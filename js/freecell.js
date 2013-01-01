@@ -11,7 +11,7 @@ var Solitaire = Y.Solitaire,
 		    delay = Solitaire.Animation.interval * 50;
 
 		while (card = this.deck.pop()) {
-			stacks[stack].push(card);			
+			stacks[stack].push(card);
 			card.faceUp();
 			card.flipPostMove(delay);
 			stack++;
@@ -92,7 +92,7 @@ var Solitaire = Y.Solitaire,
 				return true;
 			case "tableau":
 				return this.createProxyStack();
-			case "foundation": 
+			case "foundation":
 				return false;
 			}
 		},
