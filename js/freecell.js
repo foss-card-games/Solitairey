@@ -10,7 +10,7 @@ var Solitaire = Y.Solitaire,
 		    stacks = this.tableau.stacks;
 
 		while (card = this.deck.pop()) {
-			stacks[stack].push(card.faceUp());			
+			stacks[stack].push(card.faceUp());
 			stack++;
 			if (stack === 8) { stack = 0; }
 		}
@@ -89,7 +89,7 @@ var Solitaire = Y.Solitaire,
 				return true;
 			case "tableau":
 				return this.createProxyStack();
-			case "foundation": 
+			case "foundation":
 				return false;
 			}
 		},
