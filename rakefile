@@ -1,11 +1,17 @@
-PREFIX = "js"
+JS_PREFIX = "js"
+JS_SRC_PREFIX="src/js"
+PREFIX = "dest/js"
 JS = %w[yui-breakout solitaire iphone auto-stack-clear auto-turnover autoplay ie-opera-background-fix statistics solver-freecell agnes golf klondike klondike1t flowergarden fortythieves freecell grandclock montecarlo pyramid russian-solitaire scorpion spider spider1s spider2s spiderette tritowers will-o-the-wisp yukon application]
+YUI_SRC = "ext/yui/yui-all-min.js"
 YUI = "#{PREFIX}/yui-all-min.js"
 ALL = "#{PREFIX}/all.js"
 MINIFIED = "#{PREFIX}/all-min.js"
 COMBINED = "#{PREFIX}/combined-min.js"
 COMPRESSOR = "ext/yuicompressor-2.4.2/build/yuicompressor-2.4.2.jar"
 TEMPLATE = "index.erb"
+
+DEST_INDEX = "dest/index.html"
+DEST_INDX_DEV = "dest/index-dev.html"
 
 def create_index(index, development = false)
   require "erb"
@@ -15,11 +21,27 @@ def create_index(index, development = false)
   end
 end
 
+file YUI => YUI_SRC do
+    sh "cp -f #{YUI_SRC} #{YUI}"
+end
+
+dest_js_s = []
+
+JS.each do |fn_base|
+    fn = fn_base + ".js"
+    src = "#{JS_SRC_PREFIX}/#{fn}"
+    dest = "#{PREFIX}/#{fn}"
+    dest_js_s << dest
+    file dest => src do
+        sh "cp -f #{src} #{dest}"
+    end
+end
+
 desc "concatenated solitaire sources"
-file ALL do
+file ALL => dest_js_s do
   File.open(ALL, "w") do |f|
     JS.each do |fn|
-      f.write(File.read("#{PREFIX}/#{fn}.js"))
+      f.write(File.read("#{JS_SRC_PREFIX}/#{fn}.js"))
     end
   end
 end
@@ -35,17 +57,17 @@ file COMBINED => [YUI, MINIFIED] do
 end
 
 desc "development file with seperated, unminified source files"
-file "index-dev.html" => TEMPLATE do
-  create_index "index-dev.html", true
+file DEST_INDX_DEV => TEMPLATE do
+  create_index DEST_INDX_DEV, true
 end
 
 desc "production file with seperated, unminified source files"
-file "index.html" => [TEMPLATE, COMBINED] do
-  create_index "index.html"
+file DEST_INDEX => [TEMPLATE, COMBINED] do
+  create_index DEST_INDEX
 end
 
 task :clean do
-  sh "rm -f #{[ALL, MINIFIED, COMBINED, "index.html", "index-dev.html"].join(" ")}"
+  sh "rm -f #{[ALL, MINIFIED, COMBINED, DEST_INDEX, DEST_INDX_DEV].join(" ")}"
 end
 
-task :default => [:clean, "index-dev.html", "index.html"]
+task :default => [DEST_INDEX, DEST_INDX_DEV]
