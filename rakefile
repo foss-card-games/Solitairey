@@ -10,6 +10,8 @@ COMBINED = "#{PREFIX}/combined-min.js"
 COMPRESSOR = "ext/yuicompressor-2.4.2/build/yuicompressor-2.4.2.jar"
 TEMPLATE = "index.erb"
 
+IMAGES = Dir.glob("dondorf/**/*.png")
+
 DEST_INDEX = "dest/index.html"
 DEST_INDEX_DEV = "dest/index-dev.html"
 
@@ -19,6 +21,16 @@ def create_index(index, development = false)
   File.open(index, "w") do |f|
     f.write(ERB.new(File.read(TEMPLATE)).result(binding))
   end
+end
+
+DEST_IMAGES = []
+IMAGES.each do |img|
+    d = "dest/#{img}"
+    DEST_IMAGES << d
+    file d => img do
+        sh "mkdir -p $(dirname #{d})"
+        sh "cp -f #{img} #{d}"
+    end
 end
 
 file YUI => YUI_SRC do
@@ -46,6 +58,7 @@ file ALL => dest_js_s do
   end
 end
 
+
 desc "minified solitaire sources"
 file MINIFIED => ALL do
   sh "java -jar #{COMPRESSOR} -o #{MINIFIED} #{ALL}"
@@ -66,8 +79,10 @@ file DEST_INDEX => [TEMPLATE, COMBINED] do
   create_index DEST_INDEX
 end
 
+task :images => DEST_IMAGES
+
 task :clean do
   sh "rm -f #{[ALL, MINIFIED, COMBINED, DEST_INDEX, DEST_INDEX_DEV].join(" ")}"
 end
 
-task :default => [DEST_INDEX, DEST_INDEX_DEV]
+task :default => [DEST_INDEX, DEST_INDEX_DEV, :images]
