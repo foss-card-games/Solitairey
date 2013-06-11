@@ -10,7 +10,7 @@ COMBINED = "#{PREFIX}/combined-min.js"
 COMPRESSOR = "ext/yuicompressor-2.4.2/build/yuicompressor-2.4.2.jar"
 TEMPLATE = "index.erb"
 
-IMAGES = Dir.glob("dondorf/**/*.png")
+IMAGES = Dir.glob("dondorf/**/*.png") + Dir.glob("*.{css,jpg}")
 
 DEST_INDEX = "dest/index.html"
 DEST_INDEX_DEV = "dest/index-dev.html"
