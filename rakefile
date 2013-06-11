@@ -10,7 +10,7 @@ COMBINED = "#{PREFIX}/combined-min.js"
 COMPRESSOR = "ext/yuicompressor-2.4.2/build/yuicompressor-2.4.2.jar"
 TEMPLATE = "index.erb"
 
-IMAGES = Dir.glob("dondorf/**/*.png") + Dir.glob("*.{css,jpg}")
+IMAGES = Dir.glob("{dondorf,layouts}/**/*.png") + Dir.glob("*.{css,gif,png,jpg}")
 
 DEST_INDEX = "dest/index.html"
 DEST_INDEX_DEV = "dest/index-dev.html"
@@ -83,6 +83,10 @@ task :images => DEST_IMAGES
 
 task :clean do
   sh "rm -f #{[ALL, MINIFIED, COMBINED, DEST_INDEX, DEST_INDEX_DEV].join(" ")}"
+end
+
+task :upload => :default do
+  sh "rsync --progress --inplace -a -v dest hostgator:public_html/temp-Solitairey-ekrimyk/"
 end
 
 task :default => [DEST_INDEX, DEST_INDEX_DEV, :images]
