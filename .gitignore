@@ -1,3 +1,9 @@
+/dest/*.css
+/dest/*.gif
+/dest/*.jpg
+/dest/*.png
+/dest/dondorf
+/dest/layouts
 /dest/js/*.js
 /dest/index.html
 /dest/index-dev.html
