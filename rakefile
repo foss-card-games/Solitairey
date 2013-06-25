@@ -1,7 +1,7 @@
 JS_PREFIX = "js"
 JS_SRC_PREFIX="src/js"
 PREFIX = "dest/js"
-JS = %w[yui-breakout solitaire iphone auto-stack-clear auto-turnover autoplay ie-opera-background-fix statistics solver-freecell agnes golf klondike klondike1t flowergarden fortythieves freecell grandclock montecarlo pyramid russian-solitaire scorpion spider spider1s spider2s spiderette tritowers will-o-the-wisp yukon application]
+JS = %w[yui-breakout solitaire iphone auto-stack-clear auto-turnover autoplay ie-opera-background-fix statistics solver-freecell solver-freecell-worker agnes golf klondike klondike1t flowergarden fortythieves freecell grandclock montecarlo pyramid russian-solitaire scorpion spider spider1s spider2s spiderette tritowers will-o-the-wisp yukon application]
 YUI_SRC = "ext/yui/yui-all-min.js"
 YUI = "#{PREFIX}/yui-all-min.js"
 ALL = "#{PREFIX}/all.js"
