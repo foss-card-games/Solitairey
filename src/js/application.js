@@ -1,6 +1,6 @@
 (function () {
 	var active = {
-		name: "klondike",
+		name: "freecell", // name: "klondike",
 		game: null
 	    },
 	    yui = YUI(), Y,
