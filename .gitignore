@@ -3,7 +3,9 @@
 /dest/*.jpg
 /dest/*.png
 /dest/dondorf
-/dest/layouts
-/dest/js/*.js
-/dest/index.html
 /dest/index-dev.html
+/dest/index.html
+/dest/js/*.js
+/dest/js/libfreecell-solver.js.mem
+/dest/layouts
+/dest/libfreecell-solver.js.mem
