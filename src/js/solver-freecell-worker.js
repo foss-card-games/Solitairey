@@ -510,8 +510,57 @@ function mapMoves(state) {
 	return moves;
 }
 
+function _render_state_as_string (obj) {
+    var ret = '';
+
+    function _render_suit (c) {
+        return ['S', 'H', 'C', 'D'][c & 0x3];
+    }
+
+    function _render_rank (c) {
+        return ['A', '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K'][(c >> 2)-1];
+    }
+
+
+	var reserve = obj.reserve;
+    var foundation = obj.foundation;
+    ret += 'Foundations:' + foundation.map(function (c) {
+        if (c == 0) {
+            return '';
+        }
+        else {
+            return ' ' + _render_suit(c) + '-' + _render_rank(c);
+        }
+    }).join('') + "\n";
+
+    ret += 'Freecells:' + reserve.map(function (c) {
+        if (c == 0) {
+            return ' -';
+        } else {
+            return ' ' + _render_rank(c) + _render_suit(c);
+        }
+    }).join('') + "\n";
+
+	for (var i = 0; i < obj.tableau.length; i++) {
+		var stack = obj.tableau[i];
+        var l = stack[1];
+        var s = stack[0];
+
+        ret += ':';
+        for (var j = 0; j < l ; j++) {
+            var c = s[j];
+            ret += ' ' + _render_rank(c) + _render_suit(c);
+        }
+        ret += "\n";
+	}
+
+    console.log("Board = <<" + ret + ">>");
+
+    return ret;
+}
+
 function attemptSolution(obj, fastSearch) {
-	var state = new GameState(obj);
+	var state_as_string = _render_state_as_string(obj);
 
 	attempts = 0;
 	solve(state, 1, {}, 0, fastSearch);
