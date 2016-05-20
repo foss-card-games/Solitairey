@@ -21,8 +21,9 @@
 	<![if lt IE 9]>
 	<link rel="stylesheet" media="only screen and (max-device-width: 480px)" href="iphone.css">
 	<![endif]>
-	<script type="text/javascript" src="js/libfreecell-solver.js"></script>
 <% if development %>
+	<script type="text/javascript" src="js/joose.mini.js"></script>
+	<script type="text/javascript" src="js/ms-rand.js"></script>
 	<script type="text/javascript" src="js/yui-all-min.js"></script>
 	<script type="text/javascript" src="js/yui-breakout.js"></script>
 	<script type="text/javascript" src="js/solitaire.js"></script>
@@ -51,9 +52,6 @@
 	<script type="text/javascript" src="js/tritowers.js"></script>
 	<script type="text/javascript" src="js/will-o-the-wisp.js"></script>
 	<script type="text/javascript" src="js/yukon.js"></script>
-	<script type="text/javascript" src="js/joose.mini.js"></script>
-	<script type="text/javascript" src="js/ms-rand.js"></script>
-	<script type="text/javascript" src="js/web-fc-solve.js"></script>
 	<script type="text/javascript" src="js/application.js"></script>
 <% else %>
 	<script type="text/javascript" src="js/combined-min.js"></script>
@@ -72,6 +70,8 @@
 </script>
 <script type="text/javascript">var switchTo5x=false;</script><script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script><script type="text/javascript">stLight.options({publisher:'85c2f50b-8b7b-41dc-baf0-a2d273906b91'});</script>
 <% end %>
+	<script type="text/javascript" src="js/libfreecell-solver.js"></script>
+	<script type="text/javascript" src="js/web-fc-solve.js"></script>
 </head>
 <body>
 <% unless development %>
