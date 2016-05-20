@@ -12,6 +12,7 @@
 <% end %>
 <head>
 	<title>Solitairey - Beautiful HTML5 Solitaire</title>
+    <meta charset="utf-8">
 	<meta name="description" content="A modern solitaire collection for the web. Built with HTML5 and Javascript.">
 	<meta name="viewport" content="initial-scale=1.0; maximum-scale=1.0; width=device-width;">
 	<meta name="apple-mobile-web-app-capable" content="yes">
@@ -20,6 +21,7 @@
 	<![if lt IE 9]>
 	<link rel="stylesheet" media="only screen and (max-device-width: 480px)" href="iphone.css">
 	<![endif]>
+	<script type="text/javascript" src="js/libfreecell-solver.js"></script>
 <% if development %>
 	<script type="text/javascript" src="js/yui-all-min.js"></script>
 	<script type="text/javascript" src="js/yui-breakout.js"></script>
@@ -49,7 +51,9 @@
 	<script type="text/javascript" src="js/tritowers.js"></script>
 	<script type="text/javascript" src="js/will-o-the-wisp.js"></script>
 	<script type="text/javascript" src="js/yukon.js"></script>
-	<script type="text/javascript" src="js/solver-freecell.js"></script>
+	<script type="text/javascript" src="js/joose.mini.js"></script>
+	<script type="text/javascript" src="js/ms-rand.js"></script>
+	<script type="text/javascript" src="js/web-fc-solve.js"></script>
 	<script type="text/javascript" src="js/application.js"></script>
 <% else %>
 	<script type="text/javascript" src="js/combined-min.js"></script>

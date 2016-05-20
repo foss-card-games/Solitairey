@@ -1,7 +1,7 @@
 JS_PREFIX = "js"
 JS_SRC_PREFIX="src/js"
 PREFIX = "dest/js"
-JS = %w[yui-breakout solitaire iphone auto-stack-clear auto-turnover autoplay ie-opera-background-fix statistics solver-freecell solver-freecell-worker agnes golf klondike klondike1t flowergarden fortythieves freecell grandclock montecarlo pyramid russian-solitaire scorpion spider spider1s spider2s spiderette tritowers will-o-the-wisp yukon application]
+JS = %w[yui-breakout solitaire iphone auto-stack-clear auto-turnover autoplay ie-opera-background-fix statistics ms-rand joose.mini web-fc-solve web-fc-solve--expand-moves solver-freecell solver-freecell-worker agnes golf klondike klondike1t flowergarden fortythieves freecell grandclock montecarlo pyramid russian-solitaire scorpion spider spider1s spider2s spiderette tritowers will-o-the-wisp yukon application]
 YUI_SRC = "ext/yui/yui-all-min.js"
 YUI = "#{PREFIX}/yui-all-min.js"
 ALL = "#{PREFIX}/all.js"
@@ -39,15 +39,24 @@ end
 
 dest_js_s = []
 
-JS.each do |fn_base|
-    fn = fn_base + ".js"
+def js_file(fn)
     src = "#{JS_SRC_PREFIX}/#{fn}"
     dest = "#{PREFIX}/#{fn}"
-    dest_js_s << dest
     file dest => src do
         sh "cp -f #{src} #{dest}"
     end
+    return dest
 end
+
+JS.each do |fn_base|
+    fn = fn_base + ".js"
+    dest_js_s << js_file(fn)
+end
+
+dest_js_extra = []
+dest_js_extra << js_file('libfreecell-solver.js.mem')
+dest_js_extra << js_file('libfreecell-solver.js')
+dest_js_extra << js_file('libfreecell-solver.min.js')
 
 desc "concatenated solitaire sources"
 file ALL => dest_js_s do
@@ -58,6 +67,8 @@ file ALL => dest_js_s do
   end
 end
 
+file ALL => dest_js_extra do
+end
 
 desc "minified solitaire sources"
 file MINIFIED => ALL do
