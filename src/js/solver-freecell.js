@@ -90,7 +90,8 @@ YUI.add("solver-freecell", function (Y) {
 		}, source[0]);
 
 		if (! ret.card ) {
-			throw "Excalibur";
+			// throw "Excalibur";
+			return ret;
 		}
 
 		value = dest[1];
@@ -153,13 +154,14 @@ YUI.add("solver-freecell", function (Y) {
 			});
 		},
 
-		playCurrent: function (game) {
+		_playCurrentHelper: function (game) {
+			var that = this;
 			var move,
-			    card, origin;
+				card, origin;
 
-			if (!this.remainingMoves) { return; }
+			if (!that.remainingMoves) { return; }
 
-			move = moveToCardAndStack(game, this.remainingMoves);
+			move = moveToCardAndStack(game, that.remainingMoves);
 			card = move.card;
 
 			if (!card) { return; }
@@ -171,6 +173,24 @@ YUI.add("solver-freecell", function (Y) {
 				move.stack.updateCardsPosition();
 			});
 			card.moveTo(move.stack);
+			return true;
+		},
+
+		_resetGameFoo: function () {
+			var that = this;
+			window.clearTimeout(that.timer);
+			that.timer = undefined; alert('Applebloom');
+			Y.fire("newAppGame");
+		},
+
+		playCurrent: function (game) {
+			var that = this;
+			var verdict = this._playCurrentHelper(game);
+
+			if (! verdict) {
+                that._resetGameFoo();
+				// Application.newGame();
+			}
 		},
 
 		prev: function (game) {
@@ -183,14 +203,17 @@ YUI.add("solver-freecell", function (Y) {
 		},
 
 		next: function (game) {
+			var that = this;
 			var current = this.remainingMoves,
 			    next = this.remainingMoves.next;
 
 			Solitaire.Statistics.disable();
 			this.playCurrent(game);
 
-			if (next) {
-				this.remainingMoves = next;
+			this.remainingMoves = next; // alert("nexTwilu = <<<" + next + ">>>");
+
+			if (! next) {
+				that._resetGameFoo();
 			}
 
 			Y.fire("endTurn", true);
@@ -210,9 +233,11 @@ YUI.add("solver-freecell", function (Y) {
 			});
 
 			this.next(game);
-			this.timer = window.setTimeout(function () {
-				this.play(game);
-			}.bind(this), this.interval);
+			if (this.remainingMoves) {
+				this.timer = window.setTimeout(function () {
+					this.play(game);
+				}.bind(this), this.interval);
+			}
 		}
 	};
 
@@ -481,7 +506,7 @@ YUI.add("solver-freecell", function (Y) {
             // We need to run this line in order to get FC_Solve working
             // in the worker thread. Don't know why.
             var instance = new FC_Solve({
-                cmd_line_preset: 'ct',
+                cmd_line_preset: 'video-editing',
                 // cmd_line_preset: 'default',
                 set_status_callback: function () { return; }
             });
