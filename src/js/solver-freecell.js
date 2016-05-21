@@ -4,9 +4,9 @@
 YUI.add("solver-freecell", function (Y) {
 	Y.namespace("Solitaire.Solver.Freecell");
 
-	// only let this work with web workers and typed arrays
+	// only let this work with typed arrays
 
-	if (!(window.Worker && window.ArrayBuffer && window.Uint8Array)) { return; }
+	if (!(window.ArrayBuffer && window.Uint8Array)) { return; }
 
 	var Solitaire = Y.Solitaire,
 	    FreecellSolver = Solitaire.Solver.Freecell,
@@ -125,7 +125,7 @@ YUI.add("solver-freecell", function (Y) {
 	}
 
 	var Animation = {
-		interval: 500,
+        interval: 500, // interval: 500,
 		timer: null,
 		remainingMoves: null,
 
@@ -178,8 +178,10 @@ YUI.add("solver-freecell", function (Y) {
 
 		_resetGameFoo: function () {
 			var that = this;
-			window.clearTimeout(that.timer);
-			that.timer = undefined; alert('Applebloom');
+			//window.clearTimeout(that.timer);
+			//that.timer = undefined; alert('Applebloom');
+			Animation.pause();
+			alert('Applebloom');
 			Y.fire("newAppGame");
 		},
 
@@ -337,7 +339,6 @@ YUI.add("solver-freecell", function (Y) {
 
 	Y.mix(FreecellSolver, {
 		currentSolution: null,
-		worker: null,
 		attached: false,
 		supportedGames: ["Freecell"],
 
@@ -353,10 +354,6 @@ YUI.add("solver-freecell", function (Y) {
 		},
 
 		disable: function () {
-			if (this.worker) {
-				this.worker.terminate();
-			}
-
 			Status.hide();
 		},
 
@@ -402,9 +399,6 @@ YUI.add("solver-freecell", function (Y) {
 		},
 
 		stop: function () {
-			if (this.worker) {
-				this.worker.terminate();
-			}
 		},
 
 		solve: function () {
@@ -417,19 +411,6 @@ YUI.add("solver-freecell", function (Y) {
 			this.currentSolution = null;
 			window.clearTimeout(Status.indicatorTimer);
 			Status.indicatorTimer = window.setTimeout(Status.updateIndicator.bind(Status), Status.delay);
-            if (false) {
-                this.worker = new Worker("js/solver-freecell-worker.js");
-                this.worker.onmessage = function (e) {
-                    var solution = this.currentSolution = e.data.solution;
-
-                    Animation.init(solution);
-                    if (solution) {
-                        Status.stopIndicator(true);
-                    } else {
-                        Status.stopIndicator(false);
-                    }
-                }.bind(this);
-            }
 
             var state = gameToState(Game);
 
@@ -503,9 +484,7 @@ YUI.add("solver-freecell", function (Y) {
                 return ret;
             };
 
-            // We need to run this line in order to get FC_Solve working
-            // in the worker thread. Don't know why.
-            var instance = new FC_Solve({
+	        var instance = new FC_Solve({
                 cmd_line_preset: 'video-editing',
                 // cmd_line_preset: 'default',
                 set_status_callback: function () { return; }
@@ -640,11 +619,6 @@ YUI.add("solver-freecell", function (Y) {
             } else {
                 Status.stopIndicator(false);
             }
-
-            if (false) {
-                this.worker.postMessage({action: "solve", param: state});
-            }
-
 		}
 	});
 

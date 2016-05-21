@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Example: Slideshow</title>
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans:400,700,400italic,700italic">
+    <link rel="stylesheet" href="../../build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="shortcut icon" type="image/png" href="../assets/favicon.png">
+    <script src="../../build/yui/yui-min.js"></script>
+    
+</head>
+<body>
+<!--
+<a href="https://github.com/yui/yui3"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>
+-->
+<div id="doc">
+    <div id="hd">
+        <h1><img src="http://yuilibrary.com/img/yui-logo.png"></h1>
+    </div>
+    
+        <a href="#toc" class="jump">Jump to Table of Contents</a>
+    
+
+            <h1>Example: Slideshow</h1>
+    <div class="yui3-g">
+        <div class="yui3-u-3-4">
+            <div id="main">
+                <div class="content"><div class="intro">
+<p>This example illustrates how to create a slideshow using paginator to control the slides.</p>
+</div>
+
+<div id="demo" class="example">
+<style>
+#spiffySlides {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+    zoom: 1; *display: inline;
+}
+
+
+/* - S L I D E S - */
+
+#spiffySlides .slides {
+    margin: 0;
+    padding: 0;
+    width: 630px;
+    height: 350px;
+    position: relative;
+    box-shadow: 0 0 3px hsla(250, 40%, 30%, 0.8);
+}
+#spiffySlides .slides li {
+    position: absolute;
+    left: 0;
+    top: 0;
+    list-style: none;
+    display: inline;
+    opacity: 0;
+    filter: alpha(opacity=0);
+    -webkit-transition: opacity 0.3s ease-out;
+    -moz-transition:    opacity 0.3s ease-out;
+    -o-transition:      opacity 0.3s ease-out;
+    transition:         opacity 0.3s ease-out;
+}
+#spiffySlides .slides .active {
+    opacity: 1;
+    filter: alpha(opacity=100);
+    -webkit-transition: opacity 0.3s ease-out;
+    -moz-transition:    opacity 0.3s ease-out;
+    -o-transition:      opacity 0.3s ease-out;
+    transition:         opacity 0.3s ease-out;
+}
+
+
+/* - C O N T R O L S - */
+
+#spiffySlides .controls {
+    width: 630px;
+    text-align: right;
+    margin: 3px 0 0;
+    padding: 8px 0 0;
+    position: relative;
+    z-index: 1;
+}
+#spiffySlides .controls li {
+    list-style: none;
+    display: inline;
+}
+#spiffySlides .controls a {
+    display: inline-block;
+    zoom: 1; *display: inline;
+    padding: 0 10px;
+
+    border: solid 1px #CBCBCB;
+    text-decoration: none;
+    line-height: 1.7em;
+    color: #4A4A4A;
+    font-family: arial,san-serif;
+}
+#spiffySlides.circles .controls a {
+    text-indent: 100px;
+    overflow: hidden;
+    border-radius: 50%;
+    width: 12px;
+    height: 12px;
+    padding: 0;
+}
+#spiffySlides .controls a:hover {
+    background-color: #bfdaff;
+    color: #000;
+}
+#spiffySlides .controls .active a,
+#spiffySlides .controls .active a:hover {
+    background: #2647a0;
+    color: #ffffff;
+}
+
+
+/* - P A U S E   M E S S A G E - */
+
+#spiffySlides .paused {
+    opacity: 0;
+    filter: alpha(opacity=0);
+    bottom: 5px;
+    left: -130px;
+    letter-spacing: 18px;
+    position: absolute;
+    color: #2a2a2a;
+    width: 630px;
+    line-height: 1.8em;
+    -webkit-transition: all 0.3s ease-out;
+    -moz-transition:    all 0.3s ease-out;
+    -o-transition:      all 0.3s ease-out;
+    transition:         all 0.3s ease-out;
+}
+#spiffySlides:hover .paused {
+    opacity: 1;
+    filter: alpha(opacity=100);
+    left: 30px;
+    letter-spacing: 1px;
+    -webkit-transition: all 0.3s ease-out;
+    -moz-transition:    all 0.3s ease-out;
+    -o-transition:      all 0.3s ease-out;
+    transition:         all 0.3s ease-out;
+}
+</style>
+
+
+<div id="spiffySlides">
+    <ul class="slides">
+        <li class="active">
+            <img src="../assets/paginator/images/1.jpg">
+        </li>
+        <li>
+            <img src="../assets/paginator/images/2.jpg">
+        </li>
+        <li>
+            <img src="../assets/paginator/images/3.jpg">
+        </li>
+        <li>
+            <img src="../assets/paginator/images/4.jpg">
+        </li>
+        <li>
+            <img src="../assets/paginator/images/5.jpg">
+        </li>
+    </ul>
+    <ul class="controls">
+        <li class="active"><a href="#slide-1">1</a></li>
+        <li><a href="#slide-2">2</a></li>
+        <li><a href="#slide-3">3</a></li>
+        <li><a href="#slide-4">4</a></li>
+        <li><a href="#slide-5">5</a></li>
+    </ul>
+    <div class="paused">paused...</div>
+</div>
+
+
+<script>
+YUI().use('node', 'paginator',  'event-hover', 'gallery-timer', function (Y) {
+    var spiffy = Y.one('#spiffySlides'),
+        slides = spiffy.all('.slides li'),
+        controls = spiffy.all('.controls li'),
+        selectedClass = 'active',
+        pg = new Y.Paginator({
+            itemsPerPage: 1,
+            totalItems: slides.size()
+        });
+
+
+    pg.after('pageChange', function (e) {
+        var page = e.newVal;
+
+        // decrement page since nodeLists are 0 based and
+        // paginator is 1 based
+        page--;
+
+        // clear anything active
+        slides.removeClass(selectedClass);
+        controls.removeClass(selectedClass);
+
+        // make the new item active
+        slides.item(page).addClass(selectedClass);
+        controls.item(page).addClass(selectedClass);
+    });
+
+
+
+    // when we click the control links we want to go to that slide
+    spiffy.delegate('click', function (e) {
+        e.preventDefault();
+        var control = e.currentTarget;
+
+        // if it's already active, do nothing
+        if (control.ancestor('li').hasClass(selectedClass)) {
+            return;
+        }
+
+        pg.set('page', parseInt(control.getHTML(), 10));
+    }, '.controls a');
+
+
+
+    // create a timer to go to the next slide automatically
+    // we use timer to obtain a pause/resume relationship
+    autoPlay = new Y.Timer({
+        length: 2500,
+        repeatCount: 0});
+
+    autoPlay.after('timer', function (e) {
+        if (pg.hasNextPage()) {
+            pg.nextPage();
+        } else {
+            pg.set('page', 1);
+        }
+    });
+
+    // start the autoPlay timer
+    autoPlay.start();
+
+
+
+
+    // we want to pause when we mouse over the slide show
+    // and resume when we mouse out
+    spiffy.on('hover', function (e) {
+        autoPlay.pause()
+    }, function (e) {
+        autoPlay.resume()
+    });
+
+
+});
+</script>
+
+</div>
+
+<h3 id="setting-up-the-interface">Setting Up the Interface</h3>
+<p>First we need to construct the HTML for the slideshow.</p>
+<p>This includes our slides, and controls, as well as a message that is displayed when the slideshow is paused. </p>
+<p><em>If you do not want an automated slideshow, this can be left out.</em></p>
+<pre class="code prettyprint">&lt;div id=&quot;spiffySlides&quot;&gt;
+    &lt;ul class=&quot;slides&quot;&gt;
+        &lt;li class=&quot;active&quot;&gt;
+            &lt;img src=&quot;..&#x2F;assets&#x2F;paginator&#x2F;images&#x2F;1.jpg&quot;&gt;
+        &lt;&#x2F;li&gt;
+        &lt;li&gt;
+            &lt;img src=&quot;..&#x2F;assets&#x2F;paginator&#x2F;images&#x2F;2.jpg&quot;&gt;
+        &lt;&#x2F;li&gt;
+        &lt;li&gt;
+            &lt;img src=&quot;..&#x2F;assets&#x2F;paginator&#x2F;images&#x2F;3.jpg&quot;&gt;
+        &lt;&#x2F;li&gt;
+        &lt;li&gt;
+            &lt;img src=&quot;..&#x2F;assets&#x2F;paginator&#x2F;images&#x2F;4.jpg&quot;&gt;
+        &lt;&#x2F;li&gt;
+        &lt;li&gt;
+            &lt;img src=&quot;..&#x2F;assets&#x2F;paginator&#x2F;images&#x2F;5.jpg&quot;&gt;
+        &lt;&#x2F;li&gt;
+    &lt;&#x2F;ul&gt;
+    &lt;ul class=&quot;controls&quot;&gt;
+        &lt;li class=&quot;active&quot;&gt;&lt;a href=&quot;#slide-1&quot;&gt;1&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+        &lt;li&gt;&lt;a href=&quot;#slide-2&quot;&gt;2&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+        &lt;li&gt;&lt;a href=&quot;#slide-3&quot;&gt;3&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+        &lt;li&gt;&lt;a href=&quot;#slide-4&quot;&gt;4&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+        &lt;li&gt;&lt;a href=&quot;#slide-5&quot;&gt;5&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+    &lt;&#x2F;ul&gt;
+    &lt;div class=&quot;paused&quot;&gt;paused...&lt;&#x2F;div&gt;
+&lt;&#x2F;div&gt;</pre>
+
+
+<p>Now let's jazz it up a bit with some CSS.</p>
+<pre class="code prettyprint">&lt;style&gt;
+#spiffySlides {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+    zoom: 1; *display: inline;
+}
+
+
+&#x2F;* - S L I D E S - *&#x2F;
+
+#spiffySlides .slides {
+    margin: 0;
+    padding: 0;
+    width: 630px;
+    height: 350px;
+    position: relative;
+    box-shadow: 0 0 3px hsla(250, 40%, 30%, 0.8);
+}
+#spiffySlides .slides li {
+    position: absolute;
+    left: 0;
+    top: 0;
+    list-style: none;
+    display: inline;
+    opacity: 0;
+    filter: alpha(opacity=0);
+    -webkit-transition: opacity 0.3s ease-out;
+    -moz-transition:    opacity 0.3s ease-out;
+    -o-transition:      opacity 0.3s ease-out;
+    transition:         opacity 0.3s ease-out;
+}
+#spiffySlides .slides .active {
+    opacity: 1;
+    filter: alpha(opacity=100);
+    -webkit-transition: opacity 0.3s ease-out;
+    -moz-transition:    opacity 0.3s ease-out;
+    -o-transition:      opacity 0.3s ease-out;
+    transition:         opacity 0.3s ease-out;
+}
+
+
+&#x2F;* - C O N T R O L S - *&#x2F;
+
+#spiffySlides .controls {
+    width: 630px;
+    text-align: right;
+    margin: 3px 0 0;
+    padding: 8px 0 0;
+    position: relative;
+    z-index: 1;
+}
+#spiffySlides .controls li {
+    list-style: none;
+    display: inline;
+}
+#spiffySlides .controls a {
+    display: inline-block;
+    zoom: 1; *display: inline;
+    padding: 0 10px;
+
+    border: solid 1px #CBCBCB;
+    text-decoration: none;
+    line-height: 1.7em;
+    color: #4A4A4A;
+    font-family: arial,san-serif;
+}
+#spiffySlides.circles .controls a {
+    text-indent: 100px;
+    overflow: hidden;
+    border-radius: 50%;
+    width: 12px;
+    height: 12px;
+    padding: 0;
+}
+#spiffySlides .controls a:hover {
+    background-color: #bfdaff;
+    color: #000;
+}
+#spiffySlides .controls .active a,
+#spiffySlides .controls .active a:hover {
+    background: #2647a0;
+    color: #ffffff;
+}
+
+
+&#x2F;* - P A U S E   M E S S A G E - *&#x2F;
+
+#spiffySlides .paused {
+    opacity: 0;
+    filter: alpha(opacity=0);
+    bottom: 5px;
+    left: -130px;
+    letter-spacing: 18px;
+    position: absolute;
+    color: #2a2a2a;
+    width: 630px;
+    line-height: 1.8em;
+    -webkit-transition: all 0.3s ease-out;
+    -moz-transition:    all 0.3s ease-out;
+    -o-transition:      all 0.3s ease-out;
+    transition:         all 0.3s ease-out;
+}
+#spiffySlides:hover .paused {
+    opacity: 1;
+    filter: alpha(opacity=100);
+    left: 30px;
+    letter-spacing: 1px;
+    -webkit-transition: all 0.3s ease-out;
+    -moz-transition:    all 0.3s ease-out;
+    -o-transition:      all 0.3s ease-out;
+    transition:         all 0.3s ease-out;
+}
+&lt;&#x2F;style&gt;</pre>
+
+
+
+<h2 id="javascript">JavaScript</h2>
+<h3 id="setting-up-the-yui-instance">Setting Up the YUI Instance</h3>
+<p>Now we need to create our YUI instance and tell it to load the modules.</p>
+<pre class="code prettyprint">YUI().use(&#x27;node&#x27;, &#x27;paginator&#x27;,  &#x27;event-hover&#x27;, &#x27;gallery-timer&#x27;, function (Y) {
+
+    &#x2F;&#x2F; code goes here...
+
+});</pre>
+
+<p>There are only a few modules we need to require:</p>
+<ul>
+    <li><b>node:</b> Allows us to access the elem ents on the page and gives us basic event attachment</li>
+    <li><b>paginator:</b> Gives us the paginator</li>
+    <li><b>event-hover:</b> Let's us track moving the mouse over and out of an element</li>
+    <li><b>gallery-timer:</b> Let's us create a timer to pause and resume when we mouse in and out of the element</li>
+</ul>
+<p><em>If you are not interested having an automated slideshow, you can leave out <code>event-hover</code> and <code>gallery-timer</code>.</em></p>
+
+<h3 id="defining-our-variables">Defining our variables</h3>
+<pre class="code prettyprint">var spiffy = Y.one(&#x27;#spiffySlides&#x27;),
+    slides = spiffy.all(&#x27;.slides li&#x27;),
+    controls = spiffy.all(&#x27;.controls li&#x27;),
+    selectedClass = &#x27;active&#x27;,
+    pg = new Y.Paginator({
+        itemsPerPage: 1,
+        totalItems: slides.size()
+    });</pre>
+
+<p>We start our slide show by saving a reference to the slideshow container, <code>#spiffySlides</code>. Then we get a reference to all the slides and store them in a <code>Y.NodeList</code>. Our next variable, <code>controls</code>, stores a <code>Y.NodeList</code> of the control elements.</p>
+<p>After that we store our string for selected slides and controls. This will make maintenence easier for us later on.</p>
+<p>Next, we create a new <code>Y.Paginator</code> that will display only one item, or "slide", at a time. We use the <code>size()</code> method of our <code>slides</code> NodeList to get the total number of items in our paginator.</p>
+
+<h3 id="binding-paginators-pagechange">Binding Paginator's <code>pageChange</code></h3>
+<p>Now that we have our variables in place, we need to define what happens when the page number changes in the paginator.</p>
+<pre class="code prettyprint">pg.after(&#x27;pageChange&#x27;, function (e) {
+    var page = e.newVal;
+
+    &#x2F;&#x2F; decrement page since nodeLists are 0 based and
+    &#x2F;&#x2F; paginator is 1 based
+    page--;
+
+    &#x2F;&#x2F; clear anything active
+    slides.removeClass(selectedClass);
+    controls.removeClass(selectedClass);
+
+    &#x2F;&#x2F; make the new item active
+    slides.item(page).addClass(selectedClass);
+    controls.item(page).addClass(selectedClass);
+});</pre>
+
+<p>Paginator's first page is always 1, and since a <code>NodeList</code>'s first element is at 0, we need to subtract 1 from the page to give us the proper index in the slides and controls list. (<code>index = page - 1;</code>)</p>
+<p>After we get the proper index, we need to remove any evidence of a preceeding active slide then make the new slide and control active.</p>
+
+<h3 id="binding-clicks-on-page-controls">Binding clicks on page controls</h3>
+<p>To define the controls click event, we can delegate on all anchor (<code>&lt;a&gt;</code>) elements within the <code>.controls</code> element.</p>
+<pre class="code prettyprint">&#x2F;&#x2F; when we click the control links we want to go to that slide
+spiffy.delegate(&#x27;click&#x27;, function (e) {
+    e.preventDefault();
+    var control = e.currentTarget;
+
+    &#x2F;&#x2F; if it&#x27;s already active, do nothing
+    if (control.ancestor(&#x27;li&#x27;).hasClass(selectedClass)) {
+        return;
+    }
+
+    pg.set(&#x27;page&#x27;, parseInt(control.getHTML(), 10));
+}, &#x27;.controls a&#x27;);</pre>
+
+<p>First we prevent the default behavior of the anchor element.</p>
+<p>Then we check to see if it's active. If it is, we simply <code>return</code> out of the function to prevent any further action.</p>
+<p>If it's not active, we need to get the page number to go to. To do that, we use the number from the element and send it to the paginator. Since <code>Paginator</code> only takes numbers, we need to parse the string before we set it.</p>
+
+<p><b>At this point we are done with the slideshow funtionality.</b></p>
+<p><b><em>The rest of this walk through will be covering making the slideshow automated.</em></b></p>
+
+<h3 id="automating-the-slideshow">Automating the Slideshow</h3>
+<p>Using <code>gallery-timer</code>, we will create a new <code>Timer</code> object.</p>
+<pre class="code prettyprint">&#x2F;&#x2F; create a timer to go to the next slide automatically
+&#x2F;&#x2F; we use timer to obtain a pause&#x2F;resume relationship
+autoPlay = new Y.Timer({
+    length: 2500,
+    repeatCount: 0});
+
+autoPlay.after(&#x27;timer&#x27;, function (e) {
+    if (pg.hasNextPage()) {
+        pg.nextPage();
+    } else {
+        pg.set(&#x27;page&#x27;, 1);
+    }
+});
+
+&#x2F;&#x2F; start the autoPlay timer
+autoPlay.start();</pre>
+
+<p>We want the slides to advance every 2.5 seconds, so we set the length to 2500. We make it run continuously by setting repeatCount to zero.</p>
+<p>The timer fires a <code>&#x27;timer&#x27;</code> event on every loop. We listen for this event to proceed to the next slide. If there isn't a next slide, we simply go back to the first one.</p>
+
+<h3 id="pausing-the-slideshow">Pausing the Slideshow</h3>
+<p>We probably do not want to have the slideshow run while we are trying to interact with the controls, so let's make it pause when we mouse over the whole thing.</p>
+<pre class="code prettyprint">&#x2F;&#x2F; we want to pause when we mouse over the slide show
+&#x2F;&#x2F; and resume when we mouse out
+spiffy.on(&#x27;hover&#x27;, function (e) {
+    autoPlay.pause()
+}, function (e) {
+    autoPlay.resume()
+});</pre>
+
+<p>Using the <code>event-hover</code> module, we can define the mouse over and mouse out behavior at one time. When we mouse over the slideshow, we pause the timer. When we mouse out of the slideshow, we resume the timer.</p>
+
+<h3 id="the-whole-example">The Whole Example</h3>
+<p>That's it! Now let's put it all together.</p>
+<pre class="code prettyprint">&lt;style&gt;
+#spiffySlides {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+    zoom: 1; *display: inline;
+}
+
+
+&#x2F;* - S L I D E S - *&#x2F;
+
+#spiffySlides .slides {
+    margin: 0;
+    padding: 0;
+    width: 630px;
+    height: 350px;
+    position: relative;
+    box-shadow: 0 0 3px hsla(250, 40%, 30%, 0.8);
+}
+#spiffySlides .slides li {
+    position: absolute;
+    left: 0;
+    top: 0;
+    list-style: none;
+    display: inline;
+    opacity: 0;
+    filter: alpha(opacity=0);
+    -webkit-transition: opacity 0.3s ease-out;
+    -moz-transition:    opacity 0.3s ease-out;
+    -o-transition:      opacity 0.3s ease-out;
+    transition:         opacity 0.3s ease-out;
+}
+#spiffySlides .slides .active {
+    opacity: 1;
+    filter: alpha(opacity=100);
+    -webkit-transition: opacity 0.3s ease-out;
+    -moz-transition:    opacity 0.3s ease-out;
+    -o-transition:      opacity 0.3s ease-out;
+    transition:         opacity 0.3s ease-out;
+}
+
+
+&#x2F;* - C O N T R O L S - *&#x2F;
+
+#spiffySlides .controls {
+    width: 630px;
+    text-align: right;
+    margin: 3px 0 0;
+    padding: 8px 0 0;
+    position: relative;
+    z-index: 1;
+}
+#spiffySlides .controls li {
+    list-style: none;
+    display: inline;
+}
+#spiffySlides .controls a {
+    display: inline-block;
+    zoom: 1; *display: inline;
+    padding: 0 10px;
+
+    border: solid 1px #CBCBCB;
+    text-decoration: none;
+    line-height: 1.7em;
+    color: #4A4A4A;
+    font-family: arial,san-serif;
+}
+#spiffySlides.circles .controls a {
+    text-indent: 100px;
+    overflow: hidden;
+    border-radius: 50%;
+    width: 12px;
+    height: 12px;
+    padding: 0;
+}
+#spiffySlides .controls a:hover {
+    background-color: #bfdaff;
+    color: #000;
+}
+#spiffySlides .controls .active a,
+#spiffySlides .controls .active a:hover {
+    background: #2647a0;
+    color: #ffffff;
+}
+
+
+&#x2F;* - P A U S E   M E S S A G E - *&#x2F;
+
+#spiffySlides .paused {
+    opacity: 0;
+    filter: alpha(opacity=0);
+    bottom: 5px;
+    left: -130px;
+    letter-spacing: 18px;
+    position: absolute;
+    color: #2a2a2a;
+    width: 630px;
+    line-height: 1.8em;
+    -webkit-transition: all 0.3s ease-out;
+    -moz-transition:    all 0.3s ease-out;
+    -o-transition:      all 0.3s ease-out;
+    transition:         all 0.3s ease-out;
+}
+#spiffySlides:hover .paused {
+    opacity: 1;
+    filter: alpha(opacity=100);
+    left: 30px;
+    letter-spacing: 1px;
+    -webkit-transition: all 0.3s ease-out;
+    -moz-transition:    all 0.3s ease-out;
+    -o-transition:      all 0.3s ease-out;
+    transition:         all 0.3s ease-out;
+}
+&lt;&#x2F;style&gt;
+
+
+&lt;div id=&quot;spiffySlides&quot;&gt;
+    &lt;ul class=&quot;slides&quot;&gt;
+        &lt;li class=&quot;active&quot;&gt;
+            &lt;img src=&quot;..&#x2F;assets&#x2F;paginator&#x2F;images&#x2F;1.jpg&quot;&gt;
+        &lt;&#x2F;li&gt;
+        &lt;li&gt;
+            &lt;img src=&quot;..&#x2F;assets&#x2F;paginator&#x2F;images&#x2F;2.jpg&quot;&gt;
+        &lt;&#x2F;li&gt;
+        &lt;li&gt;
+            &lt;img src=&quot;..&#x2F;assets&#x2F;paginator&#x2F;images&#x2F;3.jpg&quot;&gt;
+        &lt;&#x2F;li&gt;
+        &lt;li&gt;
+            &lt;img src=&quot;..&#x2F;assets&#x2F;paginator&#x2F;images&#x2F;4.jpg&quot;&gt;
+        &lt;&#x2F;li&gt;
+        &lt;li&gt;
+            &lt;img src=&quot;..&#x2F;assets&#x2F;paginator&#x2F;images&#x2F;5.jpg&quot;&gt;
+        &lt;&#x2F;li&gt;
+    &lt;&#x2F;ul&gt;
+    &lt;ul class=&quot;controls&quot;&gt;
+        &lt;li class=&quot;active&quot;&gt;&lt;a href=&quot;#slide-1&quot;&gt;1&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+        &lt;li&gt;&lt;a href=&quot;#slide-2&quot;&gt;2&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+        &lt;li&gt;&lt;a href=&quot;#slide-3&quot;&gt;3&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+        &lt;li&gt;&lt;a href=&quot;#slide-4&quot;&gt;4&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+        &lt;li&gt;&lt;a href=&quot;#slide-5&quot;&gt;5&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+    &lt;&#x2F;ul&gt;
+    &lt;div class=&quot;paused&quot;&gt;paused...&lt;&#x2F;div&gt;
+&lt;&#x2F;div&gt;
+
+
+&lt;script&gt;
+YUI().use(&#x27;node&#x27;, &#x27;paginator&#x27;,  &#x27;event-hover&#x27;, &#x27;gallery-timer&#x27;, function (Y) {
+    var spiffy = Y.one(&#x27;#spiffySlides&#x27;),
+        slides = spiffy.all(&#x27;.slides li&#x27;),
+        controls = spiffy.all(&#x27;.controls li&#x27;),
+        selectedClass = &#x27;active&#x27;,
+        pg = new Y.Paginator({
+            itemsPerPage: 1,
+            totalItems: slides.size()
+        });
+
+
+    pg.after(&#x27;pageChange&#x27;, function (e) {
+        var page = e.newVal;
+
+        &#x2F;&#x2F; decrement page since nodeLists are 0 based and
+        &#x2F;&#x2F; paginator is 1 based
+        page--;
+
+        &#x2F;&#x2F; clear anything active
+        slides.removeClass(selectedClass);
+        controls.removeClass(selectedClass);
+
+        &#x2F;&#x2F; make the new item active
+        slides.item(page).addClass(selectedClass);
+        controls.item(page).addClass(selectedClass);
+    });
+
+
+
+    &#x2F;&#x2F; when we click the control links we want to go to that slide
+    spiffy.delegate(&#x27;click&#x27;, function (e) {
+        e.preventDefault();
+        var control = e.currentTarget;
+
+        &#x2F;&#x2F; if it&#x27;s already active, do nothing
+        if (control.ancestor(&#x27;li&#x27;).hasClass(selectedClass)) {
+            return;
+        }
+
+        pg.set(&#x27;page&#x27;, parseInt(control.getHTML(), 10));
+    }, &#x27;.controls a&#x27;);
+
+
+
+    &#x2F;&#x2F; create a timer to go to the next slide automatically
+    &#x2F;&#x2F; we use timer to obtain a pause&#x2F;resume relationship
+    autoPlay = new Y.Timer({
+        length: 2500,
+        repeatCount: 0});
+
+    autoPlay.after(&#x27;timer&#x27;, function (e) {
+        if (pg.hasNextPage()) {
+            pg.nextPage();
+        } else {
+            pg.set(&#x27;page&#x27;, 1);
+        }
+    });
+
+    &#x2F;&#x2F; start the autoPlay timer
+    autoPlay.start();
+
+
+
+
+    &#x2F;&#x2F; we want to pause when we mouse over the slide show
+    &#x2F;&#x2F; and resume when we mouse out
+    spiffy.on(&#x27;hover&#x27;, function (e) {
+        autoPlay.pause()
+    }, function (e) {
+        autoPlay.resume()
+    });
+
+
+});
+&lt;&#x2F;script&gt;</pre>
+
+</div>
+            </div>
+        </div>
+
+        <div class="yui3-u-1-4">
+            <div class="sidebar">
+                
+                    <div id="toc" class="sidebox">
+                        <div class="hd">
+                            <h2 class="no-toc">Table of Contents</h2>
+                        </div>
+
+                        <div class="bd">
+                            <ul class="toc">
+<li>
+<a href="#setting-up-the-interface">Setting Up the Interface</a>
+</li>
+<li>
+<a href="#javascript">JavaScript</a>
+<ul class="toc">
+<li>
+<a href="#setting-up-the-yui-instance">Setting Up the YUI Instance</a>
+</li>
+<li>
+<a href="#defining-our-variables">Defining our variables</a>
+</li>
+<li>
+<a href="#binding-paginators-pagechange">Binding Paginator's <code>pageChange</code></a>
+</li>
+<li>
+<a href="#binding-clicks-on-page-controls">Binding clicks on page controls</a>
+</li>
+<li>
+<a href="#automating-the-slideshow">Automating the Slideshow</a>
+</li>
+<li>
+<a href="#pausing-the-slideshow">Pausing the Slideshow</a>
+</li>
+<li>
+<a href="#the-whole-example">The Whole Example</a>
+</li>
+</ul>
+</li>
+</ul>
+                        </div>
+                    </div>
+                
+
+                
+                    <div class="sidebox">
+                        <div class="hd">
+                            <h2 class="no-toc">Examples</h2>
+                        </div>
+
+                        <div class="bd">
+                            <ul class="examples">
+                                
+                                    
+                                        <li data-description="This example illustrates how to create a slideshow using paginator to control the slides.">
+                                            <a href="slideshow.html">Slideshow</a>
+                                        </li>
+                                    
+                                
+                                    
+                                        <li data-description="An HTML table containing 50 states and their population with an attached paginator to view the information in small sections.">
+                                            <a href="table.html">Tables</a>
+                                        </li>
+                                    
+                                
+                                    
+                                        <li data-description="An application using the Flickr API to display images with a paginator control to step through the results.">
+                                            <a href="search.html">Search Results</a>
+                                        </li>
+                                    
+                                
+                                    
+                                
+                            </ul>
+                        </div>
+                    </div>
+                
+
+                
+                    <div class="sidebox">
+                        <div class="hd">
+                            <h2 class="no-toc">Examples That Use This Component</h2>
+                        </div>
+
+                        <div class="bd">
+                            <ul class="examples">
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                        <li data-description="Using the paginator.">
+                                            <a href="../datatable/datatable-paginator.html">DataTable with Paginator</a>
+                                        </li>
+                                    
+                                
+                            </ul>
+                        </div>
+                    </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+
+<script>
+YUI.Env.Tests = {
+    examples: [],
+    project: '../assets',
+    assets: '../assets/paginator',
+    name: 'slideshow',
+    title: 'Slideshow',
+    newWindow: '',
+    auto:  false 
+};
+YUI.Env.Tests.examples.push('slideshow');
+YUI.Env.Tests.examples.push('table');
+YUI.Env.Tests.examples.push('search');
+YUI.Env.Tests.examples.push('datatable-paginator');
+
+</script>
+<script src="../assets/yui/test-runner.js"></script>
+
+
+
+</body>
+</html>

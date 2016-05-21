@@ -74,7 +74,7 @@ available.
             gconf = (typeof YUI_config !== 'undefined') && YUI_config;
 
         if (!(instanceOf(Y, YUI))) {
-            Y = new YUI();
+            Y = new YUI({base: 'js/yui-unpack/yui/build/'});
         } else {
             // set up the core environment
             Y._init();

@@ -3,7 +3,7 @@
 		name: "freecell", // name: "klondike",
 		game: null
 	    },
-	    yui = YUI(), Y,
+	    yui = YUI({ base: 'js/yui-unpack/yui/build/' }), Y,
 	    games = {
 		"agnes": "Agnes",
 		"klondike": "Klondike",

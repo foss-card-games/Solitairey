@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Example: DataTable with Paginator</title>
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans:400,700,400italic,700italic">
+    <link rel="stylesheet" href="../../build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="shortcut icon" type="image/png" href="../assets/favicon.png">
+    <script src="../../build/yui/yui-min.js"></script>
+    
+</head>
+<body>
+<!--
+<a href="https://github.com/yui/yui3"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>
+-->
+<div id="doc">
+    <div id="hd">
+        <h1><img src="http://yuilibrary.com/img/yui-logo.png"></h1>
+    </div>
+    
+
+            <h1>Example: DataTable with Paginator</h1>
+    <div class="yui3-g">
+        <div class="yui3-u-3-4">
+            <div id="main">
+                <div class="content"><div class="intro">
+    <p>
+        Using the paginator.
+    </p>
+</div>
+
+<div class="example yui3-skin-sam">
+    <style>
+.numeric {
+    text-align: right;
+}
+</style>
+
+    <div id="dtable"></div>
+
+    <script>
+            YUI().use('datatable', 'datatable-paginator', 'datatype-number', function (Y) {
+
+        var foods = ('Achoccha|Amaranth|Angelica|Anise|Apple|Arrowroot|Arrugula|' +
+                    'Artichoke|Asparagus|Atemoya|Avocado|Balsam Apple|Balsam Pe' +
+                    'ar|Bambara groundnut|Bamboo|Banana and Plantains|Barbados ' +
+                    'Cherry|Beans|Beet|Blackberry|Blueberry|Bok Choy|Boniato (T' +
+                    'ropical Sweetpotato, also Batatas or Carnote)|Broccoli|Bro' +
+                    'ccoli|Brussels sprouts|Bunch Grape|Burdock|Cabbage|Calabaz' +
+                    'a (Tropical Pumpkin)|Cantaloupes and Muskmelons|Capers|Car' +
+                    'ambola (Star Fruit)|Cardoon|Carrot|Cassava (Spanish common' +
+                    ' name Yuca)|Cauliflower|Celeriac|Celery|Celtuce|Chard|Chay' +
+                    'a|Chayote|Chicory|Chinese Cabbage (Bok Choy)|Chinese Jujub' +
+                    'e|Chinese Radish|Chives|Chrysanthemum|Chufa|Cilantro|Citro' +
+                    'n|Coconut Palm|Collards|Comfrey|Corn salad|Corn|Cuban Swee' +
+                    't Potato|Cucumber|Cushcush|Daikon|Dandelion|Dasheen|Dill|E' +
+                    'ggplant|Endive|Eugenia|Fennel|Fig|Galia Muskmelon|Garbanzo' +
+                    '|Garlic|Gherkin, West Indian|Ginger|Ginseng|Gourds|Grape|G' +
+                    'uar|Guava|Hanover Salad|Horseradish|Horseradish tree|Huckl' +
+                    'eberry|Ice Plant|Jaboticaba|Jackfruit|Jicama|Jojoba|Kale|K' +
+                    'angkong|Kohlrabi|Leek|Lentils|Lettuce|Longan|Loquat|Lovage' +
+                    '|Luffa Gourd|Lychee|Macadamia|Malanga (also called Tannia ' +
+                    'or Tanier)|Mamey Sapote|Mango|Martynia|Melon|Momordica|Mus' +
+                    'cadine Grape|Mushroom|Muskmelons and Cantaloupes|Mustard|M' +
+                    'ustard collard|Mustard, potherb|Naranjillo|Nasturtium|Nect' +
+                    'arine|Okra|Onion|Orach|Oriental Persimmon|Papaya|Paprika|P' +
+                    'arsley|Parsley root|Parsnip|Passion Fruit|Peach|Peas|Peanu' +
+                    't Production|Pear|Pecan|Pepper|Persimmon|Pimiento|Pineappl' +
+                    'e|Pineapple Guava|Pitaya|Plum|Pokeweed|Pomegranate|Potato|' +
+                    'Pumpkin|Purslane|Radicchio|Radish|Rakkyo|Rampion|Raspberry' +
+                    '|Rhubarb|Romaine Lettuce|Roselle|Rutabaga|Saffron|Salsify|' +
+                    'Sapodilla|Sarsaparilla|Sassafrass|Scorzonera|Sea kale|Seag' +
+                    'rape|Shallot|Skirret|Smallage|Sorrel|Southern pea|Soybeans' +
+                    '|Spinach|Spondias|Squash|Strawberries|Sugar Apple|Swamp Ca' +
+                    'bbage|Sweet Basil|Sweet Corn|Sweet potato|Swiss Chard|Toma' +
+                    'tillo|Tomato|Truffles|Turnip|Upland cress|Water celery|Wat' +
+                    'erchestnut|Watercress|Watermelon|Yams').split('|'),
+            data = [],
+            i,
+            len;
+
+        for (i = 0, len = foods.length; i < len; i++) {
+            data.push({
+                id: i + 1,
+                name: foods[i],
+                price: Math.round((Math.random()) * 500) / 500,
+                qty: Math.ceil(len * Math.random())
+            });
+        }
+
+        var table = new Y.DataTable({
+            columns: [
+                {
+                    key: 'id',
+                    label: ' ',
+                    width: '70px',
+                    className: 'numeric'
+                },
+                {
+                    key: 'name',
+                    label: 'Food'
+                },
+                {
+                    key: 'price',
+                    label: 'Price',
+                    formatter: function (o) {
+                        return Y.Number.format(o.data.price, {
+                            prefix: "$",
+                            thousandsSeparator: ",",
+                            decimalSeparator: ".",
+                            decimalPlaces: 2
+                        })
+                    },
+                    width: '100px',
+                    className: 'numeric'
+                },
+                {
+                    key: 'qty',
+                    label: 'QTY',
+                    width: '80px',
+                    className: 'numeric'
+                },
+                {
+                    key: 'fn',
+                    label: 'Price',
+                    formatter: function(o) {
+                        return Y.Number.format(o.data.price * o.data.qty, {
+                            prefix: "$",
+                            thousandsSeparator: ",",
+                            decimalSeparator: ".",
+                            decimalPlaces: 2
+                        });
+                    },
+                    width: '120px',
+                    className: 'numeric'
+                }
+            ],
+            data: data,
+            rowsPerPage: 10,
+            paginatorLocation: ['header', 'footer']
+        });
+
+        table.render('#dtable');
+
+    });
+
+    </script>
+</div>
+
+
+<h2>Getting started</h2>
+<p>Because DataTable Paginator comes with it's own UI, there really isn't much
+mark up we need to get started.</p>
+<pre class="code prettyprint">&lt;div id=&quot;dtable&quot;&gt;&lt;&#x2F;div&gt;</pre>
+
+<p>After that we need to right align our numbers.</p>
+<pre class="code prettyprint">&lt;style&gt;
+.numeric {
+    text-align: right;
+}
+&lt;&#x2F;style&gt;</pre>
+
+<p>That's it! Just a place to put the table when we render it and some
+formatting on the columns containing numbers.</p>
+
+<h2>Implementation</h2>
+<p>For this example we create an Array of data out of 185 words and some random
+numbers. We add in some formatting to make it a little prettier. Finally we
+create a "total" column multiplying the price and quantity values.</p>
+<pre class="code prettyprint">YUI().use(&#x27;datatable&#x27;, &#x27;datatable-paginator&#x27;, &#x27;datatype-number&#x27;, function (Y) {
+
+    var foods = (&#x27;Achoccha|Amaranth|Angelica|...|Watermelon|Yams&#x27;).split(&#x27;|&#x27;),
+        data = [],
+        i,
+        len;
+
+    for (i = 0, len = foods.length; i &lt; len; i++) {
+        data.push({
+            id: i + 1,
+            name: foods[i],
+            price: Math.round((Math.random()) * 500) &#x2F; 500,
+            qty: Math.ceil(len * Math.random())
+        });
+    }
+
+    var table = new Y.DataTable({
+        columns: [
+            {
+                key: &#x27;id&#x27;,
+                label: &#x27; &#x27;,
+                width: &#x27;70px&#x27;,
+                className: &#x27;numeric&#x27;
+            },
+            {
+                key: &#x27;name&#x27;,
+                label: &#x27;Food&#x27;
+            },
+            {
+                key: &#x27;price&#x27;,
+                label: &#x27;Price&#x27;,
+                formatter: function (o) {
+                    return Y.Number.format(o.data.price, {
+                        prefix: &quot;$&quot;,
+                        thousandsSeparator: &quot;,&quot;,
+                        decimalSeparator: &quot;.&quot;,
+                        decimalPlaces: 2
+                    })
+                },
+                width: &#x27;100px&#x27;,
+                className: &#x27;numeric&#x27;
+            },
+            {
+                key: &#x27;qty&#x27;,
+                label: &#x27;QTY&#x27;,
+                width: &#x27;80px&#x27;,
+                className: &#x27;numeric&#x27;
+            },
+            {
+                key: &#x27;fn&#x27;,
+                label: &#x27;Price&#x27;,
+                formatter: function(o) {
+                    return Y.Number.format(o.data.price * o.data.qty, {
+                        prefix: &quot;$&quot;,
+                        thousandsSeparator: &quot;,&quot;,
+                        decimalSeparator: &quot;.&quot;,
+                        decimalPlaces: 2
+                    });
+                },
+                width: &#x27;120px&#x27;,
+                className: &#x27;numeric&#x27;
+            }
+        ],
+        data: data
+    });
+
+    table.render(&#x27;#dtable&#x27;);
+
+});</pre>
+
+<p>At this point it's just a typical datatable. A datatable with 185 rows! We
+were hoping to have something a little easier to read. All we need to do is
+define the number of row per page with <code>rowsPerPage</code>. Any number greater than
+zero (0) will do the trick.</p>
+<pre class="code prettyprint">table.set(&#x27;rowsPerPage&#x27;, 10);</pre>
+
+
+<p>We can also add a UI controller to the header.</p>
+<pre class="code prettyprint">table.set(&#x27;paginatorLocation&#x27;, [&#x27;header&#x27;, &#x27;footer&#x27;]);</pre>
+
+
+<h2>All the code!</h2>
+<p>For simplicity, we put our paginator specifics in the configuration object.</p>
+<pre class="code prettyprint">&lt;style&gt;
+.numeric {
+    text-align: right;
+}
+&lt;&#x2F;style&gt;
+
+&lt;div id=&quot;dtable&quot;&gt;&lt;&#x2F;div&gt;
+
+&lt;script&gt;
+    YUI().use(&#x27;datatable&#x27;, &#x27;datatable-paginator&#x27;, &#x27;datatype-number&#x27;, function (Y) {
+
+        var foods = (&#x27;Achoccha|Amaranth|Angelica|Anise|Apple|Arrowroot|Arrugula|&#x27; +
+                    &#x27;Artichoke|Asparagus|Atemoya|Avocado|Balsam Apple|Balsam Pe&#x27; +
+                    &#x27;ar|Bambara groundnut|Bamboo|Banana and Plantains|Barbados &#x27; +
+                    &#x27;Cherry|Beans|Beet|Blackberry|Blueberry|Bok Choy|Boniato (T&#x27; +
+                    &#x27;ropical Sweetpotato, also Batatas or Carnote)|Broccoli|Bro&#x27; +
+                    &#x27;ccoli|Brussels sprouts|Bunch Grape|Burdock|Cabbage|Calabaz&#x27; +
+                    &#x27;a (Tropical Pumpkin)|Cantaloupes and Muskmelons|Capers|Car&#x27; +
+                    &#x27;ambola (Star Fruit)|Cardoon|Carrot|Cassava (Spanish common&#x27; +
+                    &#x27; name Yuca)|Cauliflower|Celeriac|Celery|Celtuce|Chard|Chay&#x27; +
+                    &#x27;a|Chayote|Chicory|Chinese Cabbage (Bok Choy)|Chinese Jujub&#x27; +
+                    &#x27;e|Chinese Radish|Chives|Chrysanthemum|Chufa|Cilantro|Citro&#x27; +
+                    &#x27;n|Coconut Palm|Collards|Comfrey|Corn salad|Corn|Cuban Swee&#x27; +
+                    &#x27;t Potato|Cucumber|Cushcush|Daikon|Dandelion|Dasheen|Dill|E&#x27; +
+                    &#x27;ggplant|Endive|Eugenia|Fennel|Fig|Galia Muskmelon|Garbanzo&#x27; +
+                    &#x27;|Garlic|Gherkin, West Indian|Ginger|Ginseng|Gourds|Grape|G&#x27; +
+                    &#x27;uar|Guava|Hanover Salad|Horseradish|Horseradish tree|Huckl&#x27; +
+                    &#x27;eberry|Ice Plant|Jaboticaba|Jackfruit|Jicama|Jojoba|Kale|K&#x27; +
+                    &#x27;angkong|Kohlrabi|Leek|Lentils|Lettuce|Longan|Loquat|Lovage&#x27; +
+                    &#x27;|Luffa Gourd|Lychee|Macadamia|Malanga (also called Tannia &#x27; +
+                    &#x27;or Tanier)|Mamey Sapote|Mango|Martynia|Melon|Momordica|Mus&#x27; +
+                    &#x27;cadine Grape|Mushroom|Muskmelons and Cantaloupes|Mustard|M&#x27; +
+                    &#x27;ustard collard|Mustard, potherb|Naranjillo|Nasturtium|Nect&#x27; +
+                    &#x27;arine|Okra|Onion|Orach|Oriental Persimmon|Papaya|Paprika|P&#x27; +
+                    &#x27;arsley|Parsley root|Parsnip|Passion Fruit|Peach|Peas|Peanu&#x27; +
+                    &#x27;t Production|Pear|Pecan|Pepper|Persimmon|Pimiento|Pineappl&#x27; +
+                    &#x27;e|Pineapple Guava|Pitaya|Plum|Pokeweed|Pomegranate|Potato|&#x27; +
+                    &#x27;Pumpkin|Purslane|Radicchio|Radish|Rakkyo|Rampion|Raspberry&#x27; +
+                    &#x27;|Rhubarb|Romaine Lettuce|Roselle|Rutabaga|Saffron|Salsify|&#x27; +
+                    &#x27;Sapodilla|Sarsaparilla|Sassafrass|Scorzonera|Sea kale|Seag&#x27; +
+                    &#x27;rape|Shallot|Skirret|Smallage|Sorrel|Southern pea|Soybeans&#x27; +
+                    &#x27;|Spinach|Spondias|Squash|Strawberries|Sugar Apple|Swamp Ca&#x27; +
+                    &#x27;bbage|Sweet Basil|Sweet Corn|Sweet potato|Swiss Chard|Toma&#x27; +
+                    &#x27;tillo|Tomato|Truffles|Turnip|Upland cress|Water celery|Wat&#x27; +
+                    &#x27;erchestnut|Watercress|Watermelon|Yams&#x27;).split(&#x27;|&#x27;),
+            data = [],
+            i,
+            len;
+
+        for (i = 0, len = foods.length; i &lt; len; i++) {
+            data.push({
+                id: i + 1,
+                name: foods[i],
+                price: Math.round((Math.random()) * 500) &#x2F; 500,
+                qty: Math.ceil(len * Math.random())
+            });
+        }
+
+        var table = new Y.DataTable({
+            columns: [
+                {
+                    key: &#x27;id&#x27;,
+                    label: &#x27; &#x27;,
+                    width: &#x27;70px&#x27;,
+                    className: &#x27;numeric&#x27;
+                },
+                {
+                    key: &#x27;name&#x27;,
+                    label: &#x27;Food&#x27;
+                },
+                {
+                    key: &#x27;price&#x27;,
+                    label: &#x27;Price&#x27;,
+                    formatter: function (o) {
+                        return Y.Number.format(o.data.price, {
+                            prefix: &quot;$&quot;,
+                            thousandsSeparator: &quot;,&quot;,
+                            decimalSeparator: &quot;.&quot;,
+                            decimalPlaces: 2
+                        })
+                    },
+                    width: &#x27;100px&#x27;,
+                    className: &#x27;numeric&#x27;
+                },
+                {
+                    key: &#x27;qty&#x27;,
+                    label: &#x27;QTY&#x27;,
+                    width: &#x27;80px&#x27;,
+                    className: &#x27;numeric&#x27;
+                },
+                {
+                    key: &#x27;fn&#x27;,
+                    label: &#x27;Price&#x27;,
+                    formatter: function(o) {
+                        return Y.Number.format(o.data.price * o.data.qty, {
+                            prefix: &quot;$&quot;,
+                            thousandsSeparator: &quot;,&quot;,
+                            decimalSeparator: &quot;.&quot;,
+                            decimalPlaces: 2
+                        });
+                    },
+                    width: &#x27;120px&#x27;,
+                    className: &#x27;numeric&#x27;
+                }
+            ],
+            data: data,
+            rowsPerPage: 10,
+            paginatorLocation: [&#x27;header&#x27;, &#x27;footer&#x27;]
+        });
+
+        table.render(&#x27;#dtable&#x27;);
+
+    });
+
+&lt;&#x2F;script&gt;</pre>
+
+</div>
+            </div>
+        </div>
+
+        <div class="yui3-u-1-4">
+            <div class="sidebar">
+                
+
+                
+                    <div class="sidebox">
+                        <div class="hd">
+                            <h2 class="no-toc">Examples</h2>
+                        </div>
+
+                        <div class="bd">
+                            <ul class="examples">
+                                
+                                    
+                                        <li data-description="This example illustrates simple DataTable use cases.">
+                                            <a href="datatable-basic.html">Basic DataTable</a>
+                                        </li>
+                                    
+                                
+                                    
+                                        <li data-description="DataTable loaded with JSON data from a remote webservice via DataSource.Get">
+                                            <a href="datatable-dsget.html">DataTable + DataSource.Get + JSON Data</a>
+                                        </li>
+                                    
+                                
+                                    
+                                        <li data-description="DataTable loaded with XML data from a remote webservice via DataSource.IO.">
+                                            <a href="datatable-dsio.html">DataTable + DataSource.IO + XML Data</a>
+                                        </li>
+                                    
+                                
+                                    
+                                        <li data-description="Custom format data for display.">
+                                            <a href="datatable-formatting.html">Formatting Row Data for Display</a>
+                                        </li>
+                                    
+                                
+                                    
+                                        <li data-description="DataTable with nested column headers.">
+                                            <a href="datatable-nestedcols.html">Nested Column Headers</a>
+                                        </li>
+                                    
+                                
+                                    
+                                        <li data-description="DataTable with column sorting.">
+                                            <a href="datatable-sort.html">Column Sorting</a>
+                                        </li>
+                                    
+                                
+                                    
+                                        <li data-description="Color Sorting with DataTable and Y.Color.">
+                                            <a href="datatable-colorsort.html">Color Sorting and Filtering</a>
+                                        </li>
+                                    
+                                
+                                    
+                                        <li data-description="DataTable with vertical and/or horizontal scrolling rows.">
+                                            <a href="datatable-scroll.html">Scrolling DataTable</a>
+                                        </li>
+                                    
+                                
+                                    
+                                        <li data-description="Using DataTable&#x27;s recordType attribute to create calculated, sortable columns.">
+                                            <a href="datatable-recordtype.html">Sortable generated columns</a>
+                                        </li>
+                                    
+                                
+                                    
+                                        <li data-description="Populating one DataTable from details in the data of another.">
+                                            <a href="datatable-masterdetail.html">Master and detail tables</a>
+                                        </li>
+                                    
+                                
+                                    
+                                        <li data-description="Checkbox column that retains checked state when sorting.">
+                                            <a href="datatable-chkboxselect.html">Checkbox select column</a>
+                                        </li>
+                                    
+                                
+                                    
+                                        <li data-description="Using the paginator.">
+                                            <a href="datatable-paginator.html">DataTable with Paginator</a>
+                                        </li>
+                                    
+                                
+                                    
+                                
+                            </ul>
+                        </div>
+                    </div>
+                
+
+                
+                    <div class="sidebox">
+                        <div class="hd">
+                            <h2 class="no-toc">Examples That Use This Component</h2>
+                        </div>
+
+                        <div class="bd">
+                            <ul class="examples">
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                        <li data-description="Shows how to instantiate multiple Panel instances, and use nested modality to interact with a Datatable.">
+                                            <a href="../panel/panel-form.html">Creating a Modal Form</a>
+                                        </li>
+                                    
+                                
+                            </ul>
+                        </div>
+                    </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+
+<script>
+YUI.Env.Tests = {
+    examples: [],
+    project: '../assets',
+    assets: '../assets/datatable',
+    name: 'datatable-paginator',
+    title: 'DataTable with Paginator',
+    newWindow: '',
+    auto:  false 
+};
+YUI.Env.Tests.examples.push('datatable-basic');
+YUI.Env.Tests.examples.push('datatable-dsget');
+YUI.Env.Tests.examples.push('datatable-dsio');
+YUI.Env.Tests.examples.push('datatable-formatting');
+YUI.Env.Tests.examples.push('datatable-nestedcols');
+YUI.Env.Tests.examples.push('datatable-sort');
+YUI.Env.Tests.examples.push('datatable-colorsort');
+YUI.Env.Tests.examples.push('datatable-scroll');
+YUI.Env.Tests.examples.push('datatable-recordtype');
+YUI.Env.Tests.examples.push('datatable-masterdetail');
+YUI.Env.Tests.examples.push('datatable-chkboxselect');
+YUI.Env.Tests.examples.push('datatable-paginator');
+YUI.Env.Tests.examples.push('panel-form');
+
+</script>
+<script src="../assets/yui/test-runner.js"></script>
+
+
+
+</body>
+</html>

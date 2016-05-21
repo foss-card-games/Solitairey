@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Example: Tables</title>
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans:400,700,400italic,700italic">
+    <link rel="stylesheet" href="../../build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="shortcut icon" type="image/png" href="../assets/favicon.png">
+    <script src="../../build/yui/yui-min.js"></script>
+    
+</head>
+<body>
+<!--
+<a href="https://github.com/yui/yui3"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>
+-->
+<div id="doc">
+    <div id="hd">
+        <h1><img src="http://yuilibrary.com/img/yui-logo.png"></h1>
+    </div>
+    
+        <a href="#toc" class="jump">Jump to Table of Contents</a>
+    
+
+            <h1>Example: Tables</h1>
+    <div class="yui3-g">
+        <div class="yui3-u-3-4">
+            <div id="main">
+                <div class="content"><div class="intro">
+<p>An HTML table containing 50 states and their population with an attached paginator to view the information in small sections.</p>
+</div>
+
+<div id="demo" class="example">
+<style>
+#demo {
+    color: #333;
+    font-size: 11pt;
+    font-family: 'Segoe UI Semilight', 'Open Sans', 'Helvetica Neue', Verdana, Arial, Helvetica, sans-serif;
+    font-weight: 300;
+}
+
+/** TABLE **/
+#demo table {
+    border-bottom: 1px solid #ddd;
+}
+#demo caption {
+    padding-bottom: 10px;
+    font-size: 0.9em;
+}
+#demo th,
+#demo td {
+    background: none;
+    border: none;
+}
+#demo th {
+    font-weight: 500;
+    height: 20px;
+    line-height: 20px;
+    padding: 5px 10px;
+}
+#demo th + th,
+#demo td + td {
+    border-left: 1px solid #ddd;
+}
+#demo tbody tr td {
+    border-top: 1px solid #ddd;
+}
+#demo td {
+    padding: 3px 10px;
+}
+#demo tr:hover td {
+    background: #eee;
+}
+
+/** CONTROLS **/
+#demo .controls {
+    padding-top: 15px;
+    padding-bottom: 10px;
+    position: relative;
+}
+#demo .controls ul {
+    margin: 0;
+    padding: 0;
+}
+#demo .controls li {
+    list-style: none;
+    display: inline-block;
+    zoom: 1; *display: inline;
+}
+#demo .controls ul,
+#demo .controls div {
+    display: inline-block;
+    zoom: 1; *display: inline;
+    vertical-align: middle;
+}
+#demo .controls a {
+    display: inline-block;
+    zoom: 1; *display: inline;
+    border: solid 1px #ddd;
+    text-decoration: none;
+    line-height: 1.7em;
+    padding: 0 8px;
+    color: #4A4A4A;
+    background: #fff;
+    cursor: pointer;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+#demo .controls a:hover {
+    background-color: #eee;
+    color: #000;
+}
+#demo .controls a:active {
+    background: #333;
+    color: #fff;
+    border-color: #333;
+}
+#demo .controls a.disabled,
+#demo .controls a.disabled:hover {
+    color: #f2f2f2;
+    border-color: #f2f2f2;
+    background: #fff;
+    cursor: default;
+}
+#demo .currentPage {
+    padding-left: 20px;
+}
+#demo .rowsPerPage {
+    position: absolute;
+    right: 0;
+    line-height: 1.8em;
+    background: red;
+}
+#demo .controls select {
+/*
+    background: none;
+    font-size: 12px;
+    line-height: 1.7em;
+    border: 1px solid #ddd;
+    border-radius: 0;
+    padding-left: 8px;
+    margin-left: 5px;
+    -webkit-appearance: none;
+*/
+}
+</style>
+
+
+<table>
+    <caption>
+        2010 US Population <em>(according to <a href="http://www.census.gov/2010census/" target="_blank">census.gov</a>)</em>
+    </caption>
+    <thead>
+        <tr>
+            <th></th>
+            <th>State</th>
+            <th>Abbr</th>
+            <th>Population</th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+<div class="controls">
+    <ul>
+        <li class="control-first"><a class="control" data-type="first">First</a></li>
+        <li class="control-prev"><a class="control" data-type="prev">Prev</a></li>
+        <li class="control-next"><a class="control" data-type="next">Next</a></li>
+        <li class="control-last"><a class="control" data-type="last">Last</a></li>
+    </ul>
+    <div class="currentPage"></div>
+    <div class="rowsPerPage">
+        Items Per Page:
+        <select class="perPage">
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="-1">Show All</option>
+        </select>
+    </div>
+</div>
+
+
+
+<script>
+YUI().use('paginator', 'node', 'datatype-number-format', function (Y) {
+    // node references
+    var demo = Y.one('#demo'),
+        tbody = demo.one('tbody'),
+        controls = demo.one('.controls'),
+
+        // templates
+        rowTemplate = '<tr><td>{count}</td><td>{state}</td><td>{abbr}</td><td align="right">{population}</td></tr>',
+        currentPageTemplate = 'Page {page} of {totalPages}',
+
+        // data to display
+        data = [
+            { state: "Alabama",        abbr: "AL", population: 4447100  },
+            { state: "Alaska",         abbr: "AK", population: 626932   },
+            { state: "Arizona",        abbr: "AZ", population: 5130632  },
+            { state: "Arkansas",       abbr: "AR", population: 2673400  },
+            { state: "California",     abbr: "CA", population: 33871648 },
+            { state: "Colorado",       abbr: "CO", population: 4301261  },
+            { state: "Connecticut",    abbr: "CT", population: 3405565  },
+            { state: "Delaware",       abbr: "DE", population: 783600   },
+            { state: "Florida",        abbr: "FL", population: 15982378 },
+            { state: "Georgia",        abbr: "GA", population: 8186453  },
+            { state: "Hawaii",         abbr: "HI", population: 1211537  },
+            { state: "Idaho",          abbr: "ID", population: 1293953  },
+            { state: "Illinois",       abbr: "IL", population: 12419293 },
+            { state: "Indiana",        abbr: "IN", population: 6080485  },
+            { state: "Iowa",           abbr: "IA", population: 2926324  },
+            { state: "Kansas",         abbr: "KS", population: 2688418  },
+            { state: "Kentucky",       abbr: "KY", population: 4041769  },
+            { state: "Louisiana",      abbr: "LA", population: 4468976  },
+            { state: "Maine",          abbr: "ME", population: 1274923  },
+            { state: "Maryland",       abbr: "MD", population: 5296486  },
+            { state: "Massachusetts",  abbr: "MA", population: 6349097  },
+            { state: "Michigan",       abbr: "MI", population: 9938444  },
+            { state: "Minnesota",      abbr: "MN", population: 4919479  },
+            { state: "Mississippi",    abbr: "MS", population: 2844658  },
+            { state: "Missouri",       abbr: "MO", population: 5595211  },
+            { state: "Montana",        abbr: "MT", population: 902195   },
+            { state: "Nebraska",       abbr: "NE", population: 1711263  },
+            { state: "Nevada",         abbr: "NV", population: 1998257  },
+            { state: "New Hampshire",  abbr: "NH", population: 1235786  },
+            { state: "New Jersey",     abbr: "NJ", population: 8414350  },
+            { state: "New Mexico",     abbr: "NM", population: 1819046  },
+            { state: "New York",       abbr: "NY", population: 18976457 },
+            { state: "North Carolina", abbr: "NC", population: 8049313  },
+            { state: "North Dakota",   abbr: "ND", population: 642200   },
+            { state: "Ohio",           abbr: "OH", population: 11353140 },
+            { state: "Oklahoma",       abbr: "OK", population: 3450654  },
+            { state: "Oregon",         abbr: "OR", population: 3421399  },
+            { state: "Pennsylvania",   abbr: "PA", population: 12281054 },
+            { state: "Rhode Island",   abbr: "RI", population: 1048319  },
+            { state: "South Carolina", abbr: "SC", population: 4012012  },
+            { state: "South Dakota",   abbr: "SD", population: 754844   },
+            { state: "Tennessee",      abbr: "TN", population: 5689283  },
+            { state: "Texas",          abbr: "TX", population: 20851820 },
+            { state: "Utah",           abbr: "UH", population: 2233169  },
+            { state: "Vermont",        abbr: "VT", population: 608827   },
+            { state: "Virginia",       abbr: "VA", population: 7078515  },
+            { state: "Washington",     abbr: "WA", population: 5894121  },
+            { state: "West Virginia",  abbr: "WV", population: 1808344  },
+            { state: "Wisconsin",      abbr: "WI", population: 5363675  },
+            { state: "Wyoming",        abbr: "WY", population: 493782   }
+        ],
+
+        // paginator
+        pg = new Y.Paginator({
+            itemsPerPage: 10,
+            totalItems: data.length
+        });
+
+    // let's do a one time pass through the data to format the population numbers
+    Y.Array.each(data, function (val, key) {
+        val.population = Y.Number.format(val.population, {thousandsSeparator: ','});
+    });
+
+
+    Y.one('#demo').delegate('click', function (e) {
+        e.preventDefault();
+
+        var control = e.currentTarget,
+            type = control.getData('type');
+
+        if (control.hasClass('disabled')) {
+            return;
+        }
+
+        switch (type) {
+            case 'first': pg.set('page', 1); break;
+            case 'prev': pg.prevPage(); break;
+            case 'next': pg.nextPage(); break;
+            case 'last': pg.set('page', pg.get('totalPages')); break;
+        }
+
+    }, '.control');
+
+    Y.one('#demo .perPage').on('change', function (e) {
+        pg.set('itemsPerPage', e.currentTarget.get('value'));
+    });
+
+
+    function showPage(page) {
+        // get the page number from the paginator if there isn't one provided
+        page || (page = pg.get('page'));
+
+        // number of items to display
+        var itemsPerPage = pg.get('itemsPerPage'),
+            totalItems = pg.get('totalItems') - 1,
+            min = (page - 1) * itemsPerPage,
+            max = Math.min( (page * itemsPerPage) - 1, totalItems),
+            rows = '',
+            i;
+
+        // if our math left us with less than the minimum, use the total number of items
+        if (max < min) {
+            max = totalItems;
+        }
+
+        // loop through the data and build the templates
+        for (i = min; i <= max; i++ ) {
+            rows += Y.Lang.sub(rowTemplate, Y.mix({count: i + 1}, data[i]));
+        }
+
+        // set the table's body to the new rows
+        tbody.setHTML(rows);
+
+        // update the paginator's display
+        Y.all('.currentPage').set('text',
+            Y.Lang.sub(currentPageTemplate, pg.getAttrs())
+        );
+    }
+
+    function updateControls() {
+        var hasNext = pg.hasNextPage(),
+            hasPrev = pg.hasPrevPage();
+
+        controls.one('.control-first a').toggleClass('disabled', !hasPrev);
+        controls.one('.control-prev a').toggleClass('disabled', !hasPrev);
+        controls.one('.control-next a').toggleClass('disabled', !hasNext);
+        controls.one('.control-last a').toggleClass('disabled', !hasNext);
+    }
+
+    pg.after('itemsPerPageChange', function () {
+        if (pg.get('page') === 1) {
+            showPage();
+            updateControls();
+        } else {
+            pg.set('page', 1);
+        }
+    });
+
+    pg.after('pageChange', function (e) {
+        showPage(e.newVal);
+        updateControls();
+    });
+
+    showPage();
+    updateControls();
+
+});
+</script>
+
+</div>
+
+<h3 id="setting-up-the-interface">Setting Up the Interface</h3>
+<p>First we need to construct the HTML for the table and controls.</p>
+<pre class="code prettyprint">&lt;table&gt;
+    &lt;caption&gt;
+        2010 US Population &lt;em&gt;(according to &lt;a href=&quot;http:&#x2F;&#x2F;www.census.gov&#x2F;2010census&#x2F;&quot; target=&quot;_blank&quot;&gt;census.gov&lt;&#x2F;a&gt;)&lt;&#x2F;em&gt;
+    &lt;&#x2F;caption&gt;
+    &lt;thead&gt;
+        &lt;tr&gt;
+            &lt;th&gt;&lt;&#x2F;th&gt;
+            &lt;th&gt;State&lt;&#x2F;th&gt;
+            &lt;th&gt;Abbr&lt;&#x2F;th&gt;
+            &lt;th&gt;Population&lt;&#x2F;th&gt;
+        &lt;&#x2F;tr&gt;
+    &lt;&#x2F;thead&gt;
+    &lt;tbody&gt;
+    &lt;&#x2F;tbody&gt;
+&lt;&#x2F;table&gt;
+&lt;div class=&quot;controls&quot;&gt;
+    &lt;ul&gt;
+        &lt;li class=&quot;control-first&quot;&gt;&lt;a class=&quot;control&quot; data-type=&quot;first&quot;&gt;First&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+        &lt;li class=&quot;control-prev&quot;&gt;&lt;a class=&quot;control&quot; data-type=&quot;prev&quot;&gt;Prev&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+        &lt;li class=&quot;control-next&quot;&gt;&lt;a class=&quot;control&quot; data-type=&quot;next&quot;&gt;Next&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+        &lt;li class=&quot;control-last&quot;&gt;&lt;a class=&quot;control&quot; data-type=&quot;last&quot;&gt;Last&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+    &lt;&#x2F;ul&gt;
+    &lt;div class=&quot;currentPage&quot;&gt;&lt;&#x2F;div&gt;
+    &lt;div class=&quot;rowsPerPage&quot;&gt;
+        Items Per Page:
+        &lt;select class=&quot;perPage&quot;&gt;
+            &lt;option value=&quot;10&quot;&gt;10&lt;&#x2F;option&gt;
+            &lt;option value=&quot;20&quot;&gt;20&lt;&#x2F;option&gt;
+            &lt;option value=&quot;-1&quot;&gt;Show All&lt;&#x2F;option&gt;
+        &lt;&#x2F;select&gt;
+    &lt;&#x2F;div&gt;
+&lt;&#x2F;div&gt;</pre>
+
+
+<p>Now we can add some CSS to make it a little more presentable.</p>
+<pre class="code prettyprint">&lt;style&gt;
+#demo {
+    color: #333;
+    font-size: 11pt;
+    font-family: &#x27;Segoe UI Semilight&#x27;, &#x27;Open Sans&#x27;, &#x27;Helvetica Neue&#x27;, Verdana, Arial, Helvetica, sans-serif;
+    font-weight: 300;
+}
+
+&#x2F;** TABLE **&#x2F;
+#demo table {
+    border-bottom: 1px solid #ddd;
+}
+#demo caption {
+    padding-bottom: 10px;
+    font-size: 0.9em;
+}
+#demo th,
+#demo td {
+    background: none;
+    border: none;
+}
+#demo th {
+    font-weight: 500;
+    height: 20px;
+    line-height: 20px;
+    padding: 5px 10px;
+}
+#demo th + th,
+#demo td + td {
+    border-left: 1px solid #ddd;
+}
+#demo tbody tr td {
+    border-top: 1px solid #ddd;
+}
+#demo td {
+    padding: 3px 10px;
+}
+#demo tr:hover td {
+    background: #eee;
+}
+
+&#x2F;** CONTROLS **&#x2F;
+#demo .controls {
+    padding-top: 15px;
+    padding-bottom: 10px;
+    position: relative;
+}
+#demo .controls ul {
+    margin: 0;
+    padding: 0;
+}
+#demo .controls li {
+    list-style: none;
+    display: inline-block;
+    zoom: 1; *display: inline;
+}
+#demo .controls ul,
+#demo .controls div {
+    display: inline-block;
+    zoom: 1; *display: inline;
+    vertical-align: middle;
+}
+#demo .controls a {
+    display: inline-block;
+    zoom: 1; *display: inline;
+    border: solid 1px #ddd;
+    text-decoration: none;
+    line-height: 1.7em;
+    padding: 0 8px;
+    color: #4A4A4A;
+    background: #fff;
+    cursor: pointer;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+#demo .controls a:hover {
+    background-color: #eee;
+    color: #000;
+}
+#demo .controls a:active {
+    background: #333;
+    color: #fff;
+    border-color: #333;
+}
+#demo .controls a.disabled,
+#demo .controls a.disabled:hover {
+    color: #f2f2f2;
+    border-color: #f2f2f2;
+    background: #fff;
+    cursor: default;
+}
+#demo .currentPage {
+    padding-left: 20px;
+}
+#demo .rowsPerPage {
+    position: absolute;
+    right: 0;
+    line-height: 1.8em;
+    background: red;
+}
+#demo .controls select {
+&#x2F;*
+    background: none;
+    font-size: 12px;
+    line-height: 1.7em;
+    border: 1px solid #ddd;
+    border-radius: 0;
+    padding-left: 8px;
+    margin-left: 5px;
+    -webkit-appearance: none;
+*&#x2F;
+}
+&lt;&#x2F;style&gt;</pre>
+
+
+
+<h2 id="javascript">JavaScript</h2>
+<p>Our small table application will have four main parts:</p>
+<ul>
+    <li>Showing the page requested</li>
+    <li>Updating the controls available</li>
+    <li>Wiring the controls</li>
+    <li>Wiring the paginator</li>
+</ul>
+
+<h3 id="setting-up-the-yui-instance">Setting Up the YUI Instance</h3>
+<p>Now we need to create our YUI instance and tell it to load the modules.</p>
+<pre class="code prettyprint">YUI().use(&#x27;paginator&#x27;, &#x27;node&#x27;, &#x27;datatype-number-format&#x27;, function (Y) {
+
+    &#x2F;&#x2F; Your code goes here...
+
+});</pre>
+
+<p>There are only a few modules we need to require:</p>
+<ul>
+    <li><b>paginator</b>: Gives us the paginator</li>
+    <li><b>node</b>: Allows us to access the elem ents on the page and gives us basic event attachment</li>
+    <li><b>datatype-number-format</b>: Let's us format the population numbers</li>
+</ul>
+
+<h3 id="defining-our-variables">Defining our variables</h3>
+<p>We start off by defining the variables we need for the app.</p>
+<pre class="code prettyprint">&#x2F;&#x2F; node references
+var demo = Y.one(&#x27;#demo&#x27;),
+    tbody = demo.one(&#x27;tbody&#x27;),
+    controls = demo.one(&#x27;.controls&#x27;),
+
+    &#x2F;&#x2F; templates
+    rowTemplate = &#x27;&lt;tr&gt;&lt;td&gt;{count}&lt;&#x2F;td&gt;&lt;td&gt;{state}&lt;&#x2F;td&gt;&lt;td&gt;{abbr}&lt;&#x2F;td&gt;&lt;td align=&quot;right&quot;&gt;{population}&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;&#x27;,
+    currentPageTemplate = &#x27;Page {page} of {totalPages}&#x27;,
+
+    &#x2F;&#x2F; data to display
+    data = [
+        { state: &quot;Alabama&quot;,        abbr: &quot;AL&quot;, population: 4447100  },
+        { state: &quot;Alaska&quot;,         abbr: &quot;AK&quot;, population: 626932   },
+        &#x2F;&#x2F; ...
+        { state: &quot;Wisconsin&quot;,      abbr: &quot;WI&quot;, population: 5363675  },
+        { state: &quot;Wyoming&quot;,        abbr: &quot;WY&quot;, population: 493782   }
+    ],
+
+    &#x2F;&#x2F; paginator
+    pg = new Y.Paginator({
+        itemsPerPage: 10,
+        totalItems: data.length
+    });
+
+&#x2F;&#x2F; let&#x27;s do a one time pass through the data to format the population numbers
+Y.Array.each(data, function (val, key) {
+    val.population = Y.Number.format(val.population, {thousandsSeparator: &#x27;,&#x27;});
+});</pre>
+
+<p>We have three references to <code>Node</code>s to prevent repetative look ups.</p>
+<p>We have created two template variables that will be used to populate rows (<code>rowTemplate</code>) and the current page (<code>currentPageTemplate</code>) in the paginator.</p>
+<p>We have an <code>Array</code> of data to be parsed through to build the table when we change pages or change how many rows are visible at one time.</p>
+<p>Finally, we define our paginator showing 10 items per page. We set the <code>totalItems</code> to the number of items in the <code>data</code> array.</p>
+<p>After we define our variables, we loop through the <code>data</code> array to format the population numbers.</p>
+
+<h3 id="showpage-method"><code>showPage</code> Method</h3>
+<p>Next, we need to define how we are going to get data from the <code>Array</code> to the table's body.</p>
+<pre class="code prettyprint">function showPage(page) {
+    &#x2F;&#x2F; get the page number from the paginator if there isn&#x27;t one provided
+    page || (page = pg.get(&#x27;page&#x27;));
+
+    &#x2F;&#x2F; number of items to display
+    var itemsPerPage = pg.get(&#x27;itemsPerPage&#x27;),
+        totalItems = pg.get(&#x27;totalItems&#x27;) - 1,
+        min = (page - 1) * itemsPerPage,
+        max = Math.min( (page * itemsPerPage) - 1, totalItems),
+        rows = &#x27;&#x27;,
+        i;
+
+    &#x2F;&#x2F; if our math left us with less than the minimum, use the total number of items
+    if (max &lt; min) {
+        max = totalItems;
+    }
+
+    &#x2F;&#x2F; loop through the data and build the templates
+    for (i = min; i &lt;= max; i++ ) {
+        rows += Y.Lang.sub(rowTemplate, Y.mix({count: i + 1}, data[i]));
+    }
+
+    &#x2F;&#x2F; set the table&#x27;s body to the new rows
+    tbody.setHTML(rows);
+
+    &#x2F;&#x2F; update the paginator&#x27;s display
+    Y.all(&#x27;.currentPage&#x27;).set(&#x27;text&#x27;,
+        Y.Lang.sub(currentPageTemplate, pg.getAttrs())
+    );
+}</pre>
+
+<p>The variable definition is pretty straight forward with the exception of <code>min</code> and <code>max</code>; that can look a little confusing, so let's take it step by step.</p>
+<p>First, we set <code>min</code> to the current page minus one and multiply it by the total number of items per page. This will give you a zero based index for the first item on the page &mdash; which is what we want when working with an <code>Array</code>.</p>
+<p>Next, we set <code>max</code> to the smallest of either the last "virtual" item on the page (<code>page * itemsPerPage - 1</code>) or the total number of items. Since our last page may not end exactly at the last item (think 20 items per page and 50 total items), this will ensure that max is never more than we have to show.</p>
+<p>Finally, we make sure <code>max</code> is greater than, or equal to, <code>min</code>.</p>
+<p></p>
+<p>The <code>for</code> loop starts at <code>min</code> and goes through <code>max</code> building a string of each row using <code>Y.Lang.sub</code> and the <code>rowTemplate</code>.</p>
+<p>Then we set the table's body to the rows we created, and update the paginator's display.</p>
+
+<h3 id="updatecontrols-method"><code>updateControls</code> Method</h3>
+<p>When our paginator's page changes, we need to update the controls to set what is disabled, and what is not.</p>
+<pre class="code prettyprint">function updateControls() {
+    var hasNext = pg.hasNextPage(),
+        hasPrev = pg.hasPrevPage();
+
+    controls.one(&#x27;.control-first a&#x27;).toggleClass(&#x27;disabled&#x27;, !hasPrev);
+    controls.one(&#x27;.control-prev a&#x27;).toggleClass(&#x27;disabled&#x27;, !hasPrev);
+    controls.one(&#x27;.control-next a&#x27;).toggleClass(&#x27;disabled&#x27;, !hasNext);
+    controls.one(&#x27;.control-last a&#x27;).toggleClass(&#x27;disabled&#x27;, !hasNext);
+}</pre>
+
+<p><code>Y.Paginator</code> has two methods that return boolean values about it's current state: <code>hasNextPage</code> and <code>hasPrevPage</code>. We use these methods to determin if the control buttons should be disabled or enabled.</p>
+<p>For example, if there is not a previous page (<code>false</code> returned from <code>hasPrevPage</code>), the first control has the <code>disabled</code> ClassName applied, otherwise it is removed.</p>
+
+<h3 id="control-event-binding">Control Event Binding</h3>
+<p>Now we need to describe what happens when the controls are interacted with.</p>
+<pre class="code prettyprint">Y.one(&#x27;#demo&#x27;).delegate(&#x27;click&#x27;, function (e) {
+    e.preventDefault();
+
+    var control = e.currentTarget,
+        type = control.getData(&#x27;type&#x27;);
+
+    if (control.hasClass(&#x27;disabled&#x27;)) {
+        return;
+    }
+
+    switch (type) {
+        case &#x27;first&#x27;: pg.set(&#x27;page&#x27;, 1); break;
+        case &#x27;prev&#x27;: pg.prevPage(); break;
+        case &#x27;next&#x27;: pg.nextPage(); break;
+        case &#x27;last&#x27;: pg.set(&#x27;page&#x27;, pg.get(&#x27;totalPages&#x27;)); break;
+    }
+
+}, &#x27;.control&#x27;);
+
+Y.one(&#x27;#demo .perPage&#x27;).on(&#x27;change&#x27;, function (e) {
+    pg.set(&#x27;itemsPerPage&#x27;, e.currentTarget.get(&#x27;value&#x27;));
+});</pre>
+
+<p>First off, when the "buttons" are clicked and are not disabled, we go to their respective page.</p>
+<p>When the <code>perPage</code> select element is changed, we set the <code>itemsPerPage</code> of our paginator to the new value. We also set our paginator's page to <code>1</code> to reset the table's view.</p>
+
+<h3 id="binding-paginator">Binding Paginator</h3>
+<p>The last thing we need to do before we wrap this up is bind our paginator's change events.</p>
+<pre class="code prettyprint">pg.after(&#x27;itemsPerPageChange&#x27;, function () {
+    if (pg.get(&#x27;page&#x27;) === 1) {
+        showPage();
+        updateControls();
+    } else {
+        pg.set(&#x27;page&#x27;, 1);
+    }
+});
+
+pg.after(&#x27;pageChange&#x27;, function (e) {
+    showPage(e.newVal);
+    updateControls();
+});</pre>
+
+<p>First, after our paginator fires the <code>itemsPerPageChange</code> event, we go to the first page unless it's already at the first page. If it is at the first page, we show the new page and update the controls.</p>
+<p>After our paginator fires the <code>pageChange</code> event, we show that page, then update the controls.</p>
+
+<h3 id="show-initial-state">Show initial state!</h3>
+<p>Our last step is to show the initial page and set the initial state of the controls by updating them.</p>
+<pre class="code prettyprint">showPage();
+updateControls();</pre>
+
+
+<h2 id="the-whole-example">The Whole Example</h2>
+<p>That's it! Now let's put it all together.</p>
+<pre class="code prettyprint">&lt;style&gt;
+#demo {
+    color: #333;
+    font-size: 11pt;
+    font-family: &#x27;Segoe UI Semilight&#x27;, &#x27;Open Sans&#x27;, &#x27;Helvetica Neue&#x27;, Verdana, Arial, Helvetica, sans-serif;
+    font-weight: 300;
+}
+
+&#x2F;** TABLE **&#x2F;
+#demo table {
+    border-bottom: 1px solid #ddd;
+}
+#demo caption {
+    padding-bottom: 10px;
+    font-size: 0.9em;
+}
+#demo th,
+#demo td {
+    background: none;
+    border: none;
+}
+#demo th {
+    font-weight: 500;
+    height: 20px;
+    line-height: 20px;
+    padding: 5px 10px;
+}
+#demo th + th,
+#demo td + td {
+    border-left: 1px solid #ddd;
+}
+#demo tbody tr td {
+    border-top: 1px solid #ddd;
+}
+#demo td {
+    padding: 3px 10px;
+}
+#demo tr:hover td {
+    background: #eee;
+}
+
+&#x2F;** CONTROLS **&#x2F;
+#demo .controls {
+    padding-top: 15px;
+    padding-bottom: 10px;
+    position: relative;
+}
+#demo .controls ul {
+    margin: 0;
+    padding: 0;
+}
+#demo .controls li {
+    list-style: none;
+    display: inline-block;
+    zoom: 1; *display: inline;
+}
+#demo .controls ul,
+#demo .controls div {
+    display: inline-block;
+    zoom: 1; *display: inline;
+    vertical-align: middle;
+}
+#demo .controls a {
+    display: inline-block;
+    zoom: 1; *display: inline;
+    border: solid 1px #ddd;
+    text-decoration: none;
+    line-height: 1.7em;
+    padding: 0 8px;
+    color: #4A4A4A;
+    background: #fff;
+    cursor: pointer;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+#demo .controls a:hover {
+    background-color: #eee;
+    color: #000;
+}
+#demo .controls a:active {
+    background: #333;
+    color: #fff;
+    border-color: #333;
+}
+#demo .controls a.disabled,
+#demo .controls a.disabled:hover {
+    color: #f2f2f2;
+    border-color: #f2f2f2;
+    background: #fff;
+    cursor: default;
+}
+#demo .currentPage {
+    padding-left: 20px;
+}
+#demo .rowsPerPage {
+    position: absolute;
+    right: 0;
+    line-height: 1.8em;
+    background: red;
+}
+#demo .controls select {
+&#x2F;*
+    background: none;
+    font-size: 12px;
+    line-height: 1.7em;
+    border: 1px solid #ddd;
+    border-radius: 0;
+    padding-left: 8px;
+    margin-left: 5px;
+    -webkit-appearance: none;
+*&#x2F;
+}
+&lt;&#x2F;style&gt;
+
+
+&lt;table&gt;
+    &lt;caption&gt;
+        2010 US Population &lt;em&gt;(according to &lt;a href=&quot;http:&#x2F;&#x2F;www.census.gov&#x2F;2010census&#x2F;&quot; target=&quot;_blank&quot;&gt;census.gov&lt;&#x2F;a&gt;)&lt;&#x2F;em&gt;
+    &lt;&#x2F;caption&gt;
+    &lt;thead&gt;
+        &lt;tr&gt;
+            &lt;th&gt;&lt;&#x2F;th&gt;
+            &lt;th&gt;State&lt;&#x2F;th&gt;
+            &lt;th&gt;Abbr&lt;&#x2F;th&gt;
+            &lt;th&gt;Population&lt;&#x2F;th&gt;
+        &lt;&#x2F;tr&gt;
+    &lt;&#x2F;thead&gt;
+    &lt;tbody&gt;
+    &lt;&#x2F;tbody&gt;
+&lt;&#x2F;table&gt;
+&lt;div class=&quot;controls&quot;&gt;
+    &lt;ul&gt;
+        &lt;li class=&quot;control-first&quot;&gt;&lt;a class=&quot;control&quot; data-type=&quot;first&quot;&gt;First&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+        &lt;li class=&quot;control-prev&quot;&gt;&lt;a class=&quot;control&quot; data-type=&quot;prev&quot;&gt;Prev&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+        &lt;li class=&quot;control-next&quot;&gt;&lt;a class=&quot;control&quot; data-type=&quot;next&quot;&gt;Next&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+        &lt;li class=&quot;control-last&quot;&gt;&lt;a class=&quot;control&quot; data-type=&quot;last&quot;&gt;Last&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+    &lt;&#x2F;ul&gt;
+    &lt;div class=&quot;currentPage&quot;&gt;&lt;&#x2F;div&gt;
+    &lt;div class=&quot;rowsPerPage&quot;&gt;
+        Items Per Page:
+        &lt;select class=&quot;perPage&quot;&gt;
+            &lt;option value=&quot;10&quot;&gt;10&lt;&#x2F;option&gt;
+            &lt;option value=&quot;20&quot;&gt;20&lt;&#x2F;option&gt;
+            &lt;option value=&quot;-1&quot;&gt;Show All&lt;&#x2F;option&gt;
+        &lt;&#x2F;select&gt;
+    &lt;&#x2F;div&gt;
+&lt;&#x2F;div&gt;
+
+
+
+&lt;script&gt;
+YUI().use(&#x27;paginator&#x27;, &#x27;node&#x27;, &#x27;datatype-number-format&#x27;, function (Y) {
+    &#x2F;&#x2F; node references
+    var demo = Y.one(&#x27;#demo&#x27;),
+        tbody = demo.one(&#x27;tbody&#x27;),
+        controls = demo.one(&#x27;.controls&#x27;),
+
+        &#x2F;&#x2F; templates
+        rowTemplate = &#x27;&lt;tr&gt;&lt;td&gt;{count}&lt;&#x2F;td&gt;&lt;td&gt;{state}&lt;&#x2F;td&gt;&lt;td&gt;{abbr}&lt;&#x2F;td&gt;&lt;td align=&quot;right&quot;&gt;{population}&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;&#x27;,
+        currentPageTemplate = &#x27;Page {page} of {totalPages}&#x27;,
+
+        &#x2F;&#x2F; data to display
+        data = [
+            { state: &quot;Alabama&quot;,        abbr: &quot;AL&quot;, population: 4447100  },
+            { state: &quot;Alaska&quot;,         abbr: &quot;AK&quot;, population: 626932   },
+            { state: &quot;Arizona&quot;,        abbr: &quot;AZ&quot;, population: 5130632  },
+            { state: &quot;Arkansas&quot;,       abbr: &quot;AR&quot;, population: 2673400  },
+            { state: &quot;California&quot;,     abbr: &quot;CA&quot;, population: 33871648 },
+            { state: &quot;Colorado&quot;,       abbr: &quot;CO&quot;, population: 4301261  },
+            { state: &quot;Connecticut&quot;,    abbr: &quot;CT&quot;, population: 3405565  },
+            { state: &quot;Delaware&quot;,       abbr: &quot;DE&quot;, population: 783600   },
+            { state: &quot;Florida&quot;,        abbr: &quot;FL&quot;, population: 15982378 },
+            { state: &quot;Georgia&quot;,        abbr: &quot;GA&quot;, population: 8186453  },
+            { state: &quot;Hawaii&quot;,         abbr: &quot;HI&quot;, population: 1211537  },
+            { state: &quot;Idaho&quot;,          abbr: &quot;ID&quot;, population: 1293953  },
+            { state: &quot;Illinois&quot;,       abbr: &quot;IL&quot;, population: 12419293 },
+            { state: &quot;Indiana&quot;,        abbr: &quot;IN&quot;, population: 6080485  },
+            { state: &quot;Iowa&quot;,           abbr: &quot;IA&quot;, population: 2926324  },
+            { state: &quot;Kansas&quot;,         abbr: &quot;KS&quot;, population: 2688418  },
+            { state: &quot;Kentucky&quot;,       abbr: &quot;KY&quot;, population: 4041769  },
+            { state: &quot;Louisiana&quot;,      abbr: &quot;LA&quot;, population: 4468976  },
+            { state: &quot;Maine&quot;,          abbr: &quot;ME&quot;, population: 1274923  },
+            { state: &quot;Maryland&quot;,       abbr: &quot;MD&quot;, population: 5296486  },
+            { state: &quot;Massachusetts&quot;,  abbr: &quot;MA&quot;, population: 6349097  },
+            { state: &quot;Michigan&quot;,       abbr: &quot;MI&quot;, population: 9938444  },
+            { state: &quot;Minnesota&quot;,      abbr: &quot;MN&quot;, population: 4919479  },
+            { state: &quot;Mississippi&quot;,    abbr: &quot;MS&quot;, population: 2844658  },
+            { state: &quot;Missouri&quot;,       abbr: &quot;MO&quot;, population: 5595211  },
+            { state: &quot;Montana&quot;,        abbr: &quot;MT&quot;, population: 902195   },
+            { state: &quot;Nebraska&quot;,       abbr: &quot;NE&quot;, population: 1711263  },
+            { state: &quot;Nevada&quot;,         abbr: &quot;NV&quot;, population: 1998257  },
+            { state: &quot;New Hampshire&quot;,  abbr: &quot;NH&quot;, population: 1235786  },
+            { state: &quot;New Jersey&quot;,     abbr: &quot;NJ&quot;, population: 8414350  },
+            { state: &quot;New Mexico&quot;,     abbr: &quot;NM&quot;, population: 1819046  },
+            { state: &quot;New York&quot;,       abbr: &quot;NY&quot;, population: 18976457 },
+            { state: &quot;North Carolina&quot;, abbr: &quot;NC&quot;, population: 8049313  },
+            { state: &quot;North Dakota&quot;,   abbr: &quot;ND&quot;, population: 642200   },
+            { state: &quot;Ohio&quot;,           abbr: &quot;OH&quot;, population: 11353140 },
+            { state: &quot;Oklahoma&quot;,       abbr: &quot;OK&quot;, population: 3450654  },
+            { state: &quot;Oregon&quot;,         abbr: &quot;OR&quot;, population: 3421399  },
+            { state: &quot;Pennsylvania&quot;,   abbr: &quot;PA&quot;, population: 12281054 },
+            { state: &quot;Rhode Island&quot;,   abbr: &quot;RI&quot;, population: 1048319  },
+            { state: &quot;South Carolina&quot;, abbr: &quot;SC&quot;, population: 4012012  },
+            { state: &quot;South Dakota&quot;,   abbr: &quot;SD&quot;, population: 754844   },
+            { state: &quot;Tennessee&quot;,      abbr: &quot;TN&quot;, population: 5689283  },
+            { state: &quot;Texas&quot;,          abbr: &quot;TX&quot;, population: 20851820 },
+            { state: &quot;Utah&quot;,           abbr: &quot;UH&quot;, population: 2233169  },
+            { state: &quot;Vermont&quot;,        abbr: &quot;VT&quot;, population: 608827   },
+            { state: &quot;Virginia&quot;,       abbr: &quot;VA&quot;, population: 7078515  },
+            { state: &quot;Washington&quot;,     abbr: &quot;WA&quot;, population: 5894121  },
+            { state: &quot;West Virginia&quot;,  abbr: &quot;WV&quot;, population: 1808344  },
+            { state: &quot;Wisconsin&quot;,      abbr: &quot;WI&quot;, population: 5363675  },
+            { state: &quot;Wyoming&quot;,        abbr: &quot;WY&quot;, population: 493782   }
+        ],
+
+        &#x2F;&#x2F; paginator
+        pg = new Y.Paginator({
+            itemsPerPage: 10,
+            totalItems: data.length
+        });
+
+    &#x2F;&#x2F; let&#x27;s do a one time pass through the data to format the population numbers
+    Y.Array.each(data, function (val, key) {
+        val.population = Y.Number.format(val.population, {thousandsSeparator: &#x27;,&#x27;});
+    });
+
+
+    Y.one(&#x27;#demo&#x27;).delegate(&#x27;click&#x27;, function (e) {
+        e.preventDefault();
+
+        var control = e.currentTarget,
+            type = control.getData(&#x27;type&#x27;);
+
+        if (control.hasClass(&#x27;disabled&#x27;)) {
+            return;
+        }
+
+        switch (type) {
+            case &#x27;first&#x27;: pg.set(&#x27;page&#x27;, 1); break;
+            case &#x27;prev&#x27;: pg.prevPage(); break;
+            case &#x27;next&#x27;: pg.nextPage(); break;
+            case &#x27;last&#x27;: pg.set(&#x27;page&#x27;, pg.get(&#x27;totalPages&#x27;)); break;
+        }
+
+    }, &#x27;.control&#x27;);
+
+    Y.one(&#x27;#demo .perPage&#x27;).on(&#x27;change&#x27;, function (e) {
+        pg.set(&#x27;itemsPerPage&#x27;, e.currentTarget.get(&#x27;value&#x27;));
+    });
+
+
+    function showPage(page) {
+        &#x2F;&#x2F; get the page number from the paginator if there isn&#x27;t one provided
+        page || (page = pg.get(&#x27;page&#x27;));
+
+        &#x2F;&#x2F; number of items to display
+        var itemsPerPage = pg.get(&#x27;itemsPerPage&#x27;),
+            totalItems = pg.get(&#x27;totalItems&#x27;) - 1,
+            min = (page - 1) * itemsPerPage,
+            max = Math.min( (page * itemsPerPage) - 1, totalItems),
+            rows = &#x27;&#x27;,
+            i;
+
+        &#x2F;&#x2F; if our math left us with less than the minimum, use the total number of items
+        if (max &lt; min) {
+            max = totalItems;
+        }
+
+        &#x2F;&#x2F; loop through the data and build the templates
+        for (i = min; i &lt;= max; i++ ) {
+            rows += Y.Lang.sub(rowTemplate, Y.mix({count: i + 1}, data[i]));
+        }
+
+        &#x2F;&#x2F; set the table&#x27;s body to the new rows
+        tbody.setHTML(rows);
+
+        &#x2F;&#x2F; update the paginator&#x27;s display
+        Y.all(&#x27;.currentPage&#x27;).set(&#x27;text&#x27;,
+            Y.Lang.sub(currentPageTemplate, pg.getAttrs())
+        );
+    }
+
+    function updateControls() {
+        var hasNext = pg.hasNextPage(),
+            hasPrev = pg.hasPrevPage();
+
+        controls.one(&#x27;.control-first a&#x27;).toggleClass(&#x27;disabled&#x27;, !hasPrev);
+        controls.one(&#x27;.control-prev a&#x27;).toggleClass(&#x27;disabled&#x27;, !hasPrev);
+        controls.one(&#x27;.control-next a&#x27;).toggleClass(&#x27;disabled&#x27;, !hasNext);
+        controls.one(&#x27;.control-last a&#x27;).toggleClass(&#x27;disabled&#x27;, !hasNext);
+    }
+
+    pg.after(&#x27;itemsPerPageChange&#x27;, function () {
+        if (pg.get(&#x27;page&#x27;) === 1) {
+            showPage();
+            updateControls();
+        } else {
+            pg.set(&#x27;page&#x27;, 1);
+        }
+    });
+
+    pg.after(&#x27;pageChange&#x27;, function (e) {
+        showPage(e.newVal);
+        updateControls();
+    });
+
+    showPage();
+    updateControls();
+
+});
+&lt;&#x2F;script&gt;</pre>
+
+</div>
+            </div>
+        </div>
+
+        <div class="yui3-u-1-4">
+            <div class="sidebar">
+                
+                    <div id="toc" class="sidebox">
+                        <div class="hd">
+                            <h2 class="no-toc">Table of Contents</h2>
+                        </div>
+
+                        <div class="bd">
+                            <ul class="toc">
+<li>
+<a href="#setting-up-the-interface">Setting Up the Interface</a>
+</li>
+<li>
+<a href="#javascript">JavaScript</a>
+<ul class="toc">
+<li>
+<a href="#setting-up-the-yui-instance">Setting Up the YUI Instance</a>
+</li>
+<li>
+<a href="#defining-our-variables">Defining our variables</a>
+</li>
+<li>
+<a href="#showpage-method"><code>showPage</code> Method</a>
+</li>
+<li>
+<a href="#updatecontrols-method"><code>updateControls</code> Method</a>
+</li>
+<li>
+<a href="#control-event-binding">Control Event Binding</a>
+</li>
+<li>
+<a href="#binding-paginator">Binding Paginator</a>
+</li>
+<li>
+<a href="#show-initial-state">Show initial state!</a>
+</li>
+</ul>
+</li>
+<li>
+<a href="#the-whole-example">The Whole Example</a>
+</li>
+</ul>
+                        </div>
+                    </div>
+                
+
+                
+                    <div class="sidebox">
+                        <div class="hd">
+                            <h2 class="no-toc">Examples</h2>
+                        </div>
+
+                        <div class="bd">
+                            <ul class="examples">
+                                
+                                    
+                                        <li data-description="This example illustrates how to create a slideshow using paginator to control the slides.">
+                                            <a href="slideshow.html">Slideshow</a>
+                                        </li>
+                                    
+                                
+                                    
+                                        <li data-description="An HTML table containing 50 states and their population with an attached paginator to view the information in small sections.">
+                                            <a href="table.html">Tables</a>
+                                        </li>
+                                    
+                                
+                                    
+                                        <li data-description="An application using the Flickr API to display images with a paginator control to step through the results.">
+                                            <a href="search.html">Search Results</a>
+                                        </li>
+                                    
+                                
+                                    
+                                
+                            </ul>
+                        </div>
+                    </div>
+                
+
+                
+                    <div class="sidebox">
+                        <div class="hd">
+                            <h2 class="no-toc">Examples That Use This Component</h2>
+                        </div>
+
+                        <div class="bd">
+                            <ul class="examples">
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                        <li data-description="Using the paginator.">
+                                            <a href="../datatable/datatable-paginator.html">DataTable with Paginator</a>
+                                        </li>
+                                    
+                                
+                            </ul>
+                        </div>
+                    </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+
+<script>
+YUI.Env.Tests = {
+    examples: [],
+    project: '../assets',
+    assets: '../assets/paginator',
+    name: 'table',
+    title: 'Tables',
+    newWindow: '',
+    auto:  false 
+};
+YUI.Env.Tests.examples.push('slideshow');
+YUI.Env.Tests.examples.push('table');
+YUI.Env.Tests.examples.push('search');
+YUI.Env.Tests.examples.push('datatable-paginator');
+
+</script>
+<script src="../assets/yui/test-runner.js"></script>
+
+
+
+</body>
+</html>

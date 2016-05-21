@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Example: Color Sorting and Filtering</title>
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans:400,700,400italic,700italic">
+    <link rel="stylesheet" href="../../build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="shortcut icon" type="image/png" href="../assets/favicon.png">
+    <script src="../../build/yui/yui-min.js"></script>
+    
+</head>
+<body>
+<!--
+<a href="https://github.com/yui/yui3"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>
+-->
+<div id="doc">
+    <div id="hd">
+        <h1><img src="http://yuilibrary.com/img/yui-logo.png"></h1>
+    </div>
+    
+
+            <h1>Example: Color Sorting and Filtering</h1>
+    <div class="yui3-g">
+        <div class="yui3-u-3-4">
+            <div id="main">
+                <div class="content"><style scoped>
+/* custom styles for this example */
+.example .yui3-datatable {
+    margin-bottom: 1em;
+}
+
+/* css to counter global site css */
+.example table {
+    width: auto;
+}
+.example caption {
+    display: table-caption;
+}
+.example th,
+.example td {
+    text-transform: none;
+    border: 0 none;
+}
+.intro {
+    min-height: 182px;
+    zoom: 1;    
+}
+.intro:after {
+    content: "";
+    display: block;
+    clear: both;
+}
+.intro img {
+    width: 256px;
+    height: 150px;
+    float: right;
+    margin: 0 0 0.3em 1em;
+}
+
+.example {
+    zoom: 1;
+}
+.example:after {
+    content: "";
+    display: block;
+    clear: both;
+}
+.left-column {
+    overflow: hidden;
+    float: left;   
+}
+.right-column {
+    margin-left: 390px;
+}
+/* Swatch styling */
+.yui3-skin-sam td.yui3-datatable-cell {
+    /* override vertical cell padding so swatches fill cells */
+    padding: 0 0.5em;
+}
+.yui3-skin-sam td.yui3-datatable-col-swatch {
+    padding: 0;
+}
+.swatch {
+    height: 1.4em;
+}
+#cTable .yui3-datatable-cell {
+    font-size: 70%;
+}
+#cTable .view-small .yui3-datatable-cell {
+    font-size: 25%;
+}
+
+/* layout styles */
+#small-swatch-checkbox {
+    margin-top: 4em;
+}
+.filter-radios label {
+    display: block;
+}
+.example .content {
+    padding: 0 5px;
+}
+
+/* Styles for UI sample swatches in filtering radios */
+.filter-radios label span {
+    background: url(../assets/datatable/img/swatch_colors.png) no-repeat;
+    display: inline-block;
+    vertical-align: middle;
+    height: 30px;
+    width: 80px;
+    margin: 0.3em;
+}
+.filter-radios .examples-all {
+    background-position: 0px 0px;
+}
+.filter-radios .examples-tint {
+    background-position: 0px -30px;
+}
+.filter-radios .examples-midtone {
+    background-position: 0px -60px;
+}
+.filter-radios .examples-shade {
+    background-position: 0px -90px;
+}
+.filter-radios .examples-mute {
+    background-position: 0px -120px;
+}
+.filter-radios .examples-gray {
+    background-position: 0px -150px;
+}
+
+
+</style>
+
+<div class="intro">
+    <p>
+    <img src="../assets/datatable/img/color_sort_filt.png" width="297" height="150" alt="DataTable sorted by colors"/>
+    This example builds on the Column Sort example. It makes use of the <a href="../color/">Y.Color</a> module. It also shows how to <a href="../model-list/#filtering-models">filter the Model List</a> of the DataTable to get a subset of the data.</p>
+    <p>Click on the column headers to sort the color swatches in different ways. Filter the data with the radio buttons on the right.</p>
+</div>
+
+<div class="example yui3-skin-sam">
+    <div class="left-column">
+        <div id="cTable"></div>
+</div>
+<div class="right-column">
+    <div class="filter-radios">
+        <!-- Radios for filtering colors -->
+        <label for="filter-all">
+            <input id="filter-all" class="filters" type="radio" name="filters"/>
+            <span class="examples-all"></span>All Colors
+        </label>
+        <label for="filter-tint">
+            <input id="filter-tint" class="filters" type="radio" name="filters"/>
+            <span class="examples-tint"></span>Tints
+        </label>
+        <label for="filter-midtone">
+            <input id="filter-midtone" class="filters" type="radio" name="filters"/>
+            <span class="examples-midtone"></span>Mid-tones
+        </label>
+        <label for="filter-shade">
+            <input id="filter-shade" class="filters" type="radio" name="filters"/>
+            <span class="examples-shade"></span>Shades
+        </label>
+        <label for="filter-mute">
+            <input id="filter-mute" class="filters" type="radio" checked name="filters"/>
+            <span class="examples-mute"></span>Muted
+        </label>
+        <label for="filter-gray">
+            <input id="filter-gray" class="filters" type="radio" name="filters"/>
+            <span class="examples-gray"></span>Black, white, and grays
+        </label>
+    </div>
+    <!-- Small swatches checkbox -->
+    <label for="small-swatch-checkbox">
+        <input id="small-swatch-checkbox" type="checkbox"/>
+        Small swatches (fit more on the page)
+    </label>
+</div>
+
+    <script>    
+        YUI().use('datatable-sort', 'color-harmony', function (Y) {
+
+    // The source of this data is http://www.w3.org/TR/css3-color/
+    var filterBy,
+        myData = [
+            {name: 'antiquewhite', hex: 'faebd7'},
+            {name: 'aqua', hex: '00ffff'},
+            {name: 'aquamarine', hex: '7fffd4'},
+            {name: 'beige', hex: 'f5f5dc'},
+            {name: 'bisque', hex: 'ffe4c4'},
+            {name: 'black', hex: '000000'},
+            {name: 'blanchedalmond', hex: 'ffebcd'},
+            {name: 'blue', hex: '0000ff'},
+            {name: 'blueviolet', hex: '8a2be2'},
+            {name: 'brown', hex: 'a52a2a'},
+            {name: 'burlywood', hex: 'deb887'},
+            {name: 'cadetblue', hex: '5f9ea0'},
+            {name: 'chartreuse', hex: '7fff00'},
+            {name: 'chocolate', hex: 'd2691e'},
+            {name: 'coral', hex: 'ff7f50'},
+            {name: 'cornflowerblue', hex: '6495ed'},
+            {name: 'cornsilk', hex: 'fff8dc'},
+            {name: 'crimson', hex: 'dc143c'},
+            {name: 'cyan', hex: '00ffff'},
+            {name: 'darkblue', hex: '00008b'},
+            {name: 'darkcyan', hex: '008b8b'},
+            {name: 'darkgoldenrod', hex: 'b8860b'},
+            {name: 'darkgray', hex: 'a9a9a9'},
+            {name: 'darkgreen', hex: '006400'},
+            {name: 'darkkhaki', hex: 'bdb76b'},
+            {name: 'darkmagenta', hex: '8b008b'},
+            {name: 'darkolivegreen', hex: '556b2f'},
+            {name: 'darkorange', hex: 'ff8c00'},
+            {name: 'darkorchid', hex: '9932cc'},
+            {name: 'darkred', hex: '8b0000'},
+            {name: 'darksalmon', hex: 'e9967a'},
+            {name: 'darkseagreen', hex: '8fbc8f'},
+            {name: 'darkslateblue', hex: '483d8b'},
+            {name: 'darkslategray', hex: '2f4f4f'},
+            {name: 'darkturquoise', hex: '00ced1'},
+            {name: 'darkviolet', hex: '9400d3'},
+            {name: 'deeppink', hex: 'ff1493'},
+            {name: 'deepskyblue', hex: '00bfff'},
+            {name: 'dimgray', hex: '696969'},
+            {name: 'dodgerblue', hex: '1e90ff'},
+            {name: 'firebrick', hex: 'b22222'},
+            {name: 'forestgreen', hex: '228b22'},
+            {name: 'fuchsia', hex: 'ff00ff'},
+            {name: 'gainsboro', hex: 'dcdcdc'},
+            {name: 'gold', hex: 'ffd700'},
+            {name: 'goldenrod', hex: 'daa520'},
+            {name: 'gray', hex: '808080'},
+            {name: 'green', hex: '008000'},
+            {name: 'greenyellow', hex: 'adff2f'},
+            {name: 'hotpink', hex: 'ff69b4'},
+            {name: 'indianred', hex: 'cd5c5c'},
+            {name: 'indigo', hex: '4b0082'},
+            {name: 'khaki', hex: 'f0e68c'},
+            {name: 'lawngreen', hex: '7cfc00'},
+            {name: 'lemonchiffon', hex: 'fffacd'},
+            {name: 'lightblue', hex: 'add8e6'},
+            {name: 'lightcoral', hex: 'f08080'},
+            {name: 'lightgoldenrodyellow', hex: 'fafad2'},
+            {name: 'lightgray', hex: 'd3d3d3'},
+            {name: 'lightgreen', hex: '90ee90'},
+            {name: 'lightpink', hex: 'ffb6c1'},
+            {name: 'lightsalmon', hex: 'ffa07a'},
+            {name: 'lightseagreen', hex: '20b2aa'},
+            {name: 'lightskyblue', hex: '87cefa'},
+            {name: 'lightslategray', hex: '778899'},
+            {name: 'lightsteelblue', hex: 'b0c4de'},
+            {name: 'lime', hex: '00ff00'},
+            {name: 'limegreen', hex: '32cd32'},
+            {name: 'maroon', hex: '800000'},
+            {name: 'mediumaquamarine', hex: '66cdaa'},
+            {name: 'mediumblue', hex: '0000cd'},
+            {name: 'mediumorchid', hex: 'ba55d3'},
+            {name: 'mediumpurple', hex: '9370db'},
+            {name: 'mediumseagreen', hex: '3cb371'},
+            {name: 'mediumslateblue', hex: '7b68ee'},
+            {name: 'mediumspringgreen', hex: '00fa9a'},
+            {name: 'mediumturquoise', hex: '48d1cc'},
+            {name: 'mediumvioletred', hex: 'c71585'},
+            {name: 'midnightblue', hex: '191970'},
+            {name: 'moccasin', hex: 'ffe4b5'},
+            {name: 'navajowhite', hex: 'ffdead'},
+            {name: 'navy', hex: '000080'},
+            {name: 'oldlace', hex: 'fdf5e6'},
+            {name: 'olive', hex: '808000'},
+            {name: 'olivedrab', hex: '6b8e23'},
+            {name: 'orange', hex: 'ffa500'},
+            {name: 'orangered', hex: 'ff4500'},
+            {name: 'orchid', hex: 'da70d6'},
+            {name: 'palegoldenrod', hex: 'eee8aa'},
+            {name: 'palegreen', hex: '98fb98'},
+            {name: 'paleturquoise', hex: 'afeeee'},
+            {name: 'palevioletred', hex: 'db7093'},
+            {name: 'papayawhip', hex: 'ffefd5'},
+            {name: 'peachpuff', hex: 'ffdab9'},
+            {name: 'peru', hex: 'cd853f'},
+            {name: 'pink', hex: 'ffc0cb'},
+            {name: 'plum', hex: 'dda0dd'},
+            {name: 'powderblue', hex: 'b0e0e6'},
+            {name: 'purple', hex: '800080'},
+            {name: 'red', hex: 'ff0000'},
+            {name: 'rosybrown', hex: 'bc8f8f'},
+            {name: 'royalblue', hex: '4169e1'},
+            {name: 'saddlebrown', hex: '8b4513'},
+            {name: 'salmon', hex: 'fa8072'},
+            {name: 'sandybrown', hex: 'f4a460'},
+            {name: 'seagreen', hex: '2e8b57'},
+            {name: 'sienna', hex: 'a0522d'},
+            {name: 'silver', hex: 'c0c0c0'},
+            {name: 'skyblue', hex: '87ceeb'},
+            {name: 'slateblue', hex: '6a5acd'},
+            {name: 'slategray', hex: '708090'},
+            {name: 'springgreen', hex: '00ff7f'},
+            {name: 'steelblue', hex: '4682b4'},
+            {name: 'tan', hex: 'd2b48c'},
+            {name: 'teal', hex: '008080'},
+            {name: 'thistle', hex: 'd8bfd8'},
+            {name: 'tomato', hex: 'ff6347'},
+            {name: 'turquoise', hex: '40e0d0'},
+            {name: 'violet', hex: 'ee82ee'},
+            {name: 'wheat', hex: 'f5deb3'},
+            {name: 'white', hex: 'ffffff'},
+            {name: 'whitesmoke', hex: 'f5f5f5'},
+            {name: 'yellow', hex: 'ffff00'},
+            {name: 'yellowgreen', hex: '9acd32'}
+        ];
+
+    /* This takes a hex value and generates a numeric string
+    *  in the format "01.23.45"
+    *  Each pair of digits represents the Hue, Saturation, or Brightness
+    *  of the color in a range of 00 to 99 (always 2 digits).
+    *  These strings sort in a more visually logical way for colors.
+    *  The sequence of digits can be changed to sort in different ways.
+    *  such as hh.ss.bb for sorting first by hue, then saturation,
+    *  or bb.hh.ss for sorting first by brightness, then hue, then saturation.
+    *  The dots are only for human readability
+    */
+    function getColorNum(hex, sortType) {
+            // An array of color property values
+            // [hue, saturation, lightness]
+        var HSL = Y.Color.toArray(Y.Color.toHSL(hex)),
+            hNum, // hue
+            sNum, // saturation
+            // get the computed brightness from the hex value
+            bNum = Y.Color.getBrightness(hex).toString();
+        
+        // isolate hue part from HSL. converted to 2 digits
+        hNum = Math.floor((HSL[0] * 10) / 36.01).toString();
+        hNum = (hNum.length < 2) ? ('0' + hNum) : hNum;
+
+        // isolate sat part from HSL. converted to 2 digits
+        sNum = Math.floor((HSL[1] * 10) / 10.01).toString();
+        sNum = (sNum.length < 2) ? ('0' + sNum) : sNum;
+
+        // assure brightness is 2 digits
+        bNum = (bNum.length < 2) ? ('0' + bNum) : bNum;
+        bNum = (bNum === "100") ? "99" : bNum;
+
+        if (sortType === "hbs") {
+            return hNum + '.' + bNum + '.' + sNum; // hue.bright.sat
+        } else if (sortType === "bhs") {
+            return bNum + '.' + hNum + '.' + sNum; // bright.hue.sat
+        }
+    }
+
+    myTable = new Y.DataTable({
+        columns: [
+            { key: "swatch",
+              label: 'Swatch',
+              // Use formatter to add a div swatch in each cell
+              // Color the background-color from hex value in each row
+              formatter: function(o) {
+                return '<div class="swatch" style="' +
+                'background-color: #' + Y.Escape.html(o.data.hex) + ';' +
+                '"></div>';
+              },
+              sortable: false,
+              allowHTML: true
+            },
+            { key: "name",
+              label: 'Color Name',
+              sortable: true
+            },
+            { key: "hex",
+              label: 'Hex',
+              sortable: true
+            },
+            { key: "hbs",
+              label: 'Hue', // hue.bright.sat
+              sortable: true
+            },
+            { key: "bhs",
+              label: 'Bright', // bright.hue.sat
+              sortable: true
+            }
+        ],
+        recordType: {
+            swatch: {},
+            name: {},
+            hex: {},
+            hbs: {
+                getter: function() {
+                    // create a new attribute in the model
+                    // and generate a sortable color number
+                    // from the hex value for 
+                    // hue.bright.sat
+                    return getColorNum(this.get('hex'), 'hbs');
+                }
+            },
+            bhs: {
+                getter: function() {
+                    // do the same for bright.hue.sat
+                    return getColorNum(this.get('hex'), 'bhs');
+                }
+            }
+        },
+        data: myData,
+        sortBy: { hbs: 'desc' } // initial sorting
+    }).render("#cTable");
+
+
+    // listener for swatch size
+    Y.one('#small-swatch-checkbox').on('click', function(e) {
+        var datatable = Y.one('#cTable .yui3-datatable');
+
+        if (e.target.get('checked')) {
+            datatable.addClass('view-small');
+        } else {
+            datatable.removeClass('view-small');
+        }
+    });
+
+    // This filters the DataModel to have a subset of it's original
+    // data
+    function filterModel(filterType) {
+        // reset model list to include all colors to prepare for filter
+        myTable.set('data', myData);
+
+        var list = myTable.data,
+            filteredData = list.filter({asList: true}, function (list) {
+                var hbsStr = list.get('hbs'), // get the hue emphasized color number
+                    bright = hbsStr.substring(3, 5), // only the 2 brightness digits
+                    sat = hbsStr.substring(6, 8), // only the 2 saturation digits
+                    type; // clicked filter type
+
+                // Depending on which filter radio was clicked,
+                // filter the DataTable's modelList to include a
+                // subset of models/rows/colors
+                if (filterType === 'filter-all') {
+                    // Don't show black, white, or grays
+                    type = sat >= 1;
+                } else if (filterType === 'filter-tint') {
+                    // Bright colors that are not gray or white
+                    type = (bright >= 75) && (sat >= 1);
+                } else if (filterType === 'filter-shade') {
+                    // Darker colors that are not grayish
+                    type = (bright <= 50) && (sat >= 20);
+                } else if (filterType === 'filter-midtone') {
+                    // Middle brightness colors that are not grayish
+                    type = (bright >= 50) && (bright <= 75) && (sat >= 20);
+                } else if (filterType === 'filter-mute') {
+                    // Low saturation (grayish) but not pure grays
+                    type = (sat <= 55) && (sat >= 1);
+                } else if (filterType === 'filter-gray') {
+                    // Only colors that are completely gray
+                    type = sat === '00';
+                }
+
+                return type;
+            });
+        myTable.set('data', filteredData);
+    }
+
+    // initial filtering of the dataTable's modelList to muted colors
+    filterModel('filter-mute');
+
+    // listen for filter change
+    Y.all('.filters').on('click', function(e) {
+        filterModel(e.target.get('id'));
+    });
+});
+
+    </script>
+</div>
+
+<p>
+<strong>Note:</strong> be sure to add the <code>yui3-skin-sam</code> classname to the
+page's <code>&lt;body&gt;</code> element or to a parent element of the widget in order to apply
+the default CSS skin. See <a href="http://yuilibrary.com/yui/docs/tutorials/skins/">Understanding Skinning</a>.
+</p>
+
+<pre class="code prettyprint">&lt;body class=&quot;yui3-skin-sam&quot;&gt; &lt;!-- You need this skin class --&gt;</pre>
+
+<p>
+To add column sorting functionality to any DataTable, simply include the <code>datatable-sort</code> module in your <code>use()</code> line and add the <code>sortable: true</code> configuration to the configuration objects of the columns you want to be sortable, as shown in the <a href="datatable-sort.html">Column Sorting</a> example.</p>
+
+<p>Note, if you want all columns to be sortable, simply set <code>sortable: true</code> on the DataTable instance.</p>
+
+<pre class="code prettyprint">YUI().use(&quot;datatable-sort&quot;, function(Y) {
+    &#x2F;&#x2F; code goes here
+});</pre>
+
+<p>
+This example also uses the <code>color-harmony</code> module
+</p>
+<pre class="code prettyprint">YUI().use(&quot;datatable-sort&quot;, &#x27;color-harmony&#x27;, function(Y) {
+    &#x2F;&#x2F; code goes here
+});</pre>
+
+<h2>Color Data</h2>
+The color data for this example comes from <a href="http://www.w3.org/TR/css3-color/#svg-color">http://www.w3.org/TR/css3-color/#svg-color</a>. The data contains only the name of the color and its hex value.
+<pre class="code prettyprint">var myData = [
+        {name: &#x27;antiquewhite&#x27;, hex: &#x27;faebd7&#x27;},
+        {name: &#x27;aqua&#x27;, hex: &#x27;00ffff&#x27;},
+        {name: &#x27;aquamarine&#x27;, hex: &#x27;7fffd4&#x27;},
+        &#x2F;&#x2F; ... a lot more colors
+        {name: &#x27;whitesmoke&#x27;, hex: &#x27;f5f5f5&#x27;},
+        {name: &#x27;yellow&#x27;, hex: &#x27;ffff00&#x27;},
+        {name: &#x27;yellowgreen&#x27;, hex: &#x27;9acd32&#x27;}
+    ];</pre>
+
+<h2>Generating a Color Number</h2>
+<p>
+Sorting and filtering can help users find the right color. Hex values don't help much in sorting the colors in a visually logical way. Later in the code, the following function will use the <a href="../color/">Y.Color</a> module to generate a special color number for each hex value. This color number will be more useful in sorting and filtering.
+</p>
+<pre class="code prettyprint">&#x2F;* This takes a hex value and generates a numeric string
+*  in the format &quot;01.23.45&quot;
+*  Each pair of digits represents the Hue, Saturation, or Brightness
+*  of the color in a range of 00 to 99 (always 2 digits).
+*  These strings sort in a more visually logical way for colors.
+*  The sequence of digits can be changed to sort in different ways.
+*  such as hh.ss.bb for sorting first by hue, then saturation,
+*  or bb.hh.ss for sorting first by brightness, then hue, then saturation.
+*  The dots are only for human readability
+*&#x2F;
+function getColorNum(hex, sortType) {
+        &#x2F;&#x2F; An array of color property values
+        &#x2F;&#x2F; [hue, saturation, lightness]
+    var HSL = Y.Color.toArray(Y.Color.toHSL(hex)),
+        hNum, &#x2F;&#x2F; hue
+        sNum, &#x2F;&#x2F; saturation
+        &#x2F;&#x2F; get the computed brightness from the hex value
+        bNum = Y.Color.getBrightness(hex).toString();
+    
+    &#x2F;&#x2F; isolate hue part from HSL. converted to 2 digits
+    hNum = Math.floor((HSL[0] * 10) &#x2F; 36.01).toString();
+    hNum = (hNum.length &lt; 2) ? (&#x27;0&#x27; + hNum) : hNum;
+
+    &#x2F;&#x2F; isolate sat part from HSL. converted to 2 digits
+    sNum = Math.floor((HSL[1] * 10) &#x2F; 10.01).toString();
+    sNum = (sNum.length &lt; 2) ? (&#x27;0&#x27; + sNum) : sNum;
+
+    &#x2F;&#x2F; assure brightness is 2 digits
+    bNum = (bNum.length &lt; 2) ? (&#x27;0&#x27; + bNum) : bNum;
+    bNum = (bNum === &quot;100&quot;) ? &quot;99&quot; : bNum;
+
+    if (sortType === &quot;hbs&quot;) {
+        return hNum + &#x27;.&#x27; + bNum + &#x27;.&#x27; + sNum; &#x2F;&#x2F; hue.bright.sat
+    } else if (sortType === &quot;bhs&quot;) {
+        return bNum + &#x27;.&#x27; + hNum + &#x27;.&#x27; + sNum; &#x2F;&#x2F; bright.hue.sat
+    }
+}</pre>
+
+<h2>The DataTable Instance</h2>
+The DataTable instance will include: 
+<ul>
+    <li>Column configs that add new columns</li>
+    <li>A recordType that will populate the DataTable's ModelList so that some of the additional columns can be sortable</li>
+    <li>Data</li>
+    <li>An initial sorting config</li>
+</ul>
+<pre class="code prettyprint">myTable = new Y.DataTable({
+    columns: [
+        &#x2F;&#x2F; code goes here
+    ],
+    recordType: {
+        &#x2F;&#x2F; code goes here
+    },
+    data: myData,
+    sortBy: { hbs: &#x27;desc&#x27; }
+}).render(&quot;#cTable&quot;);</pre>
+
+<p>
+    We'll now add the details to the DataTable instance.
+</p>
+<h2>Formatter - Adding Columns</h2>
+<p>
+The provided data from <code>var = myData</code> only has two properties per row to use as columns, but we are adding more columns in the <code>columns</code> config. A Swatch column allows users to see the colors. We used a formatter to set the content to be a <code>&lt;div&gt;</code> with the background color accessed from the hex value of each row. Since there's no swatch property in <code>myData</code>, this column cannot be made sortable.
+</p>
+<p>
+We're also adding 2 columns that will allow sorting by Hue and Brightness priorities respectively. The DataTables ModelList (where myData is stored) doesn't contain any data for these columns yet. That will be added by the <code>recordType</code>. See next snippet.
+</p>
+<pre class="code prettyprint">myTable = new Y.DataTable({
+    columns: [
+        { key: &quot;swatch&quot;,
+          label: &#x27;Swatch&#x27;,
+          &#x2F;&#x2F; Use formatter to add a div swatch in each cell
+          &#x2F;&#x2F; Color the background-color from hex value in each row
+          formatter: function(o) {
+            return &#x27;&lt;div class=&quot;swatch&quot; style=&quot;&#x27; +
+            &#x27;background-color: #&#x27; + o.data.hex + &#x27;;&#x27; +
+            &#x27;&quot;&gt;&lt;&#x2F;div&gt;&#x27;;
+          },
+          sortable: false,
+          allowHTML: true
+        },
+        { key: &quot;name&quot;,
+          label: &#x27;Color Name&#x27;,
+          sortable: true
+        },
+        { key: &quot;hex&quot;,
+          label: &#x27;Hex&#x27;,
+          sortable: true
+        },
+        { key: &quot;hbs&quot;,
+          label: &#x27;Hue&#x27;, &#x2F;&#x2F; hue.bright.sat
+          sortable: true
+        },
+        { key: &quot;bhs&quot;,
+          label: &#x27;Bright&#x27;, &#x2F;&#x2F; bright.hue.sat
+          sortable: true
+        }
+    ],
+    recordType: {
+        &#x2F;&#x2F; see the next code snippet below
+    },
+    data: myData,
+    sortBy: { hbs: &#x27;desc&#x27; }
+}).render(&quot;#cTable&quot;);</pre>
+
+<h2>RecordType - Sortable Generated Columns</h2>
+<p>
+As described in the <a href="datatable-recordtype.html">Sortable Generated Columns</a> example, we're using a <code>getter</code> to return a color number string from the <code>getColorNum</code> function shown above. This puts these values in the DataTable's ModelList so they'll be filterable and the columns can be sortable.
+</p> 
+<pre class="code prettyprint">myTable = new Y.DataTable({
+    columns: [
+        &#x2F;&#x2F; see the previous code snippet above
+    ],
+    recordType: {
+        swatch: {},
+        name: {},
+        hex: {},
+        hbs: {
+            getter: function() {
+                &#x2F;&#x2F; create a new attribute in the model
+                &#x2F;&#x2F; and generate a sortable color number
+                &#x2F;&#x2F; from the hex value for each Model
+                return getColorNum(this.get(&#x27;hex&#x27;), &#x27;hbs&#x27;);
+            }
+        },
+        bhs: {
+            getter: function() {
+                &#x2F;&#x2F; do the same for bright.hue.sat
+                return getColorNum(this.get(&#x27;hex&#x27;), &#x27;bhs&#x27;);
+            }
+        }
+    },
+    data: myData,
+    sortBy: { hbs: &#x27;desc&#x27; } &#x2F;&#x2F; initial sorting
+}).render(&quot;#cTable&quot;);</pre>
+
+<h2>Filtering</h2>
+<p>
+The <code>filterModel</code> function filters the original data of the DataTable to get a subset. See the example <a href="../model-list/#filtering-models">Filtering the Model List</a> for a simpler example of filtering.
+<pre class="code prettyprint">&#x2F;&#x2F; This filters the DataModel to have a subset of it&#x27;s original
+&#x2F;&#x2F; data
+function filterModel(filterType) {
+    &#x2F;&#x2F; reset model list to include all colors to prepare for filter
+    myTable.set(&#x27;data&#x27;, myData);
+
+    var list = myTable.data,
+        filteredData = list.filter({asList: true}, function (list) {
+            var hbsStr = list.get(&#x27;hbs&#x27;), &#x2F;&#x2F; get the hue emphasized color number
+                bright = hbsStr.substring(3, 5), &#x2F;&#x2F; only the 2 brightness digits
+                sat = hbsStr.substring(6, 8), &#x2F;&#x2F; only the 2 saturation digits
+                type; &#x2F;&#x2F; clicked filter type
+
+            &#x2F;&#x2F; Depending on which filter radio was clicked,
+            &#x2F;&#x2F; filter the DataTable&#x27;s modelList to include a
+            &#x2F;&#x2F; subset of models&#x2F;rows&#x2F;colors
+            if (filterType === &#x27;filter-all&#x27;) {
+                &#x2F;&#x2F; Don&#x27;t show black, white, or grays
+                type = sat &gt;= 1;
+            } else if (filterType === &#x27;filter-tint&#x27;) {
+                &#x2F;&#x2F; Bright colors that are not gray or white
+                type = (bright &gt;= 75) &amp;&amp; (sat &gt;= 1);
+            } else if (filterType === &#x27;filter-shade&#x27;) {
+                &#x2F;&#x2F; Darker colors that are not grayish
+                type = (bright &lt;= 50) &amp;&amp; (sat &gt;= 20);
+            } else if (filterType === &#x27;filter-midtone&#x27;) {
+                &#x2F;&#x2F; Middle brightness colors that are not grayish
+                type = (bright &gt;= 50) &amp;&amp; (bright &lt;= 75) &amp;&amp; (sat &gt;= 20);
+            } else if (filterType === &#x27;filter-mute&#x27;) {
+                &#x2F;&#x2F; Low saturation (grayish) but not pure grays
+                type = (sat &lt;= 55) &amp;&amp; (sat &gt;= 1);
+            } else if (filterType === &#x27;filter-gray&#x27;) {
+                &#x2F;&#x2F; Only colors that are completely gray
+                type = sat === &#x27;00&#x27;;
+            }
+
+            return type;
+        });
+    myTable.set(&#x27;data&#x27;, filteredData);
+}</pre>
+
+<p>The <code>filterModel</code> function is used in these ways.</p>
+<pre class="code prettyprint">&#x2F;&#x2F; initial filtering of the dataTable&#x27;s modelList to muted colors
+filterModel(&#x27;filter-mute&#x27;);
+
+&#x2F;&#x2F; listen for filter change
+Y.all(&#x27;.filters&#x27;).on(&#x27;click&#x27;, function(e) {
+    filterModel(e.target.get(&#x27;id&#x27;));
+});</pre>
+
+<h2>Full Code Listing</h2>
+<h4>The CSS</h4>
+<pre class="code prettyprint">.example {
+    zoom: 1;
+}
+.example:after {
+    content: &quot;&quot;;
+    display: block;
+    clear: both;
+}
+.left-column {
+    overflow: hidden;
+    float: left;   
+}
+.right-column {
+    margin-left: 390px;
+}
+&#x2F;* Swatch styling *&#x2F;
+.yui3-skin-sam td.yui3-datatable-cell {
+    &#x2F;* override vertical cell padding so swatches fill cells *&#x2F;
+    padding: 0 0.5em;
+}
+.yui3-skin-sam td.yui3-datatable-col-swatch {
+    padding: 0;
+}
+.swatch {
+    height: 1.4em;
+}
+#cTable .yui3-datatable-cell {
+    font-size: 70%;
+}
+#cTable .view-small .yui3-datatable-cell {
+    font-size: 25%;
+}
+
+&#x2F;* layout styles *&#x2F;
+#small-swatch-checkbox {
+    margin-top: 4em;
+}
+.filter-radios label {
+    display: block;
+}
+.example .content {
+    padding: 0 5px;
+}
+
+&#x2F;* Styles for UI sample swatches in filtering radios *&#x2F;
+.filter-radios label span {
+    background: url(..&#x2F;assets&#x2F;datatable&#x2F;img&#x2F;swatch_colors.png) no-repeat;
+    display: inline-block;
+    vertical-align: middle;
+    height: 30px;
+    width: 80px;
+    margin: 0.3em;
+}
+.filter-radios .examples-all {
+    background-position: 0px 0px;
+}
+.filter-radios .examples-tint {
+    background-position: 0px -30px;
+}
+.filter-radios .examples-midtone {
+    background-position: 0px -60px;
+}
+.filter-radios .examples-shade {
+    background-position: 0px -90px;
+}
+.filter-radios .examples-mute {
+    background-position: 0px -120px;
+}
+.filter-radios .examples-gray {
+    background-position: 0px -150px;
+}</pre>
+
+<h4>The HTML</h4>
+<pre class="code prettyprint">&lt;div class=&quot;left-column&quot;&gt;
+        &lt;div id=&quot;cTable&quot;&gt;&lt;&#x2F;div&gt;
+&lt;&#x2F;div&gt;
+&lt;div class=&quot;right-column&quot;&gt;
+    &lt;div class=&quot;filter-radios&quot;&gt;
+        &lt;!-- Radios for filtering colors --&gt;
+        &lt;label for=&quot;filter-all&quot;&gt;
+            &lt;input id=&quot;filter-all&quot; class=&quot;filters&quot; type=&quot;radio&quot; name=&quot;filters&quot;&#x2F;&gt;
+            &lt;span class=&quot;examples-all&quot;&gt;&lt;&#x2F;span&gt;All Colors
+        &lt;&#x2F;label&gt;
+        &lt;label for=&quot;filter-tint&quot;&gt;
+            &lt;input id=&quot;filter-tint&quot; class=&quot;filters&quot; type=&quot;radio&quot; name=&quot;filters&quot;&#x2F;&gt;
+            &lt;span class=&quot;examples-tint&quot;&gt;&lt;&#x2F;span&gt;Tints
+        &lt;&#x2F;label&gt;
+        &lt;label for=&quot;filter-midtone&quot;&gt;
+            &lt;input id=&quot;filter-midtone&quot; class=&quot;filters&quot; type=&quot;radio&quot; name=&quot;filters&quot;&#x2F;&gt;
+            &lt;span class=&quot;examples-midtone&quot;&gt;&lt;&#x2F;span&gt;Mid-tones
+        &lt;&#x2F;label&gt;
+        &lt;label for=&quot;filter-shade&quot;&gt;
+            &lt;input id=&quot;filter-shade&quot; class=&quot;filters&quot; type=&quot;radio&quot; name=&quot;filters&quot;&#x2F;&gt;
+            &lt;span class=&quot;examples-shade&quot;&gt;&lt;&#x2F;span&gt;Shades
+        &lt;&#x2F;label&gt;
+        &lt;label for=&quot;filter-mute&quot;&gt;
+            &lt;input id=&quot;filter-mute&quot; class=&quot;filters&quot; type=&quot;radio&quot; checked name=&quot;filters&quot;&#x2F;&gt;
+            &lt;span class=&quot;examples-mute&quot;&gt;&lt;&#x2F;span&gt;Muted
+        &lt;&#x2F;label&gt;
+        &lt;label for=&quot;filter-gray&quot;&gt;
+            &lt;input id=&quot;filter-gray&quot; class=&quot;filters&quot; type=&quot;radio&quot; name=&quot;filters&quot;&#x2F;&gt;
+            &lt;span class=&quot;examples-gray&quot;&gt;&lt;&#x2F;span&gt;Black, white, and grays
+        &lt;&#x2F;label&gt;
+    &lt;&#x2F;div&gt;
+    &lt;!-- Small swatches checkbox --&gt;
+    &lt;label for=&quot;small-swatch-checkbox&quot;&gt;
+        &lt;input id=&quot;small-swatch-checkbox&quot; type=&quot;checkbox&quot;&#x2F;&gt;
+        Small swatches (fit more on the page)
+    &lt;&#x2F;label&gt;
+&lt;&#x2F;div&gt;</pre>
+
+<h4>The JavaScript</h4>
+<pre class="code prettyprint">YUI().use(&#x27;datatable-sort&#x27;, &#x27;color-harmony&#x27;, function (Y) {
+
+    &#x2F;&#x2F; The source of this data is http:&#x2F;&#x2F;www.w3.org&#x2F;TR&#x2F;css3-color&#x2F;
+    var filterBy,
+        myData = [
+            {name: &#x27;antiquewhite&#x27;, hex: &#x27;faebd7&#x27;},
+            {name: &#x27;aqua&#x27;, hex: &#x27;00ffff&#x27;},
+            {name: &#x27;aquamarine&#x27;, hex: &#x27;7fffd4&#x27;},
+            {name: &#x27;beige&#x27;, hex: &#x27;f5f5dc&#x27;},
+            {name: &#x27;bisque&#x27;, hex: &#x27;ffe4c4&#x27;},
+            {name: &#x27;black&#x27;, hex: &#x27;000000&#x27;},
+            {name: &#x27;blanchedalmond&#x27;, hex: &#x27;ffebcd&#x27;},
+            {name: &#x27;blue&#x27;, hex: &#x27;0000ff&#x27;},
+            {name: &#x27;blueviolet&#x27;, hex: &#x27;8a2be2&#x27;},
+            {name: &#x27;brown&#x27;, hex: &#x27;a52a2a&#x27;},
+            {name: &#x27;burlywood&#x27;, hex: &#x27;deb887&#x27;},
+            {name: &#x27;cadetblue&#x27;, hex: &#x27;5f9ea0&#x27;},
+            {name: &#x27;chartreuse&#x27;, hex: &#x27;7fff00&#x27;},
+            {name: &#x27;chocolate&#x27;, hex: &#x27;d2691e&#x27;},
+            {name: &#x27;coral&#x27;, hex: &#x27;ff7f50&#x27;},
+            {name: &#x27;cornflowerblue&#x27;, hex: &#x27;6495ed&#x27;},
+            {name: &#x27;cornsilk&#x27;, hex: &#x27;fff8dc&#x27;},
+            {name: &#x27;crimson&#x27;, hex: &#x27;dc143c&#x27;},
+            {name: &#x27;cyan&#x27;, hex: &#x27;00ffff&#x27;},
+            {name: &#x27;darkblue&#x27;, hex: &#x27;00008b&#x27;},
+            {name: &#x27;darkcyan&#x27;, hex: &#x27;008b8b&#x27;},
+            {name: &#x27;darkgoldenrod&#x27;, hex: &#x27;b8860b&#x27;},
+            {name: &#x27;darkgray&#x27;, hex: &#x27;a9a9a9&#x27;},
+            {name: &#x27;darkgreen&#x27;, hex: &#x27;006400&#x27;},
+            {name: &#x27;darkkhaki&#x27;, hex: &#x27;bdb76b&#x27;},
+            {name: &#x27;darkmagenta&#x27;, hex: &#x27;8b008b&#x27;},
+            {name: &#x27;darkolivegreen&#x27;, hex: &#x27;556b2f&#x27;},
+            {name: &#x27;darkorange&#x27;, hex: &#x27;ff8c00&#x27;},
+            {name: &#x27;darkorchid&#x27;, hex: &#x27;9932cc&#x27;},
+            {name: &#x27;darkred&#x27;, hex: &#x27;8b0000&#x27;},
+            {name: &#x27;darksalmon&#x27;, hex: &#x27;e9967a&#x27;},
+            {name: &#x27;darkseagreen&#x27;, hex: &#x27;8fbc8f&#x27;},
+            {name: &#x27;darkslateblue&#x27;, hex: &#x27;483d8b&#x27;},
+            {name: &#x27;darkslategray&#x27;, hex: &#x27;2f4f4f&#x27;},
+            {name: &#x27;darkturquoise&#x27;, hex: &#x27;00ced1&#x27;},
+            {name: &#x27;darkviolet&#x27;, hex: &#x27;9400d3&#x27;},
+            {name: &#x27;deeppink&#x27;, hex: &#x27;ff1493&#x27;},
+            {name: &#x27;deepskyblue&#x27;, hex: &#x27;00bfff&#x27;},
+            {name: &#x27;dimgray&#x27;, hex: &#x27;696969&#x27;},
+            {name: &#x27;dodgerblue&#x27;, hex: &#x27;1e90ff&#x27;},
+            {name: &#x27;firebrick&#x27;, hex: &#x27;b22222&#x27;},
+            {name: &#x27;forestgreen&#x27;, hex: &#x27;228b22&#x27;},
+            {name: &#x27;fuchsia&#x27;, hex: &#x27;ff00ff&#x27;},
+            {name: &#x27;gainsboro&#x27;, hex: &#x27;dcdcdc&#x27;},
+            {name: &#x27;gold&#x27;, hex: &#x27;ffd700&#x27;},
+            {name: &#x27;goldenrod&#x27;, hex: &#x27;daa520&#x27;},
+            {name: &#x27;gray&#x27;, hex: &#x27;808080&#x27;},
+            {name: &#x27;green&#x27;, hex: &#x27;008000&#x27;},
+            {name: &#x27;greenyellow&#x27;, hex: &#x27;adff2f&#x27;},
+            {name: &#x27;hotpink&#x27;, hex: &#x27;ff69b4&#x27;},
+            {name: &#x27;indianred&#x27;, hex: &#x27;cd5c5c&#x27;},
+            {name: &#x27;indigo&#x27;, hex: &#x27;4b0082&#x27;},
+            {name: &#x27;khaki&#x27;, hex: &#x27;f0e68c&#x27;},
+            {name: &#x27;lawngreen&#x27;, hex: &#x27;7cfc00&#x27;},
+            {name: &#x27;lemonchiffon&#x27;, hex: &#x27;fffacd&#x27;},
+            {name: &#x27;lightblue&#x27;, hex: &#x27;add8e6&#x27;},
+            {name: &#x27;lightcoral&#x27;, hex: &#x27;f08080&#x27;},
+            {name: &#x27;lightgoldenrodyellow&#x27;, hex: &#x27;fafad2&#x27;},
+            {name: &#x27;lightgray&#x27;, hex: &#x27;d3d3d3&#x27;},
+            {name: &#x27;lightgreen&#x27;, hex: &#x27;90ee90&#x27;},
+            {name: &#x27;lightpink&#x27;, hex: &#x27;ffb6c1&#x27;},
+            {name: &#x27;lightsalmon&#x27;, hex: &#x27;ffa07a&#x27;},
+            {name: &#x27;lightseagreen&#x27;, hex: &#x27;20b2aa&#x27;},
+            {name: &#x27;lightskyblue&#x27;, hex: &#x27;87cefa&#x27;},
+            {name: &#x27;lightslategray&#x27;, hex: &#x27;778899&#x27;},
+            {name: &#x27;lightsteelblue&#x27;, hex: &#x27;b0c4de&#x27;},
+            {name: &#x27;lime&#x27;, hex: &#x27;00ff00&#x27;},
+            {name: &#x27;limegreen&#x27;, hex: &#x27;32cd32&#x27;},
+            {name: &#x27;maroon&#x27;, hex: &#x27;800000&#x27;},
+            {name: &#x27;mediumaquamarine&#x27;, hex: &#x27;66cdaa&#x27;},
+            {name: &#x27;mediumblue&#x27;, hex: &#x27;0000cd&#x27;},
+            {name: &#x27;mediumorchid&#x27;, hex: &#x27;ba55d3&#x27;},
+            {name: &#x27;mediumpurple&#x27;, hex: &#x27;9370db&#x27;},
+            {name: &#x27;mediumseagreen&#x27;, hex: &#x27;3cb371&#x27;},
+            {name: &#x27;mediumslateblue&#x27;, hex: &#x27;7b68ee&#x27;},
+            {name: &#x27;mediumspringgreen&#x27;, hex: &#x27;00fa9a&#x27;},
+            {name: &#x27;mediumturquoise&#x27;, hex: &#x27;48d1cc&#x27;},
+            {name: &#x27;mediumvioletred&#x27;, hex: &#x27;c71585&#x27;},
+            {name: &#x27;midnightblue&#x27;, hex: &#x27;191970&#x27;},
+            {name: &#x27;moccasin&#x27;, hex: &#x27;ffe4b5&#x27;},
+            {name: &#x27;navajowhite&#x27;, hex: &#x27;ffdead&#x27;},
+            {name: &#x27;navy&#x27;, hex: &#x27;000080&#x27;},
+            {name: &#x27;oldlace&#x27;, hex: &#x27;fdf5e6&#x27;},
+            {name: &#x27;olive&#x27;, hex: &#x27;808000&#x27;},
+            {name: &#x27;olivedrab&#x27;, hex: &#x27;6b8e23&#x27;},
+            {name: &#x27;orange&#x27;, hex: &#x27;ffa500&#x27;},
+            {name: &#x27;orangered&#x27;, hex: &#x27;ff4500&#x27;},
+            {name: &#x27;orchid&#x27;, hex: &#x27;da70d6&#x27;},
+            {name: &#x27;palegoldenrod&#x27;, hex: &#x27;eee8aa&#x27;},
+            {name: &#x27;palegreen&#x27;, hex: &#x27;98fb98&#x27;},
+            {name: &#x27;paleturquoise&#x27;, hex: &#x27;afeeee&#x27;},
+            {name: &#x27;palevioletred&#x27;, hex: &#x27;db7093&#x27;},
+            {name: &#x27;papayawhip&#x27;, hex: &#x27;ffefd5&#x27;},
+            {name: &#x27;peachpuff&#x27;, hex: &#x27;ffdab9&#x27;},
+            {name: &#x27;peru&#x27;, hex: &#x27;cd853f&#x27;},
+            {name: &#x27;pink&#x27;, hex: &#x27;ffc0cb&#x27;},
+            {name: &#x27;plum&#x27;, hex: &#x27;dda0dd&#x27;},
+            {name: &#x27;powderblue&#x27;, hex: &#x27;b0e0e6&#x27;},
+            {name: &#x27;purple&#x27;, hex: &#x27;800080&#x27;},
+            {name: &#x27;red&#x27;, hex: &#x27;ff0000&#x27;},
+            {name: &#x27;rosybrown&#x27;, hex: &#x27;bc8f8f&#x27;},
+            {name: &#x27;royalblue&#x27;, hex: &#x27;4169e1&#x27;},
+            {name: &#x27;saddlebrown&#x27;, hex: &#x27;8b4513&#x27;},
+            {name: &#x27;salmon&#x27;, hex: &#x27;fa8072&#x27;},
+            {name: &#x27;sandybrown&#x27;, hex: &#x27;f4a460&#x27;},
+            {name: &#x27;seagreen&#x27;, hex: &#x27;2e8b57&#x27;},
+            {name: &#x27;sienna&#x27;, hex: &#x27;a0522d&#x27;},
+            {name: &#x27;silver&#x27;, hex: &#x27;c0c0c0&#x27;},
+            {name: &#x27;skyblue&#x27;, hex: &#x27;87ceeb&#x27;},
+            {name: &#x27;slateblue&#x27;, hex: &#x27;6a5acd&#x27;},
+            {name: &#x27;slategray&#x27;, hex: &#x27;708090&#x27;},
+            {name: &#x27;springgreen&#x27;, hex: &#x27;00ff7f&#x27;},
+            {name: &#x27;steelblue&#x27;, hex: &#x27;4682b4&#x27;},
+            {name: &#x27;tan&#x27;, hex: &#x27;d2b48c&#x27;},
+            {name: &#x27;teal&#x27;, hex: &#x27;008080&#x27;},
+            {name: &#x27;thistle&#x27;, hex: &#x27;d8bfd8&#x27;},
+            {name: &#x27;tomato&#x27;, hex: &#x27;ff6347&#x27;},
+            {name: &#x27;turquoise&#x27;, hex: &#x27;40e0d0&#x27;},
+            {name: &#x27;violet&#x27;, hex: &#x27;ee82ee&#x27;},
+            {name: &#x27;wheat&#x27;, hex: &#x27;f5deb3&#x27;},
+            {name: &#x27;white&#x27;, hex: &#x27;ffffff&#x27;},
+            {name: &#x27;whitesmoke&#x27;, hex: &#x27;f5f5f5&#x27;},
+            {name: &#x27;yellow&#x27;, hex: &#x27;ffff00&#x27;},
+            {name: &#x27;yellowgreen&#x27;, hex: &#x27;9acd32&#x27;}
+        ];
+
+    &#x2F;* This takes a hex value and generates a numeric string
+    *  in the format &quot;01.23.45&quot;
+    *  Each pair of digits represents the Hue, Saturation, or Brightness
+    *  of the color in a range of 00 to 99 (always 2 digits).
+    *  These strings sort in a more visually logical way for colors.
+    *  The sequence of digits can be changed to sort in different ways.
+    *  such as hh.ss.bb for sorting first by hue, then saturation,
+    *  or bb.hh.ss for sorting first by brightness, then hue, then saturation.
+    *  The dots are only for human readability
+    *&#x2F;
+    function getColorNum(hex, sortType) {
+            &#x2F;&#x2F; An array of color property values
+            &#x2F;&#x2F; [hue, saturation, lightness]
+        var HSL = Y.Color.toArray(Y.Color.toHSL(hex)),
+            hNum, &#x2F;&#x2F; hue
+            sNum, &#x2F;&#x2F; saturation
+            &#x2F;&#x2F; get the computed brightness from the hex value
+            bNum = Y.Color.getBrightness(hex).toString();
+        
+        &#x2F;&#x2F; isolate hue part from HSL. converted to 2 digits
+        hNum = Math.floor((HSL[0] * 10) &#x2F; 36.01).toString();
+        hNum = (hNum.length &lt; 2) ? (&#x27;0&#x27; + hNum) : hNum;
+
+        &#x2F;&#x2F; isolate sat part from HSL. converted to 2 digits
+        sNum = Math.floor((HSL[1] * 10) &#x2F; 10.01).toString();
+        sNum = (sNum.length &lt; 2) ? (&#x27;0&#x27; + sNum) : sNum;
+
+        &#x2F;&#x2F; assure brightness is 2 digits
+        bNum = (bNum.length &lt; 2) ? (&#x27;0&#x27; + bNum) : bNum;
+        bNum = (bNum === &quot;100&quot;) ? &quot;99&quot; : bNum;
+
+        if (sortType === &quot;hbs&quot;) {
+            return hNum + &#x27;.&#x27; + bNum + &#x27;.&#x27; + sNum; &#x2F;&#x2F; hue.bright.sat
+        } else if (sortType === &quot;bhs&quot;) {
+            return bNum + &#x27;.&#x27; + hNum + &#x27;.&#x27; + sNum; &#x2F;&#x2F; bright.hue.sat
+        }
+    }
+
+    myTable = new Y.DataTable({
+        columns: [
+            { key: &quot;swatch&quot;,
+              label: &#x27;Swatch&#x27;,
+              &#x2F;&#x2F; Use formatter to add a div swatch in each cell
+              &#x2F;&#x2F; Color the background-color from hex value in each row
+              formatter: function(o) {
+                return &#x27;&lt;div class=&quot;swatch&quot; style=&quot;&#x27; +
+                &#x27;background-color: #&#x27; + Y.Escape.html(o.data.hex) + &#x27;;&#x27; +
+                &#x27;&quot;&gt;&lt;&#x2F;div&gt;&#x27;;
+              },
+              sortable: false,
+              allowHTML: true
+            },
+            { key: &quot;name&quot;,
+              label: &#x27;Color Name&#x27;,
+              sortable: true
+            },
+            { key: &quot;hex&quot;,
+              label: &#x27;Hex&#x27;,
+              sortable: true
+            },
+            { key: &quot;hbs&quot;,
+              label: &#x27;Hue&#x27;, &#x2F;&#x2F; hue.bright.sat
+              sortable: true
+            },
+            { key: &quot;bhs&quot;,
+              label: &#x27;Bright&#x27;, &#x2F;&#x2F; bright.hue.sat
+              sortable: true
+            }
+        ],
+        recordType: {
+            swatch: {},
+            name: {},
+            hex: {},
+            hbs: {
+                getter: function() {
+                    &#x2F;&#x2F; create a new attribute in the model
+                    &#x2F;&#x2F; and generate a sortable color number
+                    &#x2F;&#x2F; from the hex value for 
+                    &#x2F;&#x2F; hue.bright.sat
+                    return getColorNum(this.get(&#x27;hex&#x27;), &#x27;hbs&#x27;);
+                }
+            },
+            bhs: {
+                getter: function() {
+                    &#x2F;&#x2F; do the same for bright.hue.sat
+                    return getColorNum(this.get(&#x27;hex&#x27;), &#x27;bhs&#x27;);
+                }
+            }
+        },
+        data: myData,
+        sortBy: { hbs: &#x27;desc&#x27; } &#x2F;&#x2F; initial sorting
+    }).render(&quot;#cTable&quot;);
+
+
+    &#x2F;&#x2F; listener for swatch size
+    Y.one(&#x27;#small-swatch-checkbox&#x27;).on(&#x27;click&#x27;, function(e) {
+        var datatable = Y.one(&#x27;#cTable .yui3-datatable&#x27;);
+
+        if (e.target.get(&#x27;checked&#x27;)) {
+            datatable.addClass(&#x27;view-small&#x27;);
+        } else {
+            datatable.removeClass(&#x27;view-small&#x27;);
+        }
+    });
+
+    &#x2F;&#x2F; This filters the DataModel to have a subset of it&#x27;s original
+    &#x2F;&#x2F; data
+    function filterModel(filterType) {
+        &#x2F;&#x2F; reset model list to include all colors to prepare for filter
+        myTable.set(&#x27;data&#x27;, myData);
+
+        var list = myTable.data,
+            filteredData = list.filter({asList: true}, function (list) {
+                var hbsStr = list.get(&#x27;hbs&#x27;), &#x2F;&#x2F; get the hue emphasized color number
+                    bright = hbsStr.substring(3, 5), &#x2F;&#x2F; only the 2 brightness digits
+                    sat = hbsStr.substring(6, 8), &#x2F;&#x2F; only the 2 saturation digits
+                    type; &#x2F;&#x2F; clicked filter type
+
+                &#x2F;&#x2F; Depending on which filter radio was clicked,
+                &#x2F;&#x2F; filter the DataTable&#x27;s modelList to include a
+                &#x2F;&#x2F; subset of models&#x2F;rows&#x2F;colors
+                if (filterType === &#x27;filter-all&#x27;) {
+                    &#x2F;&#x2F; Don&#x27;t show black, white, or grays
+                    type = sat &gt;= 1;
+                } else if (filterType === &#x27;filter-tint&#x27;) {
+                    &#x2F;&#x2F; Bright colors that are not gray or white
+                    type = (bright &gt;= 75) &amp;&amp; (sat &gt;= 1);
+                } else if (filterType === &#x27;filter-shade&#x27;) {
+                    &#x2F;&#x2F; Darker colors that are not grayish
+                    type = (bright &lt;= 50) &amp;&amp; (sat &gt;= 20);
+                } else if (filterType === &#x27;filter-midtone&#x27;) {
+                    &#x2F;&#x2F; Middle brightness colors that are not grayish
+                    type = (bright &gt;= 50) &amp;&amp; (bright &lt;= 75) &amp;&amp; (sat &gt;= 20);
+                } else if (filterType === &#x27;filter-mute&#x27;) {
+                    &#x2F;&#x2F; Low saturation (grayish) but not pure grays
+                    type = (sat &lt;= 55) &amp;&amp; (sat &gt;= 1);
+                } else if (filterType === &#x27;filter-gray&#x27;) {
+                    &#x2F;&#x2F; Only colors that are completely gray
+                    type = sat === &#x27;00&#x27;;
+                }
+
+                return type;
+            });
+        myTable.set(&#x27;data&#x27;, filteredData);
+    }
+
+    &#x2F;&#x2F; initial filtering of the dataTable&#x27;s modelList to muted colors
+    filterModel(&#x27;filter-mute&#x27;);
+
+    &#x2F;&#x2F; listen for filter change
+    Y.all(&#x27;.filters&#x27;).on(&#x27;click&#x27;, function(e) {
+        filterModel(e.target.get(&#x27;id&#x27;));
+    });
+});</pre>
+
+</div>
+            </div>
+        </div>
+
+        <div class="yui3-u-1-4">
+            <div class="sidebar">
+                
+
+                
+                    <div class="sidebox">
+                        <div class="hd">
+                            <h2 class="no-toc">Examples</h2>
+                        </div>
+
+                        <div class="bd">
+                            <ul class="examples">
+                                
+                                    
+                                        <li data-description="This example illustrates simple DataTable use cases.">
+                                            <a href="datatable-basic.html">Basic DataTable</a>
+                                        </li>
+                                    
+                                
+                                    
+                                        <li data-description="DataTable loaded with JSON data from a remote webservice via DataSource.Get">
+                                            <a href="datatable-dsget.html">DataTable + DataSource.Get + JSON Data</a>
+                                        </li>
+                                    
+                                
+                                    
+                                        <li data-description="DataTable loaded with XML data from a remote webservice via DataSource.IO.">
+                                            <a href="datatable-dsio.html">DataTable + DataSource.IO + XML Data</a>
+                                        </li>
+                                    
+                                
+                                    
+                                        <li data-description="Custom format data for display.">
+                                            <a href="datatable-formatting.html">Formatting Row Data for Display</a>
+                                        </li>
+                                    
+                                
+                                    
+                                        <li data-description="DataTable with nested column headers.">
+                                            <a href="datatable-nestedcols.html">Nested Column Headers</a>
+                                        </li>
+                                    
+                                
+                                    
+                                        <li data-description="DataTable with column sorting.">
+                                            <a href="datatable-sort.html">Column Sorting</a>
+                                        </li>
+                                    
+                                
+                                    
+                                        <li data-description="Color Sorting with DataTable and Y.Color.">
+                                            <a href="datatable-colorsort.html">Color Sorting and Filtering</a>
+                                        </li>
+                                    
+                                
+                                    
+                                        <li data-description="DataTable with vertical and/or horizontal scrolling rows.">
+                                            <a href="datatable-scroll.html">Scrolling DataTable</a>
+                                        </li>
+                                    
+                                
+                                    
+                                        <li data-description="Using DataTable&#x27;s recordType attribute to create calculated, sortable columns.">
+                                            <a href="datatable-recordtype.html">Sortable generated columns</a>
+                                        </li>
+                                    
+                                
+                                    
+                                        <li data-description="Populating one DataTable from details in the data of another.">
+                                            <a href="datatable-masterdetail.html">Master and detail tables</a>
+                                        </li>
+                                    
+                                
+                                    
+                                        <li data-description="Checkbox column that retains checked state when sorting.">
+                                            <a href="datatable-chkboxselect.html">Checkbox select column</a>
+                                        </li>
+                                    
+                                
+                                    
+                                        <li data-description="Using the paginator.">
+                                            <a href="datatable-paginator.html">DataTable with Paginator</a>
+                                        </li>
+                                    
+                                
+                                    
+                                
+                            </ul>
+                        </div>
+                    </div>
+                
+
+                
+                    <div class="sidebox">
+                        <div class="hd">
+                            <h2 class="no-toc">Examples That Use This Component</h2>
+                        </div>
+
+                        <div class="bd">
+                            <ul class="examples">
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                
+                                    
+                                        <li data-description="Shows how to instantiate multiple Panel instances, and use nested modality to interact with a Datatable.">
+                                            <a href="../panel/panel-form.html">Creating a Modal Form</a>
+                                        </li>
+                                    
+                                
+                            </ul>
+                        </div>
+                    </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+
+<script>
+YUI.Env.Tests = {
+    examples: [],
+    project: '../assets',
+    assets: '../assets/datatable',
+    name: 'datatable-colorsort',
+    title: 'Color Sorting and Filtering',
+    newWindow: '',
+    auto:  false 
+};
+YUI.Env.Tests.examples.push('datatable-basic');
+YUI.Env.Tests.examples.push('datatable-dsget');
+YUI.Env.Tests.examples.push('datatable-dsio');
+YUI.Env.Tests.examples.push('datatable-formatting');
+YUI.Env.Tests.examples.push('datatable-nestedcols');
+YUI.Env.Tests.examples.push('datatable-sort');
+YUI.Env.Tests.examples.push('datatable-colorsort');
+YUI.Env.Tests.examples.push('datatable-scroll');
+YUI.Env.Tests.examples.push('datatable-recordtype');
+YUI.Env.Tests.examples.push('datatable-masterdetail');
+YUI.Env.Tests.examples.push('datatable-chkboxselect');
+YUI.Env.Tests.examples.push('datatable-paginator');
+YUI.Env.Tests.examples.push('panel-form');
+
+</script>
+<script src="../assets/yui/test-runner.js"></script>
+
+
+
+</body>
+</html>

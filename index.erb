@@ -24,8 +24,10 @@
 <% if development %>
 	<script type="text/javascript" src="js/joose.mini.js"></script>
 	<script type="text/javascript" src="js/ms-rand.js"></script>
-	<script type="text/javascript" src="js/yui-all-min.js"></script>
+	<script type="text/javascript" src="js/yui-debug.js"></script>
+<% if true %>
 	<script type="text/javascript" src="js/yui-breakout.js"></script>
+<% end %>
 	<script type="text/javascript" src="js/solitaire.js"></script>
 	<script type="text/javascript" src="js/iphone.js"></script>
 	<script type="text/javascript" src="js/auto-stack-clear.js"></script>
@@ -55,20 +57,6 @@
 	<script type="text/javascript" src="js/application.js"></script>
 <% else %>
 	<script type="text/javascript" src="js/combined-min.js"></script>
-<script type="text/javascript">
-
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-9447574-2']);
-  _gaq.push(['_trackPageview']);
-
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-
-</script>
-<script type="text/javascript">var switchTo5x=false;</script><script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script><script type="text/javascript">stLight.options({publisher:'85c2f50b-8b7b-41dc-baf0-a2d273906b91'});</script>
 <% end %>
 	<script type="text/javascript" src="js/libfreecell-solver.min.js"></script>
 	<script type="text/javascript" src="js/web-fc-solve--expand-moves.js"></script>
@@ -78,7 +66,6 @@
 <body>
 <% unless development %>
 <div id=social>
-	<iframe id="fb" src="http://www.facebook.com/plugins/like.php?href=www.solitairey.com&amp;layout=button_count&amp;show_faces=false&amp;width=50&amp;action=like&amp;colorscheme=light&amp;height=21" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:100px; height:21px;" allowTransparency="true"></iframe>
 	<span class='st_sharethis_button' displayText='ShareThis' st_title='Solitairey - A Beautiful HTML5 Solitaire collection'></span>
 </div>
 <% end %>
@@ -392,11 +379,5 @@
                 <button id=close-chooser>Return to game</button>
 	</div>
 	<img src=loading.gif class="loading hidden">
-	<div class="chromestore hidden">
-		<a class=hide>[Hide]</a>
-                <a href=https://chrome.google.com/webstore/detail/dofbnmhnoodmmlhflbcihicmbnhhinhp>
-                  <img src=ChromeWebStore_Badge_v2_206x58.png>
-                </a>
-	</div>
 </body>
 </html>
