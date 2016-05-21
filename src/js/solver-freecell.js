@@ -125,7 +125,7 @@ YUI.add("solver-freecell", function (Y) {
 	}
 
 	var Animation = {
-        interval: 500, // interval: 500,
+        interval: 100, // interval: 500,
 		timer: null,
 		remainingMoves: null,
 
@@ -181,8 +181,11 @@ YUI.add("solver-freecell", function (Y) {
 			//window.clearTimeout(that.timer);
 			//that.timer = undefined; alert('Applebloom');
 			Animation.pause();
-			alert('Applebloom');
-			Y.fire("newAppGame");
+			// alert('Applebloom');
+			window.setTimeout(function () {
+                Y.fire("newAppGame");
+            }, 2000);
+			// Y.fire("newAppGame");
 		},
 
 		playCurrent: function (game) {

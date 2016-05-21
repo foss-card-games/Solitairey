@@ -246,7 +246,7 @@
 
 	function attachEvents() {
 		var that = this;
-		Y.on("newAppGame", function() { alert('pinkie'); return newGame(); });
+		Y.on("newAppGame", function() { return newGame(); });
 		Y.on("click", restart, Y.one("#restart"));
 		Y.on("click", function () { GameChooser.show(false); }, Y.one("#choose_game"));
 		Y.on("click", function () { active.game.undo(); }, Y.one("#undo"));
