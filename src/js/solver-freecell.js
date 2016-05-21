@@ -125,7 +125,7 @@ YUI.add("solver-freecell", function (Y) {
 	}
 
 	var Animation = {
-        interval: 100, // interval: 500,
+        interval: 700, // interval: 500,
 		timer: null,
 		remainingMoves: null,
 
