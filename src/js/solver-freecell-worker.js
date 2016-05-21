@@ -1,3 +1,5 @@
+importScripts('joose.mini.js', 'libfreecell-solver.min.js', 'web-fc-solve--expand-moves.js', 'web-fc-solve.js');
+
 var attempts = 0,
     maxFastAttempts = 150000;
 
@@ -563,8 +565,69 @@ function attemptSolution(obj, fastSearch) {
 	var state_as_string = _render_state_as_string(obj);
 
 	attempts = 0;
-	solve(state, 1, {}, 0, fastSearch);
-	return mapMoves(state);
+
+    var instance = new FC_Solve({
+        cmd_line_preset: 'ct',
+        set_status_callback: function () { return; }
+    });
+
+    var solve_err_code = instance.do_solve(state_as_string);
+
+    while (solve_err_code == FCS_STATE_SUSPEND_PROCESS) {
+        solve_err_code = instance.resume_solution();
+    }
+
+    if (solve_err_code == FCS_STATE_WAS_SOLVED) {
+        var buffer = instance.display_expanded_moves_solution({});
+        var to_int = function(s) { return parseInt(s, 10); };
+
+        var moves_ = instance._post_expand_states_and_moves_seq;
+
+        var current = {};
+        var pre_current = current;
+
+        var ret_moves = current;
+        for (var i = 0; i < moves_.length; i++) {
+            var m = moves_[i];
+
+            if (m.type == 'm') {
+                var str = m.str;
+
+                var move_content = (function () {
+                    var matched = str.match(/^Move 1 cards from stack ([0-9]+) to stack ([0-9]+)/);
+
+
+                    if (matched) {
+                        return { source: ["tableau", to_int(matched[1])], dest: ["tableau", to_int(matched[2])] };
+                    }
+
+                    matched = str.match(/^Move a card from (stack|freecell) ([0-9]+) to the foundations/);
+
+                    if (matched) {
+                        return { source: [(matched[1] == "stack" ? "tableau" : "reserve"), to_int(matched[2])], dest: ["foundation", 1] };
+                    }
+
+                    matched = str.match(/^Move a card from (stack|freecell) ([0-9]+) to (stack|freecell) ([0-9]+)/);
+
+                    if (matched) {
+                        return { source: [(matched[1] == "stack" ? "tableau" : "reserve"), to_int(matched[2])], dest: [(matched[3] == "stack" ? "tableau" : "reserve"), to_int(matched[4])] };
+                    }
+
+                    throw "Must not happen";
+                })();
+
+                pre_current = current;
+                current.source = move_content.source;
+                current.dest = move_content.dest;
+                current.next = {};
+                current = current.next;
+            }
+        }
+        delete pre_current.next;
+
+        return ret_moves;
+    }
+    return;
 }
 
 onmessage = function (e) {
