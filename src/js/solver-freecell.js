@@ -487,22 +487,23 @@ YUI.add("solver-freecell", function (Y) {
                 return ret;
             };
 
+            var exceeded_iters = false;
 	        var instance = new FC_Solve({
                 cmd_line_preset: 'video-editing',
                 // cmd_line_preset: 'default',
-                set_status_callback: function () { return; }
+                set_status_callback: function (status) { if (status == 'exceeded') { exceeded_iters = true; } }
             });
 
             var state_as_string = _render_state_as_string(state);
             var solve_err_code = instance.do_solve(state_as_string);
 
-            while (solve_err_code == FCS_STATE_SUSPEND_PROCESS) {
+            while ((solve_err_code == FCS_STATE_SUSPEND_PROCESS) && (!exceeded_iters)) {
                 solve_err_code = instance.resume_solution();
             }
 
             var ret_moves;
+            var buffer = instance.display_expanded_moves_solution({});
             if (solve_err_code == FCS_STATE_WAS_SOLVED) {
-                var buffer = instance.display_expanded_moves_solution({});
                 var to_int = function(s) { return parseInt(s, 10); };
 
                 var moves_ = instance._post_expand_states_and_moves_seq;
@@ -623,6 +624,9 @@ YUI.add("solver-freecell", function (Y) {
                 }, 3000);
             } else {
                 Status.stopIndicator(false);
+                window.setTimeout(function () {
+                    Y.fire("newAppGame");
+                }, 3000);
             }
 		}
 	});

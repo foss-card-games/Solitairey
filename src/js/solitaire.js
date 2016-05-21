@@ -18,6 +18,10 @@ if (!Array.prototype.indexOf) {
   };  
 }
 
+// For debugging.
+// var pre_canned_seeds = [11982, 11982, 11982, 11982];
+var pre_canned_seeds = [];
+
 Array.prototype.flatten = function () {
 	var result = [],
 	    i,
@@ -305,7 +309,7 @@ Y.mix(Solitaire, {
 		Undo.clear();
 
 		this.stationary(function () {
-            var seed = Math.floor( 1 + Math.random() * (1 << 30) );
+            var seed = pre_canned_seeds.length ? pre_canned_seeds.shift() : Math.floor( 1 + Math.random() * (((1 << 30)-2)<<1) );
             this.seed = seed;
 			this.init(seed);
 			Y.Solitaire.Animation.initQueue();

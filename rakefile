@@ -116,7 +116,8 @@ task :clean do
 end
 
 task :upload => :default do
-  sh "rsync --progress --inplace -a -v dest hostgator:public_html/temp-Solitairey-ekrimyk/"
+  # sh "rsync --progress --inplace -a -v dest hostgator:public_html/temp-Solitairey-ekrimyk/"
+  sh "rsync --progress --inplace -a -v dest hostgator:public_html/temp-Solitairey-fc-solve-loop-NjU78o/"
 end
 
 task :default => [DEST_INDEX, DEST_INDEX_DEV, :images]
