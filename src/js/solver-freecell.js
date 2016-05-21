@@ -89,6 +89,10 @@ YUI.add("solver-freecell", function (Y) {
 			}
 		}, source[0]);
 
+		if (! ret.card ) {
+			throw "Excalibur";
+		}
+
 		value = dest[1];
 		game.eachStack(function (stack) {
 			if (ret.stack) { return; }
@@ -103,6 +107,10 @@ YUI.add("solver-freecell", function (Y) {
 				ret.stack = stack;
 			}
 		}, dest[0]);
+
+		if (! ret.stack ) {
+			throw "Must not happen";
+		}
 
 		return ret;
 	}
@@ -400,15 +408,36 @@ YUI.add("solver-freecell", function (Y) {
 
             var state = gameToState(Game);
 
+            var _suits = ['S', 'H', 'C', 'D'];
+            var _ranks = ['A', '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K'];
+
+            function _rev (arr, delta) {
+                var ret = {}
+                for (var i = 0; i < arr.length; i++) {
+                    ret[arr[i]] = delta+i;
+                }
+                return ret;
+            }
+            var _suits_rev = _rev(_suits, 0);
+            var _ranks_rev = _rev(_ranks, 1);
+
+            function _str_to_c (s) {
+                var m = s.match(/^(.)(.)$/);
+                if (! m) {
+                    throw "Should not happen";
+                }
+                return (( _ranks_rev[m[1]] << 2) | _suits_rev[m[2]]);
+            }
+
             function _render_state_as_string (obj) {
                 var ret = '';
 
                 function _render_suit (c) {
-                    return ['S', 'H', 'C', 'D'][c & 0x3];
+                    return _suits[c & 0x3];
                 }
 
                 function _render_rank (c) {
-                    return ['A', '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K'][(c >> 2)-1];
+                    return _ranks[(c >> 2)-1];
                 }
 
 
@@ -480,25 +509,90 @@ YUI.add("solver-freecell", function (Y) {
 
                     if (m.type == 'm') {
                         var str = m.str;
+                        var pre_s = moves_[i-1].str.split("\n");
+                        var post_s = moves_[i+1].str.split("\n");
+
+                        function _get_stack_c (src) {
+                            var arr = pre_s[src+2].replace(/ *$/, '').split(' ');
+                            var src_c_s = arr[arr.length-1];
+                            if (src_c_s == ':') {
+                                return 0;
+                            } else {
+                                return  _str_to_c(src_c_s);
+                            }
+                        }
+
+                        function _get_freecell_c (idx) {
+                            var fc_line = pre_s[1];
+
+                            var re = '^Freecells:' + (idx == 0 ? '' : ('(?:....){' + idx + '}')) + '(....)';
+
+                            var pat = new RegExp(re, '');
+                            var matched = fc_line.match(pat);
+
+                            if (!matched) {
+                                return 0;
+                            } else {
+                                var c_s = matched[1].substring(2,4);
+                                return ((c_s == '  ') ? 0 : _str_to_c(c_s));
+                            }
+                        }
+
+                        function _get_foundation_rank (f) {
+                            var f_line = pre_s[0];
+                            var re = f + '-' + '([0A2-9TJQK])';
+                            var pat = new RegExp(re, '');
+                            var matched = f_line.match(pat);
+
+                            var m = matched[1];
+                            return (m == '0' ? 0 : _ranks_rev[m]);
+                        }
 
                         var move_content = (function () {
                             var matched = str.match(/^Move 1 cards from stack ([0-9]+) to stack ([0-9]+)/);
 
-
                             if (matched) {
-                                return { source: ["tableau", to_int(matched[1])], dest: ["tableau", to_int(matched[2])] };
+                                var src = to_int(matched[1]);
+                                var dest = to_int(matched[2]);
+                                var src_c = _get_stack_c(src);
+                                var dest_c = _get_stack_c(dest);
+                                return { source: ["tableau", src_c], dest: ["tableau", dest_c] };
                             }
 
                             matched = str.match(/^Move a card from (stack|freecell) ([0-9]+) to the foundations/);
 
                             if (matched) {
-                                return { source: [(matched[1] == "stack" ? "tableau" : "reserve"), to_int(matched[2])], dest: ["foundation", 1] };
+                                var src = to_int(matched[2]);
+                                var t = matched[1];
+
+                                var m_t;
+                                var src_c;
+
+                                if (t == "stack") {
+                                    src_c = _get_stack_c(src);
+                                    m_t = "tableau";
+                                } else {
+                                    src_c = _get_freecell_c(src);
+                                    m_t = "reserve";
+                                }
+
+                                var f_suit = src_c & 0x3;
+                                var f_rank = _get_foundation_rank(_suits[f_suit]);
+                                var f_c = ((f_rank == 0) ? false : ((f_rank << 2) | f_suit));
+
+                                return { source: [m_t, src_c], dest: ["foundation", f_c] };
                             }
 
-                            matched = str.match(/^Move a card from (stack|freecell) ([0-9]+) to (stack|freecell) ([0-9]+)/);
+                            matched = str.match(/^Move a card from stack ([0-9]+) to freecell ([0-9]+)/);
 
                             if (matched) {
-                                return { source: [(matched[1] == "stack" ? "tableau" : "reserve"), to_int(matched[2])], dest: [(matched[3] == "stack" ? "tableau" : "reserve"), to_int(matched[4])] };
+                                return { source: ["tableau", _get_stack_c(to_int(matched[1]))], dest: ["reserve", _get_freecell_c(to_int(matched[2]))] };
+                            }
+
+                            matched = str.match(/^Move a card from freecell ([0-9]+) to stack ([0-9]+)/);
+
+                            if (matched) {
+                                return { source: ["reserve", _get_freecell_c(to_int(matched[1]))], dest: ["tableau", _get_stack_c(to_int(matched[2]))],  };
                             }
 
                             throw "Must not happen";
