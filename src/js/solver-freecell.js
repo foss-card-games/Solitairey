@@ -618,7 +618,9 @@ YUI.add("solver-freecell", function (Y) {
             Animation.init(solution);
             if (solution) {
                 Status.stopIndicator(true);
-                Animation.play(Game);
+                window.setTimeout(function () {
+                    Animation.play(Game);
+                }, 3000);
             } else {
                 Status.stopIndicator(false);
             }
