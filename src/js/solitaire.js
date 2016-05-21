@@ -305,7 +305,9 @@ Y.mix(Solitaire, {
 		Undo.clear();
 
 		this.stationary(function () {
-			this.init();
+            var seed = Math.floor( 1 + Math.random() * (1 << 30) );
+            this.seed = seed;
+			this.init(seed);
 			Y.Solitaire.Animation.initQueue();
 			this.createStacks();
 			this.createEvents();
@@ -395,7 +397,7 @@ Y.mix(Solitaire, {
 
 		f.stacks = stacks;
 
-		typeof f.init === "function" && f.init();
+		typeof f.init === "function" && f.init(this.seed);
 
 		return f;
 	},
