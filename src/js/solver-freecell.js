@@ -382,22 +382,149 @@ YUI.add("solver-freecell", function (Y) {
 			});
 
 			this.currentSolution = null;
-			this.worker = new Worker("js/solver-freecell-worker.js");
-			this.worker.onmessage = function (e) {
-				var solution = this.currentSolution = e.data.solution;
-
-				Animation.init(solution);
-				if (solution) {
-					Status.stopIndicator(true);
-				} else {
-					Status.stopIndicator(false);
-				}
-			}.bind(this);
-
-			this.worker.postMessage({action: "solve", param: gameToState(Game)});
-
 			window.clearTimeout(Status.indicatorTimer);
 			Status.indicatorTimer = window.setTimeout(Status.updateIndicator.bind(Status), Status.delay);
+            if (false) {
+                this.worker = new Worker("js/solver-freecell-worker.js");
+                this.worker.onmessage = function (e) {
+                    var solution = this.currentSolution = e.data.solution;
+
+                    Animation.init(solution);
+                    if (solution) {
+                        Status.stopIndicator(true);
+                    } else {
+                        Status.stopIndicator(false);
+                    }
+                }.bind(this);
+            }
+
+            var state = gameToState(Game);
+
+            function _render_state_as_string (obj) {
+                var ret = '';
+
+                function _render_suit (c) {
+                    return ['S', 'H', 'C', 'D'][c & 0x3];
+                }
+
+                function _render_rank (c) {
+                    return ['A', '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K'][(c >> 2)-1];
+                }
+
+
+                var reserve = obj.reserve;
+                var foundation = obj.foundation;
+                ret += 'Foundations:' + foundation.map(function (c) {
+                    if (c == 0) {
+                        return '';
+                    }
+                    else {
+                        return ' ' + _render_suit(c) + '-' + _render_rank(c);
+                    }
+                }).join('') + "\n";
+
+                ret += 'Freecells:' + reserve.map(function (c) {
+                    if (c == 0) {
+                        return ' -';
+                    } else {
+                        return ' ' + _render_rank(c) + _render_suit(c);
+                    }
+                }).join('') + "\n";
+
+                for (var i = 0; i < obj.tableau.length; i++) {
+                    var stack = obj.tableau[i];
+                    var l = stack[1];
+                    var s = stack[0];
+
+                    ret += ':';
+                    for (var j = 0; j < l ; j++) {
+                        var c = s[j];
+                        ret += ' ' + _render_rank(c) + _render_suit(c);
+                    }
+                    ret += "\n";
+                }
+
+                console.log("Board = <<" + ret + ">>");
+
+                return ret;
+            };
+
+            // We need to run this line in order to get FC_Solve working
+            // in the worker thread. Don't know why.
+            var instance = new FC_Solve({
+                cmd_line_preset: 'ct',
+                // cmd_line_preset: 'default',
+                set_status_callback: function () { return; }
+            });
+
+            var state_as_string = _render_state_as_string(state);
+            var solve_err_code = instance.do_solve(state_as_string);
+
+            while (solve_err_code == FCS_STATE_SUSPEND_PROCESS) {
+                solve_err_code = instance.resume_solution();
+            }
+
+            var ret_moves;
+            if (solve_err_code == FCS_STATE_WAS_SOLVED) {
+                var buffer = instance.display_expanded_moves_solution({});
+                var to_int = function(s) { return parseInt(s, 10); };
+
+                var moves_ = instance._post_expand_states_and_moves_seq;
+
+                var current = {};
+                var pre_current = current;
+
+                ret_moves = current;
+                for (var i = 0; i < moves_.length; i++) {
+                    var m = moves_[i];
+
+                    if (m.type == 'm') {
+                        var str = m.str;
+
+                        var move_content = (function () {
+                            var matched = str.match(/^Move 1 cards from stack ([0-9]+) to stack ([0-9]+)/);
+
+
+                            if (matched) {
+                                return { source: ["tableau", to_int(matched[1])], dest: ["tableau", to_int(matched[2])] };
+                            }
+
+                            matched = str.match(/^Move a card from (stack|freecell) ([0-9]+) to the foundations/);
+
+                            if (matched) {
+                                return { source: [(matched[1] == "stack" ? "tableau" : "reserve"), to_int(matched[2])], dest: ["foundation", 1] };
+                            }
+
+                            matched = str.match(/^Move a card from (stack|freecell) ([0-9]+) to (stack|freecell) ([0-9]+)/);
+
+                            if (matched) {
+                                return { source: [(matched[1] == "stack" ? "tableau" : "reserve"), to_int(matched[2])], dest: [(matched[3] == "stack" ? "tableau" : "reserve"), to_int(matched[4])] };
+                            }
+
+                            throw "Must not happen";
+                        })();
+
+                        pre_current = current;
+                        current.source = move_content.source;
+                        current.dest = move_content.dest;
+                        current.next = {};
+                        current = current.next;
+                    }
+                }
+                delete pre_current.next;
+            }
+            var solution = ret_moves;
+            Animation.init(solution);
+            if (solution) {
+                Status.stopIndicator(true);
+            } else {
+                Status.stopIndicator(false);
+            }
+
+            if (false) {
+                this.worker.postMessage({action: "solve", param: state});
+            }
+
 		}
 	});
 

@@ -568,6 +568,7 @@ function attemptSolution(obj, fastSearch) {
 
     var instance = new FC_Solve({
         cmd_line_preset: 'ct',
+        // cmd_line_preset: 'default',
         set_status_callback: function () { return; }
     });
 
