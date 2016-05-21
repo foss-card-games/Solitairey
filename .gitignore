@@ -7,5 +7,6 @@
 /dest/index.html
 /dest/js/*.js
 /dest/js/libfreecell-solver.js.mem
+/dest/js/yui-unpack
 /dest/layouts
 /dest/libfreecell-solver.js.mem
