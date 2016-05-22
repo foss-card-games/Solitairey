@@ -1,6 +1,7 @@
 /*
  * Automatically solve a game of Freecell
  */
+var WITH_UI = false; // Remove UI clutter for the demo.
 YUI.add("solver-freecell", function (Y) {
 	Y.namespace("Solitaire.Solver.Freecell");
 
@@ -148,10 +149,10 @@ YUI.add("solver-freecell", function (Y) {
 			window.clearTimeout(this.timer);
 			this.timer = null;
 
-			withSelector("#solver_bar .pause", function (node) {
+			if (WITH_UI) { /* Remove UI clutter for the demo */ withSelector("#solver_bar .pause", function (node) {
 				node.removeClass("pause");
 				node.addClass("play");
-			});
+			}); }
 		},
 
 		_playCurrentHelper: function (game) {
@@ -232,10 +233,10 @@ YUI.add("solver-freecell", function (Y) {
 
 			Solitaire.Autoplay.disable();
 
-			withSelector("#solver_bar .play", function (node) {
+			if (WITH_UI) { withSelector("#solver_bar .play", function (node) {
 				node.removeClass("play");
 				node.addClass("pause");
-			});
+			}); }
 
 			this.next(game);
 			if (this.remainingMoves) {
@@ -279,9 +280,9 @@ YUI.add("solver-freecell", function (Y) {
 
 			if (solved) {
 				indicator.set("text", "Solution found");
-				withSelector("#solver_bar .controls", function (node) {
+				if (WITH_UI) { withSelector("#solver_bar .controls", function (node) {
 					node.removeClass("hidden");
-				});
+				}); }
 
 			} else {
 				indicator.set("text", "Unable to find solution");
@@ -291,6 +292,8 @@ YUI.add("solver-freecell", function (Y) {
 		},
 
 		show: function () {
+
+			if (!WITH_UI) { return; } // remove UI clutter for the demo
 			if (Y.one("#solver_bar")) { return; }
 
 			var bar = Y.Node.create("<div id=solver_bar></div>"),
@@ -407,9 +410,10 @@ YUI.add("solver-freecell", function (Y) {
 		solve: function () {
 			this.stop();
 
-			withSelector("#solver_bar .controls", function (node) {
+			// Remove UI clutter for the demo.
+			if (WITH_UI) { withSelector("#solver_bar .controls", function (node) {
 				node.addClass("hidden");
-			});
+			}); }
 
 			this.currentSolution = null;
 			window.clearTimeout(Status.indicatorTimer);
