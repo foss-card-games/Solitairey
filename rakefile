@@ -63,6 +63,7 @@ src = "src/#{YUI_DIST}"
 dest = "dest/#{YUI_DIST}"
 file dest => src do
     sh "rsync -a #{src} #{dest}"
+    sh "rm -fr #{dest}/yui/api"
 end
 file ALL => dest
 
