@@ -525,13 +525,14 @@ YUI.add("solver-freecell", function (Y) {
             });
 
             var state_as_string = _render_state_as_string(state);
+            var ret_moves;
+            try {
             var solve_err_code = instance.do_solve(state_as_string);
 
             while ((solve_err_code == FCS_STATE_SUSPEND_PROCESS) && (!exceeded_iters)) {
                 solve_err_code = instance.resume_solution();
             }
 
-            var ret_moves;
             var buffer = instance.display_expanded_moves_solution({});
             if (solve_err_code == FCS_STATE_WAS_SOLVED) {
                 var to_int = function(s) { return parseInt(s, 10); };
@@ -645,6 +646,9 @@ YUI.add("solver-freecell", function (Y) {
                 }
                 delete pre_current.next;
             }
+            } catch (e) {
+                _my_mod_counter = MAX_MOD_COUNTER + 5;
+            };
             var solution = ret_moves;
             Animation.init(solution);
             if (solution) {
