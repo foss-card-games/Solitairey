@@ -2,6 +2,29 @@
  * Automatically solve a game of Freecell
  */
 var WITH_UI = false; // Remove UI clutter for the demo.
+
+var _my_module;
+var MAX_MOD_COUNTER = 5;
+var _my_mod_counter = MAX_MOD_COUNTER;
+
+function _init_my_module () {
+    // alert('_my_mod_counter = <' + _my_mod_counter + '> _my_module = <' + _my_module + '> pinkiepie');
+    if (_my_mod_counter >= MAX_MOD_COUNTER) {
+        // alert('_my_mod_counter = <' + _my_mod_counter + '> _my_module = <' + _my_module + '> applej');
+        // Create a fresh instance to avoid failed allocs due to
+        // memory fragmentation.
+        _my_module = Module({});
+        FC_Solve_init_wrappers_with_module(_my_module);
+        _my_mod_counter = 0;
+        // alert('_my_mod_counter = <' + _my_mod_counter + '> _my_module = <' + _my_module + '> applebloom');
+    } else {
+        _my_mod_counter++;
+        // alert('_my_mod_counter = <' + _my_mod_counter + '> _my_module = <' + _my_module + '> scootaloo');
+    }
+
+    return;
+}
+
 YUI.add("solver-freecell", function (Y) {
 	Y.namespace("Solitaire.Solver.Freecell");
 
@@ -492,8 +515,11 @@ YUI.add("solver-freecell", function (Y) {
             };
 
             var exceeded_iters = false;
+            _init_my_module();
+            window.setTimeout(function () {
 	        var instance = new FC_Solve({
                 cmd_line_preset: 'video-editing',
+                // cmd_line_preset: 'as',
                 // cmd_line_preset: 'default',
                 set_status_callback: function (status) { if (status == 'exceeded') { exceeded_iters = true; } }
             });
@@ -632,7 +658,8 @@ YUI.add("solver-freecell", function (Y) {
                     Y.fire("newAppGame");
                 }, 3000);
             }
-		}
+		}, 100);
+            }
 	});
 
 	Y.on("beforeSetup", FreecellSolver.enable.bind(FreecellSolver));
