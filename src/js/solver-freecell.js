@@ -662,7 +662,7 @@ YUI.add("solver-freecell", function (Y) {
                     Y.fire("newAppGame");
                 }, 3000);
             }
-		}, 100);
+		}, 400);
             }
 	});
 
