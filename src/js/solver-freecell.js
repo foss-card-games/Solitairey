@@ -509,7 +509,9 @@ YUI.add("solver-freecell", function (Y) {
                     ret += "\n";
                 }
 
-                console.log("Board = <<" + ret + ">>");
+                if (false) {
+                    console.log("Board = <<" + ret + ">>");
+                }
 
                 return ret;
             };
