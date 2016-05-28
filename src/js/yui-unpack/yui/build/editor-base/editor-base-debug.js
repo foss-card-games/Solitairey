@@ -187,7 +187,7 @@ YUI.add('editor-base', function (Y, NAME) {
                     }
                 }
             }
-            
+
             if (Y.UA.webkit && e.commands && (e.commands.indent || e.commands.outdent)) {
                 /*
                 * When executing execCommand 'indent or 'outdent' Webkit applies

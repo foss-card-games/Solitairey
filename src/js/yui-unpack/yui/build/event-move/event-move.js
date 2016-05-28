@@ -210,7 +210,7 @@ define(GESTURE_MOVE_START, {
         if (!_checkDocumentElem(node)) {
             _setTouchActions(node);
         }
-        
+
         subscriber[_MOVE_START_HANDLE] = node.on(EVENT[START],
             this._onStart,
             this,
@@ -405,7 +405,7 @@ define(GESTURE_MOVE, {
         // if the passed node is NOT the document itself, modify the ms-pointer
         // behavior to prevent scrolling, highlighting, etc.
         if (!_checkDocumentElem(node)) {
-            _setTouchActions(node);         
+            _setTouchActions(node);
         }
 
         root = _getRoot(node, subscriber, EVENT[MOVE]);
@@ -540,7 +540,7 @@ define(GESTURE_MOVE_END, {
         if (!_checkDocumentElem(node)) {
             _setTouchActions(node);
         }
-        
+
         root = _getRoot(node, subscriber);
         endHandle = root.on(EVENT[END],
             this._onEnd,

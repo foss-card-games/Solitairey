@@ -125,7 +125,7 @@
 		select: function (game) {
 			var node = Y.one("#" + game + "> div"),
 			    previous = this.selected;
-			
+
 			if (previous !== game) {
 				this.unSelect();
 			}
@@ -401,7 +401,7 @@
 				Fade.hide();
 			}
 		},
-	
+
 		load: function (path) {
 			var image = new Image;
 

@@ -74,7 +74,7 @@ Y.mix(Y.Loader.prototype, {
                 // Generate custom combo urls.
                 comboUrls = this._customResolve(resolvedMods, type);
 
-                    
+
                 resolved[type] = resolved[type].concat(comboUrls);
             }
         }

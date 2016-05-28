@@ -84,12 +84,12 @@ YUI.add("agnes", function (Y) {
 
 			Stack: instance(Klondike.Stack, {
 				images: {},
-				
+
 				setCardPosition: function (card) {
 					var last = this.last(),
 					    top = last ? last.top + last.rankHeight : this.top,
 					    left = this.left;
-					    
+
 					card.top = top;
 					card.left = left;
 				}

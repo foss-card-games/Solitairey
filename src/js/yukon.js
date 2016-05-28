@@ -17,7 +17,7 @@ var Solitaire = Y.Solitaire,
 
 			for (stack = 7 - piles; stack < 7; stack++) {
 				card = deck.pop();
-				stacks[stack].push(card);			
+				stacks[stack].push(card);
 			}
 			piles--;
 		}

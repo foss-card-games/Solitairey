@@ -409,18 +409,18 @@ YUI.add("solitaire-ios", function (Y) {
 
 		o = option[orientation];
 		return o ? o : option[LANDSCAPE];
-			
+
 	}
 
 	function getOption(name) {
 		var game = Solitaire.name(),
 		    options = OPTIONS[game],
 		    dfault = DEFAULTS[name],
-		    option = options ? options[name] : dfault; 
+		    option = options ? options[name] : dfault;
 
 		return optionWithOrientation(option ? option : dfault) || dfault;
 	}
-	
+
 	function scale() {
 		_scale.call(Solitaire.game, getOption("scale"));
 	}

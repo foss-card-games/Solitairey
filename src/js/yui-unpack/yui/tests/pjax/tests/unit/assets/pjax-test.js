@@ -428,7 +428,7 @@ suite.add(new Y.Test.Case({
     },
 
     '`navigate` event should not fire for a hash URL that resolves to the current page when allowFallThrough is set to `false`': function () {
-        this.pjax.set("allowFallThrough", false); 
+        this.pjax.set("allowFallThrough", false);
         this.pjax.on('navigate', function (e) {
             Assert.fail();
         });

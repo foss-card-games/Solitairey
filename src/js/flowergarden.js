@@ -14,7 +14,7 @@ var Solitaire = Y.Solitaire,
 
 		for (i = 0; i < 36; i++) {
 			card = deck.pop();
-			stacks[stack].push(card.faceUp());			
+			stacks[stack].push(card.faceUp());
 			stack++;
 			if (stack === 6) { stack = 0; }
 		}

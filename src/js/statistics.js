@@ -105,7 +105,7 @@ YUI.add("statistics", function (Y) {
                         WillOTheWisp: "Will O' The Wisp",
 			TriTowers: "Tri Towers",
 			Yukon: "Yukon"},
-		    
+
 		    stats = Record(localStorage[Solitaire.game.name() + "record"]),
 
 		    streakCount, winCount, loseCount,

@@ -598,11 +598,11 @@ exports.invokePartial = invokePartial;function noop() { return ""; }
 
 exports.noop = noop;function initData(context, data) {
     if(!data || (typeof data !== "object")) {
-        data = {root: context};   
+        data = {root: context};
     } else if(!('root' in data)) {
         data = createFrame(data);
         data.root = context;
-    } 
+    }
     return data;
 }
 }(Handlebars.VM, Handlebars.Utils, Handlebars.Exception, Handlebars.createFrame, Handlebars.COMPILER_REVISION, Handlebars.REVISION_CHANGES));

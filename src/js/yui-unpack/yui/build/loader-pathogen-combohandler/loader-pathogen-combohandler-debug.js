@@ -78,7 +78,7 @@ Y.mix(Y.Loader.prototype, {
                 Y.log(Y.dump(resolved[type]), 'info', NAME);
                 Y.log('Custom encoding resulted in ' + comboUrls.length + ' URLs', 'info', NAME);
                 Y.log(Y.dump(comboUrls), 'info', NAME);
-                    
+
                 resolved[type] = resolved[type].concat(comboUrls);
             }
         }

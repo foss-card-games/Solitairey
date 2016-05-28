@@ -169,7 +169,7 @@ YUI.add("tri-towers", function (Y) {
 				return Math.floor(index / stackIndex);
 			}
 		}),
-		     
+
 		Stack: instance(Solitaire.Stack, {
 			images: {}
 		})

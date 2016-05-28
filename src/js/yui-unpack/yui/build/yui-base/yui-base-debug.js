@@ -548,7 +548,7 @@ proto = {
             mods = YUI.Env.mods,
             extendedCore = Y.config.extendedCore || [],
             extras = Y.config.core || [].concat(YUI.Env.core).concat(extendedCore); //Clone it..
-   
+
         for (i = 0; i < extras.length; i++) {
             if (mods[extras[i]]) {
                 core.push(extras[i]);

@@ -120,7 +120,7 @@ YUI.add("golf", function (Y) {
 				return !this.isFaceDown && this === this.stack.last();
 			},
 		}),
-		     
+
 		Stack: instance(Solitaire.Stack, {
 			images: {}
 		})

@@ -91,7 +91,7 @@ YUI.add('pathogen-encoder-tests', function (Y) {
             modules = subgroups.pop().split(MODULE_DELIM);
             Assert.areEqual(2, modules.length, 'Unexpected number of modules');
         },
-        
+
         'test basic formatting for root groups': function () {
             var loader = new Y.Loader({
                     combine: true,
@@ -194,7 +194,7 @@ YUI.add('pathogen-encoder-tests', function (Y) {
             Assert.areEqual(3, groups.length, 'Unexpected number of groups');
         }
     }));
-    
+
     suite.add(new Y.Test.Case({
         name: 'Test Complex URL Formatting',
 
@@ -310,7 +310,7 @@ YUI.add('pathogen-encoder-tests', function (Y) {
             Assert.isTrue(modules.length > 0, 'Unexpected number of modules');
         }
     }));
-    
+
     suite.add(new Y.Test.Case({
         name: 'Test non-compressed fullpath modules',
 
@@ -377,6 +377,6 @@ YUI.add('pathogen-encoder-tests', function (Y) {
             Assert.isTrue(resolved.js[0].indexOf('http://yui.yahooapis.com/combo?') > -1, 'Default YUI combo URL should be included in the result ');
         }
     }));
-    
+
     Y.Test.Runner.add(suite);
 });

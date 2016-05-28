@@ -55,7 +55,7 @@ YUI.add('datatable-colorsort-tests', function(Y) {
             tds = Y.all(tableSelector + 'td'); // refresh the nodeList
             Assert.areEqual(40, trs.size(), ' - Wrong number of tr after filter');
             Assert.areEqual('palevioletred', tds.item(1).getHTML(), ' - Wrong text in col 1 row 1 after filter "mid-tones"');
-            
+
             th.item(4).simulate('click');
             tds = Y.all(tableSelector + 'td'); // refresh the nodeList
             Assert.areEqual('deeppink', tds.item(1).getHTML(), ' - Wrong text in col 1 row 1 after sort "brightness" on "mid-tones" filter');

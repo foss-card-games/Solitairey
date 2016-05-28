@@ -18,7 +18,7 @@ var Solitaire = Y.Solitaire,
 		for (row = 0; row < 5; row++) {
 			for (stack = 0; stack < 10; stack++) {
 				if (stack < 4 || row < 4) {
-					stacks[stack].push(deck.pop());			
+					stacks[stack].push(deck.pop());
 				}
 			}
 		}
@@ -99,7 +99,7 @@ var Solitaire = Y.Solitaire,
 			switch (this.stack.field) {
 			case "tableau":
 				return this.createProxyStack();
-			case "deck": 
+			case "deck":
 				return !hasFreeTableaus(); case "foundation":
 				return false;
 			}

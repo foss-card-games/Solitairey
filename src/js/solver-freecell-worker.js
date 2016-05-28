@@ -64,7 +64,7 @@ GameState.prototype = {
 		    dest,
 		    tableau,
 		    i, len;
-	
+
 		if (!value) { return -1; }
 
 		if (start === undefined) {

@@ -51,7 +51,7 @@ YUI.add("breakout", function (Y) {
 			    container = this._container,
 			    nodes = this._nodes = [],
 			    row,
-			    
+
 			    mask = Y.Node.create(
 				'<div style="width: ' + width + 'px; height: ' + height + 'px; position: absolute; overflow: hidden">'
 				);
@@ -101,7 +101,7 @@ YUI.add("breakout", function (Y) {
 				blockHeight = blockWidth;
 				rows = height / blockHeight;
 			}
-			
+
 			if (!columns) {
 				blockWidth = blockHeight;
 				columns = width / blockWidth;
@@ -128,14 +128,14 @@ YUI.add("breakout", function (Y) {
 			var r, c,
 			    rows = this._rows,
 			    columns = this._columns,
- 
+
 			    options = options || {},
 			    randomization = Math.abs(options.random || 0),
 			    running = 0,
 			    anim,
 			    piece,
 			    delay,
-			    
+
 			    container = this._container,
 			    that = this;
 
@@ -147,7 +147,7 @@ YUI.add("breakout", function (Y) {
 
 					piece = this._nodes[r][c];
 					anim = effect.call(this, piece, r, c, rows, columns);
-					
+
 					delay = r + c;
 					if (options.reverse) {
 						delay = rows + columns - delay;
@@ -158,7 +158,7 @@ YUI.add("breakout", function (Y) {
 
 						if (!running) {
 							that._container.remove();
-							
+
 							options.unhide && that._host.setStyle("visibility", "visible");
 							options.crop && container.setStyle("overflow", "visible");
 
@@ -213,7 +213,7 @@ YUI.add("breakout", function (Y) {
 					node.setStyles(to);
 					to = {left: column * this._blockWidth, top: row * this._blockHeight};
 				}
-				
+
 				anim = new Y.Anim({
 					node: node,
 					easing: easing,
@@ -233,7 +233,7 @@ YUI.add("breakout", function (Y) {
 			    duration = options.duration || 1000,
 			    interval = options.interval || 0,
 			    easing = options.easing || Y.Easing.easeIn;
-			    
+
 			this._forEach(function (node, row, column, rows, columns) {
 				var evenCol = !(column % 2),
 				    evenRow = !(row % 2),
@@ -283,7 +283,7 @@ YUI.add("breakout", function (Y) {
 			var distance = options.distance || 1,
 			    duration = options.duration || 1000,
 			    easing = options.easing || Y.Easing.easeOut;
-			    
+
 			this._forEach(function (node, row, column, rows, columns) {
 				var evenCol = !(column % 2),
 				    evenRow = !(row % 2),
@@ -341,7 +341,7 @@ YUI.add("breakout", function (Y) {
 
 				    y = row * this._blockHeight,
 				    anim;
-				    
+
 				if (distance < 0) { row = rows - row - 1}
 
 				if (options.unhide) {

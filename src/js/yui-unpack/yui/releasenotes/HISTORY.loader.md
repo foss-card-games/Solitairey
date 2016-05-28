@@ -6,12 +6,12 @@ YUI Loader Change History
 
 * [#1974][]: Fix metadata for loader
 
-[#1974]: https://github.com/yui/yui3/pull/1974 
+[#1974]: https://github.com/yui/yui3/pull/1974
 
 3.18.0
 ------
 
-* [#1963][]: Setup Y.config.global to allow for YUI to work on CSP regulated sites and environments like Chrome extensions by providing the global in the user configuration.  
+* [#1963][]: Setup Y.config.global to allow for YUI to work on CSP regulated sites and environments like Chrome extensions by providing the global in the user configuration.
 * [#1959][]: Fixed an issue with `m` is null when `found.configfn` return `false`
 * [#1954][]: Add new configuration option called `defaultBase` to minimize the amount of settings to define per group.
 * [#1950][]: Incorporate pathogen encoding logic in a separate module under loader
