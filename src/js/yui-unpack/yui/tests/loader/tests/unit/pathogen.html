@@ -4,14 +4,14 @@
     <!-- These link tags are required for the css-stamp tests DO NOT REMOVE -->
     <link type="text/css" rel="stylesheet" href="../../../../build/cssgrids/cssgrids.css">
     <link type="text/css" rel="stylesheet" href="../../../../build/widget-base/assets/skins/sam/widget-base.css">
-    <link type="text/css" rel="stylesheet" href="../../../../build/dial/assets/skins/sam/dial.css">    
+    <link type="text/css" rel="stylesheet" href="../../../../build/dial/assets/skins/sam/dial.css">
     <title>Loader Automated Tests</title>
 </head>
 <body class="yui3-skin-sam">
 
 <div id="log"></div>
 
-<!-- This is the main test file, notice it's using the `yui-base` seed file 
+<!-- This is the main test file, notice it's using the `yui-base` seed file
 with an include for the loader-pathogen-encoder module. -->
 <script type="text/javascript" src="../../../../build/yui-base/yui-base.js"></script>
 <script type="text/javascript" src="../../../../build/loader-pathogen-encoder/loader-pathogen-encoder.js"></script>
@@ -53,7 +53,7 @@ var filter = (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'r
 var YUI_config = {
     earlyModuleMeta: true,
     gconfig: true,
-    gfilter: "raw" 
+    gfilter: "raw"
 };
 
 var TestName = 'Loader: Fetch';
@@ -67,7 +67,7 @@ YUI({
     coverage: [ 'loader' ],
     gallery: 'gallery-2013.08.07-20-34',
     allowRollup: false,
-    logExclude: {Dom: true, Selector: true, Node: true, attribute: true, base: true, widget: true },    
+    logExclude: {Dom: true, Selector: true, Node: true, attribute: true, base: true, widget: true },
     filter: YUI_config.gfilter,
     modules: {
         'pathogen-encoder-tests': {

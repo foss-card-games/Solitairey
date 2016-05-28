@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="shortcut icon" type="image/png" href="../assets/favicon.png">
     <script src="../../build/yui/yui-min.js"></script>
-    
+
 </head>
 <body>
 <!--
@@ -19,7 +19,7 @@
     <div id="hd">
         <h1><img src="http://yuilibrary.com/img/yui-logo.png"></h1>
     </div>
-    
+
 
             <h1>Example: Color Sorting and Filtering</h1>
     <div class="yui3-g">
@@ -45,7 +45,7 @@
 }
 .intro {
     min-height: 182px;
-    zoom: 1;    
+    zoom: 1;
 }
 .intro:after {
     content: "";
@@ -69,7 +69,7 @@
 }
 .left-column {
     overflow: hidden;
-    float: left;   
+    float: left;
 }
 .right-column {
     margin-left: 390px;
@@ -180,7 +180,7 @@
     </label>
 </div>
 
-    <script>    
+    <script>
         YUI().use('datatable-sort', 'color-harmony', function (Y) {
 
     // The source of this data is http://www.w3.org/TR/css3-color/
@@ -330,7 +330,7 @@
             sNum, // saturation
             // get the computed brightness from the hex value
             bNum = Y.Color.getBrightness(hex).toString();
-        
+
         // isolate hue part from HSL. converted to 2 digits
         hNum = Math.floor((HSL[0] * 10) / 36.01).toString();
         hNum = (hNum.length < 2) ? ('0' + hNum) : hNum;
@@ -389,7 +389,7 @@
                 getter: function() {
                     // create a new attribute in the model
                     // and generate a sortable color number
-                    // from the hex value for 
+                    // from the hex value for
                     // hue.bright.sat
                     return getColorNum(this.get('hex'), 'hbs');
                 }
@@ -528,7 +528,7 @@ function getColorNum(hex, sortType) {
         sNum, &#x2F;&#x2F; saturation
         &#x2F;&#x2F; get the computed brightness from the hex value
         bNum = Y.Color.getBrightness(hex).toString();
-    
+
     &#x2F;&#x2F; isolate hue part from HSL. converted to 2 digits
     hNum = Math.floor((HSL[0] * 10) &#x2F; 36.01).toString();
     hNum = (hNum.length &lt; 2) ? (&#x27;0&#x27; + hNum) : hNum;
@@ -549,7 +549,7 @@ function getColorNum(hex, sortType) {
 }</pre>
 
 <h2>The DataTable Instance</h2>
-The DataTable instance will include: 
+The DataTable instance will include:
 <ul>
     <li>Column configs that add new columns</li>
     <li>A recordType that will populate the DataTable's ModelList so that some of the additional columns can be sortable</li>
@@ -618,7 +618,7 @@ We're also adding 2 columns that will allow sorting by Hue and Brightness priori
 <h2>RecordType - Sortable Generated Columns</h2>
 <p>
 As described in the <a href="datatable-recordtype.html">Sortable Generated Columns</a> example, we're using a <code>getter</code> to return a color number string from the <code>getColorNum</code> function shown above. This puts these values in the DataTable's ModelList so they'll be filterable and the columns can be sortable.
-</p> 
+</p>
 <pre class="code prettyprint">myTable = new Y.DataTable({
     columns: [
         &#x2F;&#x2F; see the previous code snippet above
@@ -711,7 +711,7 @@ Y.all(&#x27;.filters&#x27;).on(&#x27;click&#x27;, function(e) {
 }
 .left-column {
     overflow: hidden;
-    float: left;   
+    float: left;
 }
 .right-column {
     margin-left: 390px;
@@ -962,7 +962,7 @@ Y.all(&#x27;.filters&#x27;).on(&#x27;click&#x27;, function(e) {
             sNum, &#x2F;&#x2F; saturation
             &#x2F;&#x2F; get the computed brightness from the hex value
             bNum = Y.Color.getBrightness(hex).toString();
-        
+
         &#x2F;&#x2F; isolate hue part from HSL. converted to 2 digits
         hNum = Math.floor((HSL[0] * 10) &#x2F; 36.01).toString();
         hNum = (hNum.length &lt; 2) ? (&#x27;0&#x27; + hNum) : hNum;
@@ -1021,7 +1021,7 @@ Y.all(&#x27;.filters&#x27;).on(&#x27;click&#x27;, function(e) {
                 getter: function() {
                     &#x2F;&#x2F; create a new attribute in the model
                     &#x2F;&#x2F; and generate a sortable color number
-                    &#x2F;&#x2F; from the hex value for 
+                    &#x2F;&#x2F; from the hex value for
                     &#x2F;&#x2F; hue.bright.sat
                     return getColorNum(this.get(&#x27;hex&#x27;), &#x27;hbs&#x27;);
                 }
@@ -1105,9 +1105,9 @@ Y.all(&#x27;.filters&#x27;).on(&#x27;click&#x27;, function(e) {
 
         <div class="yui3-u-1-4">
             <div class="sidebar">
-                
 
-                
+
+
                     <div class="sidebox">
                         <div class="hd">
                             <h2 class="no-toc">Examples</h2>
@@ -1115,87 +1115,87 @@ Y.all(&#x27;.filters&#x27;).on(&#x27;click&#x27;, function(e) {
 
                         <div class="bd">
                             <ul class="examples">
-                                
-                                    
+
+
                                         <li data-description="This example illustrates simple DataTable use cases.">
                                             <a href="datatable-basic.html">Basic DataTable</a>
                                         </li>
-                                    
-                                
-                                    
+
+
+
                                         <li data-description="DataTable loaded with JSON data from a remote webservice via DataSource.Get">
                                             <a href="datatable-dsget.html">DataTable + DataSource.Get + JSON Data</a>
                                         </li>
-                                    
-                                
-                                    
+
+
+
                                         <li data-description="DataTable loaded with XML data from a remote webservice via DataSource.IO.">
                                             <a href="datatable-dsio.html">DataTable + DataSource.IO + XML Data</a>
                                         </li>
-                                    
-                                
-                                    
+
+
+
                                         <li data-description="Custom format data for display.">
                                             <a href="datatable-formatting.html">Formatting Row Data for Display</a>
                                         </li>
-                                    
-                                
-                                    
+
+
+
                                         <li data-description="DataTable with nested column headers.">
                                             <a href="datatable-nestedcols.html">Nested Column Headers</a>
                                         </li>
-                                    
-                                
-                                    
+
+
+
                                         <li data-description="DataTable with column sorting.">
                                             <a href="datatable-sort.html">Column Sorting</a>
                                         </li>
-                                    
-                                
-                                    
+
+
+
                                         <li data-description="Color Sorting with DataTable and Y.Color.">
                                             <a href="datatable-colorsort.html">Color Sorting and Filtering</a>
                                         </li>
-                                    
-                                
-                                    
+
+
+
                                         <li data-description="DataTable with vertical and/or horizontal scrolling rows.">
                                             <a href="datatable-scroll.html">Scrolling DataTable</a>
                                         </li>
-                                    
-                                
-                                    
+
+
+
                                         <li data-description="Using DataTable&#x27;s recordType attribute to create calculated, sortable columns.">
                                             <a href="datatable-recordtype.html">Sortable generated columns</a>
                                         </li>
-                                    
-                                
-                                    
+
+
+
                                         <li data-description="Populating one DataTable from details in the data of another.">
                                             <a href="datatable-masterdetail.html">Master and detail tables</a>
                                         </li>
-                                    
-                                
-                                    
+
+
+
                                         <li data-description="Checkbox column that retains checked state when sorting.">
                                             <a href="datatable-chkboxselect.html">Checkbox select column</a>
                                         </li>
-                                    
-                                
-                                    
+
+
+
                                         <li data-description="Using the paginator.">
                                             <a href="datatable-paginator.html">DataTable with Paginator</a>
                                         </li>
-                                    
-                                
-                                    
-                                
+
+
+
+
                             </ul>
                         </div>
                     </div>
-                
 
-                
+
+
                     <div class="sidebox">
                         <div class="hd">
                             <h2 class="no-toc">Examples That Use This Component</h2>
@@ -1203,41 +1203,41 @@ Y.all(&#x27;.filters&#x27;).on(&#x27;click&#x27;, function(e) {
 
                         <div class="bd">
                             <ul class="examples">
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
-                                
-                                    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                                         <li data-description="Shows how to instantiate multiple Panel instances, and use nested modality to interact with a Datatable.">
                                             <a href="../panel/panel-form.html">Creating a Modal Form</a>
                                         </li>
-                                    
-                                
+
+
                             </ul>
                         </div>
                     </div>
-                
+
             </div>
         </div>
     </div>
@@ -1254,7 +1254,7 @@ YUI.Env.Tests = {
     name: 'datatable-colorsort',
     title: 'Color Sorting and Filtering',
     newWindow: '',
-    auto:  false 
+    auto:  false
 };
 YUI.Env.Tests.examples.push('datatable-basic');
 YUI.Env.Tests.examples.push('datatable-dsget');

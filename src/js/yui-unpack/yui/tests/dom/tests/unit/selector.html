@@ -253,7 +253,7 @@ onload = function() {
                 ArrayAssert.itemsAreEqual([], $('#root-test li', Y.Dom.get('nth-test')), 'id selector w/root false pos');
 
             },
-            
+
             testNthLastChild: function() {
                 var all = Y.Dom.get('nth-test').getElementsByTagName('li');
                 var odd = Y.Dom.getElementsByClassName('even', 'li', 'nth-test');
@@ -267,7 +267,7 @@ onload = function() {
                 ArrayAssert.itemsAreEqual(odd, $('li:nth-last-child(2n+1)'), '2n+1');
                 ArrayAssert.itemsAreEqual(four1, $('li:nth-last-child(4n+1)'), '4n+1');
             },
-            
+
             testNthType: function() {
                 var all = Y.Dom.get('nth-test').getElementsByTagName('li');
                 var odd = Y.Dom.getElementsByClassName('odd', 'li', 'nth-test');
