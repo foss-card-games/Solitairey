@@ -2,7 +2,7 @@ JS_PREFIX = "js"
 JS_SRC_PREFIX="src/js"
 ROOT_PREFIX = "dest"
 PREFIX = "dest/js"
-JS = %w[yui-breakout yui-debug solitaire iphone auto-stack-clear auto-turnover autoplay ie-opera-background-fix statistics ms-rand joose.mini web-fc-solve web-fc-solve--expand-moves solver-freecell solver-freecell-worker agnes golf klondike klondike1t flowergarden fortythieves freecell grandclock montecarlo pyramid russian-solitaire scorpion spider spider1s spider2s spiderette tritowers will-o-the-wisp yukon application]
+JS = %w[yui-breakout yui-debug solitaire iphone auto-stack-clear auto-turnover autoplay ie-opera-background-fix statistics joose.mini ms-rand web-fc-solve web-fc-solve--expand-moves solver-freecell solver-freecell-worker agnes golf klondike klondike1t flowergarden fortythieves freecell grandclock montecarlo pyramid russian-solitaire scorpion spider spider1s spider2s spiderette tritowers will-o-the-wisp yukon application]
 YUI_DIST="js/yui-unpack/"
 YUI_SRC = "ext/yui/yui-all-min.js"
 YUI = "#{PREFIX}/yui-all-min.js"
@@ -107,7 +107,8 @@ end
 
 desc "production file with seperated, unminified source files"
 file DEST_INDEX => [TEMPLATE, COMBINED] do
-  create_index DEST_INDEX
+  # create_index DEST_INDEX
+  create_index DEST_INDEX, true
 end
 
 task :images => DEST_IMAGES
