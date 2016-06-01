@@ -392,7 +392,7 @@ YUI.add("solver-freecell", function (Y) {
 			var pause = Animation.pause.bind(Animation);
 
 			// start the solver if the current game supports it
-			Y.on("afterSetup", function () {
+			Y.on("afterDealingAnimation", function () {
 				if (this.isSupported()) {
 					this.solve();
 				} else {

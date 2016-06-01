@@ -331,6 +331,7 @@ Y.mix(Solitaire, {
 		});
 
 		Y.Solitaire.Animation.dealing = false;
+        Y.fire("afterDealingAnimation");
 	},
 
 	createEvents: function () {
