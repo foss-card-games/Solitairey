@@ -1284,7 +1284,7 @@ Y.Solitaire.Stack = {
 			if (cards.length <= 1) { return; }
 
 			for (i = 0, len = cards.length - 1; i < len; i++) {
-				// if gaps in the stack are allowed, the stack's layed out horizontally
+				// if gaps in the stack are allowed, the stack's laid out horizontally
 				if (!cards[i]) { return; }
 
 				if (cards[i].isFaceDown) {

@@ -5,13 +5,13 @@ YUI.add("breakout", function (Y) {
 
 	/*
 	 * @attribute rows
-	 * @description The number of rows to split the host into. If columns is specified but this isnt, the host is split into squares. Default: 6
+	 * @description The number of rows to split the host into. If columns is specified but this isn't, the host is split into squares. Default: 6
 	 * @type Integer
 	 */
 
 	/*
 	 * @attribute columns
-	 * @description The number of columns to split the host into. If rows is specified but this isnt, the host is split into squares. Default: 6
+	 * @description The number of columns to split the host into. If rows is specified but this isn't, the host is split into squares. Default: 6
 	 * @type Integer
 	 */
 

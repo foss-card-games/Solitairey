@@ -3,7 +3,7 @@ JS_SRC_PREFIX="src/js"
 ROOT_PREFIX = "dest"
 PREFIX = "dest/js"
 JS = %w[yui-breakout yui-debug solitaire iphone auto-stack-clear auto-turnover autoplay ie-opera-background-fix statistics joose.mini ms-rand web-fc-solve web-fc-solve--expand-moves solver-freecell solver-freecell-worker agnes golf klondike klondike1t flowergarden fortythieves freecell grandclock montecarlo pyramid russian-solitaire scorpion spider spider1s spider2s spiderette tritowers will-o-the-wisp yukon application]
-YUI_DIST="js/yui-unpack/"
+YUI_DIST="yui-unpack/"
 YUI_SRC = "ext/yui/yui-all-min.js"
 YUI = "#{PREFIX}/yui-all-min.js"
 ALL = "#{PREFIX}/all.js"
@@ -59,8 +59,8 @@ def js_root_file(fn)
     return dest
 end
 
-src = "src/#{YUI_DIST}"
-dest = "dest/#{YUI_DIST}"
+src = "ext/#{YUI_DIST}"
+dest = "dest/js/#{YUI_DIST}"
 file dest => src do
     sh "rsync -a #{src} #{dest}"
     sh "rm -fr #{dest}/yui/{api,docs,releasenotes,tests}"
@@ -100,12 +100,12 @@ file COMBINED => [YUI, MINIFIED] do
   sh "cat #{YUI} #{MINIFIED} > #{COMBINED}"
 end
 
-desc "development file with seperated, unminified source files"
+desc "development file with separated, unminified source files"
 file DEST_INDEX_DEV => TEMPLATE do
   create_index DEST_INDEX_DEV, true
 end
 
-desc "production file with seperated, unminified source files"
+desc "production file with separated, unminified source files"
 file DEST_INDEX => [TEMPLATE, COMBINED] do
   # create_index DEST_INDEX
   create_index DEST_INDEX, true

@@ -467,7 +467,7 @@ function solve(state, depth, visited, movesSinceFoundation, fastSearch) {
 		return b.rating - a.rating;
 	});
 
-	// if nothing's been moved to the foundation in many turns, backtrack alot of steps
+	// if nothing's been moved to the foundation in many turns, backtrack many steps
 	if (movesSinceFoundation >= 20) {
 		scale = 0.7;
 	}
