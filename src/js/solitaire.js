@@ -323,7 +323,9 @@ Y.mix(Solitaire, {
 		Solitaire.moves = [];
 		Y.fire("afterSetup");
 
-		Y.Solitaire.Animation.dealing = true;
+		var animate = Y.Solitaire.Animation.animate;
+		Y.Solitaire.Animation.animate = false;
+		Y.Solitaire.Animation.dealing = false;
 
 		Game.eachStack(function (s) {
 			s.updateCardsStyle();
@@ -331,6 +333,7 @@ Y.mix(Solitaire, {
 		});
 
 		Y.Solitaire.Animation.dealing = false;
+		Y.Solitaire.Animation.animate = animate;
         Y.fire("afterDealingAnimation");
 	},
 
