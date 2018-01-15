@@ -23,6 +23,7 @@
 	<![endif]>
 <% if development %>
 	<script type="text/javascript" src="js/joose.mini.js"></script>
+	<script type="text/javascript" src="js/require--debug.js"></script>
 	<script type="text/javascript" src="js/ms-rand.js"></script>
 	<script type="text/javascript" src="js/yui-debug.js"></script>
 <% if true %>
@@ -381,5 +382,11 @@
                 <button id=close-chooser>Return to game</button>
 	</div>
 	<img src=loading.gif class="loading hidden">
+<script type="text/javascript">
+requirejs.config({
+    baseUrl: './js',
+    });
+</script>
+
 </body>
 </html>

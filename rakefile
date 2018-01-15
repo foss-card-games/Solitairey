@@ -2,7 +2,7 @@ JS_PREFIX = "js"
 JS_SRC_PREFIX="src/js"
 ROOT_PREFIX = "dest"
 PREFIX = "dest/js"
-JS = %w[yui-breakout yui-debug solitaire iphone auto-stack-clear auto-turnover autoplay ie-opera-background-fix statistics joose.mini ms-rand web-fc-solve web-fc-solve--expand-moves solver-freecell solver-freecell-worker agnes golf klondike klondike1t flowergarden fortythieves freecell grandclock montecarlo pyramid russian-solitaire scorpion spider spider1s spider2s spiderette tritowers will-o-the-wisp yukon application]
+JS = %w[yui-breakout yui-debug solitaire iphone auto-stack-clear auto-turnover autoplay ie-opera-background-fix statistics joose.mini ms-rand web-fc-solve web-fc-solve--expand-moves solver-freecell solver-freecell-worker agnes golf klondike klondike1t flowergarden fortythieves freecell grandclock montecarlo pyramid russian-solitaire scorpion spider spider1s spider2s spiderette tritowers will-o-the-wisp yukon application fcs-validate require require--debug]
 YUI_DIST="yui-unpack/"
 YUI_SRC = "ext/yui/yui-all-min.js"
 YUI = "#{PREFIX}/yui-all-min.js"
@@ -57,6 +57,12 @@ def js_root_file(fn)
         sh "cp -f #{src} #{dest}"
     end
     return dest
+end
+
+dest2 = "src/js/fcs-validate.js"
+src2 = "src/js/fcs-validate.ts"
+file dest2 => src2 do
+    sh "tsc --module amd --out #{dest2} #{src2}"
 end
 
 src = "ext/#{YUI_DIST}"
