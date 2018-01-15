@@ -282,7 +282,19 @@ Y.mix(Solitaire, {
 
 	newGame: function () {
 		Y.Cookie.remove("saved-game");
-		this.setup(this.deal);
+        var that = this;
+        // set up the cards layout here.
+		this.setup(function () {
+            // alert("merwin");
+            var card, stack = 0, stacks = that.tableau.stacks;
+
+            while (card = that.deck.pop()) {
+                stacks[stack].push(card.faceUp());
+                if (++stack === 8) { stack = 0; }
+            }
+
+            return;
+        });
 
 		Game.save("initial-game");
 
