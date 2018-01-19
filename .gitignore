@@ -10,3 +10,4 @@
 /dest/js/yui-unpack
 /dest/layouts
 /dest/libfreecell-solver.js.mem
+src/js/fcs-validate.js
