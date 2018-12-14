@@ -1,7 +1,7 @@
 // Adapted from http://www.inventpartners.com/javascript_is_int - thanks.
 function is_int(input: number): boolean {
     const value: string = "" + input;
-    if ((parseFloat(value) === parseInt(value, 10)) && !isNaN(input)) {
+    if (parseFloat(value) === parseInt(value, 10) && !isNaN(input)) {
         return true;
     } else {
         return false;
@@ -9,7 +9,7 @@ function is_int(input: number): boolean {
 }
 
 const _ranks__int_to_str: string = "0A23456789TJQK";
-const _ranks__str_to_int = {};
+export const ranks__str_to_int = {};
 function _perl_range(start: number, end: number): number[] {
     const ret: number[] = [];
 
@@ -19,41 +19,41 @@ function _perl_range(start: number, end: number): number[] {
 
     return ret;
 }
+export const NUM_SUITS: number = 4;
+const _suits: number[] = _perl_range(0, NUM_SUITS - 1);
+export const MIN_RANK: number = 1;
+export const MAX_RANK: number = 13;
+const _ranks: number[] = _perl_range(MIN_RANK, MAX_RANK);
 
-_perl_range(1, 13).forEach((rank) => {
-    _ranks__str_to_int[_ranks__int_to_str.substring(rank, rank + 1)] = rank;
-});
+for (const rank of _ranks) {
+    ranks__str_to_int[_ranks__int_to_str.substring(rank, rank + 1)] = rank;
+}
 const _suits__int_to_str: string = "HCDS";
-const _suits__str_to_int = {};
-_perl_range(0, 3).forEach((suit) => {
-    _suits__str_to_int[_suits__int_to_str.substring(suit, suit + 1)] = suit;
-});
+export let suits__str_to_int = new Map<string, number>();
+for (const suit of _suits) {
+    suits__str_to_int.set(_suits__int_to_str.substring(suit, suit + 1), suit);
+}
 
 class Card {
-    private rank: number;
-    private suit: number;
-
-    constructor(rank: number, suit: number) {
-        if (! is_int(rank)) {
+    constructor(private rank: number, private suit: number) {
+        if (!is_int(rank)) {
             throw "rank is not an integer.";
         }
-        if (! is_int(suit)) {
+        if (!is_int(suit)) {
             throw "suit is not an integer.";
         }
         if (rank < 1) {
             throw "rank is too low.";
         }
-        if (rank > 13) {
+        if (rank > MAX_RANK) {
             throw "rank is too high.";
         }
         if (suit < 0) {
             throw "suit is negative.";
         }
-        if (suit > 3) {
+        if (suit >= NUM_SUITS) {
             throw "suit is too high.";
         }
-        this.rank = rank;
-        this.suit = suit;
     }
 
     public getRank(): number {
@@ -65,17 +65,65 @@ class Card {
     }
 
     public toString(): string {
-        return _ranks__int_to_str.substring(this.rank, this.rank + 1) +
-            _suits__int_to_str.substring(this.suit, this.suit + 1);
+        return (
+            _ranks__int_to_str.substring(this.rank, this.rank + 1) +
+            _suits__int_to_str.substring(this.suit, this.suit + 1)
+        );
     }
 }
 
-class Column {
-    private cards: Card[];
-
-    constructor(cards: Card[]) {
-        this.cards = cards;
+class BoardTextLine {
+    private newline: string;
+    private comment: string;
+    private prefix: string;
+    private content: string;
+    constructor(public line: string) {
+        const that = this;
+        const m1 = line.match(/^([^\n\r]*)([\n\r]*)$/);
+        that.newline = m1[2];
+        let l = m1[1];
+        if (m1[1].match(/#/)) {
+            const m2 = m1[1].match(/^(.*?)(#.*)/);
+            that.comment = m2[2];
+            l = m2[1];
+        } else {
+            that.comment = "";
+        }
+        if (l.match(/:/)) {
+            const m3 = l.match(/^([^:]*:)(.*)/);
+            that.prefix = m3[1];
+            that.content = m3[2];
+        } else {
+            that.prefix = "";
+            that.content = l;
+        }
+        return;
     }
+    public getContent(): string {
+        return this.content;
+    }
+    public capitalize(): string {
+        const that = this;
+        const ret =
+            that.prefix +
+            that.getContent().toUpperCase() +
+            that.comment +
+            that.newline;
+        return ret;
+    }
+}
+
+export function capitalize_cards(board: string): string {
+    return board
+        .match(/[^\n]*\n?/g)
+        .map((l) => {
+            return new BoardTextLine(l).capitalize();
+        })
+        .join("");
+}
+
+class Column {
+    constructor(private cards: Card[]) {}
 
     public getLen(): number {
         return this.cards.length;
@@ -98,55 +146,59 @@ class Column {
             return that.getCard(i).toString();
         });
     }
+    public toString(): string {
+        const that = this;
+        return (
+            Array.prototype.concat
+                .apply([], [[":"], that.getArrOfStrs()])
+                .join(" ") + "\n"
+        );
+    }
 }
 
-const suit_re: string = '[HCDS]';
-const rank_re: string = '[A23456789TJQK]';
-const card_re: string = '(' + rank_re + ')(' + suit_re + ')';
+const suit_re: string = "[HCDS]";
+const rank_re: string = "[A23456789TJQK]";
+const card_re: string = "(" + rank_re + ")(" + suit_re + ")";
 export function fcs_js__card_from_string(s: string): Card {
-    const m = s.match('^' + card_re + '$');
-    if (! m) {
-        throw "Invalid format for a card - \"" + s + "\"";
+    const m = s.match("^" + card_re + "$");
+    if (!m) {
+        throw 'Invalid format for a card - "' + s + '"';
     }
-    return new Card(_ranks__str_to_int[m[1]], _suits__str_to_int[m[2]]);
+    return new Card(ranks__str_to_int[m[1]], suits__str_to_int.get(m[2]));
 }
 
 class BaseResult {
-    public is_correct: boolean;
-    public start_char_idx: number;
-    public num_consumed_chars: number;
-    public error: string;
-
-    constructor(is_correct: boolean, start_char_idx: number, num_consumed_chars: number, error: string) {
-        this.is_correct = is_correct;
-        this.num_consumed_chars = num_consumed_chars;
-        this.error = error;
-        this.start_char_idx = start_char_idx;
-    }
+    constructor(
+        public is_correct: boolean,
+        public start_char_idx: number,
+        public num_consumed_chars: number,
+        public error: string,
+    ) {}
 
     public getEnd(): number {
-        return (this.start_char_idx + this.num_consumed_chars);
+        return this.start_char_idx + this.num_consumed_chars;
     }
 }
 
 class ColumnParseResult extends BaseResult {
     public col: Column;
 
-    constructor(is_correct: boolean, start_char_idx: number,
-                num_consumed_chars: number, error: string, cards: Card[]) {
+    constructor(
+        is_correct: boolean,
+        start_char_idx: number,
+        num_consumed_chars: number,
+        error: string,
+        cards: Card[],
+    ) {
         super(is_correct, start_char_idx, num_consumed_chars, error);
         this.col = new Column(cards);
     }
 }
 
 class StringParser {
-    private s: string;
-    private consumed: number;
+    private consumed: number = 0;
 
-    constructor(s: string) {
-        this.s = s;
-        this.consumed = 0;
-    }
+    constructor(private s: string) {}
 
     public consume(m: RegExpMatchArray): void {
         const that = this;
@@ -162,7 +214,7 @@ class StringParser {
     }
 
     public isNotEmpty(): boolean {
-        return (this.s.length > 0);
+        return this.s.length > 0;
     }
 
     public match(re: any): RegExpMatchArray {
@@ -177,18 +229,19 @@ class StringParser {
         }
         return m;
     }
+    public skipComments(): void {
+        const that = this;
+        that.consume_match(/^((?:[ \t]*#[^\n\r]*\r?\n)*)/);
+        return;
+    }
 }
 
 class CardsStringParser<CardType> extends StringParser {
-    public cards: CardType[];
-    private is_start: boolean;
-    private card_mapper: ((string) => CardType);
+    public cards: CardType[] = [];
+    private is_start: boolean = true;
 
-    constructor(s: string, card_mapper) {
+    constructor(s: string, private card_mapper: ((string) => CardType)) {
         super(s);
-        this.is_start = true;
-        this.cards = [];
-        this.card_mapper = card_mapper;
     }
 
     public afterStart(): void {
@@ -198,12 +251,14 @@ class CardsStringParser<CardType> extends StringParser {
     }
 
     public getStartSpace(): string {
-        return (this.is_start ? '' : ' +');
+        return this.is_start ? "" : " +";
     }
 
     public should_loop(): boolean {
         const that = this;
-        return (that.isNotEmpty() && (!that.consume_match(/^(\s*(?:#[^\n]*)?\n?)$/)));
+        return (
+            that.isNotEmpty() && !that.consume_match(/^(\s*(?:#[^\n]*)?\n?)$/)
+        );
     }
 
     public add(m: RegExpMatchArray): void {
@@ -213,13 +268,15 @@ class CardsStringParser<CardType> extends StringParser {
         return;
     }
 
-    public loop(re: any, callback: (() => any)): any {
+    public loop(re: any, callback: (() => any)): any {
         const p = this;
 
         while (p.should_loop()) {
-            const m = p.consume_match('^(' + p.getStartSpace() + '(' + re + ')' + ')');
-            if (! m) {
-                p.consume_match('^( *)');
+            const m = p.consume_match(
+                "^(" + p.getStartSpace() + "(" + re + ")" + ")",
+            );
+            if (!m) {
+                p.consume_match("^( *)");
 
                 return callback();
             }
@@ -230,46 +287,56 @@ class CardsStringParser<CardType> extends StringParser {
 }
 
 export function fcs_js__column_from_string(
-    start_char_idx: number, orig_s: string, force_leading_colon: boolean):
-    ColumnParseResult {
+    start_char_idx: number,
+    orig_s: string,
+    force_leading_colon: boolean,
+): ColumnParseResult {
     const p = new CardsStringParser<Card>(orig_s, fcs_js__card_from_string);
 
-    const match = p.consume_match('^((?:\: +)?)');
+    const match = p.consume_match("^((?:: +|:(?:$|(?=\\n)))?)");
 
-    if (force_leading_colon && (!match[1].length)) {
+    if (force_leading_colon && !match[1].length) {
         return new ColumnParseResult(
-            false, start_char_idx, p.getConsumed(),
-            'Columns must start with a ":" in strict mode.', []);
+            false,
+            start_char_idx,
+            p.getConsumed(),
+            'Columns must start with a ":" in strict mode.',
+            [],
+        );
     }
 
     const ret = p.loop(card_re, () => {
         return new ColumnParseResult(
-            false, start_char_idx, p.getConsumed(),
-            'Wrong card format - should be [Rank][Suit]', []);
+            false,
+            start_char_idx,
+            p.getConsumed(),
+            "Wrong card format - should be [Rank][Suit]",
+            [],
+        );
     });
     if (ret) {
         return ret;
     }
 
-    return new ColumnParseResult(true, start_char_idx, p.getConsumed(), '', p.cards);
+    return new ColumnParseResult(
+        true,
+        start_char_idx,
+        p.getConsumed(),
+        "",
+        p.cards,
+    );
 }
 
 type MaybeCard = Card | null;
 
 class Freecells {
-    private num_freecells: number;
-    private cards: MaybeCard[];
-
-    constructor(num_freecells: number, cards: MaybeCard[]) {
+    constructor(private num_freecells: number, private cards: MaybeCard[]) {
         if (!is_int(num_freecells)) {
             throw "num_freecells is not an integer.";
         }
-        this.num_freecells = num_freecells;
-
         if (cards.length !== num_freecells) {
             throw "cards length mismatch.";
         }
-        this.cards = cards;
     }
 
     public getNum(): number {
@@ -291,8 +358,17 @@ class Freecells {
         const that = this;
         return _perl_range(0, that.getNum() - 1).map((i) => {
             const card = that.getCard(i);
-            return ((card !== null) ? card.toString() : '-');
+            return card !== null ? card.toString() : "-";
         });
+    }
+
+    public toString(): string {
+        const that = this;
+        return (
+            Array.prototype.concat
+                .apply([], [["Freecells:"], that.getArrOfStrs()])
+                .join(" ") + "\n"
+        );
     }
 }
 
@@ -300,9 +376,14 @@ class Freecells {
 class FreecellsParseResult extends BaseResult {
     public freecells: Freecells;
 
-    constructor(is_correct: boolean, start_char_idx: number,
-                num_consumed_chars: number, error: string,
-                num_freecells: number, fc: MaybeCard[]) {
+    constructor(
+        is_correct: boolean,
+        start_char_idx: number,
+        num_consumed_chars: number,
+        error: string,
+        num_freecells: number,
+        fc: MaybeCard[],
+    ) {
         super(is_correct, start_char_idx, num_consumed_chars, error);
         if (is_correct) {
             this.freecells = new Freecells(num_freecells, fc);
@@ -311,26 +392,38 @@ class FreecellsParseResult extends BaseResult {
 }
 
 export function fcs_js__freecells_from_string(
-    num_freecells: number, start_char_idx: number, orig_s: string):
-    FreecellsParseResult {
+    num_freecells: number,
+    start_char_idx: number,
+    orig_s: string,
+): FreecellsParseResult {
     const p = new CardsStringParser<MaybeCard>(orig_s, (card_str) => {
-        return ((card_str === '-') ? null :
-            fcs_js__card_from_string(card_str));
+        return card_str === "-" ? null : fcs_js__card_from_string(card_str);
     });
 
     function make_ret(verdict: boolean, err_str: string) {
         return new FreecellsParseResult(
-            verdict, start_char_idx, p.getConsumed(), err_str,
-            num_freecells, verdict ? p.cards : []);
+            verdict,
+            start_char_idx,
+            p.getConsumed(),
+            err_str,
+            num_freecells,
+            verdict ? p.cards : [],
+        );
     }
 
-    if (!p.consume_match(/^(Freecells\: +)/)) {
-        return make_ret(false, 'Wrong line prefix for freecells - should be "Freecells:"');
-    }
-
-    const ret = p.loop("\\-|(?:" + card_re + ')', () => {
+    if (
+        !p.consume_match(
+            new RegExp("^(" + freecells_prefix_re + ":(?: +|$|(?=\\n)))"),
+        )
+    ) {
         return make_ret(
-            false, 'Wrong card format - should be [Rank][Suit]');
+            false,
+            'Wrong line prefix for freecells - should be "Freecells:"',
+        );
+    }
+
+    const ret = p.loop("\\-|(?:" + card_re + ")", () => {
+        return make_ret(false, "Wrong card format - should be [Rank][Suit]");
     });
 
     if (ret) {
@@ -342,18 +435,16 @@ export function fcs_js__freecells_from_string(
     }
 
     if (p.cards.length !== num_freecells) {
-        return make_ret(false, 'Too many cards specified in Freecells line.');
+        return make_ret(false, "Too many cards specified in Freecells line.");
     }
 
-    return make_ret(true, '');
+    return make_ret(true, "");
 }
 
 export class Foundations {
-    private ranks: number[];
+    private ranks: number[] = [-1, -1, -1, -1];
 
-    constructor() {
-        this.ranks = [-1, -1, -1, -1];
-    }
+    constructor() {}
 
     public getByIdx(deck: number, suit: number) {
         this._validateDeckSuit(deck, suit);
@@ -367,7 +458,7 @@ export class Foundations {
             throw "Rank must be an integer.";
         }
 
-        if (! ((rank >= 0 ) && (rank <= 13))) {
+        if (!(rank >= 0 && rank <= MAX_RANK)) {
             throw "rank is out of range.";
         }
 
@@ -382,12 +473,30 @@ export class Foundations {
 
     public finalize(): void {
         const that = this;
-        for (let i = 0; i < 4; i++) {
+        for (let i = 0; i < NUM_SUITS; i++) {
             if (that.getByIdx(0, i) < 0) {
                 that.setByIdx(0, i, 0);
             }
         }
         return;
+    }
+
+    public toString(): string {
+        const that = this;
+        const arr: string[] = [];
+        for (const suit of _suits) {
+            const val = that.getByIdx(0, suit);
+            if (val > 0) {
+                arr.push(
+                    _suits__int_to_str[suit] + "-" + _ranks__int_to_str[val],
+                );
+            }
+        }
+        return (
+            Array.prototype.concat
+                .apply([], [["Foundations:"], arr])
+                .join(" ") + "\n"
+        );
     }
 
     private _validateDeckSuit(deck: number, suit: number) {
@@ -397,7 +506,7 @@ export class Foundations {
         if (!is_int(suit)) {
             throw "suit is not an integer.";
         }
-        if (! ((suit >= 0) && (suit < 4))) {
+        if (!(suit >= 0 && suit < NUM_SUITS)) {
             throw "suit is out of range.";
         }
 
@@ -409,9 +518,12 @@ class FoundationsParseResult extends BaseResult {
     public foundations: Foundations;
 
     constructor(
-        is_correct: boolean, start_char_idx: number,
-        num_consumed_chars: number, error: string,
-        foundations: Foundations) {
+        is_correct: boolean,
+        start_char_idx: number,
+        num_consumed_chars: number,
+        error: string,
+        foundations: Foundations,
+    ) {
         super(is_correct, start_char_idx, num_consumed_chars, error);
         if (is_correct) {
             this.foundations = foundations;
@@ -419,10 +531,13 @@ class FoundationsParseResult extends BaseResult {
     }
 }
 
+const foundations_prefix_re = /^((?:Foundations|Founds|FOUNDS)\:)/;
+const freecells_prefix_re = "(?:Freecells|FC|Fc)";
 export function fcs_js__foundations_from_string(
-    num_decks: number, start_char_idx: number, orig_s: string):
-    FoundationsParseResult {
-
+    num_decks: number,
+    start_char_idx: number,
+    orig_s: string,
+): FoundationsParseResult {
     if (num_decks !== 1) {
         throw "Can only handle 1 decks.";
     }
@@ -434,11 +549,20 @@ export function fcs_js__foundations_from_string(
         if (verdict) {
             founds.finalize();
         }
-        return new FoundationsParseResult(verdict, start_char_idx, p.getConsumed(), err_str, founds);
+        return new FoundationsParseResult(
+            verdict,
+            start_char_idx,
+            p.getConsumed(),
+            err_str,
+            founds,
+        );
     }
 
-    if (!p.consume_match(/^(Foundations\:)/)) {
-        return make_ret(false, 'Wrong line prefix for freecells - should be "Freecells:"');
+    if (!p.consume_match(foundations_prefix_re)) {
+        return make_ret(
+            false,
+            'Wrong line prefix for the foundations - should be "Foundations:"',
+        );
     }
 
     while (p.isNotEmpty()) {
@@ -446,36 +570,39 @@ export function fcs_js__foundations_from_string(
             break;
         }
         const m = p.consume_match("^( +(" + suit_re + ")-(" + rank_re + "))");
-        if (! m) {
-            return make_ret(false, "Could not match a foundation string [HCDS]-[A23456789TJQK]");
+        if (!m) {
+            return make_ret(
+                false,
+                "Could not match a foundation string [HCDS]-[A23456789TJQK]",
+            );
         }
         const suit = m[2];
-        if (!founds.setByIdx(0, _suits__str_to_int[suit], _ranks__str_to_int[m[3]])) {
-            return make_ret(false, "Suit \"" + suit + "\" was already set.");
+        if (
+            !founds.setByIdx(
+                0,
+                suits__str_to_int.get(suit),
+                ranks__str_to_int[m[3]],
+            )
+        ) {
+            return make_ret(false, 'Suit "' + suit + '" was already set.');
         }
     }
-    return make_ret(true, '');
+    return make_ret(true, "");
 }
 
 export enum ErrorLocationType {
-    ErrorLocationType_Foundations,
-    ErrorLocationType_Freecells,
-    ErrorLocationType_Column,
+    Foundations,
+    Freecells,
+    Column,
 }
 
 class ErrorLocation {
-    public type_: ErrorLocationType;
-    public idx: number;
-    public start: number;
-    public end: number;
-
-    constructor(t: ErrorLocationType, idx: number, start: number, end: number) {
-        this.type_ = t;
-        this.idx = idx;
-        this.start = start;
-        this.end = end;
-        return;
-    }
+    constructor(
+        public type_: ErrorLocationType,
+        public idx: number,
+        public start: number,
+        public end: number,
+    ) {}
 }
 
 export enum ParseErrorType {
@@ -485,105 +612,241 @@ export enum ParseErrorType {
     FOUNDATIONS_NOT_AT_START,
     FREECELLS_NOT_AT_START,
     LINE_PARSE_ERROR,
+    LOWERCASE_LETTERS,
+    HAS_10_STRINGS,
 }
 
 class ParseError {
-    public type_: ParseErrorType;
-    public locs: ErrorLocation[];
-    public card: Card;
+    public problem_strings: string[] = [];
+    constructor(
+        public type_: ParseErrorType,
+        public locs: ErrorLocation[],
+        public card: Card,
+    ) {}
+}
 
-    constructor(t: ParseErrorType, locs: ErrorLocation[], c: Card) {
-        this.type_ = t;
-        this.locs = locs;
-        this.card = c;
-        return;
-    }
+class ParseLocation {
+    constructor(
+        public type_: ErrorLocationType,
+        public row: number,
+        public col: number,
+    ) {}
 }
 
 export class BoardParseResult {
-    public errors: ParseError[];
-    public is_valid: boolean;
+    public errors: ParseError[] = [];
+    public is_valid: boolean = true;
     public foundations: FoundationsParseResult;
     public freecells: FreecellsParseResult;
     public columns: ColumnParseResult[];
-    public num_stacks: number;
-    public num_freecells: number;
-    constructor(num_stacks: number, num_freecells: number, orig_s: string) {
+    constructor(
+        public num_stacks: number,
+        public num_freecells: number,
+        orig_s: string,
+    ) {
         const that = this;
-        that.num_stacks = num_stacks;
-        that.num_freecells = num_freecells;
 
-        that.errors = [];
+        const lines = orig_s.match(/[^\n]*\n?/g).map((l) => {
+            return new BoardTextLine(l);
+        });
+        for (const l of lines) {
+            {
+                const matches = l.getContent().match(/[a-z]+/g);
+                if (matches && matches.length > 0) {
+                    const err = new ParseError(
+                        ParseErrorType.LOWERCASE_LETTERS,
+                        [],
+                        fcs_js__card_from_string("AH"),
+                    );
+                    err.problem_strings = matches;
+                    that.errors.push(err);
+                    that.is_valid = false;
+                }
+            }
+            {
+                const matches = l.getContent().match(/10/g);
+                if (matches && matches.length > 0) {
+                    const err = new ParseError(
+                        ParseErrorType.HAS_10_STRINGS,
+                        [],
+                        fcs_js__card_from_string("AH"),
+                    );
+                    err.problem_strings = matches;
+                    that.errors.push(err);
+                    that.is_valid = false;
+                }
+            }
+        }
         that.columns = [];
+        const counter: ParseLocation[][][] = _suits.map((i) => {
+            return _perl_range(0, MAX_RANK).map((i) => {
+                return [];
+            });
+        });
+
         const p = new StringParser(orig_s);
-        if (p.match(/^Foundations:/)) {
+        p.skipComments();
+        if (p.match(foundations_prefix_re)) {
             const start_char_idx = p.getConsumed();
             const l = p.consume_match(/^([^\n]*(?:\n|$))/)[1];
             const fo = fcs_js__foundations_from_string(1, start_char_idx, l);
             that.foundations = fo;
-            if (! fo.is_correct) {
-                that.errors.push(new ParseError(
-                    ParseErrorType.LINE_PARSE_ERROR,
-                    [new ErrorLocation(
-                        ErrorLocationType.ErrorLocationType_Foundations,
-                        0,
-                        start_char_idx,
-                        p.getConsumed(),
+            if (!fo.is_correct) {
+                that.errors.push(
+                    new ParseError(
+                        ParseErrorType.LINE_PARSE_ERROR,
+                        [
+                            new ErrorLocation(
+                                ErrorLocationType.Foundations,
+                                0,
+                                start_char_idx,
+                                p.getConsumed(),
+                            ),
+                        ],
+                        fcs_js__card_from_string("AH"),
                     ),
-                    ],
-                    fcs_js__card_from_string('AH'),
-                ),
                 );
                 that.is_valid = false;
                 return;
             }
         }
-        if (p.match(/^Freecells:/)) {
+        p.skipComments();
+        if (p.match(new RegExp("^" + freecells_prefix_re + ":"))) {
             const start_char_idx = p.getConsumed();
             const l = p.consume_match(/^([^\n]*(?:\n|$))/)[1];
-            const fc = fcs_js__freecells_from_string(num_freecells, start_char_idx, l);
+            const fc = fcs_js__freecells_from_string(
+                num_freecells,
+                start_char_idx,
+                l,
+            );
             that.freecells = fc;
-            if (! fc.is_correct) {
-                that.errors.push(new ParseError(
-                    ParseErrorType.LINE_PARSE_ERROR,
-                    [new ErrorLocation(
-                        ErrorLocationType.ErrorLocationType_Freecells,
-                        0,
-                        start_char_idx,
-                        p.getConsumed(),
+            if (!fc.is_correct) {
+                that.errors.push(
+                    new ParseError(
+                        ParseErrorType.LINE_PARSE_ERROR,
+                        [
+                            new ErrorLocation(
+                                ErrorLocationType.Freecells,
+                                0,
+                                start_char_idx,
+                                p.getConsumed(),
+                            ),
+                        ],
+                        fcs_js__card_from_string("AH"),
                     ),
-                    ],
-                    fcs_js__card_from_string('AH'),
-                ),
                 );
                 that.is_valid = false;
                 return;
             }
         }
-        for (let i = 0; i < num_stacks; i++) {
+        for (let i = 0; i < num_stacks; ++i) {
+            p.skipComments();
             const start_char_idx = p.getConsumed();
             const l = p.consume_match(/^([^\n]*(?:\n|$))/)[1];
-            const col = fcs_js__column_from_string(start_char_idx, l, true);
-            if (! col.is_correct) {
-                that.errors.push(new ParseError(
-                    ParseErrorType.LINE_PARSE_ERROR,
-                    [new ErrorLocation(
-                        ErrorLocationType.ErrorLocationType_Column,
-                        i,
-                        start_char_idx,
-                        p.getConsumed(),
-                    ),
-                    ],
-                    fcs_js__card_from_string('AH'),
+            const col = fcs_js__column_from_string(start_char_idx, l, false);
+            that.columns.push(col);
+            if (!col.is_correct) {
+                that.errors.push(
+                    new ParseError(
+                        ParseErrorType.LINE_PARSE_ERROR,
+                        [
+                            new ErrorLocation(
+                                ErrorLocationType.Column,
+                                i,
+                                start_char_idx,
+                                p.getConsumed(),
+                            ),
+                        ],
+                        fcs_js__card_from_string("AH"),
                     ),
                 );
                 that.is_valid = false;
                 return;
             }
-            that.columns.push(col);
         }
-        // TODO : Implement duplicate/missing cards.
-        that.is_valid = true;
+        if (that.foundations) {
+            for (const suit of _suits) {
+                for (const rank of _perl_range(
+                    1,
+                    that.foundations.foundations.getByIdx(0, suit),
+                )) {
+                    counter[suit][rank].push(
+                        new ParseLocation(ErrorLocationType.Foundations, 0, 0),
+                    );
+                }
+            }
+        }
+        if (that.freecells) {
+            for (const i of _perl_range(
+                0,
+                that.freecells.freecells.getNum() - 1,
+            )) {
+                const card = that.freecells.freecells.getCard(i);
+                if (card) {
+                    counter[card.getSuit()][card.getRank()].push(
+                        new ParseLocation(ErrorLocationType.Freecells, i, 0),
+                    );
+                }
+            }
+        }
+        that.columns.forEach((col_res, idx) => {
+            const col = col_res.col;
+            for (const h of _perl_range(0, col.getLen() - 1)) {
+                const card = col.getCard(h);
+
+                counter[card.getSuit()][card.getRank()].push(
+                    new ParseLocation(ErrorLocationType.Column, idx, h),
+                );
+            }
+        });
+        const NUM_WANTED_CARDS: number = 1;
+        const too_many_cards__errors: ParseError[] = [];
+        const not_enough_cards__errors: ParseError[] = [];
+        for (const suit of _suits) {
+            for (const rank of _ranks) {
+                const count = counter[suit][rank];
+                function add_error(arr, type_, locs) {
+                    arr.push(new ParseError(type_, locs, new Card(rank, suit)));
+                    that.is_valid = false;
+
+                    return;
+                }
+                if (count.length > NUM_WANTED_CARDS) {
+                    const locs: ErrorLocation[] = count.map((v) => {
+                        return new ErrorLocation(v.type_, v.row, 0, 0);
+                    });
+
+                    add_error(
+                        too_many_cards__errors,
+                        ParseErrorType.TOO_MUCH_OF_CARD,
+                        locs,
+                    );
+                } else if (count.length < NUM_WANTED_CARDS) {
+                    add_error(
+                        not_enough_cards__errors,
+                        ParseErrorType.NOT_ENOUGH_OF_CARD,
+                        [],
+                    );
+                }
+            }
+        }
+        that.errors.push(...too_many_cards__errors);
+        that.errors.push(...not_enough_cards__errors);
+
         return;
+    }
+    public getBoardString(): string {
+        const that = this;
+        let ret: string = "";
+        if (that.foundations) {
+            ret += that.foundations.foundations.toString();
+        }
+        if (that.freecells) {
+            ret += that.freecells.freecells.toString();
+        }
+        for (const col of that.columns) {
+            ret += col.col.toString();
+        }
+        return ret;
     }
 }

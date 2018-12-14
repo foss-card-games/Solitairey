@@ -62,7 +62,7 @@ end
 dest2 = "src/js/fcs-validate.js"
 src2 = "src/js/fcs-validate.ts"
 file dest2 => src2 do
-    sh "tsc --module amd --out #{dest2} #{src2}"
+    sh "tsc --lib es2015 --module amd --out #{dest2} #{src2}"
 end
 
 src = "ext/#{YUI_DIST}"
