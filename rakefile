@@ -2,14 +2,16 @@ JS_PREFIX = "js"
 JS_SRC_PREFIX="src/js"
 ROOT_PREFIX = "dest"
 PREFIX = "dest/js"
-JS = %w[yui-breakout yui-debug solitaire iphone auto-stack-clear auto-turnover autoplay ie-opera-background-fix statistics joose.mini ms-rand web-fc-solve web-fc-solve--expand-moves solver-freecell solver-freecell-worker agnes golf klondike klondike1t flowergarden fortythieves freecell grandclock montecarlo pyramid russian-solitaire scorpion spider spider1s spider2s spiderette tritowers will-o-the-wisp yukon application fcs-validate require require--debug]
+TS_BASE = %w[fcs-validate web-fc-solve--expand-moves web-fc-solve]
+JS = %w[yui-breakout yui-debug solitaire iphone auto-stack-clear auto-turnover autoplay ie-opera-background-fix statistics joose.mini ms-rand solver-freecell solver-freecell-worker agnes golf klondike klondike1t flowergarden fortythieves freecell grandclock montecarlo pyramid russian-solitaire scorpion spider spider1s spider2s spiderette tritowers will-o-the-wisp yukon application require require--debug] + TS_BASE
 YUI_DIST="yui-unpack/"
 YUI_SRC = "ext/yui/yui-all-min.js"
 YUI = "#{PREFIX}/yui-all-min.js"
 ALL = "#{PREFIX}/all.js"
 MINIFIED = "#{PREFIX}/all-min.js"
 COMBINED = "#{PREFIX}/combined-min.js"
-COMPRESSOR = "ext/yuicompressor-2.4.2/build/yuicompressor-2.4.2.jar"
+# COMPRESSOR = "ext/yuicompressor-2.4.2/build/yuicompressor-2.4.2.jar"
+COMPRESSOR = "bin/Run-YUI-Compressor"
 TEMPLATE = "index.erb"
 
 IMAGES = Dir.glob("{dondorf,layouts}/**/*.png") + Dir.glob("*.{css,gif,png,jpg}")
@@ -59,10 +61,12 @@ def js_root_file(fn)
     return dest
 end
 
-dest2 = "src/js/fcs-validate.js"
-src2 = "src/js/fcs-validate.ts"
-file dest2 => src2 do
-    sh "tsc --lib es2015 --module amd --out #{dest2} #{src2}"
+TS_BASE.each do |base|
+    dest2 = "#{JS_SRC_PREFIX}/#{base}.js"
+    src2 = "#{JS_SRC_PREFIX}/#{base}.ts"
+    file dest2 => src2 do
+        sh "tsc --target es6 --module amd --out #{dest2} #{src2}"
+    end
 end
 
 src = "ext/#{YUI_DIST}"
@@ -98,7 +102,8 @@ end
 
 desc "minified solitaire sources"
 file MINIFIED => ALL do
-  sh "java -jar #{COMPRESSOR} -o #{MINIFIED} #{ALL}"
+  # sh "java -jar #{COMPRESSOR} -o #{MINIFIED} #{ALL}"
+  sh "#{COMPRESSOR} -o #{MINIFIED} #{ALL}"
 end
 
 desc "concatenated minified solitaire and YUI sources"
