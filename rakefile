@@ -2,8 +2,9 @@ JS_PREFIX = "js"
 JS_SRC_PREFIX="src/js"
 ROOT_PREFIX = "dest"
 PREFIX = "dest/js"
+BROWSERIFY_JS = %w[big-integer]
 TS_BASE = %w[fcs-validate web-fc-solve--expand-moves web-fc-solve]
-JS = %w[yui-breakout yui-debug solitaire iphone auto-stack-clear auto-turnover autoplay ie-opera-background-fix statistics solver-freecell solver-freecell-worker agnes golf klondike klondike1t flowergarden fortythieves freecell grandclock montecarlo pyramid russian-solitaire scorpion spider spider1s spider2s spiderette tritowers will-o-the-wisp yukon application require require--debug] + TS_BASE
+JS = %w[yui-breakout yui-debug solitaire iphone auto-stack-clear auto-turnover autoplay ie-opera-background-fix statistics solver-freecell solver-freecell-worker agnes golf klondike klondike1t flowergarden fortythieves freecell grandclock montecarlo pyramid russian-solitaire scorpion spider spider1s spider2s spiderette tritowers will-o-the-wisp yukon application require require--debug] + TS_BASE + BROWSERIFY_JS
 YUI_DIST="yui-unpack/"
 YUI_SRC = "ext/yui/yui-all-min.js"
 YUI = "#{PREFIX}/yui-all-min.js"
@@ -61,6 +62,14 @@ def js_root_file(fn)
     return dest
 end
 
+BROWSERIFY_JS.each do |base|
+    dest2 = "#{JS_SRC_PREFIX}/#{base}.js"
+    file dest2 do
+        sh "browserify -s #{base} -r #{base} -o #{dest2}"
+    end
+end
+
+
 TS_BASE.each do |base|
     dest2 = "#{JS_SRC_PREFIX}/#{base}.js"
     src2 = "#{JS_SRC_PREFIX}/#{base}.ts"
@@ -83,10 +92,15 @@ JS.each do |fn_base|
 end
 
 dest_js_extra = []
-dest_js_extra << js_file('libfreecell-solver.js.mem')
-dest_js_extra << js_root_file('libfreecell-solver.js.mem')
+dest_js_extra << js_file('libfcs-wrap.d.ts')
+dest_js_extra << js_file('libfcs-wrap.js')
+dest_js_extra << js_file('libfreecell-solver-asm.js')
+dest_js_extra << js_file('libfreecell-solver-asm.js.mem')
 dest_js_extra << js_file('libfreecell-solver.js')
+dest_js_extra << js_file('libfreecell-solver.js.mem')
 dest_js_extra << js_file('libfreecell-solver.min.js')
+dest_js_extra << js_file('libfreecell-solver.wasm')
+dest_js_extra << js_root_file('libfreecell-solver.js.mem')
 
 desc "concatenated solitaire sources"
 file ALL => dest_js_s do

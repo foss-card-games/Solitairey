@@ -1,3 +1,10 @@
+define(["./libfcs-wrap", "./web-fc-solve"], function (Module, w) {
+    "use strict";
+    var exports={};
+    const FC_Solve = w.FC_Solve;
+    const FCS_STATE_SUSPEND_PROCESS = w.FCS_STATE_SUSPEND_PROCESS;
+    const FCS_STATE_WAS_SOLVED = w.FCS_STATE_WAS_SOLVED;
+    const ENABLE_VALIDATION = true;
 /*
  * Automatically solve a game of Freecell
  */
@@ -13,8 +20,8 @@ function _init_my_module () {
         // alert('_my_mod_counter = <' + _my_mod_counter + '> _my_module = <' + _my_module + '> applej');
         // Create a fresh instance to avoid failed allocs due to
         // memory fragmentation.
-        _my_module = Module({});
-        FC_Solve_init_wrappers_with_module(_my_module);
+        _my_module = Module()({});
+        w.FC_Solve_init_wrappers_with_module(_my_module);
         _my_mod_counter = 0;
         // alert('_my_mod_counter = <' + _my_mod_counter + '> _my_module = <' + _my_module + '> applebloom');
     } else {
@@ -670,3 +677,4 @@ YUI.add("solver-freecell", function (Y) {
 
 	Y.on("beforeSetup", FreecellSolver.enable.bind(FreecellSolver));
 }, "0.0.1", {requires: ["solitaire"]});
+});

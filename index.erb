@@ -59,10 +59,12 @@
 <% else %>
 	<script type="text/javascript" src="js/combined-min.js"></script>
 <% end %>
+<% if false %>
 	<script type="text/javascript" src="js/libfreecell-solver.min.js"></script>
 	<script type="text/javascript" src="js/web-fc-solve--expand-moves.js"></script>
 	<script type="text/javascript" src="js/web-fc-solve.js"></script>
 	<script type="text/javascript" src="js/solver-freecell.js"></script>
+<% end %>
 </head>
 <body>
 <% unless development %>
@@ -94,6 +96,7 @@
 requirejs.config({
     baseUrl: './js',
     });
+const solver = require(['./solver-freecell']);
 </script>
 
 </body>
