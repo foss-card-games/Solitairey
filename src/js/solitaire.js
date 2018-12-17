@@ -1545,5 +1545,6 @@ var Undo = {
 		return [to, from];
 	}
 };
+console.log("added solitaire");
 
 }, "0.0.1", {requires: ["dd", "dd-plugin", "dd-delegate", "anim", "async-queue", "cookie", "array-extras"]});

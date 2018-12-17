@@ -15,7 +15,7 @@ COMBINED = "#{PREFIX}/combined-min.js"
 COMPRESSOR = "bin/Run-YUI-Compressor"
 TEMPLATE = "index.erb"
 
-IMAGES = Dir.glob("{dondorf,layouts}/**/*.png") + Dir.glob("*.{css,gif,png,jpg}")
+IMAGES = Dir.glob("{dondorf,layouts}/**/*.png") + Dir.glob("*.{css,gif,png,jpg}") + [".htaccess"]
 
 DEST_INDEX = "dest/index.html"
 DEST_INDEX_DEV = "dest/index-dev.html"
@@ -99,8 +99,8 @@ dest_js_extra << js_file('libfreecell-solver-asm.js.mem')
 dest_js_extra << js_file('libfreecell-solver.js')
 dest_js_extra << js_file('libfreecell-solver.js.mem')
 dest_js_extra << js_file('libfreecell-solver.min.js')
-dest_js_extra << js_file('libfreecell-solver.wasm')
 dest_js_extra << js_root_file('libfreecell-solver.js.mem')
+dest_js_extra << js_root_file('libfreecell-solver.wasm')
 
 desc "concatenated solitaire sources"
 file ALL => dest_js_s do
@@ -145,6 +145,11 @@ end
 task :upload => :default do
   # sh "rsync --progress --inplace -a -v dest hostgator:public_html/temp-Solitairey-ekrimyk/"
   sh "rsync --progress --inplace -a -v dest hostgator:public_html/temp-Solitairey-fc-solve-loop-NjU78o/"
+end
+
+task :upload_local => :default do
+  # sh "rsync --progress --inplace -a -v dest hostgator:public_html/temp-Solitairey-ekrimyk/"
+  sh "rsync --progress --inplace -a -v dest /var/www/html/shlomif/temp-Solitairey/"
 end
 
 task :default => [DEST_INDEX, DEST_INDEX_DEV, :images]

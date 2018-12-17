@@ -4,6 +4,8 @@
 		game: null
 	    },
 	    yui = YUI({ base: 'js/yui-unpack/yui/build/' }), Y,
+        /*
+         * We don't need all these games for now.
 	    games = {
 		"agnes": "Agnes",
 		"klondike": "Klondike",
@@ -24,14 +26,19 @@
 		"tri-towers": "TriTowers",
 		"will-o-the-wisp": "WillOTheWisp",
 		"yukon": "Yukon"},
+        */
+	    games = {
+		"freecell": "Freecell"
+        },
 
 	    extensions = [
 		"auto-turnover",
 	        "statistics",
-		"solver-freecell",
-		"solitaire-autoplay",
-	        "solitaire-ios",
-		"solitaire-background-fix"],
+		//"solver-freecell",
+		"solitaire-autoplay"
+	        //"solitaire-ios"
+		// "solitaire-background-fix"
+        ],
 
 	Fade = (function() {
 		var el = null,
@@ -452,4 +459,9 @@
 	};
 
 	yui.use.apply(yui, modules().concat(main));
+    window.setTimeout(function () {
+        console.log("at use solver");
+        yui.use.apply(yui, ["solver-freecell"]);
+    }, 10000);
+
 }());
