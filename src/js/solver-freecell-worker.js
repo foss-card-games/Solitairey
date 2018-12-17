@@ -1,4 +1,4 @@
-importScripts('joose.mini.js', 'libfreecell-solver.min.js', 'web-fc-solve--expand-moves.js', 'web-fc-solve.js');
+importScripts('libfreecell-solver.min.js', 'web-fc-solve--expand-moves.js', 'web-fc-solve.js');
 
 var attempts = 0,
     maxFastAttempts = 150000;
