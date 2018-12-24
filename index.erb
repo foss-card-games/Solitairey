@@ -31,8 +31,8 @@ const solver = require(['./solver-freecell']);
 	<script src="js/yui-breakout.js"></script>
 <% end %>
 	<script>
-        require(['./solitaire', './iphone', './auto-stack-clear', './auto-turnover', './autoplay', './application'],
-                function (solitaire, iphone, auto_stack, auto_turn, autoplay, application) {
+        require(['./solitaire', './iphone', './auto-stack-clear', './auto-turnover', './autoplay', './application', './freecell'],
+                function (solitaire, iphone, auto_stack, auto_turn, autoplay, application, freecell) {
         });
     </script>
 <% if false %>
@@ -56,7 +56,6 @@ const solver = require(['./solver-freecell']);
 	<script src="js/will-o-the-wisp.js"></script>
 	<script src="js/yukon.js"></script>
 <% end %>
-	<script src="js/freecell.js"></script>
 <% else %>
 	<script src="js/combined-min.js"></script>
 <% end %>
