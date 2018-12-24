@@ -145,6 +145,10 @@ define([], function() {
 
     var Game;
 
+    function getGame() {
+        return Game;
+    }
+
     YUI.add(
         "solitaire",
         function(Y) {
@@ -1728,5 +1732,6 @@ define([], function() {
     return {
         instance: instance,
         Game: Game,
+        getGame: getGame,
     };
 });

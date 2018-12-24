@@ -1,4 +1,8 @@
-define(["./libfcs-wrap", "./web-fc-solve"], function(Module, w) {
+define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
+    Module,
+    w,
+    solitaire,
+) {
     "use strict";
     var exports = {};
     console.log("fku");
@@ -6,6 +10,7 @@ define(["./libfcs-wrap", "./web-fc-solve"], function(Module, w) {
     const FCS_STATE_SUSPEND_PROCESS = w.FCS_STATE_SUSPEND_PROCESS;
     const FCS_STATE_WAS_SOLVED = w.FCS_STATE_WAS_SOLVED;
     const ENABLE_VALIDATION = true;
+    const getGame = solitaire.getGame;
     console.log("apb");
     /*
      * Automatically solve a game of Freecell
@@ -180,6 +185,7 @@ define(["./libfcs-wrap", "./web-fc-solve"], function(Module, w) {
                     callback(node);
                 }
             }
+            alert("before Animation");
 
             var Animation = {
                 interval: 700, // interval: 500,
@@ -390,10 +396,10 @@ define(["./libfcs-wrap", "./web-fc-solve"], function(Module, w) {
                         playCallback;
 
                     next.on("click", function() {
-                        Animation.next(Game);
+                        Animation.next(getGame());
                     });
                     prev.on("click", function() {
-                        Animation.prev(Game);
+                        Animation.prev(getGame());
                     });
                     playPause.on("click", function() {
                         /*
@@ -402,7 +408,7 @@ define(["./libfcs-wrap", "./web-fc-solve"], function(Module, w) {
                          */
 
                         if (this.hasClass("play")) {
-                            Animation.play(Game);
+                            Animation.play(getGame());
                         } else if (this.hasClass("pause")) {
                             Animation.pause();
                         }
@@ -427,6 +433,7 @@ define(["./libfcs-wrap", "./web-fc-solve"], function(Module, w) {
                     }
                 },
             };
+            alert("after Stat");
 
             Y.mix(FreecellSolver, {
                 currentSolution: null,
@@ -434,7 +441,7 @@ define(["./libfcs-wrap", "./web-fc-solve"], function(Module, w) {
                 supportedGames: ["Freecell"],
 
                 isSupported: function() {
-                    return this.supportedGames.indexOf(Game.name()) !== -1;
+                    return this.supportedGames.indexOf(getGame().name()) !== -1;
                 },
 
                 enable: function() {
@@ -525,7 +532,7 @@ define(["./libfcs-wrap", "./web-fc-solve"], function(Module, w) {
                         Status.delay,
                     );
 
-                    var state = gameToState(Game);
+                    var state = gameToState(getGame());
 
                     var _suits = ["S", "H", "C", "D"];
                     var _ranks = [
@@ -664,6 +671,7 @@ define(["./libfcs-wrap", "./web-fc-solve"], function(Module, w) {
                                 {},
                             );
                             if (solve_err_code == FCS_STATE_WAS_SOLVED) {
+                                alert("FCS_STATE_WAS_SOLVED");
                                 var to_int = function(s) {
                                     return parseInt(s, 10);
                                 };
@@ -850,13 +858,16 @@ define(["./libfcs-wrap", "./web-fc-solve"], function(Module, w) {
                         if (solution) {
                             Status.stopIndicator(true);
                             window.setTimeout(function() {
-                                Animation.play(Game);
+                                Animation.play(getGame());
                             }, 3000);
                         } else {
                             Status.stopIndicator(false);
-                            window.setTimeout(function() {
-                                Y.fire("newAppGame");
-                            }, 3000);
+                            alert("no solution");
+                            if (false) {
+                                window.setTimeout(function() {
+                                    Y.fire("newAppGame");
+                                }, 3000);
+                            }
                         }
                     }, 400);
                 },
