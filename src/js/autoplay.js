@@ -1,3 +1,4 @@
+define(['./solitaire'], function (solitaire) {
 YUI.add("solitaire-autoplay", function (Y) {
 	Y.namespace("Solitaire.Autoplay");
 
@@ -71,3 +72,7 @@ YUI.add("solitaire-autoplay", function (Y) {
 		}
 	});
 }, "0.0.1", {requires: ["solitaire"]});
+    return {
+    };
+}
+);

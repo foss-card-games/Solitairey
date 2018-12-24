@@ -31,14 +31,12 @@ const solver = require(['./solver-freecell']);
 	<script src="js/yui-breakout.js"></script>
 <% end %>
 	<script>
-        require(['./solitaire', './iphone', './auto-stack-clear', './auto-turnover', './application'],
-                function (solitaire, iphone, auto_stack, auto_turn, application) {
+        require(['./solitaire', './iphone', './auto-stack-clear', './auto-turnover', './autoplay', './application'],
+                function (solitaire, iphone, auto_stack, auto_turn, autoplay, application) {
         });
     </script>
-	<script src="js/autoplay.js"></script>
-	<script src="js/ie-opera-background-fix.js"></script>
-	<script src="js/statistics.js"></script>
 <% if false %>
+	<script src="js/ie-opera-background-fix.js"></script>
 	<script src="js/agnes.js"></script>
 	<script src="js/golf.js"></script>
 	<script src="js/klondike.js"></script>

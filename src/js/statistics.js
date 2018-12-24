@@ -1,3 +1,4 @@
+define(['./solitaire'], function (solitaire) {
 /*
  * record win/lose records, streaks, etc
  */
@@ -234,3 +235,7 @@ YUI.add("statistics", function (Y) {
 	});
 
 }, "0.0.1", {requires: ["solitaire", "array-extras", "breakout"]});
+    return {
+    };
+}
+);
