@@ -4,7 +4,8 @@ ROOT_PREFIX = "dest"
 PREFIX = "dest/js"
 BROWSERIFY_JS = %w[big-integer]
 TS_BASE = %w[fcs-validate web-fc-solve--expand-moves web-fc-solve]
-JS = %w[yui-breakout yui-debug solitaire iphone auto-stack-clear auto-turnover autoplay ie-opera-background-fix statistics solver-freecell solver-freecell-worker agnes golf klondike klondike1t flowergarden fortythieves freecell grandclock montecarlo pyramid russian-solitaire scorpion spider spider1s spider2s spiderette tritowers will-o-the-wisp yukon application require require--debug] + TS_BASE + BROWSERIFY_JS
+JS_CURATED_SOURCES = %w[solitaire iphone auto-stack-clear auto-turnover autoplay ie-opera-background-fix statistics solver-freecell solver-freecell-worker agnes golf klondike klondike1t flowergarden fortythieves freecell grandclock montecarlo pyramid russian-solitaire scorpion spider spider1s spider2s spiderette tritowers will-o-the-wisp yukon application]
+JS = %w[yui-breakout yui-debug require require--debug] + JS_CURATED_SOURCES + TS_BASE + BROWSERIFY_JS
 YUI_DIST="yui-unpack/"
 YUI_SRC = "ext/yui/yui-all-min.js"
 YUI = "#{PREFIX}/yui-all-min.js"
@@ -44,8 +45,17 @@ end
 
 dest_js_s = []
 
-def js_file(fn)
+def js_pat_file(fn)
     src = "#{JS_SRC_PREFIX}/#{fn}"
+    return src
+end
+
+def js_js_pat_file(fn)
+    return js_pat_file(fn + ".js")
+end
+
+def js_file(fn)
+    src = js_pat_file(fn)
     dest = "#{PREFIX}/#{fn}"
     file dest => src do
         sh "cp -f #{src} #{dest}"
@@ -134,6 +144,10 @@ desc "production file with separated, unminified source files"
 file DEST_INDEX => [TEMPLATE, COMBINED] do
   # create_index DEST_INDEX
   create_index DEST_INDEX, true
+end
+
+task :prettier do
+    sh "prettier --arrow-parens always --tab-width 4 --trailing-comma all --write " + JS_CURATED_SOURCES.map { |bn| js_js_pat_file(bn) }.join(" ")
 end
 
 task :images => DEST_IMAGES
