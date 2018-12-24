@@ -1,3 +1,4 @@
+define(['./solitaire'], function (solitaire) {
 (function () {
 	var active = {
 		name: "freecell", // name: "klondike",
@@ -465,3 +466,7 @@
     }, 10000);
 
 }());
+
+    return {
+    };
+});

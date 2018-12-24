@@ -1,3 +1,4 @@
+define(['./solitaire'], function (solitaire) {
 /*
  * Stack extension class to automatically move complete stacks/runs to the foundation
  */
@@ -56,3 +57,8 @@ YUI.add("auto-stack-clear", function (Y) {
 		stack.updateCardsPosition();
 	}
 }, "0.0.1", {requires: ["solitaire"]});
+
+    return {
+        auto_stack: true,
+    };
+});

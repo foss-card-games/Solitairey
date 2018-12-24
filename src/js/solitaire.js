@@ -1,3 +1,4 @@
+define([], function() {
 if (!Array.prototype.indexOf) {
   Array.prototype.indexOf = function(elt /*, from*/)  {
     var len = this.length >>> 0;
@@ -1548,3 +1549,9 @@ var Undo = {
 console.log("added solitaire");
 
 }, "0.0.1", {requires: ["dd", "dd-plugin", "dd-delegate", "anim", "async-queue", "cookie", "array-extras"]});
+
+    return {
+        instance: instance,
+        Game: Game,
+    };
+});

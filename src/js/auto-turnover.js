@@ -1,3 +1,4 @@
+define(['./solitaire'], function (solitaire) {
 /*
  * automatically turn over the first open faceup card in a stack
  */
@@ -10,3 +11,7 @@ YUI.add("auto-turnover", function (Y) {
 		});
 	});
 }, "0.0.1", {requires: ["solitaire"]});
+    return {
+    };
+}
+);

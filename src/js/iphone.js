@@ -1,3 +1,4 @@
+define(['./solitaire'], function (solitaire) {
 YUI.add("solitaire-ios", function (Y) {
 	if (!Y.UA.ios) { return; }
 
@@ -583,3 +584,7 @@ YUI.add("solitaire-ios", function (Y) {
 
 	Y.on("domready", setupUI);
 }, "0.0.1", {requires: ["solitaire", "statistics"]});
+    return {
+        solitaire_ios: true,
+    };
+});

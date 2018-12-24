@@ -1,3 +1,5 @@
+define(['./solitaire'], function (solitaire) {
+    const instance = solitaire.instance;
 YUI.add("freecell", function (Y) {
 
 var Solitaire = Y.Solitaire,
@@ -152,3 +154,7 @@ Y.mix(Freecell.Tableau.Stack, {
 }, true);
 
 }, "0.0.1", {requires: ["solitaire"]});
+    return {
+        instance: instance
+    };
+});
