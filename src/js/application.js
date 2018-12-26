@@ -39,6 +39,7 @@ define(["./solitaire"], function(solitaire) {
                 "solitaire-autoplay",
                 //"solitaire-ios"
                 // "solitaire-background-fix"
+                "solitaire",
             ],
             Fade = (function() {
                 var el = null,
@@ -264,14 +265,24 @@ define(["./solitaire"], function(solitaire) {
             Y.on("newAppGame", function() {
                 return newGame();
             });
-            Y.on("click", restart, Y.one("#restart"));
-            Y.on(
-                "click",
-                function() {
-                    GameChooser.show(false);
-                },
-                Y.one("#choose_game"),
-            );
+            if (false) {
+                Y.on("click", restart, Y.one("#restart"));
+                Y.on(
+                    "click",
+                    function() {
+                        GameChooser.show(false);
+                    },
+                    Y.one("#choose_game"),
+                );
+                Y.on("click", newGame, Y.one("#new_deal"));
+                Y.on(
+                    "click",
+                    function() {
+                        GameChooser.hide();
+                    },
+                    Y.one("#close-chooser"),
+                );
+            }
             Y.on(
                 "click",
                 function() {
@@ -279,19 +290,11 @@ define(["./solitaire"], function(solitaire) {
                 },
                 Y.one("#undo"),
             );
-            Y.on("click", newGame, Y.one("#new_deal"));
 
             Y.on("click", hideChromeStoreLink, Y.one(".chromestore"));
 
             Y.delegate("click", showDescription, "#descriptions", "li");
 
-            Y.on(
-                "click",
-                function() {
-                    GameChooser.hide();
-                },
-                Y.one("#close-chooser"),
-            );
             Y.one("document").on("keydown", function(e) {
                 e.keyCode === 27 && GameChooser.hide();
             });
