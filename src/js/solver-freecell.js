@@ -572,7 +572,8 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
                     playPause.on("click", function() {
                         /*
                          * Here I tie up state with the DOM
-                         * Maybe thats alright, as its interface state being stored in the interface
+                         * Maybe that is alright, as it is interface state
+                         * being stored in the interface
                          */
 
                         if (that.hasClass("play")) {
@@ -643,7 +644,8 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
                     );
 
                     if (false) {
-                        // if a solution isn't currently being played, find a new solution on every new turn
+                        // if a solution isn't currently being played,
+                        // find a new solution on every new turn
                         Y.on(
                             "endTurn",
                             function(dontResolve) {
