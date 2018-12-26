@@ -18,6 +18,9 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
     var _my_module;
     var MAX_MOD_COUNTER = 5;
     var _my_mod_counter = MAX_MOD_COUNTER;
+    function to_int(s) {
+        return parseInt(s, 10);
+    }
 
     function _init_my_module() {
         if (_my_mod_counter >= MAX_MOD_COUNTER) {
@@ -31,6 +34,148 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
         }
 
         return;
+    }
+
+    function _calc__ret_moves(moves_, _str_to_c, _ranks_rev, _suits) {
+        var current = {};
+        var pre_current = current;
+
+        const ret_moves = current;
+        for (var i = 0; i < moves_.length; i++) {
+            var m = moves_[i];
+
+            if (m.type == "m") {
+                var str = m.str;
+                var pre_s = moves_[i - 1].str.split("\n");
+                var post_s = moves_[i + 1].str.split("\n");
+
+                function _get_stack_c(src) {
+                    var arr = pre_s[src + 2].replace(/ *$/, "").split(" ");
+                    var src_c_s = arr[arr.length - 1];
+                    if (src_c_s == ":") {
+                        return 0;
+                    } else {
+                        return _str_to_c(src_c_s);
+                    }
+                }
+
+                function _get_freecell_c(idx) {
+                    var fc_line = pre_s[1];
+
+                    var re =
+                        "^Freecells:" +
+                        (idx == 0 ? "" : "(?:....){" + idx + "}") +
+                        "(....)";
+
+                    var pat = new RegExp(re, "");
+                    var matched = fc_line.match(pat);
+
+                    if (!matched) {
+                        return 0;
+                    } else {
+                        var c_s = matched[1].substring(2, 4);
+                        return c_s == "  " ? 0 : _str_to_c(c_s);
+                    }
+                }
+
+                function _get_foundation_rank(f) {
+                    var f_line = pre_s[0];
+                    var re = f + "-" + "([0A2-9TJQK])";
+                    var pat = new RegExp(re, "");
+                    var matched = f_line.match(pat);
+
+                    var m = matched[1];
+                    return m == "0" ? 0 : _ranks_rev[m];
+                }
+
+                var move_content = (function() {
+                    var matched = str.match(
+                        /^Move 1 cards from stack ([0-9]+) to stack ([0-9]+)/,
+                    );
+
+                    if (matched) {
+                        var src = to_int(matched[1]);
+                        var dest = to_int(matched[2]);
+                        var src_c = _get_stack_c(src);
+                        var dest_c = _get_stack_c(dest);
+                        return {
+                            source: ["tableau", src_c],
+                            dest: ["tableau", dest_c],
+                        };
+                    }
+
+                    matched = str.match(
+                        /^Move a card from (stack|freecell) ([0-9]+) to the foundations/,
+                    );
+
+                    if (matched) {
+                        var src = to_int(matched[2]);
+                        var t = matched[1];
+
+                        var m_t;
+                        var src_c;
+
+                        if (t == "stack") {
+                            src_c = _get_stack_c(src);
+                            m_t = "tableau";
+                        } else {
+                            src_c = _get_freecell_c(src);
+                            m_t = "reserve";
+                        }
+
+                        var f_suit = src_c & 0x3;
+                        var f_rank = _get_foundation_rank(_suits[f_suit]);
+                        var f_c = f_rank == 0 ? false : (f_rank << 2) | f_suit;
+
+                        return {
+                            source: [m_t, src_c],
+                            dest: ["foundation", f_c],
+                        };
+                    }
+
+                    matched = str.match(
+                        /^Move a card from stack ([0-9]+) to freecell ([0-9]+)/,
+                    );
+
+                    if (matched) {
+                        return {
+                            source: [
+                                "tableau",
+                                _get_stack_c(to_int(matched[1])),
+                            ],
+                            dest: [
+                                "reserve",
+                                _get_freecell_c(to_int(matched[2])),
+                            ],
+                        };
+                    }
+
+                    matched = str.match(
+                        /^Move a card from freecell ([0-9]+) to stack ([0-9]+)/,
+                    );
+
+                    if (matched) {
+                        return {
+                            source: [
+                                "reserve",
+                                _get_freecell_c(to_int(matched[1])),
+                            ],
+                            dest: ["tableau", _get_stack_c(to_int(matched[2]))],
+                        };
+                    }
+
+                    throw "Must not happen";
+                })();
+
+                pre_current = current;
+                current.source = move_content.source;
+                current.dest = move_content.dest;
+                current.next = {};
+                current = current.next;
+            }
+        }
+        delete pre_current.next;
+        return ret_moves;
     }
 
     YUI.add(
@@ -239,8 +384,8 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
                 _resetGameFoo: function() {
                     return;
                     var that = this;
-                    //window.clearTimeout(that.timer);
-                    //that.timer = undefined;
+                    // window.clearTimeout(that.timer);
+                    // that.timer = undefined;
                     Animation.pause();
                     window.setTimeout(function() {
                         Y.fire("newAppGame");
@@ -370,6 +515,7 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
                     if (!WITH_UI) {
                         return;
                     } // remove UI clutter for the demo
+                    const that = this;
                     if (Y.one("#solver_bar")) {
                         return;
                     }
@@ -396,9 +542,9 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
                          * Maybe thats alright, as its interface state being stored in the interface
                          */
 
-                        if (this.hasClass("play")) {
+                        if (that.hasClass("play")) {
                             Animation.play(getGame());
-                        } else if (this.hasClass("pause")) {
+                        } else if (that.hasClass("pause")) {
                             Animation.pause();
                         }
                     });
@@ -670,183 +816,14 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
                                 },
                             );
                             if (solve_err_code == FCS_STATE_WAS_SOLVED) {
-                                var to_int = function(s) {
-                                    return parseInt(s, 10);
-                                };
-
                                 var moves_ =
                                     instance._post_expand_states_and_moves_seq;
-
-                                var current = {};
-                                var pre_current = current;
-
-                                ret_moves = current;
-                                for (var i = 0; i < moves_.length; i++) {
-                                    var m = moves_[i];
-
-                                    if (m.type == "m") {
-                                        var str = m.str;
-                                        var pre_s = moves_[i - 1].str.split(
-                                            "\n",
-                                        );
-                                        var post_s = moves_[i + 1].str.split(
-                                            "\n",
-                                        );
-
-                                        function _get_stack_c(src) {
-                                            var arr = pre_s[src + 2]
-                                                .replace(/ *$/, "")
-                                                .split(" ");
-                                            var src_c_s = arr[arr.length - 1];
-                                            if (src_c_s == ":") {
-                                                return 0;
-                                            } else {
-                                                return _str_to_c(src_c_s);
-                                            }
-                                        }
-
-                                        function _get_freecell_c(idx) {
-                                            var fc_line = pre_s[1];
-
-                                            var re =
-                                                "^Freecells:" +
-                                                (idx == 0
-                                                    ? ""
-                                                    : "(?:....){" + idx + "}") +
-                                                "(....)";
-
-                                            var pat = new RegExp(re, "");
-                                            var matched = fc_line.match(pat);
-
-                                            if (!matched) {
-                                                return 0;
-                                            } else {
-                                                var c_s = matched[1].substring(
-                                                    2,
-                                                    4,
-                                                );
-                                                return c_s == "  "
-                                                    ? 0
-                                                    : _str_to_c(c_s);
-                                            }
-                                        }
-
-                                        function _get_foundation_rank(f) {
-                                            var f_line = pre_s[0];
-                                            var re = f + "-" + "([0A2-9TJQK])";
-                                            var pat = new RegExp(re, "");
-                                            var matched = f_line.match(pat);
-
-                                            var m = matched[1];
-                                            return m == "0" ? 0 : _ranks_rev[m];
-                                        }
-
-                                        var move_content = (function() {
-                                            var matched = str.match(
-                                                /^Move 1 cards from stack ([0-9]+) to stack ([0-9]+)/,
-                                            );
-
-                                            if (matched) {
-                                                var src = to_int(matched[1]);
-                                                var dest = to_int(matched[2]);
-                                                var src_c = _get_stack_c(src);
-                                                var dest_c = _get_stack_c(dest);
-                                                return {
-                                                    source: ["tableau", src_c],
-                                                    dest: ["tableau", dest_c],
-                                                };
-                                            }
-
-                                            matched = str.match(
-                                                /^Move a card from (stack|freecell) ([0-9]+) to the foundations/,
-                                            );
-
-                                            if (matched) {
-                                                var src = to_int(matched[2]);
-                                                var t = matched[1];
-
-                                                var m_t;
-                                                var src_c;
-
-                                                if (t == "stack") {
-                                                    src_c = _get_stack_c(src);
-                                                    m_t = "tableau";
-                                                } else {
-                                                    src_c = _get_freecell_c(
-                                                        src,
-                                                    );
-                                                    m_t = "reserve";
-                                                }
-
-                                                var f_suit = src_c & 0x3;
-                                                var f_rank = _get_foundation_rank(
-                                                    _suits[f_suit],
-                                                );
-                                                var f_c =
-                                                    f_rank == 0
-                                                        ? false
-                                                        : (f_rank << 2) |
-                                                          f_suit;
-
-                                                return {
-                                                    source: [m_t, src_c],
-                                                    dest: ["foundation", f_c],
-                                                };
-                                            }
-
-                                            matched = str.match(
-                                                /^Move a card from stack ([0-9]+) to freecell ([0-9]+)/,
-                                            );
-
-                                            if (matched) {
-                                                return {
-                                                    source: [
-                                                        "tableau",
-                                                        _get_stack_c(
-                                                            to_int(matched[1]),
-                                                        ),
-                                                    ],
-                                                    dest: [
-                                                        "reserve",
-                                                        _get_freecell_c(
-                                                            to_int(matched[2]),
-                                                        ),
-                                                    ],
-                                                };
-                                            }
-
-                                            matched = str.match(
-                                                /^Move a card from freecell ([0-9]+) to stack ([0-9]+)/,
-                                            );
-
-                                            if (matched) {
-                                                return {
-                                                    source: [
-                                                        "reserve",
-                                                        _get_freecell_c(
-                                                            to_int(matched[1]),
-                                                        ),
-                                                    ],
-                                                    dest: [
-                                                        "tableau",
-                                                        _get_stack_c(
-                                                            to_int(matched[2]),
-                                                        ),
-                                                    ],
-                                                };
-                                            }
-
-                                            throw "Must not happen";
-                                        })();
-
-                                        pre_current = current;
-                                        current.source = move_content.source;
-                                        current.dest = move_content.dest;
-                                        current.next = {};
-                                        current = current.next;
-                                    }
-                                }
-                                delete pre_current.next;
+                                ret_moves = _calc__ret_moves(
+                                    moves_,
+                                    _str_to_c,
+                                    _ranks_rev,
+                                    _suits,
+                                );
                             }
                         } catch (e) {
                             _my_mod_counter = MAX_MOD_COUNTER + 5;
