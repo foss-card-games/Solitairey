@@ -22,18 +22,14 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
     var _my_mod_counter = MAX_MOD_COUNTER;
 
     function _init_my_module() {
-        // alert('_my_mod_counter = <' + _my_mod_counter + '> _my_module = <' + _my_module + '> pinkiepie');
         if (_my_mod_counter >= MAX_MOD_COUNTER) {
-            // alert('_my_mod_counter = <' + _my_mod_counter + '> _my_module = <' + _my_module + '> applej');
             // Create a fresh instance to avoid failed allocs due to
             // memory fragmentation.
             _my_module = Module()({});
             w.FC_Solve_init_wrappers_with_module(_my_module);
             _my_mod_counter = 0;
-            // alert('_my_mod_counter = <' + _my_mod_counter + '> _my_module = <' + _my_module + '> applebloom');
         } else {
-            _my_mod_counter++;
-            // alert('_my_mod_counter = <' + _my_mod_counter + '> _my_module = <' + _my_module + '> scootaloo');
+            ++_my_mod_counter;
         }
 
         return;
@@ -184,7 +180,6 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
                     callback(node);
                 }
             }
-            alert("before Animation");
 
             var Animation = {
                 interval: 700, // interval: 500,
@@ -247,11 +242,11 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
                 },
 
                 _resetGameFoo: function() {
+                    return;
                     var that = this;
                     //window.clearTimeout(that.timer);
-                    //that.timer = undefined; alert('Applebloom');
+                    //that.timer = undefined;
                     Animation.pause();
-                    // alert('Applebloom');
                     window.setTimeout(function() {
                         Y.fire("newAppGame");
                     }, 2000);
@@ -285,7 +280,7 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
                     Solitaire.Statistics.disable();
                     this.playCurrent(game);
 
-                    this.remainingMoves = next; // alert("nexTwilu = <<<" + next + ">>>");
+                    this.remainingMoves = next;
 
                     if (!next) {
                         that._resetGameFoo();
@@ -432,9 +427,9 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
                     }
                 },
             };
-            alert("after Stat");
 
             Y.mix(FreecellSolver, {
+                solver_active: false,
                 currentSolution: null,
                 attached: false,
                 supportedGames: ["Freecell"],
@@ -473,16 +468,18 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
                         }.bind(this),
                     );
 
-                    // if a solution isn't currently being played, find a new solution on every new turn
-                    Y.on(
-                        "endTurn",
-                        function(dontResolve) {
-                            if (dontResolve || !this.isSupported()) {
-                                return;
-                            }
-                            this.solve();
-                        }.bind(this),
-                    );
+                    if (false) {
+                        // if a solution isn't currently being played, find a new solution on every new turn
+                        Y.on(
+                            "endTurn",
+                            function(dontResolve) {
+                                if (dontResolve || !this.isSupported()) {
+                                    return;
+                                }
+                                this.solve();
+                            }.bind(this),
+                        );
+                    }
 
                     Y.on("autoPlay", function() {
                         FreecellSolver.disable();
@@ -515,6 +512,10 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
 
                 solve: function() {
                     const that = this;
+                    if (that.solver_active) {
+                        return;
+                    }
+                    that.solver_active = true;
                     console.log("solve()");
                     that.stop();
 
@@ -876,6 +877,7 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
                                 }, 3000);
                             }
                         }
+                        that.solver_active = false;
                     }, 400);
                 },
             });

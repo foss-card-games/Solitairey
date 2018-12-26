@@ -251,13 +251,15 @@ define(["./solitaire"], function(solitaire) {
                         Y.one("#win_display .new_deal"),
                     );
 
-                    Y.on(
-                        "click",
-                        function() {
-                            Application.GameChooser.show(true);
-                        },
-                        Y.one("#win_display .choose_game"),
-                    );
+                    if (false) {
+                        Y.on(
+                            "click",
+                            function() {
+                                Application.GameChooser.show(true);
+                            },
+                            Y.one("#win_display .choose_game"),
+                        );
+                    }
                 },
 
                 enable: function() {
