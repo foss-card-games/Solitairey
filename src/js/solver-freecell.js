@@ -107,10 +107,8 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
         );
 
         if (matched) {
-            var src = to_int(matched[1]);
-            var dest = to_int(matched[2]);
-            var src_c = _get_stack_c(pre_s, src);
-            var dest_c = _get_stack_c(pre_s, dest);
+            const src_c = _get_stack_c(pre_s, to_int(matched[1]));
+            const dest_c = _get_stack_c(pre_s, to_int(matched[2]));
             return {
                 source: ["tableau", src_c],
                 dest: ["tableau", dest_c],
@@ -122,13 +120,11 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
         );
 
         if (matched) {
-            var src = to_int(matched[2]);
-            var t = matched[1];
+            const src = to_int(matched[2]);
+            let m_t;
+            let src_c;
 
-            var m_t;
-            var src_c;
-
-            if (t == "stack") {
+            if (matched[1] == "stack") {
                 src_c = _get_stack_c(pre_s, src);
                 m_t = "tableau";
             } else {
@@ -136,9 +132,9 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
                 m_t = "reserve";
             }
 
-            var f_suit = src_c & 0x3;
-            var f_rank = _get_foundation_rank(pre_s, _suits[f_suit]);
-            var f_c = f_rank == 0 ? false : (f_rank << 2) | f_suit;
+            const f_suit = src_c & 0x3;
+            const f_rank = _get_foundation_rank(pre_s, _suits[f_suit]);
+            const f_c = f_rank == 0 ? false : (f_rank << 2) | f_suit;
 
             return {
                 source: [m_t, src_c],
@@ -171,18 +167,18 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
         throw "Must not happen";
     }
     function _calc__ret_moves(moves_) {
-        var current = {};
-        var pre_current = current;
+        let current = {};
+        let pre_current = current;
 
         const ret_moves = current;
-        for (var i = 0; i < moves_.length; i++) {
-            var m = moves_[i];
+        for (let i = 0; i < moves_.length; ++i) {
+            const m = moves_[i];
 
             if (m.type == "m") {
-                var str = m.str;
-                var pre_s = moves_[i - 1].str.split("\n");
-
-                const move_content = _calc__move_content(pre_s, str);
+                const move_content = _calc__move_content(
+                    moves_[i - 1].str.split("\n"),
+                    m.str,
+                );
 
                 pre_current = current;
                 current.source = move_content.source;
