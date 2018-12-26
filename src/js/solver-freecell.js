@@ -21,6 +21,32 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
     function to_int(s) {
         return parseInt(s, 10);
     }
+    var _suits = ["S", "H", "C", "D"];
+
+    var _ranks = [
+        "A",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "T",
+        "J",
+        "Q",
+        "K",
+    ];
+    function _rev(arr, delta) {
+        var ret = {};
+        for (var i = 0; i < arr.length; i++) {
+            ret[arr[i]] = delta + i;
+        }
+        return ret;
+    }
+    var _ranks_rev = _rev(_ranks, 1);
+    var _suits_rev = _rev(_suits, 0);
 
     function _init_my_module() {
         if (_my_mod_counter >= MAX_MOD_COUNTER) {
@@ -36,7 +62,14 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
         return;
     }
 
-    function _calc__ret_moves(moves_, _str_to_c, _ranks_rev, _suits) {
+    function _str_to_c(s) {
+        var m = s.match(/^(.)(.)$/);
+        if (!m) {
+            throw "Should not happen";
+        }
+        return (_ranks_rev[m[1]] << 2) | _suits_rev[m[2]];
+    }
+    function _calc__ret_moves(moves_) {
         var current = {};
         var pre_current = current;
 
@@ -675,41 +708,6 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
 
                     var state = gameToState(getGame());
 
-                    var _suits = ["S", "H", "C", "D"];
-                    var _ranks = [
-                        "A",
-                        "2",
-                        "3",
-                        "4",
-                        "5",
-                        "6",
-                        "7",
-                        "8",
-                        "9",
-                        "T",
-                        "J",
-                        "Q",
-                        "K",
-                    ];
-
-                    function _rev(arr, delta) {
-                        var ret = {};
-                        for (var i = 0; i < arr.length; i++) {
-                            ret[arr[i]] = delta + i;
-                        }
-                        return ret;
-                    }
-                    var _suits_rev = _rev(_suits, 0);
-                    var _ranks_rev = _rev(_ranks, 1);
-
-                    function _str_to_c(s) {
-                        var m = s.match(/^(.)(.)$/);
-                        if (!m) {
-                            throw "Should not happen";
-                        }
-                        return (_ranks_rev[m[1]] << 2) | _suits_rev[m[2]];
-                    }
-
                     function _render_state_as_string(obj) {
                         var ret = "";
 
@@ -818,12 +816,7 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
                             if (solve_err_code == FCS_STATE_WAS_SOLVED) {
                                 var moves_ =
                                     instance._post_expand_states_and_moves_seq;
-                                ret_moves = _calc__ret_moves(
-                                    moves_,
-                                    _str_to_c,
-                                    _ranks_rev,
-                                    _suits,
-                                );
+                                ret_moves = _calc__ret_moves(moves_);
                             }
                         } catch (e) {
                             _my_mod_counter = MAX_MOD_COUNTER + 5;
