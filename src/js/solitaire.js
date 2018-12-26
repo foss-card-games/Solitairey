@@ -319,7 +319,6 @@ define([], function() {
                     var that = this;
                     // set up the cards layout here.
                     this.setup(function() {
-                        // alert("merwin");
                         var card,
                             stack = 0,
                             stacks = that.tableau.stacks;

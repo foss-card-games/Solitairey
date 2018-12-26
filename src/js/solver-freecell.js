@@ -679,7 +679,6 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
                                 },
                             );
                             if (solve_err_code == FCS_STATE_WAS_SOLVED) {
-                                alert("FCS_STATE_WAS_SOLVED");
                                 var to_int = function(s) {
                                     return parseInt(s, 10);
                                 };
