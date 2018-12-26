@@ -5,13 +5,11 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
 ) {
     "use strict";
     var exports = {};
-    console.log("fku");
     const FC_Solve = w.FC_Solve;
     const FCS_STATE_SUSPEND_PROCESS = w.FCS_STATE_SUSPEND_PROCESS;
     const FCS_STATE_WAS_SOLVED = w.FCS_STATE_WAS_SOLVED;
     const ENABLE_VALIDATION = true;
     const getGame = solitaire.getGame;
-    console.log("apb");
     /*
      * Automatically solve a game of Freecell
      */
@@ -35,12 +33,9 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
         return;
     }
 
-    console.log("twil");
-    console.log("solver-freecell rari");
     YUI.add(
         "solver-freecell",
         function(Y) {
-            console.log("in Y");
             Y.namespace("Solitaire.Solver.Freecell");
 
             // only let this work with typed arrays
@@ -516,7 +511,6 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
                         return;
                     }
                     that.solver_active = true;
-                    console.log("solve()");
                     that.stop();
 
                     // Remove UI clutter for the demo.
@@ -641,7 +635,6 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
                     var exceeded_iters = false;
                     _init_my_module();
                     window.setTimeout(function() {
-                        console.log("timeout");
                         var instance = new FC_Solve({
                             // cmd_line_preset: "video-editing",
                             cmd_line_preset: "lg",
@@ -653,10 +646,8 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
                                 }
                             },
                         });
-                        console.log("got instance timeout");
 
                         var state_as_string = _render_state_as_string(state);
-                        console.log("state_as_string = " + state_as_string);
                         var ret_moves;
                         try {
                             var solve_err_code = instance.do_solve(

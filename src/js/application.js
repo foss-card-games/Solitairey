@@ -523,7 +523,7 @@ define(["./solitaire"], function(solitaire) {
         window.setTimeout(function() {
             console.log("at use solver");
             yui.use.apply(yui, ["solver-freecell"]);
-        }, 2000);
+        }, 400);
     })();
 
     return {};
