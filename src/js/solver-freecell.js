@@ -69,6 +69,107 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
         }
         return (_ranks_rev[m[1]] << 2) | _suits_rev[m[2]];
     }
+    function _get_stack_c(pre_s, src) {
+        const arr = pre_s[src + 2].replace(/ *$/, "").split(" ");
+        const src_c_s = arr[arr.length - 1];
+        return src_c_s == ":" ? 0 : _str_to_c(src_c_s);
+    }
+    function _get_freecell_c(pre_s, idx) {
+        const fc_line = pre_s[1];
+
+        const re =
+            "^Freecells:" +
+            (idx == 0 ? "" : "(?:....){" + idx + "}") +
+            "(....)";
+
+        const pat = new RegExp(re, "");
+        const matched = fc_line.match(pat);
+
+        if (!matched) {
+            return 0;
+        } else {
+            const c_s = matched[1].substring(2, 4);
+            return c_s == "  " ? 0 : _str_to_c(c_s);
+        }
+    }
+    function _get_foundation_rank(pre_s, f) {
+        const f_line = pre_s[0];
+        const re = f + "-" + "([0A2-9TJQK])";
+        const pat = new RegExp(re, "");
+        const matched = f_line.match(pat);
+
+        const m = matched[1];
+        return m == "0" ? 0 : _ranks_rev[m];
+    }
+    function _calc__move_content(pre_s, str) {
+        var matched = str.match(
+            /^Move 1 cards from stack ([0-9]+) to stack ([0-9]+)/,
+        );
+
+        if (matched) {
+            var src = to_int(matched[1]);
+            var dest = to_int(matched[2]);
+            var src_c = _get_stack_c(pre_s, src);
+            var dest_c = _get_stack_c(pre_s, dest);
+            return {
+                source: ["tableau", src_c],
+                dest: ["tableau", dest_c],
+            };
+        }
+
+        matched = str.match(
+            /^Move a card from (stack|freecell) ([0-9]+) to the foundations/,
+        );
+
+        if (matched) {
+            var src = to_int(matched[2]);
+            var t = matched[1];
+
+            var m_t;
+            var src_c;
+
+            if (t == "stack") {
+                src_c = _get_stack_c(pre_s, src);
+                m_t = "tableau";
+            } else {
+                src_c = _get_freecell_c(pre_s, src);
+                m_t = "reserve";
+            }
+
+            var f_suit = src_c & 0x3;
+            var f_rank = _get_foundation_rank(pre_s, _suits[f_suit]);
+            var f_c = f_rank == 0 ? false : (f_rank << 2) | f_suit;
+
+            return {
+                source: [m_t, src_c],
+                dest: ["foundation", f_c],
+            };
+        }
+
+        matched = str.match(
+            /^Move a card from stack ([0-9]+) to freecell ([0-9]+)/,
+        );
+
+        if (matched) {
+            return {
+                source: ["tableau", _get_stack_c(pre_s, to_int(matched[1]))],
+                dest: ["reserve", _get_freecell_c(pre_s, to_int(matched[2]))],
+            };
+        }
+
+        matched = str.match(
+            /^Move a card from freecell ([0-9]+) to stack ([0-9]+)/,
+        );
+
+        if (matched) {
+            return {
+                source: ["reserve", _get_freecell_c(pre_s, to_int(matched[1]))],
+                dest: ["tableau", _get_stack_c(pre_s, to_int(matched[2]))],
+            };
+        }
+
+        throw "Must not happen";
+    }
     function _calc__ret_moves(moves_) {
         var current = {};
         var pre_current = current;
@@ -80,125 +181,8 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
             if (m.type == "m") {
                 var str = m.str;
                 var pre_s = moves_[i - 1].str.split("\n");
-                var post_s = moves_[i + 1].str.split("\n");
 
-                function _get_stack_c(src) {
-                    var arr = pre_s[src + 2].replace(/ *$/, "").split(" ");
-                    var src_c_s = arr[arr.length - 1];
-                    if (src_c_s == ":") {
-                        return 0;
-                    } else {
-                        return _str_to_c(src_c_s);
-                    }
-                }
-
-                function _get_freecell_c(idx) {
-                    var fc_line = pre_s[1];
-
-                    var re =
-                        "^Freecells:" +
-                        (idx == 0 ? "" : "(?:....){" + idx + "}") +
-                        "(....)";
-
-                    var pat = new RegExp(re, "");
-                    var matched = fc_line.match(pat);
-
-                    if (!matched) {
-                        return 0;
-                    } else {
-                        var c_s = matched[1].substring(2, 4);
-                        return c_s == "  " ? 0 : _str_to_c(c_s);
-                    }
-                }
-
-                function _get_foundation_rank(f) {
-                    var f_line = pre_s[0];
-                    var re = f + "-" + "([0A2-9TJQK])";
-                    var pat = new RegExp(re, "");
-                    var matched = f_line.match(pat);
-
-                    var m = matched[1];
-                    return m == "0" ? 0 : _ranks_rev[m];
-                }
-
-                var move_content = (function() {
-                    var matched = str.match(
-                        /^Move 1 cards from stack ([0-9]+) to stack ([0-9]+)/,
-                    );
-
-                    if (matched) {
-                        var src = to_int(matched[1]);
-                        var dest = to_int(matched[2]);
-                        var src_c = _get_stack_c(src);
-                        var dest_c = _get_stack_c(dest);
-                        return {
-                            source: ["tableau", src_c],
-                            dest: ["tableau", dest_c],
-                        };
-                    }
-
-                    matched = str.match(
-                        /^Move a card from (stack|freecell) ([0-9]+) to the foundations/,
-                    );
-
-                    if (matched) {
-                        var src = to_int(matched[2]);
-                        var t = matched[1];
-
-                        var m_t;
-                        var src_c;
-
-                        if (t == "stack") {
-                            src_c = _get_stack_c(src);
-                            m_t = "tableau";
-                        } else {
-                            src_c = _get_freecell_c(src);
-                            m_t = "reserve";
-                        }
-
-                        var f_suit = src_c & 0x3;
-                        var f_rank = _get_foundation_rank(_suits[f_suit]);
-                        var f_c = f_rank == 0 ? false : (f_rank << 2) | f_suit;
-
-                        return {
-                            source: [m_t, src_c],
-                            dest: ["foundation", f_c],
-                        };
-                    }
-
-                    matched = str.match(
-                        /^Move a card from stack ([0-9]+) to freecell ([0-9]+)/,
-                    );
-
-                    if (matched) {
-                        return {
-                            source: [
-                                "tableau",
-                                _get_stack_c(to_int(matched[1])),
-                            ],
-                            dest: [
-                                "reserve",
-                                _get_freecell_c(to_int(matched[2])),
-                            ],
-                        };
-                    }
-
-                    matched = str.match(
-                        /^Move a card from freecell ([0-9]+) to stack ([0-9]+)/,
-                    );
-
-                    if (matched) {
-                        return {
-                            source: [
-                                "reserve",
-                                _get_freecell_c(to_int(matched[1])),
-                            ],
-                            dest: ["tableau", _get_stack_c(to_int(matched[2]))],
-                        };
-                    }
-
-                    throw "Must not happen";
-                })();
+                const move_content = _calc__move_content(pre_s, str);
 
                 pre_current = current;
                 current.source = move_content.source;
@@ -821,6 +805,7 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
                                 ret_moves = _calc__ret_moves(moves_);
                             }
                         } catch (e) {
+                            console.log("received exception " + e);
                             _my_mod_counter = MAX_MOD_COUNTER + 5;
                         }
                         var solution = ret_moves;
