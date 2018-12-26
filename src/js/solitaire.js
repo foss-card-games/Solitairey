@@ -1519,16 +1519,17 @@ define([], function() {
                 },
 
                 createNode: function() {
-                    var node = this.node;
+                    const that = this;
+                    var node = that.node;
 
-                    node = this.node = Y.Node.create("<img class='stack'>")
-                        .setAttribute("src", this.imageSrc())
-                        .setData("target", this)
+                    node = that.node = Y.Node.create("<img class='stack'>")
+                        .setAttribute("src", that.imageSrc())
+                        .setData("target", that)
                         .plug(Y.Plugin.Drop, {
                             useShim: true,
                         });
 
-                    this.updateStyle();
+                    that.updateStyle();
 
                     Solitaire.container().append(node);
                 },

@@ -40,7 +40,6 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
     }
 
     console.log("twil");
-    console.log("YUI" + "= " + YUI);
     console.log("solver-freecell rari");
     YUI.add(
         "solver-freecell",
@@ -515,8 +514,9 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
                 stop: function() {},
 
                 solve: function() {
+                    const that = this;
                     console.log("solve()");
-                    this.stop();
+                    that.stop();
 
                     // Remove UI clutter for the demo.
                     if (WITH_UI) {
@@ -525,7 +525,7 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
                         });
                     }
 
-                    this.currentSolution = null;
+                    that.currentSolution = null;
                     window.clearTimeout(Status.indicatorTimer);
                     Status.indicatorTimer = window.setTimeout(
                         Status.updateIndicator.bind(Status),
@@ -642,7 +642,8 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
                     window.setTimeout(function() {
                         console.log("timeout");
                         var instance = new FC_Solve({
-                            cmd_line_preset: "video-editing",
+                            // cmd_line_preset: "video-editing",
+                            cmd_line_preset: "lg",
                             // cmd_line_preset: 'as',
                             // cmd_line_preset: 'default',
                             set_status_callback: function(status) {
@@ -654,6 +655,7 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
                         console.log("got instance timeout");
 
                         var state_as_string = _render_state_as_string(state);
+                        console.log("state_as_string = " + state_as_string);
                         var ret_moves;
                         try {
                             var solve_err_code = instance.do_solve(
@@ -668,7 +670,12 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
                             }
 
                             var buffer = instance.display_expanded_moves_solution(
-                                {},
+                                {
+                                    displayer: new w.DisplayFilter({
+                                        is_unicode_cards: false,
+                                        is_unicode_cards_chars: false,
+                                    }),
+                                },
                             );
                             if (solve_err_code == FCS_STATE_WAS_SOLVED) {
                                 alert("FCS_STATE_WAS_SOLVED");
@@ -862,7 +869,7 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
                             }, 3000);
                         } else {
                             Status.stopIndicator(false);
-                            alert("no solution");
+                            console.log("no solution");
                             if (false) {
                                 window.setTimeout(function() {
                                     Y.fire("newAppGame");

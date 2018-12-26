@@ -31,8 +31,8 @@ const solver = require(['./solver-freecell']);
 	<script src="js/yui-breakout.js"></script>
 <% end %>
 	<script>
-        require(['./solitaire', './iphone', './auto-stack-clear', './auto-turnover', './autoplay', './application', './freecell'],
-                function (solitaire, iphone, auto_stack, auto_turn, autoplay, application, freecell) {
+        require(['./solitaire', './iphone', './auto-stack-clear', './auto-turnover', './statistics', './autoplay', './application', './freecell'],
+                function (solitaire, iphone, auto_stack, auto_turn, statistics, autoplay, application, freecell) {
         });
     </script>
 <% if false %>
@@ -92,6 +92,12 @@ const solver = require(['./solver-freecell']);
                 <button id=close-chooser>Return to game</button>
 	</div>
 	<img src="loading.gif" class="loading hidden" alt="Loading">
+	<div class="chromestore hidden">
+		<a class=hide>[Hide]</a>
+                <a href=https://chrome.google.com/webstore/detail/dofbnmhnoodmmlhflbcihicmbnhhinhp>
+                  <img src=ChromeWebStore_Badge_v2_206x58.png>
+                </a>
+	</div>
 
 </body>
 </html>
