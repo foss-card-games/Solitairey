@@ -69,9 +69,9 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
         }
         return (_ranks_rev[m[1]] << 2) | _suits_rev[m[2]];
     }
-    function _get_stack_c(pre_s, src) {
+    function _get_stack_c(pre_s, src, card_idx) {
         const arr = pre_s[src + 2].replace(/ *$/, "").split(" ");
-        const src_c_s = arr[arr.length - 1];
+        const src_c_s = arr[arr.length - card_idx];
         return src_c_s == ":" ? 0 : _str_to_c(src_c_s);
     }
     function _get_freecell_c(pre_s, idx) {
@@ -103,12 +103,16 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
     }
     function _calc__move_content(pre_s, str) {
         var matched = str.match(
-            /^Move 1 cards from stack ([0-9]+) to stack ([0-9]+)/,
+            /^Move ([0-9]+) cards from stack ([0-9]+) to stack ([0-9]+)/,
         );
 
         if (matched) {
-            const src_c = _get_stack_c(pre_s, to_int(matched[1]));
-            const dest_c = _get_stack_c(pre_s, to_int(matched[2]));
+            const src_c = _get_stack_c(
+                pre_s,
+                to_int(matched[2]),
+                to_int(matched[1]),
+            );
+            const dest_c = _get_stack_c(pre_s, to_int(matched[3]), 1);
             return {
                 source: ["tableau", src_c],
                 dest: ["tableau", dest_c],
@@ -125,7 +129,7 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
             let src_c;
 
             if (matched[1] == "stack") {
-                src_c = _get_stack_c(pre_s, src);
+                src_c = _get_stack_c(pre_s, src, 1);
                 m_t = "tableau";
             } else {
                 src_c = _get_freecell_c(pre_s, src);
@@ -148,7 +152,7 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
 
         if (matched) {
             return {
-                source: ["tableau", _get_stack_c(pre_s, to_int(matched[1]))],
+                source: ["tableau", _get_stack_c(pre_s, to_int(matched[1]), 1)],
                 dest: ["reserve", _get_freecell_c(pre_s, to_int(matched[2]))],
             };
         }
@@ -160,11 +164,13 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
         if (matched) {
             return {
                 source: ["reserve", _get_freecell_c(pre_s, to_int(matched[1]))],
-                dest: ["tableau", _get_stack_c(pre_s, to_int(matched[2]))],
+                dest: ["tableau", _get_stack_c(pre_s, to_int(matched[2]), 1)],
             };
         }
 
-        throw "Must not happen";
+        throw "Must not happen - _calc__move_content() failed with <" +
+            str +
+            ">";
     }
     function _calc__ret_moves(moves_) {
         let current = {};
@@ -272,30 +278,40 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
                 var source = move.source,
                     dest = move.dest,
                     value,
-                    ret = {};
+                    ret = { top_card: true };
 
                 value = source[1];
+                const source_type = source[0];
                 game.eachStack(function(stack) {
                     if (ret.card) {
                         return;
                     }
+                    const len = stack.cards.length;
 
-                    var card = stack.last();
-                    if (!card) {
-                        return;
-                    }
+                    stack.eachCard(function(card, i) {
+                        if (ret.card) {
+                            return false;
+                        }
+                        if (!card) {
+                            return true;
+                        }
 
-                    if (
-                        card.rank === cardRank(value) &&
-                        card.suit === cardSuit(value)
-                    ) {
-                        ret.card = card;
-                    }
-                }, source[0]);
+                        if (
+                            card.rank === cardRank(value) &&
+                            card.suit === cardSuit(value)
+                        ) {
+                            ret.card = card;
+                            if (source_type === "tableau" && i != len - 1) {
+                                ret.top_card = false;
+                            }
+                            return false;
+                        }
+                    });
+                }, source_type);
 
                 if (!ret.card) {
-                    // throw "Excalibur";
-                    return ret;
+                    throw "Excalibur";
+                    // return ret;
                 }
 
                 value = dest[1];
@@ -320,7 +336,7 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
                 }, dest[0]);
 
                 if (!ret.stack) {
-                    throw "Must not happen";
+                    throw "Must not happen - could not find dest stack";
                 }
 
                 return ret;
@@ -390,7 +406,13 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
                         origin.updateCardsPosition();
                         move.stack.updateCardsPosition();
                     });
-                    card.moveTo(move.stack);
+                    if (move.top_card) {
+                        card.moveTo(move.stack);
+                    } else {
+                        Solitaire.activeCard = card;
+                        card.createProxyStack();
+                        move.stack.pushStack(card.proxyStack);
+                    }
                     return true;
                 },
 
@@ -787,17 +809,15 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
                                 solve_err_code = instance.resume_solution();
                             }
 
-                            var buffer = instance.display_expanded_moves_solution(
-                                {
-                                    displayer: new w.DisplayFilter({
-                                        is_unicode_cards: false,
-                                        is_unicode_cards_chars: false,
-                                    }),
-                                },
-                            );
+                            var buffer = instance.display_solution({
+                                displayer: new w.DisplayFilter({
+                                    is_unicode_cards: false,
+                                    is_unicode_cards_chars: false,
+                                }),
+                            });
                             if (solve_err_code == FCS_STATE_WAS_SOLVED) {
                                 var moves_ =
-                                    instance._post_expand_states_and_moves_seq;
+                                    instance._pre_expand_states_and_moves_seq;
                                 ret_moves = _calc__ret_moves(moves_);
                             }
                         } catch (e) {

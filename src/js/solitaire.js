@@ -752,7 +752,6 @@ define([], function() {
 
                     var card = Solitaire.activeCard,
                         stack = card.proxyStack,
-                        origin = card.stack,
                         target,
                         first;
 
