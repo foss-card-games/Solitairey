@@ -2,7 +2,7 @@ JS_PREFIX = "js"
 JS_SRC_PREFIX="src/js"
 ROOT_PREFIX = "dest"
 PREFIX = "dest/js"
-BROWSERIFY_JS = %w[big-integer]
+BROWSERIFY_JS = %w[big-integer flatted]
 TS_BASE = %w[fcs-validate web-fc-solve--expand-moves web-fc-solve]
 JS_CURATED_SOURCES = %w[solitaire iphone auto-stack-clear auto-turnover autoplay ie-opera-background-fix statistics solver-freecell solver-freecell-worker agnes golf klondike klondike1t flowergarden fortythieves freecell grandclock montecarlo pyramid russian-solitaire scorpion spider spider1s spider2s spiderette tritowers will-o-the-wisp yukon application]
 JS = %w[yui-breakout yui-debug require require--debug] + JS_CURATED_SOURCES + TS_BASE + BROWSERIFY_JS
@@ -158,7 +158,8 @@ end
 
 task :upload => :default do
   # sh "rsync --progress --inplace -a -v dest hostgator:public_html/temp-Solitairey-ekrimyk/"
-  sh "rsync --progress --inplace -a -v dest hostgator:public_html/temp-Solitairey-fc-solve-loop-NjU78o/"
+  # sh "rsync --progress --inplace -a -v dest hostgator:public_html/temp-Solitairey-fc-solve-loop-NjU78o/"
+  sh "rsync --progress --inplace -a -v dest hostgator:public_html/temp-Solitairey-fc-solve/"
 end
 
 task :upload_local => :default do

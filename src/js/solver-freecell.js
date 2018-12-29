@@ -1,8 +1,9 @@
-define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
-    Module,
-    w,
-    solitaire,
-) {
+define([
+    "./libfcs-wrap",
+    "./web-fc-solve",
+    "./solitaire",
+    "./flatted",
+], function(Module, w, solitaire, flatted) {
     "use strict";
     var exports = {};
     const FC_Solve = w.FC_Solve;
@@ -47,6 +48,12 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
     }
     var _ranks_rev = _rev(_ranks, 1);
     var _suits_rev = _rev(_suits, 0);
+    function _render_rank(c) {
+        return _ranks[(c >> 2) - 1];
+    }
+    function _render_suit(c) {
+        return _suits[c & 0x3];
+    }
 
     function _init_my_module() {
         if (_my_mod_counter >= MAX_MOD_COUNTER) {
@@ -107,15 +114,13 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
         );
 
         if (matched) {
-            const src_c = _get_stack_c(
-                pre_s,
-                to_int(matched[2]),
-                to_int(matched[1]),
-            );
+            const num_cards = to_int(matched[1]);
+            const src_c = _get_stack_c(pre_s, to_int(matched[2]), num_cards);
             const dest_c = _get_stack_c(pre_s, to_int(matched[3]), 1);
             return {
                 source: ["tableau", src_c],
                 dest: ["tableau", dest_c],
+                num_cards: num_cards,
             };
         }
 
@@ -143,6 +148,7 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
             return {
                 source: [m_t, src_c],
                 dest: ["foundation", f_c],
+                num_cards: 1,
             };
         }
 
@@ -154,6 +160,7 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
             return {
                 source: ["tableau", _get_stack_c(pre_s, to_int(matched[1]), 1)],
                 dest: ["reserve", _get_freecell_c(pre_s, to_int(matched[2]))],
+                num_cards: 1,
             };
         }
 
@@ -165,6 +172,7 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
             return {
                 source: ["reserve", _get_freecell_c(pre_s, to_int(matched[1]))],
                 dest: ["tableau", _get_stack_c(pre_s, to_int(matched[2]), 1)],
+                num_cards: 1,
             };
         }
 
@@ -188,6 +196,7 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
 
                 pre_current = current;
                 current.source = move_content.source;
+                current.num_cards = move_content.num_cards;
                 current.dest = move_content.dest;
                 current.next = {};
                 current = current.next;
@@ -339,6 +348,8 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
                     throw "Must not happen - could not find dest stack";
                 }
 
+                ret.num_cards = move.num_cards;
+
                 return ret;
             }
 
@@ -349,6 +360,11 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
                     callback(node);
                 }
             }
+            Y.one("#redeal").on("click", function() {
+                Solitaire.Application.newGame();
+                //getGame().redeal();
+                return;
+            });
 
             var Animation = {
                 interval: 700, // interval: 500,
@@ -402,16 +418,53 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
 
                     origin = card.stack;
 
-                    card.after(function() {
-                        origin.updateCardsPosition();
-                        move.stack.updateCardsPosition();
-                    });
+                    if (false) {
+                        card.after(function() {
+                            origin.updateCardsPosition();
+                            move.stack.updateCardsPosition();
+                        });
+                    }
                     if (move.top_card) {
                         card.moveTo(move.stack);
                     } else {
                         Solitaire.activeCard = card;
                         card.createProxyStack();
-                        move.stack.pushStack(card.proxyStack);
+                        const proxyStack = card.proxyStack;
+                        false &&
+                            alert(
+                                "proxyStack " +
+                                    proxyStack.cards
+                                        .map((card) => {
+                                            _ranks[card.rank] +
+                                                _suits[card.suit];
+                                        })
+                                        .join(" "),
+                            );
+                        if (proxyStack.cards.length !== move.num_cards) {
+                            alert("Error !!! mismatch in num_cards");
+                        }
+                        // alert("proxyStack " + flatted.stringify(proxyStack));
+
+                        if (false) {
+                            getGame().unanimated(function() {
+                                proxyStack.updateCardsPosition();
+                            });
+                        }
+
+                        Y.Array.each(proxyStack.cards, function(card) {
+                            if (!card) {
+                                return;
+                            }
+
+                            // card.proxyStack = null;
+                            // fragment.append(card.node);
+                        });
+                        move.stack.pushStack(proxyStack);
+                        move.stack.updateCardsPosition();
+                        origin.updateCardsPosition();
+                        // origin.deleteItem(card.proxyStack);
+                        // origin.deleteItem(card);
+                        Solitaire.endTurn();
                     }
                     return true;
                 },
@@ -715,14 +768,6 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
                     function _render_state_as_string(obj) {
                         var ret = "";
 
-                        function _render_suit(c) {
-                            return _suits[c & 0x3];
-                        }
-
-                        function _render_rank(c) {
-                            return _ranks[(c >> 2) - 1];
-                        }
-
                         var reserve = obj.reserve;
                         var foundation = obj.foundation;
                         ret +=
@@ -784,8 +829,8 @@ define(["./libfcs-wrap", "./web-fc-solve", "./solitaire"], function(
                     _init_my_module();
                     window.setTimeout(function() {
                         var instance = new FC_Solve({
-                            // cmd_line_preset: "video-editing",
-                            cmd_line_preset: "lg",
+                            cmd_line_preset: "video-editing",
+                            // cmd_line_preset: "lg",
                             // cmd_line_preset: 'as',
                             // cmd_line_preset: 'default',
                             set_status_callback: function(status) {
