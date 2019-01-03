@@ -181,10 +181,7 @@ define([
             ">";
     }
     function _calc__ret_moves(moves_) {
-        let current = {};
-        let pre_current = current;
-
-        const ret_moves = current;
+        const ret_moves = [];
         for (let i = 0; i < moves_.length; ++i) {
             const m = moves_[i];
 
@@ -194,15 +191,13 @@ define([
                     m.str,
                 );
 
-                pre_current = current;
+                let current = {};
                 current.source = move_content.source;
                 current.num_cards = move_content.num_cards;
                 current.dest = move_content.dest;
-                current.next = {};
-                current = current.next;
+                ret_moves.push(current);
             }
         }
-        delete pre_current.next;
         return ret_moves;
     }
 
@@ -369,19 +364,12 @@ define([
             var Animation = {
                 interval: 700, // interval: 500,
                 timer: null,
-                remainingMoves: null,
+                remainingMovesIdx: null,
+                remainingMovesArr: [],
 
                 init: function(moves) {
-                    var current = moves;
-
-                    while (current) {
-                        if (current.next) {
-                            current.next.prev = current;
-                        }
-                        current = current.next;
-                    }
-
-                    this.remainingMoves = moves;
+                    this.remainingMovesArr = moves;
+                    this.remainingMovesIdx = 0;
                 },
 
                 pause: function() {
@@ -405,11 +393,16 @@ define([
                     var that = this;
                     var move, card, origin;
 
-                    if (!that.remainingMoves) {
+                    if (
+                        that.remainingMovesIdx >= that.remainingMovesArr.length
+                    ) {
                         return;
                     }
 
-                    move = moveToCardAndStack(game, that.remainingMoves);
+                    move = moveToCardAndStack(
+                        game,
+                        that.remainingMovesArr[that.remainingMovesIdx],
+                    );
                     card = move.card;
 
                     if (!card) {
@@ -470,15 +463,16 @@ define([
                 },
 
                 _resetGameFoo: function() {
-                    return;
-                    var that = this;
-                    // window.clearTimeout(that.timer);
-                    // that.timer = undefined;
-                    Animation.pause();
-                    window.setTimeout(function() {
-                        Y.fire("newAppGame");
-                    }, 2000);
-                    // Y.fire("newAppGame");
+                    const that = this;
+                    if (false) {
+                        // window.clearTimeout(that.timer);
+                        // that.timer = undefined;
+                        Animation.pause();
+                        window.setTimeout(function() {
+                            Y.fire("newAppGame");
+                        }, 2000);
+                        // Y.fire("newAppGame");
+                    }
                 },
 
                 playCurrent: function(game) {
@@ -492,25 +486,25 @@ define([
                 },
 
                 prev: function(game) {
-                    var prev = this.remainingMoves.prev;
-
-                    if (prev) {
+                    const that = this;
+                    if (that.remainingMovesIdx >= 0) {
                         Y.fire("undo", true);
-                        this.remainingMoves = prev;
+                        --that.remainingMovesIdx;
                     }
                 },
 
                 next: function(game) {
                     var that = this;
-                    var current = this.remainingMoves,
-                        next = this.remainingMoves.next;
+                    var next = this.remainingMovesIdx + 1;
 
                     Solitaire.Statistics.disable();
                     this.playCurrent(game);
 
-                    this.remainingMoves = next;
+                    that.remainingMovesIdx = next;
 
-                    if (!next) {
+                    if (
+                        that.remainingMovesIdx >= that.remainingMovesArr.length
+                    ) {
                         that._resetGameFoo();
                     }
 
@@ -519,8 +513,13 @@ define([
 
                 play: function(game) {
                     var move, card, origin;
+                    const that = this;
 
-                    if (!this.remainingMoves) {
+                    if (
+                        that.remainingMovesIdx >=
+                            that.remainingMovesArr.length ||
+                        that.remainingMovesIdx < 0
+                    ) {
                         return;
                     }
 
@@ -534,7 +533,13 @@ define([
                     }
 
                     this.next(game);
-                    if (this.remainingMoves) {
+                    if (
+                        !(
+                            that.remainingMovesIdx >=
+                                that.remainingMovesArr.length ||
+                            that.remainingMovesIdx < 0
+                        )
+                    ) {
                         this.timer = window.setTimeout(
                             function() {
                                 this.play(game);
@@ -841,7 +846,7 @@ define([
                         });
 
                         var state_as_string = _render_state_as_string(state);
-                        var ret_moves;
+                        let ret_moves = [];
                         try {
                             var solve_err_code = instance.do_solve(
                                 state_as_string,
