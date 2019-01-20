@@ -66,6 +66,10 @@ end
 def js_root_file(fn)
     src = "#{JS_SRC_PREFIX}/#{fn}"
     dest = "#{ROOT_PREFIX}/#{fn}"
+    dest2 = "#{PREFIX}/js/#{fn}"
+    file dest2 => src do
+        sh "cp -f #{src} #{dest2}"
+    end
     file dest => src do
         sh "cp -f #{src} #{dest}"
     end
