@@ -45,30 +45,28 @@ define([], function() {
     Array.prototype.my_Last = function() {
         return this[this.length - 1];
     };
+    Array.prototype.deleteItem = function(item) {
+        var i = this.indexOf(item);
+
+        i !== -1 && this.splice(i, 1);
+    };
+    Array.prototype.my_Shuffle = function() {
+        var i = this.length,
+            r,
+            item,
+            temp;
+
+        while (--i) {
+            r = ~~(Math.random() * i);
+            item = this[i];
+            temp = this[r];
+            this[r] = item;
+            this[i] = temp;
+        }
+    };
     if (false) {
         Array.prototype.last = function() {
             return this[this.length - 1];
-        };
-
-        Array.prototype.deleteItem = function(item) {
-            var i = this.indexOf(item);
-
-            i !== -1 && this.splice(i, 1);
-        };
-
-        Array.prototype.shuffle = function() {
-            var i = this.length,
-                r,
-                item,
-                temp;
-
-            while (--i) {
-                r = ~~(Math.random() * i);
-                item = this[i];
-                temp = this[r];
-                this[r] = item;
-                this[i] = temp;
-            }
         };
 
         Function.prototype.bind = function(o) {
@@ -830,7 +828,7 @@ define([], function() {
                     }
 
                     if (seed === undefined) {
-                        this.cards.shuffle();
+                        this.cards.my_Shuffle();
                     } else {
                         this.msSeededShuffle(seed);
                     }
