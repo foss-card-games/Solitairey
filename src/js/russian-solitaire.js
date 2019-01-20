@@ -8,7 +8,7 @@ YUI.add(
             }));
 
         RussianSolitaire.Card.validTarget = function(stack) {
-            var target = stack.last();
+            var target = stack.my_Last();
 
             switch (stack.field) {
                 case "tableau":

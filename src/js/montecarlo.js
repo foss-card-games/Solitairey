@@ -89,7 +89,7 @@ YUI.add(
                         if (!(i % 5)) {
                             s++;
                         }
-                        card = deck.last().faceUp();
+                        card = deck.my_Last().faceUp();
                         card.moveTo(stacks[s]);
                         card.node.setStyle("zIndex", 100 - i);
                         i++;
@@ -265,7 +265,7 @@ YUI.add(
                 },
 
                 setCardPosition: function(card) {
-                    var last = this.cards.last(),
+                    var last = this.cards.my_Last(),
                         layout = MonteCarlo.Tableau.stackConfig.layout,
                         top = this.top,
                         left = last
@@ -306,7 +306,7 @@ YUI.add(
             {
                 updateDragGroups: function() {
                     var active = Solitaire.activeCard,
-                        card = this.last();
+                        card = this.my_Last();
 
                     if (!card) {
                         return;

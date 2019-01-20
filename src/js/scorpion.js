@@ -39,7 +39,7 @@ YUI.add(
                         len;
 
                     for (i = 0; i < 3; i++) {
-                        deck.last()
+                        deck.my_Last()
                             .faceUp()
                             .moveTo(stacks[i]);
                     }
@@ -111,7 +111,7 @@ YUI.add(
                     },
 
                     validTarget: function(stack) {
-                        var target = stack.last();
+                        var target = stack.my_Last();
 
                         if (stack.field !== "tableau") {
                             return false;
@@ -181,7 +181,7 @@ YUI.add(
             Scorpion.Tableau.Stack,
             {
                 setCardPosition: function(card) {
-                    var last = this.cards.last(),
+                    var last = this.cards.my_Last(),
                         top = last ? last.top + last.rankHeight : this.top,
                         left = this.left;
 

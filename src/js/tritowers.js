@@ -54,7 +54,7 @@ YUI.add(
                     turnOver: function() {
                         var deck = this.deck.stacks[0],
                             foundation = this.foundation.stacks[0],
-                            last = deck.last();
+                            last = deck.my_Last();
 
                         last && last.faceUp().moveTo(foundation);
                     },
@@ -150,7 +150,7 @@ YUI.add(
                                 return false;
                             }
 
-                            var card = stack.last(),
+                            var card = stack.my_Last(),
                                 diff = Math.abs(this.rank - card.rank);
 
                             return diff === 1 || diff === 12;
@@ -161,7 +161,7 @@ YUI.add(
 
                             return (
                                 (stack.field === "deck" &&
-                                    this === stack.last()) ||
+                                    this === stack.my_Last()) ||
                                 (this.isFree() &&
                                     this.validTarget(Game.foundation.stacks[0]))
                             );
@@ -224,7 +224,7 @@ YUI.add(
                 },
 
                 setCardPosition: function(card) {
-                    var last = this.last(),
+                    var last = this.my_Last(),
                         top = this.top,
                         left,
                         index,
@@ -257,7 +257,7 @@ YUI.add(
             TriTowers.Deck.Stack,
             {
                 setCardPosition: function(card) {
-                    var last = this.last(),
+                    var last = this.my_Last(),
                         top,
                         left,
                         zIndex;

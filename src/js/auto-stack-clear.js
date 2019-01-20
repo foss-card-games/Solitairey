@@ -65,7 +65,7 @@ define(["./solitaire"], function(solitaire) {
 
                 Solitaire.stationary(function() {
                     while (count) {
-                        cards.last().moveTo(foundation);
+                        cards.my_Last().moveTo(foundation);
                         count--;
                     }
                 });

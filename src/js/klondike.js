@@ -41,7 +41,7 @@ YUI.add(
                         i > stop && i;
                         i--
                     ) {
-                        deck.last()
+                        deck.my_Last()
                             .faceUp()
                             .moveTo(waste);
                     }
@@ -59,7 +59,7 @@ YUI.add(
 
                     while (waste.cards.length) {
                         waste
-                            .last()
+                            .my_Last()
                             .faceDown()
                             .moveTo(deck);
                     }
@@ -147,7 +147,7 @@ YUI.add(
                     },
 
                     validTarget: function(stack) {
-                        var target = stack.last();
+                        var target = stack.my_Last();
 
                         switch (stack.field) {
                             case "tableau":
@@ -190,7 +190,7 @@ YUI.add(
             Klondike.Tableau.Stack,
             {
                 setCardPosition: function(card) {
-                    var last = this.cards.last(),
+                    var last = this.cards.my_Last(),
                         top = last ? last.top + last.rankHeight : this.top,
                         left = this.left;
 
@@ -207,7 +207,7 @@ YUI.add(
                 // always display only the last three cards
                 setCardPosition: function(card) {
                     var cards = this.cards,
-                        last = cards.last(),
+                        last = cards.my_Last(),
                         stack = this;
 
                     Y.Array.each(cards.slice(-2), function(card, i) {

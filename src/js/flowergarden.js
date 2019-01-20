@@ -138,7 +138,7 @@ YUI.add(
                         },
 
                         validTarget: function(stack) {
-                            var target = stack.last();
+                            var target = stack.my_Last();
 
                             switch (stack.field) {
                                 case "tableau":
@@ -207,7 +207,7 @@ YUI.add(
             FlowerGarden.Tableau.Stack,
             {
                 setCardPosition: function(card) {
-                    var last = this.cards.last(),
+                    var last = this.cards.my_Last(),
                         top = last
                             ? last.top + Solitaire.game.Card.rankHeight
                             : this.top,
@@ -224,7 +224,7 @@ YUI.add(
             FlowerGarden.Reserve.Stack,
             {
                 setCardPosition: function(card) {
-                    var last = this.cards.last(),
+                    var last = this.cards.my_Last(),
                         left = last
                             ? last.left + Solitaire.Card.width * 0.4
                             : this.left,

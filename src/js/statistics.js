@@ -71,7 +71,7 @@ define(["./solitaire"], function(solitaire) {
                         }
 
                         var node = card.node;
-                        if (card !== stack.last()) {
+                        if (card !== stack.my_Last()) {
                             node.addClass("hidden");
                             return;
                         }
@@ -128,7 +128,7 @@ define(["./solitaire"], function(solitaire) {
                     loseCount,
                     output = "<div id='win_display'>";
 
-                streakCount = stats.streaks().last().length;
+                streakCount = stats.streaks().my_Last().length;
                 winCount = stats.wins().length;
                 loseCount = stats.loses().length;
 

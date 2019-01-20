@@ -20,7 +20,7 @@ YUI.add(
                     }
 
                     deck.createStack();
-                    deck.last().faceUp();
+                    deck.my_Last().faceUp();
                 },
 
                 turnOver: function() {
@@ -30,7 +30,7 @@ YUI.add(
                     if (deck.cards.length === 1) {
                         return;
                     }
-                    deck.last().moveTo(waste);
+                    deck.my_Last().moveTo(waste);
                 },
 
                 height: function() {
@@ -228,7 +228,7 @@ YUI.add(
 
                 setCardPosition: function(card) {
                     var layout = Pyramid.Tableau.stackConfig.layout,
-                        last = this.cards.last(),
+                        last = this.cards.my_Last(),
                         top = this.top,
                         left = last
                             ? last.left + card.width * layout.cardGap
@@ -251,14 +251,14 @@ YUI.add(
                 },
 
                 update: function(undo) {
-                    var last = this.last();
+                    var last = this.my_Last();
 
                     last && last.faceUp(undo);
                 },
 
                 updateDragGroups: function() {
                     var active = Solitaire.activeCard,
-                        card = this.last();
+                        card = this.my_Last();
 
                     if (!card) {
                         return;

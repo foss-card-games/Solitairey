@@ -43,7 +43,7 @@ YUI.add(
                     }
 
                     this.eachStack(function(stack) {
-                        var card = deck.last();
+                        var card = deck.my_Last();
 
                         if (card) {
                             card.faceUp()
@@ -119,7 +119,7 @@ YUI.add(
                             return false;
                         }
 
-                        var target = stack.last();
+                        var target = stack.my_Last();
 
                         return (
                             !target ||
@@ -144,7 +144,7 @@ YUI.add(
             Spider.Stack,
             {
                 validCard: function(card) {
-                    return card.suit === this.cards.last().suit;
+                    return card.suit === this.cards.my_Last().suit;
                 },
 
                 validTarget: function(stack) {
@@ -165,7 +165,7 @@ YUI.add(
             Spider.Tableau.Stack,
             {
                 setCardPosition: function(card) {
-                    var last = this.cards.last(),
+                    var last = this.cards.my_Last(),
                         top = last ? last.top + last.rankHeight : this.top,
                         left = this.left;
 

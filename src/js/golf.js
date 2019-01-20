@@ -31,7 +31,7 @@ YUI.add(
                     turnOver: function() {
                         var deck = this.deck.stacks[0],
                             foundation = this.foundation.stacks[0],
-                            last = deck.last();
+                            last = deck.my_Last();
 
                         last && last.faceUp().moveTo(foundation);
                     },
@@ -125,7 +125,7 @@ YUI.add(
                                 return false;
                             }
 
-                            var target = stack.last(),
+                            var target = stack.my_Last(),
                                 diff = Math.abs(this.rank - target.rank);
 
                             return diff === 1;
@@ -133,7 +133,8 @@ YUI.add(
 
                         isFree: function() {
                             return (
-                                !this.isFaceDown && this === this.stack.last()
+                                !this.isFaceDown &&
+                                this === this.stack.my_Last()
                             );
                         },
                     }),
@@ -153,7 +154,7 @@ YUI.add(
             Golf.Tableau.Stack,
             {
                 setCardPosition: function(card) {
-                    var last = this.cards.last(),
+                    var last = this.cards.my_Last(),
                         top = last ? last.top + last.rankHeight : this.top,
                         left = this.left;
 
@@ -168,7 +169,7 @@ YUI.add(
             Golf.Deck.Stack,
             {
                 setCardPosition: function(card) {
-                    var last = this.last(),
+                    var last = this.my_Last(),
                         top,
                         left,
                         zIndex;

@@ -37,7 +37,7 @@ YUI.add(
                         i > stop && i;
                         i--
                     ) {
-                        deck.last()
+                        deck.my_Last()
                             .faceUp()
                             .moveTo(waste);
                     }
@@ -121,7 +121,7 @@ YUI.add(
 
                 Card: instance(Solitaire.Card, {
                     validTarget: function(stack) {
-                        var target = stack.last();
+                        var target = stack.my_Last();
 
                         switch (stack.field) {
                             case "tableau":
@@ -179,7 +179,7 @@ YUI.add(
             FortyThieves.Tableau.Stack,
             {
                 setCardPosition: function(card) {
-                    var last = this.cards.last(),
+                    var last = this.cards.my_Last(),
                         top = last ? last.top + last.rankHeight : this.top,
                         left = this.left;
 

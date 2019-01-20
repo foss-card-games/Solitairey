@@ -1,24 +1,26 @@
 define([], function() {
-    if (!Array.prototype.indexOf) {
-        Array.prototype.indexOf = function(elt /*, from*/) {
-            var len = this.length >>> 0;
+    if (false) {
+        if (!Array.prototype.indexOf) {
+            Array.prototype.indexOf = function(elt /*, from*/) {
+                var len = this.length >>> 0;
 
-            var from = Number(arguments[1]) || 0;
-            from = from < 0 ? Math.ceil(from) : Math.floor(from);
-            if (from < 0) from += len;
+                var from = Number(arguments[1]) || 0;
+                from = from < 0 ? Math.ceil(from) : Math.floor(from);
+                if (from < 0) from += len;
 
-            for (; from < len; from++) {
-                if (from in this && this[from] === elt) return from;
-            }
-            return -1;
-        };
+                for (; from < len; from++) {
+                    if (from in this && this[from] === elt) return from;
+                }
+                return -1;
+            };
+        }
     }
 
     // For debugging.
     // var pre_canned_seeds = [11982, 11982, 11982, 11982];
     var pre_canned_seeds = [];
 
-    Array.prototype.flatten = function() {
+    Array.prototype.my_Flatten = function() {
         var result = [],
             i,
             len,
@@ -28,7 +30,7 @@ define([], function() {
         for (i = 0, len = this.length; i < len; i++) {
             item = this[i];
             if (Object.prototype.toString.call(item) === "[object Array]") {
-                proto.push.apply(result, proto.flatten.call(item));
+                proto.push.apply(result, proto.my_Flatten.call(item));
             } else {
                 result.push(item);
             }
@@ -40,57 +42,62 @@ define([], function() {
         return Array.prototype.slice.call(args);
     }
 
-    Array.prototype.last = function() {
+    Array.prototype.my_Last = function() {
         return this[this.length - 1];
     };
-
-    Array.prototype.deleteItem = function(item) {
-        var i = this.indexOf(item);
-
-        i !== -1 && this.splice(i, 1);
-    };
-
-    Array.prototype.shuffle = function() {
-        var i = this.length,
-            r,
-            item,
-            temp;
-
-        while (--i) {
-            r = ~~(Math.random() * i);
-            item = this[i];
-            temp = this[r];
-            this[r] = item;
-            this[i] = temp;
-        }
-    };
-
-    Function.prototype.bind = function(o) {
-        var f = this;
-
-        return function() {
-            var args = argsArray(arguments);
-
-            return f.apply(o, args);
+    if (false) {
+        Array.prototype.last = function() {
+            return this[this.length - 1];
         };
-    };
 
-    Function.prototype.partial = function() {
-        var f = this,
-            captured = argsArray(arguments);
+        Array.prototype.deleteItem = function(item) {
+            var i = this.indexOf(item);
 
-        return function() {
-            var i,
-                len,
-                args = [].concat(captured);
+            i !== -1 && this.splice(i, 1);
+        };
 
-            for (i = 0, len = arguments.length; i < len; i++) {
-                args.push(arguments[i]);
+        Array.prototype.shuffle = function() {
+            var i = this.length,
+                r,
+                item,
+                temp;
+
+            while (--i) {
+                r = ~~(Math.random() * i);
+                item = this[i];
+                temp = this[r];
+                this[r] = item;
+                this[i] = temp;
             }
-
-            return f.apply(this, args);
         };
-    };
+
+        Function.prototype.bind = function(o) {
+            var f = this;
+
+            return function() {
+                var args = argsArray(arguments);
+
+                return f.apply(o, args);
+            };
+        };
+
+        Function.prototype.partial = function() {
+            var f = this,
+                captured = argsArray(arguments);
+
+            return function() {
+                var i,
+                    len,
+                    args = [].concat(captured);
+
+                for (i = 0, len = arguments.length; i < len; i++) {
+                    args.push(arguments[i]);
+                }
+
+                return f.apply(this, args);
+            };
+        };
+    }
 
     function instance(proto, attrs) {
         var maker = new Function(),
@@ -579,7 +586,7 @@ define([], function() {
                             return Y.Array.map(f.stacks, function(s) {
                                 return s.left;
                             });
-                        }).flatten(),
+                        }).my_Flatten(),
                     );
 
                     maxX =
@@ -589,7 +596,7 @@ define([], function() {
                                 return Y.Array.map(f.stacks, function(s) {
                                     return s.left;
                                 });
-                            }).flatten(),
+                            }).my_Flatten(),
                         ) + this.Card.width;
 
                     this.widthScale = (maxX - minX) / this.Card.base.width;
@@ -857,8 +864,8 @@ define([], function() {
                     }
                 },
 
-                last: function() {
-                    return this.cards.last();
+                my_Last: function() {
+                    return this.cards.my_Last();
                 },
 
                 pop: function() {
@@ -1003,7 +1010,7 @@ define([], function() {
 
                 autoPlay: function() {
                     var origin = this.stack,
-                        last = origin.last(),
+                        last = origin.my_Last(),
                         stacks,
                         foundation,
                         i,
@@ -1034,7 +1041,7 @@ define([], function() {
                 },
 
                 isFree: function() {
-                    return this === this.stack.last();
+                    return this === this.stack.my_Last();
                 },
 
                 playable: function() {
@@ -1366,7 +1373,7 @@ define([], function() {
                 },
 
                 push: function(card, temp) {
-                    var last = this.last(),
+                    var last = this.my_Last(),
                         to = this.field,
                         from = card.stack ? card.stack.field : "deck";
 
@@ -1421,7 +1428,7 @@ define([], function() {
                 adjustRankHeight: function() {
                     var cards = this.cards,
                         card,
-                        last = this.last(),
+                        last = this.my_Last(),
                         max = Game.maxStackHeight(),
                         sumHidden = 0,
                         sumVisible = 0,
@@ -1484,8 +1491,8 @@ define([], function() {
                     return this.cards[0];
                 },
 
-                last: function() {
-                    return this.cards.last();
+                my_Last: function() {
+                    return this.cards.my_Last();
                 },
 
                 index: function() {
@@ -1545,7 +1552,7 @@ define([], function() {
                 updateDragGroups: function() {
                     var active = Solitaire.activeCard,
                         cards = this.cards,
-                        last = this.last(),
+                        last = this.my_Last(),
                         drop,
                         i = cards.length - 1;
 
@@ -1674,7 +1681,7 @@ define([], function() {
                     var stacks;
 
                     stacks = Y.Array.unique(
-                        Y.Array.map(this.pop(), this.act).flatten(),
+                        Y.Array.map(this.pop(), this.act).my_Flatten(),
                     );
 
                     Y.Array.each(stacks, function(stack) {

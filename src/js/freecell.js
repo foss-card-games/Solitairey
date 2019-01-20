@@ -31,13 +31,13 @@ define(["./solitaire"], function(solitaire) {
 
                         for (i = 0; i < 4; i++) {
                             stack = rStacks[i];
-                            !stack.last() && total++;
+                            !stack.my_Last() && total++;
                         }
 
                         for (i = 0; i < 8; i++) {
                             stack = tStacks[i];
                             exclude !== stack &&
-                                !tStacks[i].last() &&
+                                !tStacks[i].my_Last() &&
                                 freeTableaus++;
                         }
 
@@ -121,7 +121,7 @@ define(["./solitaire"], function(solitaire) {
                         },
 
                         validTarget: function(stack) {
-                            var target = stack.last();
+                            var target = stack.my_Last();
 
                             switch (stack.field) {
                                 case "tableau":
@@ -173,7 +173,7 @@ define(["./solitaire"], function(solitaire) {
 
                         return (
                             this.cards.length <=
-                            Freecell.openSlots(stack, this.last())
+                            Freecell.openSlots(stack, this.my_Last())
                         );
                     },
                 },
@@ -184,7 +184,7 @@ define(["./solitaire"], function(solitaire) {
                 Freecell.Tableau.Stack,
                 {
                     setCardPosition: function(card) {
-                        var last = this.cards.last(),
+                        var last = this.cards.my_Last(),
                             top = last ? last.top + last.rankHeight : this.top,
                             left = this.left;
 

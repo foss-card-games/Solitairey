@@ -27,7 +27,7 @@ YUI.add(
 
                     Klondike.deal.call(this);
 
-                    deck.last()
+                    deck.my_Last()
                         .faceUp()
                         .moveTo(foundation);
 
@@ -53,7 +53,7 @@ YUI.add(
                     }
 
                     for (i = 0; i < count; i++) {
-                        deck.last()
+                        deck.my_Last()
                             .faceUp()
                             .moveTo(target[i]);
                     }
@@ -71,7 +71,7 @@ YUI.add(
 
                     Stack: instance(Solitaire.Stack, {
                         setCardPosition: function(card) {
-                            var last = this.last(),
+                            var last = this.my_Last(),
                                 top = this.top,
                                 left = last
                                     ? last.left + Solitaire.Card.width * 1.5
@@ -100,7 +100,7 @@ YUI.add(
                         images: {},
 
                         setCardPosition: function(card) {
-                            var last = this.last(),
+                            var last = this.my_Last(),
                                 top = last
                                     ? last.top + last.rankHeight
                                     : this.top,
@@ -122,7 +122,7 @@ YUI.add(
                     },
 
                     validTarget: function(stack) {
-                        var target = stack.last();
+                        var target = stack.my_Last();
 
                         switch (stack.field) {
                             case "tableau":

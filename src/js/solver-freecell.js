@@ -16,7 +16,7 @@ define([
      */
     var WITH_UI = false; // Remove UI clutter for the demo.
 
-    var _my_module;
+    let _my_module;
     var MAX_MOD_COUNTER = 5;
     var _my_mod_counter = MAX_MOD_COUNTER;
     function to_int(s) {
@@ -55,12 +55,16 @@ define([
         return _suits[c & 0x3];
     }
 
-    function _init_my_module() {
+    function _init_my_module(callback) {
         if (_my_mod_counter >= MAX_MOD_COUNTER) {
             // Create a fresh instance to avoid failed allocs due to
             // memory fragmentation.
-            _my_module = Module()({});
-            w.FC_Solve_init_wrappers_with_module(_my_module);
+            _my_module = Module()({
+                onRuntimeInitialized: () => {
+                    w.FC_Solve_init_wrappers_with_module(_my_module);
+                    callback();
+                },
+            });
             _my_mod_counter = 0;
         } else {
             ++_my_mod_counter;
@@ -263,12 +267,12 @@ define([
 
                 reserve = [];
                 Y.Array.forEach(sortedStacks(game.reserve), function(s, i) {
-                    reserve[i] = cardToValue(s.last());
+                    reserve[i] = cardToValue(s.my_Last());
                 });
 
                 foundation = [];
                 Y.Array.forEach(sortedStacks(game.foundation), function(s, i) {
-                    foundation[i] = cardToValue(s.last());
+                    foundation[i] = cardToValue(s.my_Last());
                 });
 
                 return {
@@ -324,7 +328,7 @@ define([
                         return;
                     }
 
-                    var card = stack.last();
+                    var card = stack.my_Last();
 
                     if (!(card || value)) {
                         ret.stack = stack;
@@ -831,67 +835,71 @@ define([
                     }
 
                     var exceeded_iters = false;
-                    _init_my_module();
-                    window.setTimeout(function() {
-                        var instance = new FC_Solve({
-                            cmd_line_preset: "video-editing",
-                            // cmd_line_preset: "lg",
-                            // cmd_line_preset: 'as',
-                            // cmd_line_preset: 'default',
-                            set_status_callback: function(status) {
-                                if (status == "exceeded") {
-                                    exceeded_iters = true;
-                                }
-                            },
-                        });
-
-                        var state_as_string = _render_state_as_string(state);
-                        let ret_moves = [];
-                        try {
-                            var solve_err_code = instance.do_solve(
-                                state_as_string,
-                            );
-
-                            while (
-                                solve_err_code == FCS_STATE_SUSPEND_PROCESS &&
-                                !exceeded_iters
-                            ) {
-                                solve_err_code = instance.resume_solution();
-                            }
-
-                            var buffer = instance.display_solution({
-                                displayer: new w.DisplayFilter({
-                                    is_unicode_cards: false,
-                                    is_unicode_cards_chars: false,
-                                }),
+                    _init_my_module(() => {
+                        window.setTimeout(function() {
+                            var instance = new FC_Solve({
+                                cmd_line_preset: "video-editing",
+                                // cmd_line_preset: "lg",
+                                // cmd_line_preset: 'as',
+                                // cmd_line_preset: 'default',
+                                set_status_callback: function(status) {
+                                    if (status == "exceeded") {
+                                        exceeded_iters = true;
+                                    }
+                                },
                             });
-                            if (solve_err_code == FCS_STATE_WAS_SOLVED) {
-                                var moves_ =
-                                    instance._pre_expand_states_and_moves_seq;
-                                ret_moves = _calc__ret_moves(moves_);
+
+                            var state_as_string = _render_state_as_string(
+                                state,
+                            );
+                            let ret_moves = [];
+                            try {
+                                var solve_err_code = instance.do_solve(
+                                    state_as_string,
+                                );
+
+                                while (
+                                    solve_err_code ==
+                                        FCS_STATE_SUSPEND_PROCESS &&
+                                    !exceeded_iters
+                                ) {
+                                    solve_err_code = instance.resume_solution();
+                                }
+
+                                var buffer = instance.display_solution({
+                                    displayer: new w.DisplayFilter({
+                                        is_unicode_cards: false,
+                                        is_unicode_cards_chars: false,
+                                    }),
+                                });
+                                if (solve_err_code == FCS_STATE_WAS_SOLVED) {
+                                    var moves_ =
+                                        instance._pre_expand_states_and_moves_seq;
+                                    ret_moves = _calc__ret_moves(moves_);
+                                }
+                            } catch (e) {
+                                console.log("received exception " + e);
+                                _my_mod_counter = MAX_MOD_COUNTER + 5;
                             }
-                        } catch (e) {
-                            console.log("received exception " + e);
-                            _my_mod_counter = MAX_MOD_COUNTER + 5;
-                        }
-                        var solution = ret_moves;
-                        Animation.init(solution);
-                        if (solution) {
-                            Status.stopIndicator(true);
-                            window.setTimeout(function() {
-                                Animation.play(getGame());
-                            }, 3000);
-                        } else {
-                            Status.stopIndicator(false);
-                            console.log("no solution");
-                            if (false) {
+                            var solution = ret_moves;
+                            Animation.init(solution);
+                            if (solution) {
+                                Status.stopIndicator(true);
                                 window.setTimeout(function() {
-                                    Y.fire("newAppGame");
+                                    Animation.play(getGame());
                                 }, 3000);
+                            } else {
+                                Status.stopIndicator(false);
+                                console.log("no solution");
+                                if (false) {
+                                    window.setTimeout(function() {
+                                        Y.fire("newAppGame");
+                                    }, 3000);
+                                }
                             }
-                        }
-                        that.solver_active = false;
-                    }, 400);
+                            that.solver_active = false;
+                        }, 400);
+                    });
                 },
             });
 

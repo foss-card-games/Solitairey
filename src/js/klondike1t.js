@@ -9,7 +9,7 @@ YUI.add(
                 turnOver: function() {
                     var deck = this.deck.stacks[0],
                         waste = this.waste.stacks[0],
-                        card = deck.last();
+                        card = deck.my_Last();
 
                     card && card.faceUp().moveTo(waste);
                 },
