@@ -16,7 +16,7 @@ COMBINED = "#{PREFIX}/combined-min.js"
 COMPRESSOR = "bin/Run-YUI-Compressor"
 TEMPLATE = "index.erb"
 
-IMAGES = Dir["{dondorf,layouts}/**/*.png","*.{css,gif,png,jpg}",".htaccess"]
+IMAGES = Dir["{dondorf,layouts}/**/*.png","*.{css,gif,png,jpg}"] + [".htaccess"]
 
 DEST_INDEX = "dest/index.html"
 DEST_INDEX_DEV = "dest/index-dev.html"
@@ -34,8 +34,8 @@ IMAGES.each do |img|
     d = "dest/#{img}"
     DEST_IMAGES << d
     file d => img do
-        sh "mkdir -p $(dirname #{d})"
-        sh "cp -f #{img} #{d}"
+        mkdir_p File.dirname(d)
+        cp "#{img}", "#{d}"
     end
 end
 
