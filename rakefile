@@ -104,27 +104,22 @@ JS.each do |fn_base|
     dest_js_s << js_file(fn)
 end
 
-dest_js_extra = []
-dest_js_extra << js_file('libfcs-wrap.d.ts')
-dest_js_extra << js_file('libfcs-wrap.js')
-dest_js_extra << js_file('libfreecell-solver-asm.js')
-dest_js_extra << js_file('libfreecell-solver-asm.js.mem')
-dest_js_extra << js_file('libfreecell-solver.js')
-dest_js_extra << js_file('libfreecell-solver.js.mem')
-dest_js_extra << js_file('libfreecell-solver.min.js')
-dest_js_extra << js_root_file('libfreecell-solver.js.mem')
-dest_js_extra << js_root_file('libfreecell-solver.wasm')
+dest_js_extra = ['libfcs-wrap.d.ts',
+'libfcs-wrap.js',
+'libfreecell-solver-asm.js',
+'libfreecell-solver-asm.js.mem',
+'libfreecell-solver.js',
+'libfreecell-solver.js.mem',
+'libfreecell-solver.min.js',].map {|x| js_file(x)}
+dest_js_extra += ['libfreecell-solver.js.mem','libfreecell-solver.wasm'].map{|x| js_root_file(x)}
 
 desc "concatenated solitaire sources"
-file ALL => dest_js_s do
+file ALL => dest_js_s + dest_js_extra do
     File.open(ALL, "w") do |f|
         JS.each do |fn|
             f.write(File.read(js_js_pat_file(fn)))
         end
     end
-end
-
-file ALL => dest_js_extra do
 end
 
 desc "minified solitaire sources"
