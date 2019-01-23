@@ -4,8 +4,16 @@ ROOT_PREFIX = 'dest'.freeze
 PREFIX = 'dest/js'.freeze
 BROWSERIFY_JS = %w[big-integer flatted].freeze
 TS_BASE = %w[fcs-validate web-fc-solve--expand-moves web-fc-solve].freeze
-JS_CURATED_SOURCES = %w[solitaire iphone auto-stack-clear auto-turnover autoplay ie-opera-background-fix statistics solver-freecell solver-freecell-worker agnes golf klondike klondike1t flowergarden fortythieves freecell grandclock montecarlo pyramid russian-solitaire scorpion spider spider1s spider2s spiderette tritowers will-o-the-wisp yukon application].freeze
-JS = %w[yui-breakout yui-debug require require--debug] + JS_CURATED_SOURCES + TS_BASE + BROWSERIFY_JS
+JS_CURATED_SOURCES = %w[solitaire iphone auto-stack-clear auto-turnover
+                        autoplay ie-opera-background-fix statistics
+                        solver-freecell
+                        solver-freecell-worker agnes golf klondike klondike1t
+                        flowergarden fortythieves freecell grandclock
+                        montecarlo pyramid russian-solitaire scorpion spider
+                        spider1s spider2s spiderette tritowers will-o-the-wisp
+                        yukon application].freeze
+JS = %w[yui-breakout yui-debug require require--debug] +
+     JS_CURATED_SOURCES + TS_BASE + BROWSERIFY_JS
 YUI_DIST = 'yui-unpack/'.freeze
 YUI_SRC = 'ext/yui/yui-all-min.js'.freeze
 YUI = "#{PREFIX}/yui-all-min.js".freeze
@@ -16,7 +24,8 @@ COMBINED = "#{PREFIX}/combined-min.js".freeze
 COMPRESSOR = 'bin/Run-YUI-Compressor'.freeze
 TEMPLATE = 'index.erb'.freeze
 
-IMAGES = Dir['{dondorf,layouts}/**/*.png', '*.{css,gif,png,jpg}'] + ['.htaccess']
+IMAGES = Dir['{dondorf,layouts}/**/*.png', '*.{css,gif,png,jpg}'] +
+         ['.htaccess']
 
 DEST_INDEX = 'dest/index.html'.freeze
 DEST_INDEX_DEV = 'dest/index-dev.html'.freeze
@@ -29,10 +38,10 @@ def create_index(index, development = false)
   end
 end
 
-DEST_IMAGES = []
+dest_images = []
 IMAGES.each do |img|
   d = "dest/#{img}"
-  DEST_IMAGES << d
+  dest_images << d
   file d => img do
     mkdir_p File.dirname(d)
     cp img.to_s, d.to_s
@@ -45,27 +54,27 @@ end
 
 dest_js_s = []
 
-def js_pat_file(fn)
-  "#{JS_SRC_PREFIX}/#{fn}"
+def js_pat_file(filename)
+  "#{JS_SRC_PREFIX}/#{filename}"
 end
 
-def js_js_pat_file(fn)
-  js_pat_file(fn + '.js')
+def js_js_pat_file(filename)
+  js_pat_file(filename + '.js')
 end
 
-def js_file(fn)
-  src = js_pat_file(fn)
-  dest = "#{PREFIX}/#{fn}"
+def js_file(filename)
+  src = js_pat_file(filename)
+  dest = "#{PREFIX}/#{filename}"
   file dest => src do
     cp src, dest
   end
   dest
 end
 
-def js_root_file(fn)
-  src = js_pat_file(fn)
-  dest = "#{ROOT_PREFIX}/#{fn}"
-  dest2 = "#{PREFIX}/js/#{fn}"
+def js_root_file(filename)
+  src = js_pat_file(filename)
+  dest = "#{ROOT_PREFIX}/#{filename}"
+  dest2 = "#{PREFIX}/js/#{filename}"
   file dest2 => src do
     cp src, dest2
   end
@@ -99,8 +108,8 @@ end
 file ALL => dest
 
 JS.each do |fn_base|
-  fn = fn_base + '.js'
-  dest_js_s << js_file(fn)
+  filename = fn_base + '.js'
+  dest_js_s << js_file(filename)
 end
 
 dest_js_extra = ['libfcs-wrap.d.ts',
@@ -116,8 +125,8 @@ dest_js_extra += ['libfreecell-solver.js.mem',
 desc 'concatenated solitaire sources'
 file ALL => dest_js_s + dest_js_extra do
   File.open(ALL, 'w') do |f|
-    JS.each do |fn|
-      f.write(File.read(js_js_pat_file(fn)))
+    JS.each do |filename|
+      f.write(File.read(js_js_pat_file(filename)))
     end
   end
 end
@@ -148,7 +157,7 @@ task :prettier do
      '--write ' + JS_CURATED_SOURCES.map { |bn| js_js_pat_file(bn) }.join(' ')
 end
 
-task images: DEST_IMAGES
+task images: dest_images
 
 task :clean do
   sh "rm -f #{[ALL, MINIFIED, COMBINED, DEST_INDEX, DEST_INDEX_DEV].join(' ')}"
