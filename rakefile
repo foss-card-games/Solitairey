@@ -22,11 +22,11 @@ DEST_INDEX = "dest/index.html"
 DEST_INDEX_DEV = "dest/index-dev.html"
 
 def create_index(index, development = false)
-  require "erb"
+    require "erb"
 
-  File.open(index, "w") do |f|
-    f.write(ERB.new(File.read(TEMPLATE)).result(binding))
-  end
+    File.open(index, "w") do |f|
+        f.write(ERB.new(File.read(TEMPLATE)).result(binding))
+    end
 end
 
 DEST_IMAGES = []
@@ -117,11 +117,11 @@ dest_js_extra << js_root_file('libfreecell-solver.wasm')
 
 desc "concatenated solitaire sources"
 file ALL => dest_js_s do
-  File.open(ALL, "w") do |f|
-    JS.each do |fn|
-      f.write(File.read(js_js_pat_file(fn)))
+    File.open(ALL, "w") do |f|
+        JS.each do |fn|
+            f.write(File.read(js_js_pat_file(fn)))
+        end
     end
-  end
 end
 
 file ALL => dest_js_extra do
@@ -129,23 +129,23 @@ end
 
 desc "minified solitaire sources"
 file MINIFIED => ALL do
-  sh "#{COMPRESSOR} -o #{MINIFIED} #{ALL}"
+    sh "#{COMPRESSOR} -o #{MINIFIED} #{ALL}"
 end
 
 desc "concatenated minified solitaire and YUI sources"
 file COMBINED => [YUI, MINIFIED] do
-  sh "cat #{YUI} #{MINIFIED} > #{COMBINED}"
+    sh "cat #{YUI} #{MINIFIED} > #{COMBINED}"
 end
 
 desc "development file with separated, unminified source files"
 file DEST_INDEX_DEV => TEMPLATE do
-  create_index DEST_INDEX_DEV, true
+    create_index DEST_INDEX_DEV, true
 end
 
 desc "production file with separated, unminified source files"
 file DEST_INDEX => [TEMPLATE, COMBINED] do
-  # create_index DEST_INDEX
-  create_index DEST_INDEX, true
+    # create_index DEST_INDEX
+    create_index DEST_INDEX, true
 end
 
 task :prettier do
@@ -155,18 +155,21 @@ end
 task :images => DEST_IMAGES
 
 task :clean do
-  sh "rm -f #{[ALL, MINIFIED, COMBINED, DEST_INDEX, DEST_INDEX_DEV].join(" ")}"
+    sh "rm -f #{[ALL, MINIFIED, COMBINED, DEST_INDEX, DEST_INDEX_DEV].join(" ")}"
+end
+
+def myrsync remote
+    sh "rsync --progress --inplace -a -v dest #{remote}"
 end
 
 task :upload => :default do
-  # sh "rsync --progress --inplace -a -v dest hostgator:public_html/temp-Solitairey-ekrimyk/"
-  # sh "rsync --progress --inplace -a -v dest hostgator:public_html/temp-Solitairey-fc-solve-loop-NjU78o/"
-  sh "rsync --progress --inplace -a -v dest hostgator:public_html/temp-Solitairey-fc-solve/"
+    # myrsync "hostgator:public_html/temp-Solitairey-ekrimyk/"
+    # myrsync "hostgator:public_html/temp-Solitairey-fc-solve-loop-NjU78o/"
+    myrsync "hostgator:public_html/temp-Solitairey-fc-solve/"
 end
 
 task :upload_local => :default do
-  # sh "rsync --progress --inplace -a -v dest hostgator:public_html/temp-Solitairey-ekrimyk/"
-  sh "rsync --progress --inplace -a -v dest /var/www/html/shlomif/temp-Solitairey/"
+    myrsync "/var/www/html/shlomif/temp-Solitairey/"
 end
 
 task :default => [DEST_INDEX, DEST_INDEX_DEV, :images]
