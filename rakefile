@@ -46,8 +46,7 @@ end
 dest_js_s = []
 
 def js_pat_file(fn)
-    src = "#{JS_SRC_PREFIX}/#{fn}"
-    return src
+    return "#{JS_SRC_PREFIX}/#{fn}"
 end
 
 def js_js_pat_file(fn)
@@ -64,7 +63,7 @@ def js_file(fn)
 end
 
 def js_root_file(fn)
-    src = "#{JS_SRC_PREFIX}/#{fn}"
+    src = js_pat_file(fn)
     dest = "#{ROOT_PREFIX}/#{fn}"
     dest2 = "#{PREFIX}/js/#{fn}"
     file dest2 => src do
@@ -77,7 +76,7 @@ def js_root_file(fn)
 end
 
 BROWSERIFY_JS.each do |base|
-    dest2 = "#{JS_SRC_PREFIX}/#{base}.js"
+    dest2 = js_js_pat_file(base)
     file dest2 do
         sh "browserify -s #{base} -r #{base} -o #{dest2}"
     end
@@ -85,8 +84,8 @@ end
 
 
 TS_BASE.each do |base|
-    dest2 = "#{JS_SRC_PREFIX}/#{base}.js"
-    src2 = "#{JS_SRC_PREFIX}/#{base}.ts"
+    dest2 = js_js_pat_file(base)
+    src2 = js_pat_file("#{base}.ts")
     file dest2 => [src2] + BROWSERIFY_JS.map {|x| js_js_pat_file(x)} do
         sh "tsc --target es6 --module amd --out #{dest2} #{src2}"
     end
@@ -120,7 +119,7 @@ desc "concatenated solitaire sources"
 file ALL => dest_js_s do
   File.open(ALL, "w") do |f|
     JS.each do |fn|
-      f.write(File.read("#{JS_SRC_PREFIX}/#{fn}.js"))
+      f.write(File.read(js_js_pat_file(fn)))
     end
   end
 end
