@@ -16,7 +16,7 @@ COMBINED = "#{PREFIX}/combined-min.js"
 COMPRESSOR = "bin/Run-YUI-Compressor"
 TEMPLATE = "index.erb"
 
-IMAGES = Dir.glob("{dondorf,layouts}/**/*.png") + Dir.glob("*.{css,gif,png,jpg}") + [".htaccess"]
+IMAGES = Dir["{dondorf,layouts}/**/*.png","*.{css,gif,png,jpg}",".htaccess"]
 
 DEST_INDEX = "dest/index.html"
 DEST_INDEX_DEV = "dest/index-dev.html"
