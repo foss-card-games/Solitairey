@@ -110,7 +110,8 @@ dest_js_extra = ['libfcs-wrap.d.ts',
                  'libfreecell-solver.js',
                  'libfreecell-solver.js.mem',
                  'libfreecell-solver.min.js'].map { |x| js_file(x) }
-dest_js_extra += ['libfreecell-solver.js.mem', 'libfreecell-solver.wasm'].map { |x| js_root_file(x) }
+dest_js_extra += ['libfreecell-solver.js.mem',
+                  'libfreecell-solver.wasm'].map { |x| js_root_file(x) }
 
 desc 'concatenated solitaire sources'
 file ALL => dest_js_s + dest_js_extra do
@@ -143,7 +144,8 @@ file DEST_INDEX => [TEMPLATE, COMBINED] do
 end
 
 task :prettier do
-  sh 'prettier --arrow-parens always --tab-width 4 --trailing-comma all --write ' + JS_CURATED_SOURCES.map { |bn| js_js_pat_file(bn) }.join(' ')
+  sh 'prettier --arrow-parens always --tab-width 4 --trailing-comma all ' \
+     '--write ' + JS_CURATED_SOURCES.map { |bn| js_js_pat_file(bn) }.join(' ')
 end
 
 task images: DEST_IMAGES
