@@ -40,7 +40,7 @@ IMAGES.each do |img|
 end
 
 file YUI => YUI_SRC do
-    sh "cp -f #{YUI_SRC} #{YUI}"
+    cp YUI_SRC, YUI
 end
 
 dest_js_s = []
@@ -58,7 +58,7 @@ def js_file(fn)
     src = js_pat_file(fn)
     dest = "#{PREFIX}/#{fn}"
     file dest => src do
-        sh "cp -f #{src} #{dest}"
+        cp src, dest
     end
     return dest
 end
@@ -68,10 +68,10 @@ def js_root_file(fn)
     dest = "#{ROOT_PREFIX}/#{fn}"
     dest2 = "#{PREFIX}/js/#{fn}"
     file dest2 => src do
-        sh "cp -f #{src} #{dest2}"
+        cp src, dest2
     end
     file dest => src do
-        sh "cp -f #{src} #{dest}"
+        cp src, dest
     end
     return dest
 end
@@ -87,7 +87,7 @@ end
 TS_BASE.each do |base|
     dest2 = "#{JS_SRC_PREFIX}/#{base}.js"
     src2 = "#{JS_SRC_PREFIX}/#{base}.ts"
-    file dest2 => src2 do
+    file dest2 => [src2, "#{JS_SRC_PREFIX}/big-integer.js"] do
         sh "tsc --target es6 --module amd --out #{dest2} #{src2}"
     end
 end
@@ -130,7 +130,6 @@ end
 
 desc "minified solitaire sources"
 file MINIFIED => ALL do
-  # sh "java -jar #{COMPRESSOR} -o #{MINIFIED} #{ALL}"
   sh "#{COMPRESSOR} -o #{MINIFIED} #{ALL}"
 end
 
