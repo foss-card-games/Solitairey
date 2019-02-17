@@ -54,6 +54,21 @@ define([
     function _render_suit(c) {
         return _suits[c & 0x3];
     }
+    function _render_foundation(c) {
+        if (c == 0) {
+            return "";
+        } else {
+            return " " + _render_suit(c) + "-" + _render_rank(c);
+        }
+    }
+
+    function _render_freecell(c) {
+        if (c == 0) {
+            return " -";
+        } else {
+            return " " + _render_rank(c) + _render_suit(c);
+        }
+    }
 
     function _init_my_module(callback) {
         if (_my_mod_counter >= MAX_MOD_COUNTER) {
@@ -781,37 +796,12 @@ define([
                         var foundation = obj.foundation;
                         ret +=
                             "Foundations:" +
-                            foundation
-                                .map(function(c) {
-                                    if (c == 0) {
-                                        return "";
-                                    } else {
-                                        return (
-                                            " " +
-                                            _render_suit(c) +
-                                            "-" +
-                                            _render_rank(c)
-                                        );
-                                    }
-                                })
-                                .join("") +
+                            foundation.map(_render_foundation).join("") +
                             "\n";
 
                         ret +=
                             "Freecells:" +
-                            reserve
-                                .map(function(c) {
-                                    if (c == 0) {
-                                        return " -";
-                                    } else {
-                                        return (
-                                            " " +
-                                            _render_rank(c) +
-                                            _render_suit(c)
-                                        );
-                                    }
-                                })
-                                .join("") +
+                            reserve.map(_render_freecell).join("") +
                             "\n";
 
                         for (var i = 0; i < obj.tableau.length; i++) {
