@@ -70,6 +70,36 @@ define([
         }
     }
 
+    function _render_state_as_string(obj) {
+        var ret = "";
+
+        var reserve = obj.reserve;
+        var foundation = obj.foundation;
+        ret +=
+            "Foundations:" + foundation.map(_render_foundation).join("") + "\n";
+
+        ret += "Freecells:" + reserve.map(_render_freecell).join("") + "\n";
+
+        for (var i = 0; i < obj.tableau.length; i++) {
+            var stack = obj.tableau[i];
+            var l = stack[1];
+            var s = stack[0];
+
+            ret += ":";
+            for (var j = 0; j < l; j++) {
+                var c = s[j];
+                ret += " " + _render_rank(c) + _render_suit(c);
+            }
+            ret += "\n";
+        }
+
+        if (false) {
+            console.log("Board = <<" + ret + ">>");
+        }
+
+        return ret;
+    }
+
     function _init_my_module(callback) {
         if (_my_mod_counter >= MAX_MOD_COUNTER) {
             // Create a fresh instance to avoid failed allocs due to
@@ -218,6 +248,64 @@ define([
             }
         }
         return ret_moves;
+    }
+    function _solve_cb(that, state, Animation, Status) {
+        let exceeded_iters = false;
+        var instance = new FC_Solve({
+            cmd_line_preset: "video-editing",
+            // cmd_line_preset: "lg",
+            // cmd_line_preset: 'as',
+            // cmd_line_preset: 'default',
+            set_status_callback: function(status) {
+                if (status == "exceeded") {
+                    exceeded_iters = true;
+                }
+            },
+        });
+
+        var state_as_string = _render_state_as_string(state);
+        let ret_moves = [];
+        try {
+            var solve_err_code = instance.do_solve(state_as_string);
+
+            while (
+                solve_err_code == FCS_STATE_SUSPEND_PROCESS &&
+                !exceeded_iters
+            ) {
+                solve_err_code = instance.resume_solution();
+            }
+
+            var buffer = instance.display_solution({
+                displayer: new w.DisplayFilter({
+                    is_unicode_cards: false,
+                    is_unicode_cards_chars: false,
+                }),
+            });
+            if (solve_err_code == FCS_STATE_WAS_SOLVED) {
+                var moves_ = instance._pre_expand_states_and_moves_seq;
+                ret_moves = _calc__ret_moves(moves_);
+            }
+        } catch (e) {
+            console.log("received exception " + e);
+            _my_mod_counter = MAX_MOD_COUNTER + 5;
+        }
+        var solution = ret_moves;
+        Animation.init(solution);
+        if (solution) {
+            Status.stopIndicator(true);
+            window.setTimeout(function() {
+                Animation.play(getGame());
+            }, 3000);
+        } else {
+            Status.stopIndicator(false);
+            console.log("no solution");
+            if (false) {
+                window.setTimeout(function() {
+                    Y.fire("newAppGame");
+                }, 3000);
+            }
+        }
+        that.solver_active = false;
     }
 
     YUI.add(
@@ -789,105 +877,9 @@ define([
 
                     var state = gameToState(getGame());
 
-                    function _render_state_as_string(obj) {
-                        var ret = "";
-
-                        var reserve = obj.reserve;
-                        var foundation = obj.foundation;
-                        ret +=
-                            "Foundations:" +
-                            foundation.map(_render_foundation).join("") +
-                            "\n";
-
-                        ret +=
-                            "Freecells:" +
-                            reserve.map(_render_freecell).join("") +
-                            "\n";
-
-                        for (var i = 0; i < obj.tableau.length; i++) {
-                            var stack = obj.tableau[i];
-                            var l = stack[1];
-                            var s = stack[0];
-
-                            ret += ":";
-                            for (var j = 0; j < l; j++) {
-                                var c = s[j];
-                                ret += " " + _render_rank(c) + _render_suit(c);
-                            }
-                            ret += "\n";
-                        }
-
-                        if (false) {
-                            console.log("Board = <<" + ret + ">>");
-                        }
-
-                        return ret;
-                    }
-
-                    var exceeded_iters = false;
                     _init_my_module(() => {
                         window.setTimeout(function() {
-                            var instance = new FC_Solve({
-                                cmd_line_preset: "video-editing",
-                                // cmd_line_preset: "lg",
-                                // cmd_line_preset: 'as',
-                                // cmd_line_preset: 'default',
-                                set_status_callback: function(status) {
-                                    if (status == "exceeded") {
-                                        exceeded_iters = true;
-                                    }
-                                },
-                            });
-
-                            var state_as_string = _render_state_as_string(
-                                state,
-                            );
-                            let ret_moves = [];
-                            try {
-                                var solve_err_code = instance.do_solve(
-                                    state_as_string,
-                                );
-
-                                while (
-                                    solve_err_code ==
-                                        FCS_STATE_SUSPEND_PROCESS &&
-                                    !exceeded_iters
-                                ) {
-                                    solve_err_code = instance.resume_solution();
-                                }
-
-                                var buffer = instance.display_solution({
-                                    displayer: new w.DisplayFilter({
-                                        is_unicode_cards: false,
-                                        is_unicode_cards_chars: false,
-                                    }),
-                                });
-                                if (solve_err_code == FCS_STATE_WAS_SOLVED) {
-                                    var moves_ =
-                                        instance._pre_expand_states_and_moves_seq;
-                                    ret_moves = _calc__ret_moves(moves_);
-                                }
-                            } catch (e) {
-                                console.log("received exception " + e);
-                                _my_mod_counter = MAX_MOD_COUNTER + 5;
-                            }
-                            var solution = ret_moves;
-                            Animation.init(solution);
-                            if (solution) {
-                                Status.stopIndicator(true);
-                                window.setTimeout(function() {
-                                    Animation.play(getGame());
-                                }, 3000);
-                            } else {
-                                Status.stopIndicator(false);
-                                console.log("no solution");
-                                if (false) {
-                                    window.setTimeout(function() {
-                                        Y.fire("newAppGame");
-                                    }, 3000);
-                                }
-                            }
-                            that.solver_active = false;
+                            return _solve_cb(that, state, Animation, Status);
                         }, 400);
                     });
                 },
