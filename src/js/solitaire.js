@@ -368,6 +368,7 @@ define([], function() {
                             : Math.floor(
                                   1 + Math.random() * (((1 << 30) - 2) << 1),
                               );
+                        Y.one("#deal_num_shlomify").set("value", seed);
                         this.seed = seed;
                         this.init(seed);
                         Y.Solitaire.Animation.initQueue();
