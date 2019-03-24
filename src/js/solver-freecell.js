@@ -19,6 +19,62 @@ define([
     let _my_module;
     var MAX_MOD_COUNTER = 5;
     var _my_mod_counter = MAX_MOD_COUNTER;
+    const suitTable = {
+        s: 0,
+        h: 1,
+        c: 2,
+        d: 3,
+    };
+    function cardToValue(card) {
+        return card ? (card.rank << 2) | suitTable[card.suit] : 0;
+    }
+    function withSelector(Y, selector, callback) {
+        var node = Y.one(selector);
+
+        if (node) {
+            callback(node);
+        }
+    }
+    function sortedStacks(Y, field) {
+        return Y.Array.map(field.stacks, function(s) {
+            return s;
+        }).sort(function(s1, s2) {
+            var c1 = s1.first(),
+                c2 = s2.first();
+
+            return cardToValue(c1) - cardToValue(c2);
+        });
+    }
+
+    function gameToState(Y, game) {
+        var reserve, foundation, tableau;
+
+        tableau = Y.Array.map(sortedStacks(Y, game.tableau), function(s) {
+            var buffer = [];
+
+            s.eachCard(function(c, i) {
+                buffer[i] = cardToValue(c);
+            });
+
+            return [buffer, s.cards.length];
+        });
+
+        reserve = [];
+        Y.Array.forEach(sortedStacks(Y, game.reserve), function(s, i) {
+            reserve[i] = cardToValue(s.my_Last());
+        });
+
+        foundation = [];
+        Y.Array.forEach(sortedStacks(Y, game.foundation), function(s, i) {
+            foundation[i] = cardToValue(s.my_Last());
+        });
+
+        return {
+            reserve: reserve,
+            foundation: foundation,
+            tableau: tableau,
+        };
+    }
     function to_int(s) {
         return parseInt(s, 10);
     }
@@ -256,7 +312,7 @@ define([
         }
         return ret_moves;
     }
-    function _solve_cb(that, state, Animation, Status) {
+    function _solve_cb(Y, that, state, Animation, Status) {
         let exceeded_iters = false;
         var instance = new FC_Solve({
             cmd_line_preset: "video-editing",
@@ -396,70 +452,8 @@ define([
             }
 
             var Solitaire = Y.Solitaire,
-                FreecellSolver = Solitaire.Solver.Freecell,
-                suitTable = {
-                    s: 0,
-                    h: 1,
-                    c: 2,
-                    d: 3,
-                };
+                FreecellSolver = Solitaire.Solver.Freecell;
 
-            function cardToValue(card) {
-                return card ? (card.rank << 2) | suitTable[card.suit] : 0;
-            }
-
-            function compareStack(a, b) {
-                return b[0] - a[0];
-            }
-
-            function sortedStacks(field) {
-                return Y.Array.map(field.stacks, function(s) {
-                    return s;
-                }).sort(function(s1, s2) {
-                    var c1 = s1.first(),
-                        c2 = s2.first();
-
-                    return cardToValue(c1) - cardToValue(c2);
-                });
-            }
-
-            function gameToState(game) {
-                var reserve, foundation, tableau;
-
-                tableau = Y.Array.map(sortedStacks(game.tableau), function(s) {
-                    var buffer = [];
-
-                    s.eachCard(function(c, i) {
-                        buffer[i] = cardToValue(c);
-                    });
-
-                    return [buffer, s.cards.length];
-                });
-
-                reserve = [];
-                Y.Array.forEach(sortedStacks(game.reserve), function(s, i) {
-                    reserve[i] = cardToValue(s.my_Last());
-                });
-
-                foundation = [];
-                Y.Array.forEach(sortedStacks(game.foundation), function(s, i) {
-                    foundation[i] = cardToValue(s.my_Last());
-                });
-
-                return {
-                    reserve: reserve,
-                    foundation: foundation,
-                    tableau: tableau,
-                };
-            }
-
-            function withSelector(selector, callback) {
-                var node = Y.one(selector);
-
-                if (node) {
-                    callback(node);
-                }
-            }
             Y.one("#redeal").on("click", function() {
                 Solitaire.Application.newGame();
                 //getGame().redeal();
@@ -631,7 +625,7 @@ define([
                     Solitaire.Autoplay.disable();
 
                     if (WITH_UI) {
-                        withSelector("#solver_bar .play", function(node) {
+                        withSelector(Y, "#solver_bar .play", function(node) {
                             node.removeClass("play");
                             node.addClass("pause");
                         });
@@ -696,7 +690,7 @@ define([
                     if (solved) {
                         indicator.set("text", "Solution found");
                         if (WITH_UI) {
-                            withSelector("#solver_bar .controls", function(
+                            withSelector(Y, "#solver_bar .controls", function(
                                 node,
                             ) {
                                 node.removeClass("hidden");
@@ -861,7 +855,9 @@ define([
 
                     // Remove UI clutter for the demo.
                     if (WITH_UI) {
-                        withSelector("#solver_bar .controls", function(node) {
+                        withSelector(Y, "#solver_bar .controls", function(
+                            node,
+                        ) {
                             node.addClass("hidden");
                         });
                     }
@@ -873,11 +869,11 @@ define([
                         Status.delay,
                     );
 
-                    var state = gameToState(getGame());
+                    var state = gameToState(Y, getGame());
 
                     _init_my_module(() => {
                         window.setTimeout(function() {
-                            return _solve_cb(that, state, Animation, Status);
+                            return _solve_cb(Y, that, state, Animation, Status);
                         }, 400);
                     });
                 },
