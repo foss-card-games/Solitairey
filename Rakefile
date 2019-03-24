@@ -48,9 +48,13 @@ IMAGES.each do |img|
   end
 end
 
-file YUI => YUI_SRC do
-  cp YUI_SRC, YUI
+def cpfile(src, dest)
+    file dest => src do
+        cp src, dest
+    end
 end
+
+cpfile YUI_SRC, YUI
 
 dest_js_s = []
 
@@ -65,9 +69,7 @@ end
 def js_file(filename)
   src = js_pat_file(filename)
   dest = "#{PREFIX}/#{filename}"
-  file dest => src do
-    cp src, dest
-  end
+  cpfile src, dest
   dest
 end
 
@@ -75,12 +77,8 @@ def js_root_file(filename)
   src = js_pat_file(filename)
   dest = "#{ROOT_PREFIX}/#{filename}"
   dest2 = "#{PREFIX}/js/#{filename}"
-  file dest2 => src do
-    cp src, dest2
-  end
-  file dest => src do
-    cp src, dest
-  end
+  cpfile src, dest2
+  cpfile src, dest
   dest
 end
 
