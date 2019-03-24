@@ -1,6 +1,8 @@
 import * as bigInt from "big-integer";
 import * as validate from "./fcs-validate";
 import * as expand from "./web-fc-solve--expand-moves";
+import { perl_range } from "./prange";
+import { rank_re, suits__int_to_str, suit_re } from "./french-cards";
 
 const fc_solve_expand_move = expand.fc_solve_expand_move;
 
@@ -150,7 +152,7 @@ export function FC_Solve_init_wrappers_with_module(Module) {
     );
 
     fc_solve_Pointer_stringify = (ptr) => {
-        return Module.Pointer_stringify(ptr);
+        return Module.UTF8ToString(ptr, 10000);
     };
     fc_solve_FS_writeFile = (p1, p2, p3) => {
         return Module.FS.writeFile(p1, p2, p3);
@@ -219,6 +221,8 @@ function fc_solve_2uni_found(match, p1, p2, offset, mystring) {
     return fc_solve_2uni_suit_map[p1] + p2;
 }
 
+const card_re = new RegExp("\\b(" + rank_re + ")(" + suit_re + ")\\b", "g");
+const found_re = new RegExp("\\b(" + suit_re + ")(-[0A2-9TJQK])\\b", "g");
 export class DisplayFilter {
     public is_unicode_cards: boolean;
     public is_unicode_cards_chars: boolean;
@@ -241,13 +245,13 @@ export class DisplayFilter {
         );
     }
     private _replace_char_card(s) {
-        return s.replace(/\b([A2-9TJQK])([HCDS])\b/g, fc_solve_2uni_char_card);
+        return s.replace(card_re, fc_solve_2uni_char_card);
     }
     private _replace_card(s) {
-        return s.replace(/\b([A2-9TJQK])([HCDS])\b/g, fc_solve_2uni_card);
+        return s.replace(card_re, fc_solve_2uni_card);
     }
     private _replace_found(s) {
-        return s.replace(/\b([HCDS])(-[0A2-9TJQK])\b/g, fc_solve_2uni_found);
+        return s.replace(found_re, fc_solve_2uni_found);
     }
 }
 
@@ -787,20 +791,10 @@ export function deal_ms_fc_board(seed) {
     const randomizer = new MSRand({ gamenumber: seed });
     const num_cols = 8;
 
-    function _perl_range(start, end) {
-        const ret = [];
-
-        for (let i = start; i <= end; i++) {
-            ret.push(i);
-        }
-
-        return ret;
-    }
-
-    const columns = _perl_range(0, num_cols - 1).map(() => {
+    const columns = perl_range(0, num_cols - 1).map(() => {
         return [];
     });
-    let deck = _perl_range(0, 4 * 13 - 1);
+    let deck = perl_range(0, 4 * 13 - 1);
 
     randomizer.shuffle(deck);
 

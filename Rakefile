@@ -3,7 +3,7 @@ JS_SRC_PREFIX = 'src/js'.freeze
 ROOT_PREFIX = 'dest'.freeze
 PREFIX = 'dest/js'.freeze
 BROWSERIFY_JS = %w[big-integer flatted].freeze
-TS_BASE = %w[fcs-validate web-fc-solve--expand-moves web-fc-solve].freeze
+TS_BASE = %w[fcs-validate french-cards prange web-fc-solve--expand-moves web-fc-solve].freeze
 JS_CURATED_SOURCES = %w[solitaire iphone auto-stack-clear auto-turnover
                         autoplay ie-opera-background-fix statistics
                         solver-freecell
