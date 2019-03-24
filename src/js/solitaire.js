@@ -1055,7 +1055,7 @@ define([], function() {
                         node,
                         card = this;
 
-                    node = this.node = Y.Node.create("<img class='card'>")
+                    node = this.node = Y.Node.create("<img class='card' />")
                         .setData("target", this)
                         .setAttribute("src", this.imageSrc())
                         .plug(Y.Plugin.Drop, {
@@ -1526,7 +1526,7 @@ define([], function() {
                     const that = this;
                     var node = that.node;
 
-                    node = that.node = Y.Node.create("<img class='stack'>")
+                    node = that.node = Y.Node.create("<img class='stack' />")
                         .setAttribute("src", that.imageSrc())
                         .setData("target", that)
                         .plug(Y.Plugin.Drop, {

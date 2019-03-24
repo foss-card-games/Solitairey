@@ -1,8 +1,9 @@
-<!doctype html>
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
 <% if development %>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US">
 <% else %>
-<html lang="en" manifest="cache.manifest">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" manifest="cache.manifest">
   <!--
   Hi! There's no useful source code on this page :(
   BUT!! There is at index-dev.html and Solitairey's GitHub page https://github.com/pharrington/Solitairey :)
@@ -12,11 +13,11 @@
 <% end %>
 <head>
 	<title>Solitairey - Beautiful HTML5 Solitaire</title>
-    <meta charset="utf-8">
-	<meta name="description" content="A modern solitaire collection for the web. Built with HTML5 and Javascript.">
-	<meta name="apple-mobile-web-app-capable" content="yes">
-        <meta property="fb:admins" content="100000659492810">
-	<link rel="stylesheet" href="cards.css">
+    <meta charset="utf-8" />
+	<meta name="description" content="A modern solitaire collection for the web. Built with HTML5 and Javascript." />
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta property="fb:admins" content="100000659492810" />
+	<link rel="stylesheet" href="cards.css" />
 <% if development %>
 	<script src="js/require--debug.js"></script>
 	<script src="js/yui-debug.js"></script>
@@ -91,15 +92,15 @@ requirejs.config({
     </ul>
 <% end %>
 <button id="redeal">Redeal</button>
-<span style="color:white;">Deal Number:</span> <input id="deal_num_shlomify" size="30" name="deal_num_shlomify" readonly/>
+<span style="color:white;">Deal Number:</span> <input id="deal_num_shlomify" size="30" name="deal_num_shlomify" readonly="readonly"/>
 	<div id="game-chooser">
         <button id="close-chooser">Return to game</button>
 	</div>
-	<img src="loading.gif" class="loading hidden" alt="Loading">
+	<img src="loading.gif" class="loading hidden" alt="Loading" />
 	<div class="chromestore hidden">
 		<a class="hide">[Hide]</a>
         <a href="https://chrome.google.com/webstore/detail/dofbnmhnoodmmlhflbcihicmbnhhinhp">
-            <img alt="Chrome Web Store" src="ChromeWebStore_Badge_v2_206x58.png">
+            <img alt="Chrome Web Store" src="ChromeWebStore_Badge_v2_206x58.png" />
         </a>
 	</div>
 

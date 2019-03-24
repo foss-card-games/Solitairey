@@ -1,4 +1,5 @@
 AddDefaultCharset utf-8
 
 AddType application/wasm .wasm
+AddType text/html .html
 AddOutputFilterByType DEFLATE application/wasm

@@ -61,6 +61,13 @@ define([
             return " " + _render_suit(c) + "-" + _render_rank(c);
         }
     }
+    function cardRank(val) {
+        return val >> 2;
+    }
+
+    function cardSuit(val) {
+        return ["s", "h", "c", "d"][val & 3];
+    }
 
     function _render_freecell(c) {
         if (c == 0) {
@@ -308,6 +315,75 @@ define([
         that.solver_active = false;
     }
 
+    function moveToCardAndStack(game, move) {
+        var source = move.source,
+            dest = move.dest,
+            value,
+            ret = { top_card: true };
+
+        value = source[1];
+        const source_type = source[0];
+        game.eachStack(function(stack) {
+            if (ret.card) {
+                return;
+            }
+            const len = stack.cards.length;
+
+            stack.eachCard(function(card, i) {
+                if (ret.card) {
+                    return false;
+                }
+                if (!card) {
+                    return true;
+                }
+
+                if (
+                    card.rank === cardRank(value) &&
+                    card.suit === cardSuit(value)
+                ) {
+                    ret.card = card;
+                    if (source_type === "tableau" && i != len - 1) {
+                        ret.top_card = false;
+                    }
+                    return false;
+                }
+            });
+        }, source_type);
+
+        if (!ret.card) {
+            throw "Excalibur";
+            // return ret;
+        }
+
+        value = dest[1];
+        game.eachStack(function(stack) {
+            if (ret.stack) {
+                return;
+            }
+
+            var card = stack.my_Last();
+
+            if (!(card || value)) {
+                ret.stack = stack;
+            }
+
+            if (
+                card &&
+                (card.rank === cardRank(value) && card.suit === cardSuit(value))
+            ) {
+                ret.stack = stack;
+            }
+        }, dest[0]);
+
+        if (!ret.stack) {
+            throw "Must not happen - could not find dest stack";
+        }
+
+        ret.num_cards = move.num_cards;
+
+        return ret;
+    }
+
     YUI.add(
         "solver-freecell",
         function(Y) {
@@ -330,14 +406,6 @@ define([
 
             function cardToValue(card) {
                 return card ? (card.rank << 2) | suitTable[card.suit] : 0;
-            }
-
-            function cardRank(val) {
-                return val >> 2;
-            }
-
-            function cardSuit(val) {
-                return ["s", "h", "c", "d"][val & 3];
             }
 
             function compareStack(a, b) {
@@ -383,76 +451,6 @@ define([
                     foundation: foundation,
                     tableau: tableau,
                 };
-            }
-
-            function moveToCardAndStack(game, move) {
-                var source = move.source,
-                    dest = move.dest,
-                    value,
-                    ret = { top_card: true };
-
-                value = source[1];
-                const source_type = source[0];
-                game.eachStack(function(stack) {
-                    if (ret.card) {
-                        return;
-                    }
-                    const len = stack.cards.length;
-
-                    stack.eachCard(function(card, i) {
-                        if (ret.card) {
-                            return false;
-                        }
-                        if (!card) {
-                            return true;
-                        }
-
-                        if (
-                            card.rank === cardRank(value) &&
-                            card.suit === cardSuit(value)
-                        ) {
-                            ret.card = card;
-                            if (source_type === "tableau" && i != len - 1) {
-                                ret.top_card = false;
-                            }
-                            return false;
-                        }
-                    });
-                }, source_type);
-
-                if (!ret.card) {
-                    throw "Excalibur";
-                    // return ret;
-                }
-
-                value = dest[1];
-                game.eachStack(function(stack) {
-                    if (ret.stack) {
-                        return;
-                    }
-
-                    var card = stack.my_Last();
-
-                    if (!(card || value)) {
-                        ret.stack = stack;
-                    }
-
-                    if (
-                        card &&
-                        (card.rank === cardRank(value) &&
-                            card.suit === cardSuit(value))
-                    ) {
-                        ret.stack = stack;
-                    }
-                }, dest[0]);
-
-                if (!ret.stack) {
-                    throw "Must not happen - could not find dest stack";
-                }
-
-                ret.num_cards = move.num_cards;
-
-                return ret;
             }
 
             function withSelector(selector, callback) {
