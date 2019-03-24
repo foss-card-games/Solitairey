@@ -157,7 +157,7 @@ task :prettier do
      '--write ' + JS_CURATED_SOURCES.map { |bn| js_js_pat_file(bn) }.join(' ')
 end
 
-task images: dest_images
+multitask images: dest_images
 
 task :clean do
   sh "rm -f #{[ALL, MINIFIED, COMBINED, DEST_INDEX, DEST_INDEX_DEV].join(' ')}"
@@ -177,4 +177,4 @@ task upload_local: :default do
   myrsync '/var/www/html/shlomif/temp-Solitairey/'
 end
 
-task default: [DEST_INDEX, DEST_INDEX_DEV, :images]
+multitask default: [DEST_INDEX, DEST_INDEX_DEV, :images]
