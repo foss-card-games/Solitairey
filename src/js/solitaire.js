@@ -172,7 +172,7 @@ define([], function() {
             Y.mix(Solitaire, {
                 activeCard: null,
                 moves: null,
-                selector: "body",
+                selector: ".solitairey_body",
                 offset: { left: 50, top: 70 },
                 padding: { x: 50, y: 50 },
                 widthScale: 0,

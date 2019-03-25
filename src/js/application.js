@@ -59,7 +59,7 @@ define(["./solitaire"], function(solitaire) {
                         if (el === null) {
                             el = Y.Node.create("<div>");
                             el.setStyles(css);
-                            body = Y.one("body").append(el);
+                            body = Y.one(".solitairey_body").append(el);
                         }
                         return el;
                     };
@@ -107,7 +107,7 @@ define(["./solitaire"], function(solitaire) {
                     }
 
                     Y.one("#game-chooser").addClass("show");
-                    Y.one("body").addClass("scrollable");
+                    Y.one(".solitairey_body").addClass("scrollable");
                 },
 
                 hide: function() {
@@ -117,7 +117,7 @@ define(["./solitaire"], function(solitaire) {
 
                     Y.one("#game-chooser").removeClass("show");
                     Y.fire("gamechooser:hide", this);
-                    Y.one("body").removeClass("scrollable");
+                    Y.one(".solitairey_body").removeClass("scrollable");
                 },
 
                 choose: function() {
