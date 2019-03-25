@@ -124,28 +124,28 @@ define([], function() {
         return isNaN(val) ? undefined : val;
     }
 
-    Object.prototype.mapToFloat = function() {
+    function mapToFloat(that) {
         var p;
 
-        for (p in this) {
-            if (this.hasOwnProperty(p)) {
-                this[p] = parseFloat(this[p]);
+        for (p in that) {
+            if (that.hasOwnProperty(p)) {
+                that[p] = parseFloat(that[p]);
             }
         }
 
-        return this;
-    };
+        return that;
+    }
 
-    Object.prototype.mapAppend = function(str) {
+    mapAppend = function(that, str) {
         var p;
 
-        for (p in this) {
-            if (this.hasOwnProperty(p)) {
-                this[p] += str;
+        for (p in that) {
+            if (that.hasOwnProperty(p)) {
+                that[p] += str;
             }
         }
 
-        return this;
+        return that;
     };
 
     var Game;
@@ -1602,12 +1602,13 @@ define([], function() {
                     var node = card.node,
                         q = this.queue,
                         speeds = card.animSpeeds,
-                        from = {
-                            top: node.getStyle("top"),
-                            left: node.getStyle("left"),
-                        }
-                            .mapToFloat()
-                            .mapAppend("px"),
+                        from = mapAppend(
+                            mapToFloat({
+                                top: node.getStyle("top"),
+                                left: node.getStyle("left"),
+                            }),
+                            "px",
+                        ),
                         zIndex = to.zIndex,
                         duration,
                         anim;
