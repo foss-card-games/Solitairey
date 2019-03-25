@@ -9,6 +9,7 @@
 /dest/index.html
 /dest/js/*.js
 /dest/js/*.wasm
+/dest/js/libfcs-wrap.d.ts
 /dest/js/libfreecell-solver-asm.js.mem
 /dest/js/libfreecell-solver.js.mem
 /dest/js/yui-unpack
@@ -17,5 +18,8 @@
 /node_modules/
 /src/js/big-integer.js
 /src/js/fcs-validate.js
+/src/js/flatted.js
+/src/js/french-cards.js
+/src/js/prange.js
 /src/js/web-fc-solve--expand-moves.js
 /src/js/web-fc-solve.js
