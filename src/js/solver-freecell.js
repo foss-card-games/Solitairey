@@ -1,3 +1,4 @@
+"use strict";
 define([
     "./libfcs-wrap",
     "./web-fc-solve",
@@ -11,6 +12,10 @@ define([
     const FCS_STATE_WAS_SOLVED = w.FCS_STATE_WAS_SOLVED;
     const ENABLE_VALIDATION = true;
     const getGame = solitaire.getGame;
+    let _startSolution_cb;
+    function startSolution(args) {
+        return _startSolution_cb(args);
+    }
     /*
      * Automatically solve a game of Freecell
      */
@@ -312,7 +317,7 @@ define([
         }
         return ret_moves;
     }
-    function _solve_cb(Y, that, state, Animation, Status) {
+    function _calc_instance_from_state(state) {
         let exceeded_iters = false;
         var instance = new FC_Solve({
             cmd_line_preset: "video-editing",
@@ -327,9 +332,9 @@ define([
         });
 
         var state_as_string = _render_state_as_string(state);
-        let ret_moves = [];
+        let solve_err_code;
         try {
-            var solve_err_code = instance.do_solve(state_as_string);
+            solve_err_code = instance.do_solve(state_as_string);
 
             while (
                 solve_err_code == FCS_STATE_SUSPEND_PROCESS &&
@@ -337,20 +342,20 @@ define([
             ) {
                 solve_err_code = instance.resume_solution();
             }
-
-            var buffer = instance.display_solution({
-                displayer: new w.DisplayFilter({
-                    is_unicode_cards: false,
-                    is_unicode_cards_chars: false,
-                }),
-            });
-            if (solve_err_code == FCS_STATE_WAS_SOLVED) {
-                var moves_ = instance._pre_expand_states_and_moves_seq;
-                ret_moves = _calc__ret_moves(moves_);
-            }
         } catch (e) {
             console.log("received exception " + e);
             _my_mod_counter = MAX_MOD_COUNTER + 5;
+        }
+        if (solve_err_code == FCS_STATE_WAS_SOLVED) {
+            return instance;
+        }
+        return null;
+    }
+    function _solve_cb(Y, that, instance, Animation, Status) {
+        let ret_moves = [];
+        if (instance) {
+            let moves_ = instance._pre_expand_states_and_moves_seq;
+            ret_moves = _calc__ret_moves(moves_);
         }
         var solution = ret_moves;
         Animation.init(solution);
@@ -766,6 +771,50 @@ define([
                     }
                 },
             };
+            _startSolution_cb = function(args) {
+                function _from_card(card) {
+                    return Solitaire.Card.create(
+                        card.getRank(),
+                        game.deck.suits[[2, 0, 1, 3][card.getSuit()]],
+                    ).faceUp();
+                }
+                const board = args.board;
+                const game = getGame();
+                const tableau = game.tableau;
+                board.columns.forEach((col, ci) => {
+                    const c = col.col;
+                    tableau.stacks[ci].setCards(c.getLen(), function(i) {
+                        const card = c.getCard(i);
+                        return _from_card(card);
+                    });
+                });
+                game.reserve.stacks.forEach((s, i) => {
+                    const card = board.freecells.freecells.getCard(i);
+                    s.setCards(card ? 1 : 0, function(ii) {
+                        return _from_card(card);
+                    });
+                });
+                game.foundation.stacks.forEach(function(s, i) {
+                    const suit = [1, 2, 0, 3][i];
+                    s.setCards(
+                        board.foundations.foundations.getByIdx(0, suit),
+                        function(ii) {
+                            return Solitaire.Card.create(ii, i).faceUp();
+                            // body...
+                        },
+                    );
+                });
+
+                return true
+                    ? 1
+                    : _solve_cb(
+                          Y,
+                          FreecellSolver,
+                          args.instance,
+                          Animation,
+                          Status,
+                      );
+            };
 
             Y.mix(FreecellSolver, {
                 solver_active: false,
@@ -800,7 +849,7 @@ define([
                         "afterDealingAnimation",
                         function() {
                             if (this.isSupported()) {
-                                this.solve();
+                                // this.solve();
                             } else {
                                 this.disable();
                             }
@@ -816,7 +865,7 @@ define([
                                 if (dontResolve || !this.isSupported()) {
                                     return;
                                 }
-                                this.solve();
+                                // this.solve();
                             }.bind(this),
                         );
                     }
@@ -878,7 +927,13 @@ define([
 
                     _init_my_module(() => {
                         window.setTimeout(function() {
-                            return _solve_cb(Y, that, state, Animation, Status);
+                            return _solve_cb(
+                                Y,
+                                that,
+                                _calc_instance_from_state(state),
+                                Animation,
+                                Status,
+                            );
                         }, 400);
                     });
                 },
@@ -889,4 +944,5 @@ define([
         "0.0.1",
         { requires: ["solitaire"] },
     );
+    return { startSolution: startSolution };
 });

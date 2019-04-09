@@ -427,7 +427,10 @@ define(["./solitaire"], function(solitaire) {
         function hideChromeStoreLink() {
             var expires = 1000 * 3600 * 24 * 365; // one year
 
-            Y.one(".chromestore").addClass("hidden");
+            const chromestore = Y.one(".chromestore");
+            if (chromestore) {
+                chromestore.addClass("hidden");
+            }
             Y.Cookie.set("disable-chromestore-link", true, {
                 expires: new Date(new Date().getTime() + expires),
             });
