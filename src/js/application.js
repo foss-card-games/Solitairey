@@ -90,8 +90,11 @@ define(["./solitaire"], function(solitaire) {
                 },
 
                 refit: function() {
-                    var node = Y.one("#game-chooser"),
-                        height = node.get("winHeight");
+                    const node = Y.one("#game-chooser");
+                    if (!node) {
+                        return;
+                    }
+                    const height = node.get("winHeight");
 
                     node.setStyle("min-height", height);
                 },
@@ -451,7 +454,10 @@ define(["./solitaire"], function(solitaire) {
                         100,
                     );
                 } else {
-                    Y.one(".loading").addClass("hidden");
+                    const loading = Y.one(".loading");
+                    if (loading) {
+                        loading.addClass("hidden");
+                    }
                     callback();
                     Fade.hide();
                 }
@@ -518,7 +524,10 @@ define(["./solitaire"], function(solitaire) {
                 );
 
                 Fade.show();
-                Y.one(".loading").removeClass("hidden");
+                const loading = Y.one(".loading");
+                if (loading) {
+                    loading.removeClass("hidden");
+                }
             },
         };
 

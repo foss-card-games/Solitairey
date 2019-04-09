@@ -368,7 +368,10 @@ define([], function() {
                             : Math.floor(
                                   1 + Math.random() * (((1 << 30) - 2) << 1),
                               );
-                        Y.one("#deal_num_shlomify").set("value", seed);
+                        const deal_num = Y.one("#deal_num_shlomify");
+                        if (deal_num) {
+                            deal_num.set("value", seed);
+                        }
                         this.seed = seed;
                         this.init(seed);
                         Y.Solitaire.Animation.initQueue();

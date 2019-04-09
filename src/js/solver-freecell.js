@@ -457,11 +457,14 @@ define([
             var Solitaire = Y.Solitaire,
                 FreecellSolver = Solitaire.Solver.Freecell;
 
-            Y.one("#redeal").on("click", function() {
-                Solitaire.Application.newGame();
-                //getGame().redeal();
-                return;
-            });
+            const redeal = Y.one("#redeal");
+            if (redeal) {
+                redeal.on("click", function() {
+                    Solitaire.Application.newGame();
+                    //getGame().redeal();
+                    return;
+                });
+            }
 
             var Animation = {
                 interval: 700, // interval: 500,
