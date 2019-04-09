@@ -436,7 +436,7 @@ define([
                 value +
                 ">";
         }
-        console.log("found for <" + value + ">");
+        // console.log("found for <" + value + ">");
 
         ret.num_cards = move.num_cards;
 
