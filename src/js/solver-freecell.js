@@ -788,16 +788,20 @@ define([
                         return _from_card(card);
                     });
                 });
+                const fc = board.freecells;
                 game.reserve.stacks.forEach((s, i) => {
-                    const card = board.freecells.freecells.getCard(i);
+                    const card = fc ? fc.freecells.getCard(i) : null;
                     s.setCards(card ? 1 : 0, function(ii) {
                         return _from_card(card);
                     });
                 });
+                const foundations = board.foundations;
                 game.foundation.stacks.forEach(function(s, i) {
                     const suit = [1, 2, 0, 3][i];
                     s.setCards(
-                        board.foundations.foundations.getByIdx(0, suit),
+                        foundations
+                            ? foundations.foundations.getByIdx(0, suit)
+                            : 0,
                         function(ii) {
                             return Solitaire.Card.create(ii, i).faceUp();
                             // body...
@@ -805,15 +809,13 @@ define([
                     );
                 });
 
-                return true
-                    ? 1
-                    : _solve_cb(
-                          Y,
-                          FreecellSolver,
-                          args.instance,
-                          Animation,
-                          Status,
-                      );
+                return _solve_cb(
+                    Y,
+                    FreecellSolver,
+                    args.instance,
+                    Animation,
+                    Status,
+                );
             };
 
             Y.mix(FreecellSolver, {
