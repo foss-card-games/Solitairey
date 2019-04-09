@@ -773,7 +773,7 @@ define([
             };
             _startSolution_cb = function(args) {
                 function _from_card(card) {
-                    return Solitaire.Card.create(
+                    return Y.Solitaire.Freecell.Card.create(
                         card.getRank(),
                         game.deck.suits[[2, 0, 1, 3][card.getSuit()]],
                     ).faceUp();
@@ -803,7 +803,10 @@ define([
                             ? foundations.foundations.getByIdx(0, suit)
                             : 0,
                         function(ii) {
-                            return Solitaire.Card.create(ii, i).faceUp();
+                            return Y.Solitaire.Freecell.Card.create(
+                                ii,
+                                i,
+                            ).faceUp();
                             // body...
                         },
                     );
