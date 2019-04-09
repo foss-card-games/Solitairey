@@ -432,7 +432,9 @@ define([
         }, dest[0]);
 
         if (!ret.stack) {
-            throw "Must not happen - could not find dest stack";
+            throw "Must not happen - could not find dest stack for <" +
+                value +
+                ">";
         }
 
         ret.num_cards = move.num_cards;
