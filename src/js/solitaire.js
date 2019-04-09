@@ -1116,7 +1116,7 @@ define([], function() {
                 },
 
                 createProxyNode: function() {
-                    var node = Y.Node.create("<div>"),
+                    var node = Y.Node.create("<div></div>"),
                         stack = this.proxyStack;
 
                     // if the card isn't playable, create ghost copy

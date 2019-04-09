@@ -57,7 +57,7 @@ define(["./solitaire"], function(solitaire) {
                     },
                     element = function() {
                         if (el === null) {
-                            el = Y.Node.create("<div>");
+                            el = Y.Node.create("<div></div>");
                             el.setStyles(css);
                             body = Y.one(".solitairey_body").append(el);
                         }
