@@ -436,6 +436,7 @@ define([
                 value +
                 ">";
         }
+        console.log("found for <" + value + ">");
 
         ret.num_cards = move.num_cards;
 
@@ -491,8 +492,7 @@ define([
                 },
 
                 _playCurrentHelper: function(game) {
-                    var that = this;
-                    var move, card, origin;
+                    const that = this;
 
                     if (
                         that.remainingMovesIdx >= that.remainingMovesArr.length
@@ -500,17 +500,17 @@ define([
                         return;
                     }
 
-                    move = moveToCardAndStack(
+                    const move = moveToCardAndStack(
                         game,
                         that.remainingMovesArr[that.remainingMovesIdx],
                     );
-                    card = move.card;
+                    const card = move.card;
 
                     if (!card) {
                         return;
                     }
 
-                    origin = card.stack;
+                    const origin = card.stack;
 
                     if (false) {
                         card.after(function() {
@@ -750,7 +750,7 @@ define([
 
                     bar.append(indicator);
                     bar.append(controls);
-                    Y.one("body").append(bar);
+                    Y.one(".solitairey_body").append(bar);
 
                     this.indicator = indicator;
 

@@ -1,4 +1,5 @@
 define(["./solitaire"], function(solitaire) {
+    const getGame = solitaire.getGame;
     /*
      * record win/lose records, streaks, etc
      */
@@ -64,7 +65,7 @@ define(["./solitaire"], function(solitaire) {
                     duration = 900,
                     interval = 900;
 
-                Game.eachStack(function(stack) {
+                getGame().eachStack(function(stack) {
                     stack.eachCard(function(card) {
                         if (!card) {
                             return;
@@ -139,15 +140,17 @@ define(["./solitaire"], function(solitaire) {
                 output +=
                     "<li>Current win streak: <span class='streak'>" +
                     streakCount +
-                    "</li>";
+                    "</span></li>";
                 output +=
-                    "<li>Total wins: <span class='wins'>" + winCount + "</li>";
+                    "<li>Total wins: <span class='wins'>" +
+                    winCount +
+                    "</span></li>";
                 output +=
                     "<li>Total loses: <span class='loses'>" +
                     loseCount +
-                    "</li>";
+                    "</span></li>";
                 output +=
-                    "<div class=replay_options><button class=new_deal>New Deal</button><button class=choose_game>Choose Game</button></div>";
+                    '<div class="replay_options"><button class="new_deal">New Deal</button><button class="choose_game">Choose Game</button></div>';
 
                 output += "</ul></div>";
 
@@ -241,7 +244,7 @@ define(["./solitaire"], function(solitaire) {
                 winDisplay: function() {
                     var Application = Solitaire.Application;
 
-                    Y.one("body").append(winDisplay());
+                    Y.one(".solitairey_body").append(winDisplay());
 
                     Y.on(
                         "click",
