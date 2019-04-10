@@ -358,12 +358,9 @@ define([
         return null;
     }
     function _solve_cb(Y, that, instance, Animation, Status) {
-        let ret_moves = [];
-        if (instance) {
-            let moves_ = instance._pre_expand_states_and_moves_seq;
-            ret_moves = _calc__ret_moves(moves_);
-        }
-        var solution = ret_moves;
+        const solution = instance
+            ? _calc__ret_moves(instance._pre_expand_states_and_moves_seq)
+            : [];
         Animation.init(solution);
         if (solution) {
             Status.stopIndicator(true);
