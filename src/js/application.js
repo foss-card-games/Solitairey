@@ -330,14 +330,15 @@ define(["./solitaire"], function(solitaire) {
                     expires: new Date(new Date().getTime() + expires),
                 });
             }
-            Y.on("click", hideChromeStoreLink, Y.one(".chromestore"));
+            if (false) {
+                Y.on("click", hideChromeStoreLink, Y.one(".chromestore"));
 
-            function showDescription() {
-                GameChooser.select(this._node.id);
-                GameChooser.choose();
+                function showDescription() {
+                    GameChooser.select(this._node.id);
+                    GameChooser.choose();
+                }
+                Y.delegate("click", showDescription, "#descriptions", "li");
             }
-            Y.delegate("click", showDescription, "#descriptions", "li");
-
             Y.one("document").on("keydown", function(e) {
                 e.keyCode === 27 && GameChooser.hide();
             });

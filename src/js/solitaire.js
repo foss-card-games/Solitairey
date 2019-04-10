@@ -400,12 +400,21 @@ define([], function() {
 
                 createEvents: function() {
                     var container = Y.one(Solitaire.selector);
+                    if (false) {
+                        container.delegate("dblclick", Game.autoPlay, ".card");
+                        container.delegate(
+                            "contextmenu",
+                            Game.autoPlay,
+                            ".card",
+                        );
 
-                    container.delegate("dblclick", Game.autoPlay, ".card");
-                    container.delegate("contextmenu", Game.autoPlay, ".card");
-
-                    container.delegate("click", Game.Events.click, ".card");
-                    container.delegate("touchend", Game.Events.click, ".card");
+                        container.delegate("click", Game.Events.click, ".card");
+                        container.delegate(
+                            "touchend",
+                            Game.Events.click,
+                            ".card",
+                        );
+                    }
 
                     Y.on("solitaire|endTurn", Game.Events.endTurn);
                     Y.on("solitaire|undo", Game.Events.undo);
@@ -644,6 +653,7 @@ define([], function() {
             });
 
             Y.Solitaire.Events = {
+                /*
                 click: function(e) {
                     var card = e.target.getData("target");
 
@@ -656,7 +666,7 @@ define([], function() {
                     Solitaire.moves.reverse();
                     Solitaire.endTurn();
                     e.preventDefault();
-                },
+                },*/
 
                 clickEmptyDeck: function() {
                     Game.redeal();
