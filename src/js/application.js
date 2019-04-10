@@ -444,7 +444,10 @@ define(["./solitaire"], function(solitaire) {
                 Y.UA.chrome &&
                 !Y.Cookie.get("disable-chromestore-link", Boolean)
             ) {
-                Y.one(".chromestore").removeClass("hidden");
+                const chromestore = Y.one(".chromestore");
+                if (chromestore) {
+                    chromestore.removeClass("hidden");
+                }
             }
         }
         function _my_load_func() {
