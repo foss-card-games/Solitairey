@@ -860,7 +860,7 @@ define([
                         "afterDealingAnimation",
                         function() {
                             if (this.isSupported()) {
-                                this.solve();
+                                // this.solve();
                             } else {
                                 this.disable();
                             }
@@ -876,7 +876,7 @@ define([
                                 if (dontResolve || !this.isSupported()) {
                                     return;
                                 }
-                                this.solve();
+                                // this.solve();
                             }.bind(this),
                         );
                     }
