@@ -310,14 +310,14 @@ define(["./solitaire"], function(solitaire) {
                     },
                     Y.one("#close-chooser"),
                 );
+                Y.on(
+                    "click",
+                    function() {
+                        active.game.undo();
+                    },
+                    Y.one("#undo"),
+                );
             }
-            Y.on(
-                "click",
-                function() {
-                    active.game.undo();
-                },
-                Y.one("#undo"),
-            );
 
             function hideChromeStoreLink() {
                 const expires = 1000 * 3600 * 24 * 365; // one year
