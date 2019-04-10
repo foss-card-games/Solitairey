@@ -468,7 +468,7 @@ define(["./solitaire"], function(solitaire) {
                     active.game = Y.Solitaire[games[active.name]];
                     active.game.loadGame(save);
                 } else {
-                    playGame(active.name);
+                    // playGame(active.name);
                 }
             });
 
