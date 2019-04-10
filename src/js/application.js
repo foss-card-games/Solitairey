@@ -519,7 +519,7 @@ define(["./solitaire"], function(solitaire) {
 
             clearDOM();
             game.cleanup();
-            game.newGame();
+            // game.newGame();
         }
 
         function exportAPI() {
