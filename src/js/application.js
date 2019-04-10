@@ -84,11 +84,14 @@ define(["./solitaire"], function(solitaire) {
                 },
             };
         })();
-        function playGame(name) {
-            const twoWeeks = 1000 * 3600 * 24 * 14;
-
+        function switchToGame(name) {
             active.name = name;
             active.game = Y.Solitaire[games[name]];
+        }
+        function playGame(name) {
+            const twoWeeks = 1000 * 3600 * 24 * 14;
+            switchToGame(name);
+
             Y.Cookie.set("options", name, {
                 expires: new Date(new Date().getTime() + twoWeeks),
             });
@@ -486,8 +489,8 @@ define(["./solitaire"], function(solitaire) {
         }
 
         function resize() {
-            var game = active.game,
-                el = game.container(),
+            const game = active.game;
+            let el = game.container(),
                 padding = Y.Solitaire.padding,
                 offset = Y.Solitaire.offset,
                 width = el.get("winWidth") - padding.x,
@@ -509,11 +512,11 @@ define(["./solitaire"], function(solitaire) {
         }
 
         function restart() {
-            var init = Y.Cookie.get("initial-game"),
-                game = active.game;
+            const init = Y.Cookie.get("initial-game");
 
             if (init) {
                 clearDOM();
+                const game = active.game;
                 game.cleanup();
                 game.loadGame(init);
                 game.save();
@@ -542,6 +545,7 @@ define(["./solitaire"], function(solitaire) {
                 GameChooser: GameChooser,
                 newGame: newGame,
                 clearDOM: clearGame,
+                switchToGame: switchToGame,
             };
         }
         schedule = function(cb) {
