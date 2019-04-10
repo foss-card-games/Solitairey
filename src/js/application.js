@@ -459,7 +459,7 @@ define(["./solitaire"], function(solitaire) {
 
             Preloader.preload();
             Preloader.loaded(function() {
-                showChromeStoreLink();
+                // showChromeStoreLink();
                 if (save) {
                     clearDOM();
                     active.game = Y.Solitaire[games[active.name]];
