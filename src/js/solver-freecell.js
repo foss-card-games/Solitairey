@@ -776,6 +776,7 @@ define([
             };
             console.log("_startSolution_cb");
             _startSolution_cb = function(args) {
+                Y.Solitaire.Application.clearDOM();
                 Y.Solitaire.Freecell.setup(() => {
                     function _from_card(card) {
                         return Y.Solitaire.Freecell.Card.create(

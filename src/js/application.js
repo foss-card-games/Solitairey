@@ -524,6 +524,10 @@ define(["./solitaire"], function(solitaire) {
                 resizeEvent: "resize",
                 GameChooser: GameChooser,
                 newGame: newGame,
+                clearDOM: function() {
+                    clearDOM();
+                    active.game.cleanup();
+                },
             };
         }
 
