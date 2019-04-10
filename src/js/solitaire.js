@@ -560,22 +560,24 @@ define([], function() {
                         maxX,
                         fields;
 
-                    Y.on("selectstart", cancel, document);
-                    Y.on("mousedown", cancel, document.body);
-                    Y.on(
-                        "contextmenu",
-                        function(e) {
-                            var target = e.target;
+                    if (false) {
+                        Y.on("selectstart", cancel, document);
+                        Y.on("mousedown", cancel, document.body);
+                        Y.on(
+                            "contextmenu",
+                            function(e) {
+                                var target = e.target;
 
-                            if (
-                                target.hasClass("stack") ||
-                                target.hasClass("card")
-                            ) {
-                                e.preventDefault();
-                            }
-                        },
-                        document,
-                    );
+                                if (
+                                    target.hasClass("stack") ||
+                                    target.hasClass("card")
+                                ) {
+                                    e.preventDefault();
+                                }
+                            },
+                            document,
+                        );
+                    }
 
                     this.scale(1);
 
