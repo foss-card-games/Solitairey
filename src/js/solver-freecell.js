@@ -319,7 +319,7 @@ define([
     }
     function _calc_instance_from_state(state) {
         let exceeded_iters = false;
-        var instance = new FC_Solve({
+        const instance = new FC_Solve({
             cmd_line_preset: "video-editing",
             // cmd_line_preset: "lg",
             // cmd_line_preset: 'as',
@@ -337,7 +337,7 @@ define([
             solve_err_code = instance.do_solve(state_as_string);
 
             while (
-                solve_err_code == FCS_STATE_SUSPEND_PROCESS &&
+                solve_err_code === FCS_STATE_SUSPEND_PROCESS &&
                 !exceeded_iters
             ) {
                 solve_err_code = instance.resume_solution();
@@ -346,7 +346,13 @@ define([
             console.log("received exception " + e);
             _my_mod_counter = MAX_MOD_COUNTER + 5;
         }
-        if (solve_err_code == FCS_STATE_WAS_SOLVED) {
+        if (solve_err_code === FCS_STATE_WAS_SOLVED) {
+            instance.display_solution({
+                displayer: new w.DisplayFilter({
+                    is_unicode_cards: false,
+                    is_unicode_cards_chars: false,
+                }),
+            });
             return instance;
         }
         return null;
@@ -854,7 +860,7 @@ define([
                         "afterDealingAnimation",
                         function() {
                             if (this.isSupported()) {
-                                // this.solve();
+                                this.solve();
                             } else {
                                 this.disable();
                             }
@@ -870,7 +876,7 @@ define([
                                 if (dontResolve || !this.isSupported()) {
                                     return;
                                 }
-                                // this.solve();
+                                this.solve();
                             }.bind(this),
                         );
                     }
@@ -928,7 +934,7 @@ define([
                         Status.delay,
                     );
 
-                    var state = gameToState(Y, getGame());
+                    const state = gameToState(Y, getGame());
 
                     _init_my_module(() => {
                         window.setTimeout(function() {
