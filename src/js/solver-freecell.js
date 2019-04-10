@@ -774,45 +774,48 @@ define([
                     }
                 },
             };
+            console.log("_startSolution_cb");
             _startSolution_cb = function(args) {
-                function _from_card(card) {
-                    return Y.Solitaire.Freecell.Card.create(
-                        card.getRank(),
-                        game.deck.suits[[2, 0, 1, 3][card.getSuit()]],
-                    ).faceUp();
-                }
-                const board = args.board;
-                const game = getGame();
-                const tableau = game.tableau.stacks;
-                board.columns.forEach((col, ci) => {
-                    const column = col.col;
-                    tableau[ci].setCards(column.getLen(), function(i) {
-                        return _from_card(column.getCard(i));
+                Y.Solitaire.Freecell.setup(() => {
+                    function _from_card(card) {
+                        return Y.Solitaire.Freecell.Card.create(
+                            card.getRank(),
+                            game.deck.suits[[2, 0, 1, 3][card.getSuit()]],
+                        ).faceUp();
+                    }
+                    const board = args.board;
+                    const game = getGame();
+                    const tableau = game.tableau.stacks;
+                    board.columns.forEach((col, ci) => {
+                        const column = col.col;
+                        tableau[ci].setCards(column.getLen(), function(i) {
+                            return _from_card(column.getCard(i));
+                        });
                     });
-                });
-                const fc = board.freecells;
-                game.reserve.stacks.forEach((stack, i) => {
-                    const card = fc ? fc.freecells.getCard(i) : null;
-                    stack.setCards(card ? 1 : 0, function(_unused) {
-                        return _from_card(card);
+                    const fc = board.freecells;
+                    game.reserve.stacks.forEach((stack, i) => {
+                        const card = fc ? fc.freecells.getCard(i) : null;
+                        stack.setCards(card ? 1 : 0, function(_unused) {
+                            return _from_card(card);
+                        });
                     });
-                });
-                const foundations = board.foundations;
-                game.foundation.stacks.forEach(function(stack, suit) {
-                    stack.setCards(
-                        foundations
-                            ? foundations.foundations.getByIdx(
-                                  0,
-                                  [1, 2, 0, 3][suit],
-                              )
-                            : 0,
-                        function(rank) {
-                            return Y.Solitaire.Freecell.Card.create(
-                                rank,
-                                suit,
-                            ).faceUp();
-                        },
-                    );
+                    const foundations = board.foundations;
+                    game.foundation.stacks.forEach(function(stack, suit) {
+                        stack.setCards(
+                            foundations
+                                ? foundations.foundations.getByIdx(
+                                      0,
+                                      [1, 2, 0, 3][suit],
+                                  )
+                                : 0,
+                            function(rank) {
+                                return Y.Solitaire.Freecell.Card.create(
+                                    rank,
+                                    suit,
+                                ).faceUp();
+                            },
+                        );
+                    });
                 });
 
                 return _solve_cb(
