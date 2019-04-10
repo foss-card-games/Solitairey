@@ -1,12 +1,12 @@
 define(["./solitaire"], function(solitaire) {
     (function() {
-        var active = {
+        let active = {
                 name: "freecell", // name: "klondike",
                 game: null,
             },
             yui = YUI({ base: "js/yui-unpack/yui/build/" }),
-            Y,
-            /*
+            Y;
+        /*
          * We don't need all these games for now.
 	    games = {
 		"agnes": "Agnes",
@@ -29,214 +29,150 @@ define(["./solitaire"], function(solitaire) {
 		"will-o-the-wisp": "WillOTheWisp",
 		"yukon": "Yukon"},
         */
-            games = {
-                freecell: "Freecell",
-            },
-            extensions = [
-                "auto-turnover",
-                "statistics",
-                //"solver-freecell",
-                "solitaire-autoplay",
-                //"solitaire-ios"
-                // "solitaire-background-fix"
-                "solitaire",
-            ],
-            Fade = (function() {
-                var el = null,
-                    body,
-                    css = {
-                        position: "absolute",
-                        display: "none",
-                        backgroundColor: "#000",
-                        opacity: 0.7,
-                        top: 0,
-                        left: 0,
-                        width: 0,
-                        height: 0,
-                        zIndex: 1000,
-                    },
-                    element = function() {
-                        if (el === null) {
-                            el = Y.Node.create("<div></div>");
-                            el.setStyles(css);
-                            body = Y.one(".solitairey_body").append(el);
-                        }
-                        return el;
-                    };
-
-                return {
-                    show: function() {
-                        var el = element();
-
-                        css.display = "block";
-                        css.width = el.get("winWidth");
-                        css.height = el.get("winHeight");
-
+        const games = {
+            freecell: "Freecell",
+        };
+        const extensions = [
+            "auto-turnover",
+            "statistics",
+            //"solver-freecell",
+            "solitaire-autoplay",
+            //"solitaire-ios"
+            // "solitaire-background-fix"
+            "solitaire",
+        ];
+        const Fade = (function() {
+            var el = null,
+                body,
+                css = {
+                    position: "absolute",
+                    display: "none",
+                    backgroundColor: "#000",
+                    opacity: 0.7,
+                    top: 0,
+                    left: 0,
+                    width: 0,
+                    height: 0,
+                    zIndex: 1000,
+                },
+                element = function() {
+                    if (el === null) {
+                        el = Y.Node.create("<div></div>");
                         el.setStyles(css);
-                    },
-
-                    hide: function() {
-                        css.display = "none";
-                        element().setStyles(css);
-                    },
+                        body = Y.one(".solitairey_body").append(el);
+                    }
+                    return el;
                 };
-            })(),
-            GameChooser = {
-                selected: null,
-                fade: false,
 
-                init: function() {
-                    this.refit();
-                },
+            return {
+                show: function() {
+                    var el = element();
 
-                refit: function() {
-                    const node = Y.one("#game-chooser");
-                    if (!node) {
-                        return;
-                    }
-                    const height = node.get("winHeight");
+                    css.display = "block";
+                    css.width = el.get("winWidth");
+                    css.height = el.get("winHeight");
 
-                    node.setStyle("min-height", height);
-                },
-
-                show: function(fade) {
-                    if (!this.selected) {
-                        this.select(active.name);
-                    }
-
-                    if (fade) {
-                        Fade.show();
-                        this.fade = true;
-                    }
-
-                    Y.one("#game-chooser").addClass("show");
-                    Y.one(".solitairey_body").addClass("scrollable");
+                    el.setStyles(css);
                 },
 
                 hide: function() {
-                    if (this.fade) {
-                        Fade.hide();
-                    }
-
-                    Y.one("#game-chooser").removeClass("show");
-                    Y.fire("gamechooser:hide", this);
-                    Y.one(".solitairey_body").removeClass("scrollable");
-                },
-
-                choose: function() {
-                    if (!this.selected) {
-                        return;
-                    }
-
-                    this.hide();
-                    playGame(this.selected);
-                },
-
-                select: function(game) {
-                    var node = Y.one("#" + game + "> div"),
-                        previous = this.selected;
-
-                    if (previous !== game) {
-                        this.unSelect();
-                    }
-
-                    if (node) {
-                        this.selected = game;
-                        new Y.Node(document.getElementById(game)).addClass(
-                            "selected",
-                        );
-                    }
-
-                    if (previous && previous !== game) {
-                        Y.fire("gamechooser:select", this);
-                    }
-                },
-
-                unSelect: function() {
-                    if (!this.selected) {
-                        return;
-                    }
-
-                    new Y.Node(
-                        document.getElementById(this.selected),
-                    ).removeClass("selected");
-                    this.selected = null;
-                },
-            },
-            /* theres no mechanism yet to load the appropriate deck depending on the scaled card width
-             * so we just load the 122x190 cards and call it a day :/
-             */
-            Themes = {
-                dondorf: {
-                    sizes: [61, 79, 95, 122],
-                    61: {
-                        hiddenRankHeight: 7,
-                        rankHeight: 25,
-                        dimensions: [61, 95],
-                    },
-
-                    79: {
-                        hiddenRankHeight: 10,
-                        rankHeight: 32,
-                        dimensions: [79, 123],
-                    },
-
-                    95: {
-                        hiddenRankHeight: 12,
-                        rankHeight: 38,
-                        dimensions: [95, 148],
-                    },
-
-                    122: {
-                        hiddenRankHeight: 15,
-                        rankHeight: 48,
-                        dimensions: [122, 190],
-                    },
-                },
-
-                snapToSize: function(width) {
-                    var theme,
-                        sizes = theme.sizes;
-
-                    width =
-                        clamp(width, sizes[0], sizes[sizes.length - 1]) >>> 0;
-
-                    while (Y.Array.indexOf(sizes, width) === -1) {
-                        width++;
-                    }
-
-                    return width;
-                },
-
-                load: function(name) {
-                    var Solitaire = Y.Solitaire,
-                        base = Solitaire.Card.base;
-
-                    if (!(name in this)) {
-                        name = "dondorf";
-                    }
-
-                    if (base.theme !== name) {
-                        this.set(name, 122);
-                    }
-                },
-
-                set: function(name, size) {
-                    var theme = this[name][size];
-
-                    Y.mix(
-                        Y.Solitaire.Card.base,
-                        {
-                            theme: name + "/" + size,
-                            hiddenRankHeight: theme.hiddenRankHeight,
-                            rankHeight: theme.rankHeight,
-                            width: theme.dimensions[0],
-                            height: theme.dimensions[1],
-                        },
-                        true,
-                    );
+                    css.display = "none";
+                    element().setStyles(css);
                 },
             };
+        })();
+        function playGame(name) {
+            const twoWeeks = 1000 * 3600 * 24 * 14;
+
+            active.name = name;
+            active.game = Y.Solitaire[games[name]];
+            Y.Cookie.set("options", name, {
+                expires: new Date(new Date().getTime() + twoWeeks),
+            });
+            newGame();
+        }
+        const GameChooser = {
+            selected: null,
+            fade: false,
+
+            init: function() {
+                this.refit();
+            },
+
+            refit: function() {
+                const node = Y.one("#game-chooser");
+                if (!node) {
+                    return;
+                }
+                const height = node.get("winHeight");
+
+                node.setStyle("min-height", height);
+            },
+
+            show: function(fade) {
+                if (!this.selected) {
+                    this.select(active.name);
+                }
+
+                if (fade) {
+                    Fade.show();
+                    this.fade = true;
+                }
+
+                Y.one("#game-chooser").addClass("show");
+                Y.one(".solitairey_body").addClass("scrollable");
+            },
+
+            hide: function() {
+                if (this.fade) {
+                    Fade.hide();
+                }
+
+                Y.one("#game-chooser").removeClass("show");
+                Y.fire("gamechooser:hide", this);
+                Y.one(".solitairey_body").removeClass("scrollable");
+            },
+
+            choose: function() {
+                if (!this.selected) {
+                    return;
+                }
+
+                this.hide();
+                playGame(this.selected);
+            },
+
+            select: function(game) {
+                var node = Y.one("#" + game + "> div"),
+                    previous = this.selected;
+
+                if (previous !== game) {
+                    this.unSelect();
+                }
+
+                if (node) {
+                    this.selected = game;
+                    new Y.Node(document.getElementById(game)).addClass(
+                        "selected",
+                    );
+                }
+
+                if (previous && previous !== game) {
+                    Y.fire("gamechooser:select", this);
+                }
+            },
+
+            unSelect: function() {
+                if (!this.selected) {
+                    return;
+                }
+
+                new Y.Node(document.getElementById(this.selected)).removeClass(
+                    "selected",
+                );
+                this.selected = null;
+            },
+        };
 
         function modules() {
             var modules = extensions.slice(),
@@ -250,19 +186,108 @@ define(["./solitaire"], function(solitaire) {
 
             return modules;
         }
+        /* theres no mechanism yet to load the appropriate deck depending on the scaled card width
+         * so we just load the 122x190 cards and call it a day :/
+         */
+        const Themes = {
+            dondorf: {
+                sizes: [61, 79, 95, 122],
+                61: {
+                    hiddenRankHeight: 7,
+                    rankHeight: 25,
+                    dimensions: [61, 95],
+                },
 
-        function main(YUI) {
-            Y = YUI;
+                79: {
+                    hiddenRankHeight: 10,
+                    rankHeight: 32,
+                    dimensions: [79, 123],
+                },
 
-            exportAPI();
-            Y.on("domready", load);
+                95: {
+                    hiddenRankHeight: 12,
+                    rankHeight: 38,
+                    dimensions: [95, 148],
+                },
+
+                122: {
+                    hiddenRankHeight: 15,
+                    rankHeight: 48,
+                    dimensions: [122, 190],
+                },
+            },
+
+            snapToSize: function(width) {
+                var theme,
+                    sizes = theme.sizes;
+
+                width = clamp(width, sizes[0], sizes[sizes.length - 1]) >>> 0;
+
+                while (Y.Array.indexOf(sizes, width) === -1) {
+                    width++;
+                }
+
+                return width;
+            },
+
+            load: function(name) {
+                var Solitaire = Y.Solitaire,
+                    base = Solitaire.Card.base;
+
+                if (!(name in this)) {
+                    name = "dondorf";
+                }
+
+                if (base.theme !== name) {
+                    this.set(name, 122);
+                }
+            },
+
+            set: function(name, size) {
+                const theme = this[name][size];
+                console.log("width:" + theme.dimensions[0]);
+
+                Y.mix(
+                    Y.Solitaire.Card.base,
+                    {
+                        theme: name + "/" + size,
+                        hiddenRankHeight: theme.hiddenRankHeight,
+                        rankHeight: theme.rankHeight,
+                        width: theme.dimensions[0],
+                        height: theme.dimensions[1],
+                    },
+                    true,
+                );
+            },
+        };
+
+        function loadOptions() {
+            const options = Y.Cookie.get("options");
+
+            options && (active.name = options);
+
+            Themes.load("dondorf");
         }
+        function attachResize() {
+            var timer,
+                delay = 250,
+                attachEvent;
 
-        function showDescription() {
-            GameChooser.select(this._node.id);
-            GameChooser.choose();
+            if (window.addEventListener) {
+                attachEvent = "addEventListener";
+            } else if (window.attachEvent) {
+                attachEvent = "attachEvent";
+            }
+
+            window[attachEvent](
+                Y.Solitaire.Application.resizeEvent,
+                function() {
+                    clearTimeout(timer);
+                    timer = setTimeout(resize, delay);
+                },
+                false,
+            );
         }
-
         function attachEvents() {
             var that = this;
             Y.on("newAppGame", function() {
@@ -294,8 +319,23 @@ define(["./solitaire"], function(solitaire) {
                 Y.one("#undo"),
             );
 
+            function hideChromeStoreLink() {
+                const expires = 1000 * 3600 * 24 * 365; // one year
+
+                const chromestore = Y.one(".chromestore");
+                if (chromestore) {
+                    chromestore.addClass("hidden");
+                }
+                Y.Cookie.set("disable-chromestore-link", true, {
+                    expires: new Date(new Date().getTime() + expires),
+                });
+            }
             Y.on("click", hideChromeStoreLink, Y.one(".chromestore"));
 
+            function showDescription() {
+                GameChooser.select(this._node.id);
+                GameChooser.choose();
+            }
             Y.delegate("click", showDescription, "#descriptions", "li");
 
             Y.one("document").on("keydown", function(e) {
@@ -310,142 +350,7 @@ define(["./solitaire"], function(solitaire) {
 
             attachResize();
         }
-
-        function attachResize() {
-            var timer,
-                delay = 250,
-                attachEvent;
-
-            if (window.addEventListener) {
-                attachEvent = "addEventListener";
-            } else if (window.attachEvent) {
-                attachEvent = "attachEvent";
-            }
-
-            window[attachEvent](
-                Y.Solitaire.Application.resizeEvent,
-                function() {
-                    clearTimeout(timer);
-                    timer = setTimeout(resize, delay);
-                },
-                false,
-            );
-        }
-
-        function resize() {
-            var game = active.game,
-                el = game.container(),
-                padding = Y.Solitaire.padding,
-                offset = Y.Solitaire.offset,
-                width = el.get("winWidth") - padding.x,
-                height = el.get("winHeight") - padding.y,
-                ratio = 1;
-
-            Y.Solitaire.Application.windowHeight = height;
-            ratio = Math.min(
-                (width - offset.left) / game.width(),
-                (height - offset.top) / game.height(),
-            );
-
-            active.game.resize(ratio);
-            GameChooser.refit();
-        }
-
-        function playGame(name) {
-            var twoWeeks = 1000 * 3600 * 24 * 14;
-
-            active.name = name;
-            active.game = Y.Solitaire[games[name]];
-            Y.Cookie.set("options", name, {
-                expires: new Date(new Date().getTime() + twoWeeks),
-            });
-            newGame();
-        }
-
-        function loadOptions() {
-            var options = Y.Cookie.get("options");
-
-            options && (active.name = options);
-
-            Themes.load("dondorf");
-        }
-
-        function load() {
-            var save = Y.Cookie.get("saved-game");
-
-            attachEvents();
-            loadOptions();
-
-            Preloader.preload();
-            Preloader.loaded(function() {
-                showChromeStoreLink();
-                if (save) {
-                    clearDOM();
-                    active.game = Y.Solitaire[games[active.name]];
-                    active.game.loadGame(save);
-                } else {
-                    playGame(active.name);
-                }
-            });
-
-            GameChooser.init();
-        }
-
-        function clearDOM() {
-            Y.all(".stack, .card").remove();
-        }
-
-        function restart() {
-            var init = Y.Cookie.get("initial-game"),
-                game = active.game;
-
-            if (init) {
-                clearDOM();
-                game.cleanup();
-                game.loadGame(init);
-                game.save();
-            }
-        }
-
-        function newGame() {
-            var game = active.game;
-
-            clearDOM();
-            game.cleanup();
-            game.newGame();
-        }
-
-        function exportAPI() {
-            Y.Solitaire.Application = {
-                windowHeight: 0,
-                resizeEvent: "resize",
-                GameChooser: GameChooser,
-                newGame: newGame,
-            };
-        }
-
-        function hideChromeStoreLink() {
-            var expires = 1000 * 3600 * 24 * 365; // one year
-
-            const chromestore = Y.one(".chromestore");
-            if (chromestore) {
-                chromestore.addClass("hidden");
-            }
-            Y.Cookie.set("disable-chromestore-link", true, {
-                expires: new Date(new Date().getTime() + expires),
-            });
-        }
-
-        function showChromeStoreLink() {
-            if (
-                Y.UA.chrome &&
-                !Y.Cookie.get("disable-chromestore-link", Boolean)
-            ) {
-                Y.one(".chromestore").removeClass("hidden");
-            }
-        }
-
-        var Preloader = {
+        const Preloader = {
             loadingCount: 0,
 
             loaded: function(callback) {
@@ -533,6 +438,94 @@ define(["./solitaire"], function(solitaire) {
                 }
             },
         };
+        function showChromeStoreLink() {
+            if (
+                Y.UA.chrome &&
+                !Y.Cookie.get("disable-chromestore-link", Boolean)
+            ) {
+                Y.one(".chromestore").removeClass("hidden");
+            }
+        }
+        function _my_load_func() {
+            const save = Y.Cookie.get("saved-game");
+
+            attachEvents();
+            console.log("_my_load_func()");
+            loadOptions();
+
+            Preloader.preload();
+            Preloader.loaded(function() {
+                showChromeStoreLink();
+                if (save) {
+                    clearDOM();
+                    active.game = Y.Solitaire[games[active.name]];
+                    active.game.loadGame(save);
+                } else {
+                    playGame(active.name);
+                }
+            });
+
+            GameChooser.init();
+        }
+
+        function main(YUI) {
+            Y = YUI;
+
+            exportAPI();
+            Y.on("domready", _my_load_func);
+        }
+
+        function resize() {
+            var game = active.game,
+                el = game.container(),
+                padding = Y.Solitaire.padding,
+                offset = Y.Solitaire.offset,
+                width = el.get("winWidth") - padding.x,
+                height = el.get("winHeight") - padding.y,
+                ratio = 1;
+
+            Y.Solitaire.Application.windowHeight = height;
+            ratio = Math.min(
+                (width - offset.left) / game.width(),
+                (height - offset.top) / game.height(),
+            );
+
+            active.game.resize(ratio);
+            GameChooser.refit();
+        }
+
+        function clearDOM() {
+            Y.all(".stack, .card").remove();
+        }
+
+        function restart() {
+            var init = Y.Cookie.get("initial-game"),
+                game = active.game;
+
+            if (init) {
+                clearDOM();
+                game.cleanup();
+                game.loadGame(init);
+                game.save();
+            }
+        }
+
+        function newGame() {
+            var game = active.game;
+
+            clearDOM();
+            game.cleanup();
+            game.newGame();
+        }
+
+        function exportAPI() {
+            Y.Solitaire.Application = {
+                windowHeight: 0,
+                resizeEvent: "resize",
+                GameChooser: GameChooser,
+                newGame: newGame,
+            };
+        }
 
         yui.use.apply(yui, modules().concat(main));
         window.setTimeout(function() {
