@@ -1,4 +1,7 @@
 define(["./solitaire"], function(solitaire) {
+    let newGameRun;
+    let schedule;
+    let schedule_cb;
     (function() {
         let active = {
                 name: "freecell", // name: "klondike",
@@ -470,6 +473,9 @@ define(["./solitaire"], function(solitaire) {
             });
 
             GameChooser.init();
+            if (schedule_cb) {
+                schedule_cb(Y);
+            }
         }
 
         function main(YUI) {
@@ -513,27 +519,34 @@ define(["./solitaire"], function(solitaire) {
                 game.save();
             }
         }
-
-        function newGame() {
-            var game = active.game;
+        function clearGame() {
+            const game = active.game;
 
             clearDOM();
             game.cleanup();
-            // game.newGame();
         }
 
+        function newGame() {
+            clearGame();
+            active.game.newGame();
+        }
+        newGameRun = function() {
+            playGame("freecell");
+        };
+
         function exportAPI() {
+            Y.on("newGameRun", newGameRun);
             Y.Solitaire.Application = {
                 windowHeight: 0,
                 resizeEvent: "resize",
                 GameChooser: GameChooser,
                 newGame: newGame,
-                clearDOM: function() {
-                    clearDOM();
-                    active.game.cleanup();
-                },
+                clearDOM: clearGame,
             };
         }
+        schedule = function(cb) {
+            schedule_cb = cb;
+        };
 
         yui.use.apply(yui, modules().concat(main));
         window.setTimeout(function() {
@@ -542,5 +555,5 @@ define(["./solitaire"], function(solitaire) {
         }, 400);
     })();
 
-    return {};
+    return { schedule: schedule, newGameRun: newGameRun };
 });
