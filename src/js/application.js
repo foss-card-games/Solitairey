@@ -45,9 +45,9 @@ define(["./solitaire"], function(solitaire) {
             "solitaire",
         ];
         const Fade = (function() {
-            var el = null,
-                body,
-                css = {
+            let el = null,
+                body;
+            const css = {
                     position: "absolute",
                     display: "none",
                     backgroundColor: "#000",
@@ -69,7 +69,7 @@ define(["./solitaire"], function(solitaire) {
 
             return {
                 show: function() {
-                    var el = element();
+                    const el = element();
 
                     css.display = "block";
                     css.width = el.get("winWidth");
@@ -149,7 +149,7 @@ define(["./solitaire"], function(solitaire) {
             },
 
             select: function(game) {
-                var node = Y.one("#" + game + "> div"),
+                const node = Y.one("#" + game + "> div"),
                     previous = this.selected;
 
                 if (previous !== game) {
@@ -181,10 +181,9 @@ define(["./solitaire"], function(solitaire) {
         };
 
         function modules() {
-            var modules = extensions.slice(),
-                m;
+            const modules = extensions.slice();
 
-            for (m in games) {
+            for (const m in games) {
                 if (games.hasOwnProperty(m)) {
                     modules.unshift(m);
                 }
@@ -223,21 +222,8 @@ define(["./solitaire"], function(solitaire) {
                 },
             },
 
-            snapToSize: function(width) {
-                var theme,
-                    sizes = theme.sizes;
-
-                width = clamp(width, sizes[0], sizes[sizes.length - 1]) >>> 0;
-
-                while (Y.Array.indexOf(sizes, width) === -1) {
-                    width++;
-                }
-
-                return width;
-            },
-
             load: function(name) {
-                var Solitaire = Y.Solitaire,
+                const Solitaire = Y.Solitaire,
                     base = Solitaire.Card.base;
 
                 if (!(name in this)) {
@@ -275,9 +261,9 @@ define(["./solitaire"], function(solitaire) {
             Themes.load("dondorf");
         }
         function attachResize() {
-            var timer,
-                delay = 250,
-                attachEvent;
+            let timer;
+            const delay = 250;
+            let attachEvent;
 
             if (window.addEventListener) {
                 attachEvent = "addEventListener";
@@ -378,7 +364,7 @@ define(["./solitaire"], function(solitaire) {
             },
 
             load: function(path) {
-                var image = new Image();
+                const image = new Image();
 
                 image.onload = function() {
                     --this.loadingCount;
@@ -390,27 +376,27 @@ define(["./solitaire"], function(solitaire) {
 
             preload: function() {
                 const that = this;
-                var rank,
-                    icons = [
-                        "agnes",
-                        "flower-garden",
-                        "forty-thieves",
-                        "freecell",
-                        "gclock",
-                        "golf",
-                        "klondike1t",
-                        "klondike",
-                        "montecarlo",
-                        "pyramid",
-                        "scorpion",
-                        "spider1s",
-                        "spider2s",
-                        "spiderette",
-                        "spider",
-                        "tritowers",
-                        "will-o-the-wisp",
-                        "yukon",
-                    ];
+                let rank;
+                const icons = [
+                    "agnes",
+                    "flower-garden",
+                    "forty-thieves",
+                    "freecell",
+                    "gclock",
+                    "golf",
+                    "klondike1t",
+                    "klondike",
+                    "montecarlo",
+                    "pyramid",
+                    "scorpion",
+                    "spider1s",
+                    "spider2s",
+                    "spiderette",
+                    "spider",
+                    "tritowers",
+                    "will-o-the-wisp",
+                    "yukon",
+                ];
 
                 Y.Array.each(
                     ["s", "h", "c", "d"],
