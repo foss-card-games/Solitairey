@@ -480,11 +480,10 @@ define(["./solitaire"], function(solitaire) {
                 padding = Y.Solitaire.padding,
                 offset = Y.Solitaire.offset,
                 width = el.get("winWidth") - padding.x,
-                height = el.get("winHeight") - padding.y,
-                ratio = 1;
+                height = el.get("winHeight") - padding.y;
 
             Y.Solitaire.Application.windowHeight = height;
-            ratio = Math.min(
+            const ratio = Math.min(
                 (width - offset.left) / game.width(),
                 (height - offset.top) / game.height(),
             );
