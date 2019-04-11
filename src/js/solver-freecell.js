@@ -299,7 +299,7 @@ define([
                     m.str,
                 );
 
-                let current = {};
+                const current = {};
                 current.source = move_content.source;
                 current.num_cards = move_content.num_cards;
                 current.dest = move_content.dest;
@@ -357,7 +357,7 @@ define([
             if (!Y.UA.chrome) {
                 return;
             }
-            let old = document.body.style.zoom;
+            const old = document.body.style.zoom;
             document.body.style.zoom = "80%";
             setTimeout(function() {
                 document.body.style.zoom = old;
@@ -384,7 +384,7 @@ define([
         const source = move.source,
             dest = move.dest;
 
-        let ret = { top_card: true };
+        const ret = { top_card: true };
 
         let value = source[1];
         const source_type = source[0];
@@ -470,7 +470,7 @@ define([
             if (redeal) {
                 redeal.on("click", function() {
                     Solitaire.Application.newGame();
-                    //getGame().redeal();
+                    // getGame().redeal();
                     return;
                 });
             }
@@ -655,12 +655,9 @@ define([
                             that.remainingMovesIdx < 0
                         )
                     ) {
-                        that.timer = window.setTimeout(
-                            function() {
-                                that.play(game);
-                            }.bind(this),
-                            that.interval,
-                        );
+                        that.timer = window.setTimeout(function() {
+                            that.play(game);
+                        }, that.interval);
                     }
                 },
             };
@@ -752,7 +749,7 @@ define([
                         Animation.prev(getGame());
                     });
                     playPause.on("click", function() {
-                        const that = this;
+                        const that = playPause;
                         /*
                          * Here I tie up state with the DOM
                          * Maybe that is alright, as it is interface state
