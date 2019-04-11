@@ -59,7 +59,7 @@ cpfile YUI_SRC, YUI
 dest_js_s = []
 
 def js_pat_file(filename)
-  "#{JS_SRC_PREFIX}/#{filename}"
+  ["ext/requirejs/#{filename}", "ext/yui-debug/#{filename}",  ].select {|f| File.file? f}[0] || "#{JS_SRC_PREFIX}/#{filename}"
 end
 def fcs_pat_file(filename)
   "ext/libfreecell-solver/#{filename}"
@@ -98,6 +98,8 @@ def js_root_file(filename)
   cpfile src, dest
   dest
 end
+
+
 
 BROWSERIFY_JS.each do |base|
   dest2 = js_js_pat_file(base)
