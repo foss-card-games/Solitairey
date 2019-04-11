@@ -240,9 +240,13 @@ define([], function() {
                             lengths = serialized.substr(1, numStacks),
                             offset = numStacks + 1,
                             fields = that.fields,
-                            fieldIndex = -1,
                             stacks = [];
-                        let data, stackIndex, stack, i, length;
+                        let data,
+                            stackIndex,
+                            stack,
+                            i,
+                            length,
+                            fieldIndex = -1;
 
                         for (
                             i = 0, stackIndex = 0;
