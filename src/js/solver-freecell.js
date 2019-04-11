@@ -497,7 +497,7 @@ define([
                 },
 
                 pause: function() {
-                    Solitaire.Autoplay.enable();
+                    // Solitaire.Autoplay.enable();
 
                     window.clearTimeout(this.timer);
                     this.timer = null;
@@ -611,7 +611,7 @@ define([
 
                 prev: function(game) {
                     const that = this;
-                    if (that.remainingMovesIdx >= 0) {
+                    if (that.remainingMovesIdx > 0) {
                         Y.fire("undo", true);
                         --that.remainingMovesIdx;
                     }
@@ -756,9 +756,11 @@ define([
                         playCallback;
 
                     next.on("click", function() {
+                        Animation.pause();
                         Animation.next(getGame());
                     });
                     prev.on("click", function() {
+                        Animation.pause();
                         Animation.prev(getGame());
                     });
                     playPause.on("click", function() {
