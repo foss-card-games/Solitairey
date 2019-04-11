@@ -6,7 +6,6 @@ define([
     "./flatted",
 ], function(Module, w, solitaire, flatted) {
     "use strict";
-    var exports = {};
     const FC_Solve = w.FC_Solve;
     const FCS_STATE_SUSPEND_PROCESS = w.FCS_STATE_SUSPEND_PROCESS;
     const FCS_STATE_WAS_SOLVED = w.FCS_STATE_WAS_SOLVED;
@@ -23,8 +22,8 @@ define([
     WITH_UI = true;
 
     let _my_module;
-    var MAX_MOD_COUNTER = 5;
-    var _my_mod_counter = MAX_MOD_COUNTER;
+    const MAX_MOD_COUNTER = 5;
+    let _my_mod_counter = MAX_MOD_COUNTER;
     const suitTable = {
         s: 0,
         h: 1,
@@ -35,7 +34,7 @@ define([
         return card ? (card.rank << 2) | suitTable[card.suit] : 0;
     }
     function withSelector(Y, selector, callback) {
-        var node = Y.one(selector);
+        const node = Y.one(selector);
 
         if (node) {
             callback(node);
@@ -45,18 +44,13 @@ define([
         return Y.Array.map(field.stacks, function(s) {
             return s;
         }).sort(function(s1, s2) {
-            var c1 = s1.first(),
-                c2 = s2.first();
-
-            return cardToValue(c1) - cardToValue(c2);
+            return cardToValue(s1.first()) - cardToValue(s2.first());
         });
     }
 
     function gameToState(Y, game) {
-        var reserve, foundation, tableau;
-
-        tableau = Y.Array.map(sortedStacks(Y, game.tableau), function(s) {
-            var buffer = [];
+        const tableau = Y.Array.map(sortedStacks(Y, game.tableau), function(s) {
+            const buffer = [];
 
             s.eachCard(function(c, i) {
                 buffer[i] = cardToValue(c);
@@ -65,12 +59,12 @@ define([
             return [buffer, s.cards.length];
         });
 
-        reserve = [];
+        const reserve = [];
         Y.Array.forEach(sortedStacks(Y, game.reserve), function(s, i) {
             reserve[i] = cardToValue(s.my_Last());
         });
 
-        foundation = [];
+        const foundation = [];
         Y.Array.forEach(sortedStacks(Y, game.foundation), function(s, i) {
             foundation[i] = cardToValue(s.my_Last());
         });
@@ -84,9 +78,9 @@ define([
     function to_int(s) {
         return parseInt(s, 10);
     }
-    var _suits = ["S", "H", "C", "D"];
+    const _suits = ["S", "H", "C", "D"];
 
-    var _ranks = [
+    const _ranks = [
         "A",
         "2",
         "3",
@@ -102,14 +96,14 @@ define([
         "K",
     ];
     function _rev(arr, delta) {
-        var ret = {};
-        for (var i = 0; i < arr.length; i++) {
+        const ret = {};
+        for (let i = 0; i < arr.length; ++i) {
             ret[arr[i]] = delta + i;
         }
         return ret;
     }
-    var _ranks_rev = _rev(_ranks, 1);
-    var _suits_rev = _rev(_suits, 0);
+    const _ranks_rev = _rev(_ranks, 1);
+    const _suits_rev = _rev(_suits, 0);
     function _render_rank(c) {
         return _ranks[(c >> 2) - 1];
     }
@@ -140,30 +134,26 @@ define([
     }
 
     function _render_state_as_string(obj) {
-        var ret = "";
+        let ret = "";
 
-        var reserve = obj.reserve;
-        var foundation = obj.foundation;
+        const reserve = obj.reserve;
+        const foundation = obj.foundation;
         ret +=
             "Foundations:" + foundation.map(_render_foundation).join("") + "\n";
 
         ret += "Freecells:" + reserve.map(_render_freecell).join("") + "\n";
 
-        for (var i = 0; i < obj.tableau.length; i++) {
-            var stack = obj.tableau[i];
-            var l = stack[1];
-            var s = stack[0];
+        for (let i = 0; i < obj.tableau.length; ++i) {
+            const stack = obj.tableau[i];
+            const l = stack[1];
+            const s = stack[0];
 
             ret += ":";
-            for (var j = 0; j < l; j++) {
-                var c = s[j];
+            for (let j = 0; j < l; ++j) {
+                const c = s[j];
                 ret += " " + _render_rank(c) + _render_suit(c);
             }
             ret += "\n";
-        }
-
-        if (false) {
-            console.log("Board = <<" + ret + ">>");
         }
 
         return ret;
@@ -188,7 +178,7 @@ define([
     }
 
     function _str_to_c(s) {
-        var m = s.match(/^(.)(.)$/);
+        const m = s.match(/^(.)(.)$/);
         if (!m) {
             throw "Should not happen";
         }
@@ -227,7 +217,7 @@ define([
         return m == "0" ? 0 : _ranks_rev[m];
     }
     function _calc__move_content(pre_s, str) {
-        var matched = str.match(
+        let matched = str.match(
             /^Move ([0-9]+) cards from stack ([0-9]+) to stack ([0-9]+)/,
         );
 
@@ -332,7 +322,7 @@ define([
             },
         });
 
-        var state_as_string = _render_state_as_string(state);
+        const state_as_string = _render_state_as_string(state);
         let solve_err_code;
         try {
             solve_err_code = instance.do_solve(state_as_string);
@@ -391,12 +381,12 @@ define([
     }
 
     function moveToCardAndStack(game, move) {
-        var source = move.source,
-            dest = move.dest,
-            value,
-            ret = { top_card: true };
+        const source = move.source,
+            dest = move.dest;
 
-        value = source[1];
+        let ret = { top_card: true };
+
+        let value = source[1];
         const source_type = source[0];
         game.eachStack(function(stack) {
             if (ret.card) {
@@ -436,7 +426,7 @@ define([
                 return;
             }
 
-            var card = stack.my_Last();
+            const card = stack.my_Last();
 
             if (!(card || value)) {
                 ret.stack = stack;
@@ -473,7 +463,7 @@ define([
                 return;
             }
 
-            var Solitaire = Y.Solitaire,
+            const Solitaire = Y.Solitaire,
                 FreecellSolver = Solitaire.Solver.Freecell;
 
             const redeal = Y.one("#redeal");
@@ -485,7 +475,7 @@ define([
                 });
             }
 
-            var Animation = {
+            const Animation = {
                 interval: 700, // interval: 500,
                 timer: null,
                 remainingMovesIdx: null,
@@ -601,8 +591,8 @@ define([
                 },
 
                 playCurrent: function(game) {
-                    var that = this;
-                    var verdict = this._playCurrentHelper(game);
+                    const that = this;
+                    const verdict = this._playCurrentHelper(game);
 
                     if (!verdict) {
                         that._resetGameFoo();
@@ -619,8 +609,8 @@ define([
                 },
 
                 next: function(game) {
-                    var that = this;
-                    var next = this.remainingMovesIdx + 1;
+                    const that = this;
+                    const next = this.remainingMovesIdx + 1;
 
                     Solitaire.Statistics.disable();
                     this.playCurrent(game);
@@ -637,7 +627,6 @@ define([
                 },
 
                 play: function(game) {
-                    var move, card, origin;
                     const that = this;
 
                     if (
@@ -658,7 +647,7 @@ define([
                         });
                     }
 
-                    this.next(game);
+                    that.next(game);
                     if (
                         !(
                             that.remainingMovesIdx >=
@@ -666,17 +655,17 @@ define([
                             that.remainingMovesIdx < 0
                         )
                     ) {
-                        this.timer = window.setTimeout(
+                        that.timer = window.setTimeout(
                             function() {
-                                this.play(game);
+                                that.play(game);
                             }.bind(this),
-                            this.interval,
+                            that.interval,
                         );
                     }
                 },
             };
 
-            var Status = {
+            const Status = {
                 bar: null,
                 indicator: null,
                 indicatorTimer: null,
@@ -684,17 +673,15 @@ define([
                 delay: 400,
 
                 updateIndicator: function(ticks) {
-                    var indicator = this.indicator,
-                        i,
-                        text;
+                    const indicator = this.indicator;
 
                     if (!indicator) {
                         return;
                     }
 
                     ticks = (ticks || 0) % 4;
-                    text = "Solving";
-                    for (i = 0; i < ticks; i++) {
+                    let text = "Solving";
+                    for (let i = 0; i < ticks; ++i) {
                         text += ".";
                     }
 
@@ -707,7 +694,7 @@ define([
                 },
 
                 stopIndicator: function(solved) {
-                    var indicator = this.indicator;
+                    const indicator = this.indicator;
 
                     window.clearTimeout(this.indicatorTimer);
                     if (!indicator) {
@@ -883,7 +870,7 @@ define([
                         return;
                     }
 
-                    var pause = Animation.pause.bind(Animation);
+                    const pause = Animation.pause.bind(Animation);
 
                     // start the solver if the current game supports it
                     Y.on(
