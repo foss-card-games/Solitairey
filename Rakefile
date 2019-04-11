@@ -173,7 +173,7 @@ file DEST_INDEX => [TEMPLATE, COMBINED] do
   create_index DEST_INDEX, true
 end
 
-T = %w[application solver-freecell].freeze
+T = %w[application solver-freecell statistics].freeze
 task :test do
   sh 'eslint -c .eslintrc.yml ' + T.map { |f| "src/js/#{f}.js" }.join(' ')
   sh 'rubocop Rakefile'
