@@ -509,6 +509,7 @@ define([
                             function(node) {
                                 node.removeClass("pause");
                                 node.addClass("play");
+                                node.set("text", "⏵");
                             },
                         );
                     }
@@ -653,6 +654,7 @@ define([
                         withSelector(Y, "#solver_bar .play", function(node) {
                             node.removeClass("play");
                             node.addClass("pause");
+                            node.set("text", "⏸");
                         });
                     }
 
@@ -744,10 +746,10 @@ define([
                             '<span class="indicator"></span>',
                         ),
                         next = Y.Node.create(
-                            "<button class='fastforward'>⏵</button>",
+                            "<button class='fastforward'>⏩︎</button>",
                         ),
                         prev = Y.Node.create(
-                            "<button class='rewind'>⏴</button>",
+                            "<button class='rewind'>⏪︎</button>",
                         ),
                         playPause = Y.Node.create(
                             "<button class='play'>⏸</button>",
