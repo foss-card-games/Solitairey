@@ -789,48 +789,51 @@ define([
                 console.log("called _startSolution_cb");
                 Y.Solitaire.Application.switchToGame("freecell");
                 Y.Solitaire.Application.clearDOM();
-                Y.Solitaire.Freecell.setup(() => {
-                    function _from_card(card) {
-                        return Y.Solitaire.Freecell.Card.create(
-                            card.getRank(),
-                            game.deck.suits[[2, 0, 1, 3][card.getSuit()]],
-                        ).faceUp();
-                    }
-                    const board = args.board;
-                    const game = getGame();
-                    const tableau = game.tableau.stacks;
-                    board.columns.forEach((col, ci) => {
-                        const column = col.col;
-                        tableau[ci].setCards(column.getLen(), function(i) {
-                            return _from_card(column.getCard(i));
+                Y.Solitaire.Freecell.setup(
+                    () => {
+                        function _from_card(card) {
+                            return Y.Solitaire.Freecell.Card.create(
+                                card.getRank(),
+                                game.deck.suits[[2, 0, 1, 3][card.getSuit()]],
+                            ).faceUp();
+                        }
+                        const board = args.board;
+                        const game = getGame();
+                        const tableau = game.tableau.stacks;
+                        board.columns.forEach((col, ci) => {
+                            const column = col.col;
+                            tableau[ci].setCards(column.getLen(), function(i) {
+                                return _from_card(column.getCard(i));
+                            });
                         });
-                    });
-                    const fc = board.freecells;
-                    game.reserve.stacks.forEach((stack, i) => {
-                        const card = fc ? fc.freecells.getCard(i) : null;
-                        stack.setCards(card ? 1 : 0, function(_unused) {
-                            return _from_card(card);
+                        const fc = board.freecells;
+                        game.reserve.stacks.forEach((stack, i) => {
+                            const card = fc ? fc.freecells.getCard(i) : null;
+                            stack.setCards(card ? 1 : 0, function(_unused) {
+                                return _from_card(card);
+                            });
                         });
-                    });
-                    const foundations = board.foundations;
-                    game.foundation.stacks.forEach(function(stack, suit) {
-                        stack.setCards(
-                            foundations
-                                ? 1 +
-                                      foundations.foundations.getByIdx(
-                                          0,
-                                          [1, 2, 0, 3][suit],
-                                      )
-                                : 0,
-                            function(rank) {
-                                return Y.Solitaire.Freecell.Card.create(
-                                    rank,
-                                    game.deck.suits[suit],
-                                ).faceUp();
-                            },
-                        );
-                    });
-                });
+                        const foundations = board.foundations;
+                        game.foundation.stacks.forEach(function(stack, suit) {
+                            stack.setCards(
+                                foundations
+                                    ? 1 +
+                                          foundations.foundations.getByIdx(
+                                              0,
+                                              [1, 2, 0, 3][suit],
+                                          )
+                                    : 0,
+                                function(rank) {
+                                    return Y.Solitaire.Freecell.Card.create(
+                                        rank,
+                                        game.deck.suits[suit],
+                                    ).faceUp();
+                                },
+                            );
+                        });
+                    },
+                    { disableDragging: true },
+                );
 
                 return _solve_cb(
                     Y,

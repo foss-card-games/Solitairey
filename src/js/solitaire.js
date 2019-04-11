@@ -326,7 +326,7 @@ define([], function() {
                     });
                 },
 
-                setup: function(callback) {
+                setup: function(callback, args) {
                     Game = Solitaire.game = this;
 
                     Y.fire("beforeSetup");
@@ -349,7 +349,9 @@ define([], function() {
                         Y.Solitaire.Animation.initQueue();
                         Game.createStacks();
                         Game.createEvents();
-                        Game.createDraggables();
+                        if (!(args && args.disableDragging)) {
+                            Game.createDraggables();
+                        }
                         callback.call(Game);
                     });
 
