@@ -19,7 +19,8 @@ define([
     /*
      * Automatically solve a game of Freecell
      */
-    var WITH_UI = false; // Remove UI clutter for the demo.
+    let WITH_UI = false; // Remove UI clutter for the demo.
+    WITH_UI = true;
 
     let _my_module;
     var MAX_MOD_COUNTER = 5;
@@ -735,13 +736,15 @@ define([
                         return;
                     }
 
-                    var bar = Y.Node.create("<div id=solver_bar></div>"),
-                        indicator = Y.Node.create("<span class=indicator>"),
-                        next = Y.Node.create("<div class=fastforward>"),
-                        prev = Y.Node.create("<div class=rewind>"),
-                        playPause = Y.Node.create("<div class=play>"),
+                    let bar = Y.Node.create('<div id="solver_bar"></div>'),
+                        indicator = Y.Node.create(
+                            '<span class="indicator"></span>',
+                        ),
+                        next = Y.Node.create("<div class='fastforward'></div>"),
+                        prev = Y.Node.create("<div class='rewind'></div>"),
+                        playPause = Y.Node.create("<div class='play'></div>"),
                         controls = Y.Node.create(
-                            "<div class='controls hidden'>",
+                            "<div class='controls hidden'></div>",
                         ),
                         playCallback;
 
