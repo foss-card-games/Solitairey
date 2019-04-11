@@ -737,7 +737,9 @@ define([
                         return;
                     }
 
-                    let bar = Y.Node.create('<nav id="solver_bar"></nav>'),
+                    let bar = Y.Node.create(
+                            '<nav id="solver_bar" class="controls"></nav>',
+                        ),
                         indicator = Y.Node.create(
                             '<span class="indicator"></span>',
                         ),
@@ -750,9 +752,7 @@ define([
                         playPause = Y.Node.create(
                             "<button class='play'>⏸</button>",
                         ),
-                        controls = Y.Node.create(
-                            "<div class='controls hidden'></div>",
-                        ),
+                        controls = bar,
                         playCallback;
 
                     next.on("click", function() {
@@ -776,12 +776,12 @@ define([
                         }
                     });
 
+                    bar.append(indicator);
                     controls.append(prev);
                     controls.append(playPause);
                     controls.append(next);
 
-                    bar.append(indicator);
-                    bar.append(controls);
+                    // bar.append(controls);
                     Y.one(".solitairey_body").append(bar);
 
                     this.indicator = indicator;
