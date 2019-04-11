@@ -1,31 +1,12 @@
 define([], function() {
-    if (false) {
-        if (!Array.prototype.indexOf) {
-            Array.prototype.indexOf = function(elt /*, from*/) {
-                var len = this.length >>> 0;
-
-                var from = Number(arguments[1]) || 0;
-                from = from < 0 ? Math.ceil(from) : Math.floor(from);
-                if (from < 0) from += len;
-
-                for (; from < len; from++) {
-                    if (from in this && this[from] === elt) return from;
-                }
-                return -1;
-            };
-        }
-    }
-
     // For debugging.
     // var pre_canned_seeds = [11982, 11982, 11982, 11982];
-    var pre_canned_seeds = [];
+    const pre_canned_seeds = [];
 
     Array.prototype.my_Flatten = function() {
-        var result = [],
-            i,
-            len,
-            item,
-            proto = Array.prototype;
+        const result = [];
+        let i, len, item;
+        const proto = Array.prototype;
 
         for (i = 0, len = this.length; i < len; i++) {
             item = this[i];
@@ -98,14 +79,12 @@ define([], function() {
     }
 
     function instance(proto, attrs) {
-        var maker = new Function(),
-            o,
-            p;
+        const maker = new Function();
 
         maker.prototype = proto;
-        o = new maker();
+        const o = new maker();
         if (typeof attrs === "object") {
-            for (p in attrs) {
+            for (const p in attrs) {
                 if (attrs.hasOwnProperty(p)) {
                     o[p] = attrs[p];
                 }
@@ -116,7 +95,7 @@ define([], function() {
     }
 
     function normalize(valOrFunction) {
-        var val =
+        const val =
             typeof valOrFunction === "function"
                 ? valOrFunction()
                 : valOrFunction;
@@ -125,9 +104,7 @@ define([], function() {
     }
 
     function mapToFloat(that) {
-        var p;
-
-        for (p in that) {
+        for (const p in that) {
             if (that.hasOwnProperty(p)) {
                 that[p] = parseFloat(that[p]);
             }
@@ -137,9 +114,7 @@ define([], function() {
     }
 
     mapAppend = function(that, str) {
-        var p;
-
-        for (p in that) {
+        for (const p in that) {
             if (that.hasOwnProperty(p)) {
                 that[p] += str;
             }
@@ -148,7 +123,7 @@ define([], function() {
         return that;
     };
 
-    var Game;
+    let Game;
 
     function getGame() {
         return Game;
@@ -157,7 +132,7 @@ define([], function() {
     YUI.add(
         "solitaire",
         function(Y) {
-            var Solitaire = Y.namespace("Solitaire");
+            const Solitaire = Y.namespace("Solitaire");
 
             function CardDelegate(cfg) {
                 CardDelegate.superclass.constructor.call(this, cfg);
@@ -180,9 +155,7 @@ define([], function() {
                 noop: function() {},
 
                 name: function() {
-                    var p;
-
-                    for (p in Solitaire) {
+                    for (const p in Solitaire) {
                         if (
                             Solitaire.hasOwnProperty(p) &&
                             Solitaire[p] === Game
@@ -215,25 +188,22 @@ define([], function() {
                 },
 
                 pushMove: function(move) {
-                    var moves = Solitaire.moves;
+                    const moves = Solitaire.moves;
                     moves && moves.push(move);
                 },
 
                 serialize: function() {
-                    var serialized = [],
-                        lengths = [],
-                        data,
-                        stacks,
-                        i,
-                        len;
+                    const that = this;
+                    const serialized = [],
+                        lengths = [];
 
                     Y.Array.each(
                         this.fields,
                         function(field) {
-                            stacks = this[field.toLowerCase()].stacks;
+                            const stacks = that[field.toLowerCase()].stacks;
 
-                            for (i = 0, len = stacks.length; i < len; i++) {
-                                data = stacks[i].serialize();
+                            for (let i = 0, len = stacks.length; i < len; i++) {
+                                const data = stacks[i].serialize();
                                 serialized.push(data);
                                 lengths.push(String.fromCharCode(data.length));
                             }
@@ -247,7 +217,7 @@ define([], function() {
                 },
 
                 stationary: function(callback) {
-                    var updatePosition = Game.Card.updatePosition;
+                    const updatePosition = Game.Card.updatePosition;
 
                     Game.Card.updatePosition = Solitaire.noop;
                     callback.call(this);
@@ -255,7 +225,7 @@ define([], function() {
                 },
 
                 unanimated: function(callback) {
-                    var anim = Y.Solitaire.Animation,
+                    const anim = Y.Solitaire.Animation,
                         animate = anim.animate;
 
                     anim.animate = false;
@@ -264,18 +234,15 @@ define([], function() {
                 },
 
                 unserialize: function(serialized) {
-                    this.unanimated(function() {
-                        var numStacks = serialized.charCodeAt(0),
+                    const that = this;
+                    that.unanimated(function() {
+                        const numStacks = serialized.charCodeAt(0),
                             lengths = serialized.substr(1, numStacks),
                             offset = numStacks + 1,
-                            data,
-                            fields = this.fields,
+                            fields = that.fields,
                             fieldIndex = -1,
-                            stacks = [],
-                            stackIndex,
-                            stack,
-                            i,
-                            length;
+                            stacks = [];
+                        let data, stackIndex, stack, i, length;
 
                         for (
                             i = 0, stackIndex = 0;
@@ -287,8 +254,9 @@ define([], function() {
 
                             if (stackIndex === stacks.length) {
                                 fieldIndex++;
-                                stacks = this[fields[fieldIndex].toLowerCase()]
-                                    .stacks;
+                                stacks =
+                                    that[fields[fieldIndex].toLowerCase()]
+                                        .stacks;
                                 stackIndex = 0;
                             }
 
@@ -300,19 +268,19 @@ define([], function() {
                 },
 
                 save: function(name) {
-                    var data = this.serialize(),
-                        name = name || "saved-game",
+                    const data = this.serialize(),
                         twoWeeks = 1206900000;
 
-                    Y.Cookie.set(name, data, {
+                    Y.Cookie.set(name || "saved-game", data, {
                         expires: new Date(new Date().getTime() + twoWeeks),
                     });
                 },
 
                 loadGame: function(data) {
-                    this.unanimated(function() {
-                        this.setup(function() {
-                            this.unserialize(data);
+                    const that = this;
+                    that.unanimated(function() {
+                        that.setup(function() {
+                            that.unserialize(data);
                         });
                     });
 
@@ -321,12 +289,12 @@ define([], function() {
 
                 newGame: function() {
                     Y.Cookie.remove("saved-game");
-                    var that = this;
+                    const that = this;
                     // set up the cards layout here.
-                    this.setup(function() {
-                        var card,
-                            stack = 0,
-                            stacks = that.tableau.stacks;
+                    that.setup(function() {
+                        let card,
+                            stack = 0;
+                        const stacks = that.tableau.stacks;
 
                         while ((card = that.deck.pop())) {
                             stacks[stack].push(card.faceUp());
@@ -346,7 +314,7 @@ define([], function() {
                 cleanup: function() {
                     Y.Event.purgeElement(this.container());
 
-                    //remove custom events
+                    // remove custom events
                     Y.detach("solitaire|*");
 
                     this.eachStack(function(stack) {
@@ -363,7 +331,7 @@ define([], function() {
                     Undo.clear();
 
                     this.stationary(function() {
-                        var seed = pre_canned_seeds.length
+                        const seed = pre_canned_seeds.length
                             ? pre_canned_seeds.shift()
                             : Math.floor(
                                   1 + Math.random() * (((1 << 30) - 2) << 1),
@@ -372,19 +340,19 @@ define([], function() {
                         if (deal_num) {
                             deal_num.set("value", seed);
                         }
-                        this.seed = seed;
-                        this.init(seed);
+                        Game.seed = seed;
+                        Game.init(seed);
                         Y.Solitaire.Animation.initQueue();
-                        this.createStacks();
-                        this.createEvents();
-                        this.createDraggables();
-                        callback.call(this);
+                        Game.createStacks();
+                        Game.createEvents();
+                        Game.createDraggables();
+                        callback.call(Game);
                     });
 
                     Solitaire.moves = [];
                     Y.fire("afterSetup");
 
-                    var animate = Y.Solitaire.Animation.animate;
+                    const animate = Y.Solitaire.Animation.animate;
                     Y.Solitaire.Animation.animate = false;
                     Y.Solitaire.Animation.dealing = false;
 
@@ -399,7 +367,7 @@ define([], function() {
                 },
 
                 createEvents: function() {
-                    var container = Y.one(Solitaire.selector);
+                    const container = Y.one(Solitaire.selector);
                     if (false) {
                         container.delegate("dblclick", Game.autoPlay, ".card");
                         container.delegate(
@@ -423,7 +391,7 @@ define([], function() {
                 createDraggables: function() {
                     console.log("flutt = " + Solitaire.selector);
                     console.log("flutt2 = " + Y.one(Solitaire.selector));
-                    var del = new CardDelegate({
+                    const del = new CardDelegate({
                         dragConfig: {
                             dragMode: "intersect",
                             groups: ["open"],
@@ -451,12 +419,8 @@ define([], function() {
                         return;
                     }
 
-                    var f = instance(field),
-                        stackLayout,
-                        stack,
-                        stacks,
-                        i,
-                        len;
+                    const f = instance(field);
+                    let stackLayout, stack, stacks, i, len;
 
                     if (field.stackConfig) {
                         stackLayout = field.stackConfig.layout;
@@ -496,7 +460,7 @@ define([], function() {
                 eachStack: function(callback, fieldName) {
                     Game &&
                         Y.Array.each(Game.fields, function(name) {
-                            var currentName = name.toLowerCase(),
+                            const currentName = name.toLowerCase(),
                                 field = Game[currentName],
                                 fname = fieldName || currentName;
 
@@ -507,13 +471,14 @@ define([], function() {
                 },
 
                 resize: function(scale) {
+                    const that = this;
                     Y.fire("beforeResize");
 
-                    this.scale(scale);
+                    that.scale(scale);
 
-                    this.unanimated(function() {
-                        this.eachStack(function(stack, i) {
-                            var cards = stack.cards,
+                    that.unanimated(function() {
+                        that.eachStack(function(stack, i) {
+                            const cards = stack.cards,
                                 layout = stack.configLayout;
 
                             stack.adjustRankHeight();
@@ -529,7 +494,7 @@ define([], function() {
                             stack.updateStyle();
 
                             stack.setCards(cards.length, function(i) {
-                                var card = cards[i];
+                                const card = cards[i];
 
                                 card && card.updateStyle();
                                 return card;
@@ -543,13 +508,12 @@ define([], function() {
                 },
 
                 scale: function(scale) {
-                    var Card = Y.Solitaire.Card,
-                        base = Card.base,
-                        prop;
+                    const Card = Y.Solitaire.Card,
+                        base = Card.base;
 
                     Card.scale = scale;
 
-                    for (prop in base) {
+                    for (const prop in base) {
                         if (base.hasOwnProperty(prop)) {
                             Card[prop] = base[prop] * scale;
                         }
@@ -557,10 +521,7 @@ define([], function() {
                 },
 
                 init: function() {
-                    var cancel = Solitaire.preventDefault,
-                        minX,
-                        maxX,
-                        fields;
+                    const cancel = Solitaire.preventDefault;
 
                     if (false) {
                         Y.on("selectstart", cancel, document);
@@ -568,7 +529,7 @@ define([], function() {
                         Y.on(
                             "contextmenu",
                             function(e) {
-                                var target = e.target;
+                                const target = e.target;
 
                                 if (
                                     target.hasClass("stack") ||
@@ -583,7 +544,7 @@ define([], function() {
 
                     this.scale(1);
 
-                    fields = Y.Array.map(Game.fields, function(field) {
+                    const fields = Y.Array.map(Game.fields, function(field) {
                         return (Game[field.toLowerCase()] = Game.createField(
                             Game[field],
                         ));
@@ -595,7 +556,7 @@ define([], function() {
                     }
 
                     // find the game/card width ratio
-                    minX = Math.min.apply(
+                    const minX = Math.min.apply(
                         Math,
                         Y.Array.map(fields, function(f) {
                             return Y.Array.map(f.stacks, function(s) {
@@ -604,7 +565,7 @@ define([], function() {
                         }).my_Flatten(),
                     );
 
-                    maxX =
+                    const maxX =
                         Math.max.apply(
                             Math,
                             Y.Array.map(fields, function(f) {
@@ -622,7 +583,7 @@ define([], function() {
                 },
 
                 autoPlay: function() {
-                    var card =
+                    const card =
                         typeof this.getCard === "function"
                             ? this.getCard()
                             : this.getData("target");
@@ -631,14 +592,13 @@ define([], function() {
                 },
 
                 isWon: function() {
-                    var foundations = this.foundation.stacks,
-                        deck = this.deck,
-                        total,
-                        placed = 0,
+                    const foundations = this.foundation.stacks,
+                        deck = this.deck;
+                    let placed = 0,
                         i,
                         len;
 
-                    total = deck.suits.length * 13 * deck.count;
+                    const total = deck.suits.length * 13 * deck.count;
                     for (i = 0, len = foundations.length; i < len; i++) {
                         placed += foundations[i].cards.length;
                     }
@@ -683,7 +643,7 @@ define([], function() {
                 },
 
                 dragCheck: function() {
-                    var card = this.getCard(),
+                    const card = this.getCard(),
                         stack = card.createProxyStack();
 
                     if (!stack) {
@@ -698,7 +658,7 @@ define([], function() {
                 },
 
                 dragStart: function() {
-                    var card = this.getCard(),
+                    const card = this.getCard(),
                         node = this.get("dragNode"),
                         proxy = card.createProxyNode();
 
@@ -713,7 +673,7 @@ define([], function() {
                 },
 
                 dragMiss: function() {
-                    var card = this.getCard();
+                    const card = this.getCard();
 
                     Game.unanimated(function() {
                         card.updatePosition();
@@ -721,22 +681,18 @@ define([], function() {
                 },
 
                 dragEnd: function() {
-                    var target = this.getCard(),
+                    const target = this.getCard(),
                         root = Solitaire.container(),
                         fragment = new Y.Node(
                             document.createDocumentFragment(),
                         ),
-                        dragNode,
-                        node,
                         dragXY = this.dd.realXY,
                         containerXY = root.getXY(),
-                        cards,
-                        stack,
                         proxyStack = target.proxyStack;
 
                     target.dragging = false;
-                    dragNode = this.get("dragNode");
-                    node = dragNode.get("firstChild");
+                    const dragNode = this.get("dragNode");
+                    const node = dragNode.get("firstChild");
 
                     node && node.remove();
 
@@ -744,8 +700,8 @@ define([], function() {
                         return;
                     }
 
-                    cards = proxyStack.cards;
-                    stack = target.stack;
+                    const cards = proxyStack.cards;
+                    const stack = target.stack;
 
                     proxyStack.left = dragXY[0] - containerXY[0];
                     proxyStack.top = dragXY[1] - containerXY[1];
@@ -773,15 +729,13 @@ define([], function() {
                         return;
                     }
 
-                    var card = Solitaire.activeCard,
-                        stack = card.proxyStack,
-                        target,
-                        first;
+                    const card = Solitaire.activeCard,
+                        stack = card.proxyStack;
 
                     if (stack) {
-                        first = stack.first();
+                        const first = stack.first();
 
-                        target = e.drop.get("node").getData("target");
+                        let target = e.drop.get("node").getData("target");
 
                         target = target.stack || target;
 
@@ -812,8 +766,8 @@ define([], function() {
                     }
                 },
 
-                undo: function() {
-                    var args = argsArray(arguments);
+                undo: function(...rest) {
+                    const args = argsArray(rest);
 
                     args.unshift("endTurn");
                     Undo.undo();
@@ -826,12 +780,9 @@ define([], function() {
                 suits: ["c", "d", "h", "s"],
 
                 init: function(seed) {
-                    var suits = this.suits,
-                        suit,
-                        s,
-                        rank,
-                        count,
-                        Card = Game.Card;
+                    const suits = this.suits;
+                    let suit, s, rank, count;
+                    const Card = Game.Card;
 
                     this.cards = [];
 
@@ -854,13 +805,11 @@ define([], function() {
 
                 // shuffle the deck using the "Microsoft Number"
                 msSeededShuffle: function(seed) {
-                    var cards = this.cards,
-                        maxInt = Math.pow(2, 31),
-                        rand,
-                        temp,
-                        i;
+                    const cards = this.cards,
+                        maxInt = Math.pow(2, 31);
+                    let rand, temp, i;
 
-                    for (i = cards.length; i > 1; i--) {
+                    for (i = cards.length; i > 1; --i) {
                         // simulate x86 integer overflow
                         seed = (((214013 * seed) % maxInt) + 2531011) % maxInt;
                         rand = (seed >> 16) & 0x7fff;
@@ -873,9 +822,7 @@ define([], function() {
                 },
 
                 createStack: function() {
-                    var i;
-
-                    for (i = this.cards.length - 1; i >= 0; i--) {
+                    for (let i = this.cards.length - 1; i >= 0; i--) {
                         this.stacks[0].push(this.cards[i]);
                     }
                 },
@@ -912,12 +859,12 @@ define([], function() {
 
                 origin: {
                     left: function() {
-                        var offset = Solitaire.container().getXY()[0];
+                        const offset = Solitaire.container().getXY()[0];
 
                         return -offset - Y.Solitaire.Card.width;
                     },
                     top: function() {
-                        var offset = Solitaire.container().getXY()[1];
+                        const offset = Solitaire.container().getXY()[1];
 
                         return -offset - Y.Solitaire.Card.height;
                     },
@@ -926,7 +873,7 @@ define([], function() {
                 animSpeeds: { slow: 0.5, mid: 0.2, fast: 0.1 },
 
                 create: function(rank, suit) {
-                    var colors = { c: 0, s: 0, h: 1, d: 1 };
+                    const colors = { c: 0, s: 0, h: 1, d: 1 };
 
                     return instance(this, {
                         rank: rank,
@@ -961,9 +908,8 @@ define([], function() {
                 },
 
                 setRankHeight: function() {
-                    var stack = this.stack,
-                        rh,
-                        hh;
+                    const stack = this.stack;
+                    let rh, hh;
 
                     if (stack && stack.rankHeight) {
                         rh = stack.rankHeight;
@@ -977,7 +923,7 @@ define([], function() {
                 },
 
                 imageSrc: function() {
-                    var src = this.base.theme + "/";
+                    let src = this.base.theme + "/";
 
                     src += this.isFaceDown ? "facedown" : this.suit + this.rank;
 
@@ -987,7 +933,7 @@ define([], function() {
                 },
 
                 setImageSrc: function() {
-                    var n = this.node;
+                    const n = this.node;
 
                     n && n.setAttribute("src", this.imageSrc());
                 },
@@ -1002,7 +948,7 @@ define([], function() {
                 },
 
                 updateStyle: function() {
-                    var n = this.node;
+                    const n = this.node;
 
                     n && n.setStyles(this.wrapperStyle());
                     this.setRankHeight();
@@ -1013,7 +959,7 @@ define([], function() {
                         return;
                     }
 
-                    var stack = this.stack;
+                    const stack = this.stack;
 
                     if (stack.field === "deck") {
                         Game.turnOver();
@@ -1025,18 +971,15 @@ define([], function() {
                 },
 
                 autoPlay: function() {
-                    var origin = this.stack,
-                        last = origin.my_Last(),
-                        stacks,
-                        foundation,
-                        i,
-                        len;
+                    const origin = this.stack,
+                        last = origin.my_Last();
+                    let foundation, i, len;
 
                     if (this.isFaceDown || origin.field === "foundation") {
                         return;
                     }
 
-                    stacks = Game.foundation.stacks;
+                    const stacks = Game.foundation.stacks;
                     for (i = 0, len = stacks.length; i < len; i++) {
                         foundation = stacks[i];
                         if (this.isFree() && this.validTarget(foundation)) {
@@ -1068,26 +1011,27 @@ define([], function() {
                 },
 
                 createNode: function() {
-                    var groups,
-                        node,
-                        card = this;
+                    let groups;
+                    const card = this;
 
-                    node = this.node = Y.Node.create("<img class='card' />")
+                    const node = (this.node = Y.Node.create(
+                        "<img class='card' />",
+                    )
                         .setData("target", this)
                         .setAttribute("src", this.imageSrc())
                         .plug(Y.Plugin.Drop, {
                             useShim: false,
-                        });
+                        }));
 
                     node.setStyles({ left: -this.width, top: -this.height });
-                    //this.updateStyle();
+                    // this.updateStyle();
                     this.setRankHeight();
 
                     Solitaire.container().append(node);
                 },
 
                 destroyNode: function() {
-                    var n = this.node;
+                    const n = this.node;
 
                     n && n.clearData().destroy(true);
                 },
@@ -1098,14 +1042,12 @@ define([], function() {
                         return null;
                     }
 
-                    var stack = instance(this.stack, {
+                    const stack = instance(this.stack, {
                             proxy: true,
                             stack: this.stack,
                         }),
-                        cards = stack.cards,
-                        card,
-                        i,
-                        len;
+                        cards = stack.cards;
+                    let i, len;
 
                     stack.cards = [];
                     stack.push(this, true);
@@ -1115,7 +1057,7 @@ define([], function() {
                         i < len;
                         i++
                     ) {
-                        card = cards[i];
+                        const card = cards[i];
                         if (stack.validProxy(card)) {
                             stack.push(card, true);
                         } else {
@@ -1133,7 +1075,7 @@ define([], function() {
                 },
 
                 createProxyNode: function() {
-                    var node = Y.Node.create("<div></div>"),
+                    const node = Y.Node.create("<div></div>"),
                         stack = this.proxyStack;
 
                     // if the card isn't playable, create ghost copy
@@ -1168,7 +1110,7 @@ define([], function() {
                         return;
                     }
 
-                    var to = {
+                    const to = {
                             left: this.left + "px",
                             top: this.top + "px",
                             zIndex: this.zIndex,
@@ -1186,7 +1128,7 @@ define([], function() {
                 },
 
                 pushPosition: function() {
-                    var index =
+                    const index =
                         this.index >= 0
                             ? this.index
                             : this.stack.cards.indexOf(this);
@@ -1199,7 +1141,7 @@ define([], function() {
                 },
 
                 moveTo: function(stack) {
-                    var origin = this.stack;
+                    const origin = this.stack;
 
                     this.pushPosition();
                     origin.deleteItem(this);
@@ -1233,14 +1175,10 @@ define([], function() {
                 },
 
                 serialize: function() {
-                    var i,
-                        len,
-                        cards = this.cards,
-                        card,
-                        suits = Game.deck.suits,
-                        bite,
-                        serialized = [];
-
+                    let i, len, card, bite;
+                    const cards = this.cards,
+                        serialized = [],
+                        suits = Game.deck.suits;
                     for (i = 0, len = cards.length; i < len; i++) {
                         card = cards[i];
                         if (card) {
@@ -1258,9 +1196,8 @@ define([], function() {
                 },
 
                 eachCard: function(callback) {
-                    var i,
-                        len,
-                        cards = this.cards;
+                    let i, len;
+                    const cards = this.cards;
 
                     for (i = 0, len = cards.length; i < len; i++) {
                         if (cards[i]) {
@@ -1298,16 +1235,17 @@ define([], function() {
                 },
 
                 updateCardsPosition: function() {
-                    var cards = this.cards;
+                    const cards = this.cards;
 
                     Game.stationary(
                         function() {
+                            const that = this;
                             this.proxy || this.adjustRankHeight();
                             this.setCards(cards.length, function(i) {
-                                var card = cards[i];
+                                const card = cards[i];
 
                                 if (card) {
-                                    card.stack = this;
+                                    card.stack = that;
                                     card.setRankHeight();
                                 }
 
@@ -1322,7 +1260,7 @@ define([], function() {
                 },
 
                 updateCardsStyle: function() {
-                    var field = this.field;
+                    const field = this.field;
 
                     field === "foundation" ||
                         this.eachCard(function(c) {
@@ -1335,13 +1273,13 @@ define([], function() {
                 },
 
                 unserialize: function(serialized) {
-                    var deck = Game.deck,
+                    const deck = Game.deck,
                         Card = Game.Card;
 
                     this.setCards(serialized.length, function(i) {
-                        var value, card;
+                        let card;
 
-                        value = serialized.charCodeAt(i);
+                        const value = serialized.charCodeAt(i);
 
                         if (value === 128) {
                             card = null;
@@ -1363,7 +1301,7 @@ define([], function() {
                 },
 
                 imageSrc: function() {
-                    var basename = this.images[this.field];
+                    const basename = this.images[this.field];
 
                     return basename
                         ? Solitaire.Card.base.theme + "/" + basename
@@ -1371,7 +1309,7 @@ define([], function() {
                 },
 
                 layout: function(layout) {
-                    var hoffset = layout.hoffset * Y.Solitaire.Card.width,
+                    const hoffset = layout.hoffset * Y.Solitaire.Card.width,
                         voffset = layout.voffset * Y.Solitaire.Card.height,
                         gameOffset = Solitaire.offset,
                         self = this;
@@ -1389,7 +1327,7 @@ define([], function() {
                 },
 
                 push: function(card, temp) {
-                    var last = this.my_Last(),
+                    const last = this.my_Last(),
                         to = this.field,
                         from = card.stack ? card.stack.field : "deck";
 
@@ -1417,7 +1355,7 @@ define([], function() {
                 },
 
                 pushStack: function(proxy) {
-                    var origin = Solitaire.activeCard.stack,
+                    const origin = Solitaire.activeCard.stack,
                         stack = this;
 
                     /* save the card's index in the stack so we can properly undo this move */
@@ -1442,21 +1380,19 @@ define([], function() {
                 },
 
                 adjustRankHeight: function() {
-                    var cards = this.cards,
-                        card,
+                    const cards = this.cards,
                         last = this.my_Last(),
-                        max = Game.maxStackHeight(),
+                        max = Game.maxStackHeight();
+                    let card,
                         sumHidden = 0,
                         sumVisible = 0,
                         sumRankHeights,
                         height = 0,
-                        Card = Solitaire.Card,
                         countHidden = 0,
                         countVisible = 0,
-                        rhHidden,
-                        rhVisible,
                         i,
                         len;
+                    const Card = Solitaire.Card;
 
                     if (cards.length <= 1) {
                         return;
@@ -1490,11 +1426,11 @@ define([], function() {
                         return;
                     }
 
-                    rhHidden =
+                    const rhHidden =
                         (sumRankHeights *
                             (sumHidden / (sumHidden + sumVisible))) /
                         countHidden;
-                    rhVisible =
+                    const rhVisible =
                         (sumRankHeights *
                             (sumVisible / (sumHidden + sumVisible))) /
                         countVisible;
@@ -1556,7 +1492,7 @@ define([], function() {
                 },
 
                 cleanup: function() {
-                    var n = this.node;
+                    const n = this.node;
 
                     n && n.clearData().destroy(true);
 
@@ -1673,13 +1609,13 @@ define([], function() {
                 },
 
                 initQueue: function() {
-                    var q = this.queue;
+                    const q = this.queue;
 
                     q.defaults.timeout = this.interval;
                 },
             };
 
-            var Undo = {
+            const Undo = {
                 stack: null,
 
                 clear: function() {
@@ -1695,9 +1631,7 @@ define([], function() {
                 },
 
                 undo: function() {
-                    var stacks;
-
-                    stacks = Y.Array.unique(
+                    const stacks = Y.Array.unique(
                         Y.Array.map(this.pop(), this.act).my_Flatten(),
                     );
 
@@ -1710,7 +1644,7 @@ define([], function() {
                 },
 
                 act: function(move) {
-                    var from = move.from,
+                    const from = move.from,
                         card = move.card,
                         to = card.stack,
                         cards = to.cards;

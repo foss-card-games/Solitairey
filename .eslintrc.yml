@@ -6,7 +6,6 @@ rules:
     camelcase: off
     comma-dangle: off
     indent: off
-    no-var: off
     no-unused-vars: off
     no-throw-literal: off
     new-cap: off
