@@ -739,23 +739,22 @@ define([
                         return;
                     }
 
-                    let bar = Y.Node.create(
-                            '<nav id="solver_bar" class="controls"></nav>',
-                        ),
-                        indicator = Y.Node.create(
-                            '<span class="indicator"></span>',
-                        ),
-                        next = Y.Node.create(
-                            "<button class='fastforward'>⏩︎</button>",
-                        ),
-                        prev = Y.Node.create(
-                            "<button class='rewind'>⏪︎</button>",
-                        ),
-                        playPause = Y.Node.create(
-                            "<button class='play'>⏸</button>",
-                        ),
-                        controls = bar,
-                        playCallback;
+                    const bar = Y.Node.create(
+                        '<nav id="solver_bar" class="controls"></nav>',
+                    );
+                    const indicator = Y.Node.create(
+                        '<span class="indicator"></span>',
+                    );
+                    const next = Y.Node.create(
+                        "<button class='fastforward' title=\"Next move\">⏩︎</button>",
+                    );
+                    const prev = Y.Node.create(
+                        "<button class='rewind' title=\"Previous move\">⏪︎</button>",
+                    );
+                    const playPause = Y.Node.create(
+                        "<button class='play' title=\"Play/Pause\">⏸</button>",
+                    );
+                    const controls = bar;
 
                     next.on("click", function() {
                         Animation.pause();
