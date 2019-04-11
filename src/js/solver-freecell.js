@@ -504,6 +504,7 @@ define([
 
                     if (WITH_UI) {
                         /* Remove UI clutter for the demo */ withSelector(
+                            Y,
                             "#solver_bar .pause",
                             function(node) {
                                 node.removeClass("pause");
@@ -736,13 +737,19 @@ define([
                         return;
                     }
 
-                    let bar = Y.Node.create('<div id="solver_bar"></div>'),
+                    let bar = Y.Node.create('<nav id="solver_bar"></nav>'),
                         indicator = Y.Node.create(
                             '<span class="indicator"></span>',
                         ),
-                        next = Y.Node.create("<div class='fastforward'></div>"),
-                        prev = Y.Node.create("<div class='rewind'></div>"),
-                        playPause = Y.Node.create("<div class='play'></div>"),
+                        next = Y.Node.create(
+                            "<button class='fastforward'>⏵</button>",
+                        ),
+                        prev = Y.Node.create(
+                            "<button class='rewind'>⏴</button>",
+                        ),
+                        playPause = Y.Node.create(
+                            "<button class='play'>⏸</button>",
+                        ),
                         controls = Y.Node.create(
                             "<div class='controls hidden'></div>",
                         ),
@@ -755,6 +762,7 @@ define([
                         Animation.prev(getGame());
                     });
                     playPause.on("click", function() {
+                        const that = this;
                         /*
                          * Here I tie up state with the DOM
                          * Maybe that is alright, as it is interface state
