@@ -61,11 +61,20 @@ dest_js_s = []
 def js_pat_file(filename)
   "#{JS_SRC_PREFIX}/#{filename}"
 end
+def fcs_pat_file(filename)
+  "ext/libfreecell-solver/#{filename}"
+end
 
 def js_js_pat_file(filename)
   js_pat_file(filename + '.js')
 end
 
+def fcs_file(filename)
+  src = fcs_pat_file(filename)
+  dest = "#{PREFIX}/#{filename}"
+  cpfile src, dest
+  dest
+end
 def js_file(filename)
   src = js_pat_file(filename)
   dest = "#{PREFIX}/#{filename}"
@@ -73,6 +82,14 @@ def js_file(filename)
   dest
 end
 
+def fcs_root_file(filename)
+  src = fcs_pat_file(filename)
+  dest = "#{ROOT_PREFIX}/#{filename}"
+  dest2 = "#{PREFIX}/js/#{filename}"
+  cpfile src, dest2
+  cpfile src, dest
+  dest
+end
 def js_root_file(filename)
   src = js_pat_file(filename)
   dest = "#{ROOT_PREFIX}/#{filename}"
@@ -116,9 +133,9 @@ dest_js_extra = ['libfcs-wrap.d.ts',
                  'libfreecell-solver-asm.js.mem',
                  'libfreecell-solver.js',
                  'libfreecell-solver.js.mem',
-                 'libfreecell-solver.min.js'].map { |x| js_file(x) }
+                 'libfreecell-solver.min.js'].map { |x| fcs_file(x) }
 dest_js_extra += ['libfreecell-solver.js.mem',
-                  'libfreecell-solver.wasm'].map { |x| js_root_file(x) }
+                  'libfreecell-solver.wasm'].map { |x| fcs_root_file(x) }
 
 desc 'concatenated solitaire sources'
 file ALL => dest_js_s + dest_js_extra do
