@@ -3,34 +3,34 @@ define(["./solitaire"], function(solitaire) {
     let schedule;
     let schedule_cb;
     (function() {
-        let active = {
-                name: "freecell", // name: "klondike",
-                game: null,
-            },
-            yui = YUI({ base: "js/yui-unpack/yui/build/" }),
-            Y;
+        const active = {
+            name: "freecell", // name: "klondike",
+            game: null,
+        };
+        const yui = YUI({ base: "js/yui-unpack/yui/build/" });
+        let Y;
         /*
          * We don't need all these games for now.
-	    games = {
-		"agnes": "Agnes",
-		"klondike": "Klondike",
-		"klondike1t": "Klondike1T",
-		"flower-garden": "FlowerGarden",
-		"forty-thieves": "FortyThieves",
-		"freecell": "Freecell",
-		"golf": "Golf",
-		"grandfathers-clock": "GClock",
-		"monte-carlo": "MonteCarlo",
-		"pyramid": "Pyramid",
-		"russian-solitaire": "RussianSolitaire",
-		"scorpion": "Scorpion",
-		"spider": "Spider",
-		"spider1s": "Spider1S",
-		"spider2s": "Spider2S",
+        games = {
+        "agnes": "Agnes",
+        "klondike": "Klondike",
+        "klondike1t": "Klondike1T",
+        "flower-garden": "FlowerGarden",
+        "forty-thieves": "FortyThieves",
+        "freecell": "Freecell",
+        "golf": "Golf",
+        "grandfathers-clock": "GClock",
+        "monte-carlo": "MonteCarlo",
+        "pyramid": "Pyramid",
+        "russian-solitaire": "RussianSolitaire",
+        "scorpion": "Scorpion",
+        "spider": "Spider",
+        "spider1s": "Spider1S",
+        "spider2s": "Spider2S",
                 "spiderette": "Spiderette",
-		"tri-towers": "TriTowers",
-		"will-o-the-wisp": "WillOTheWisp",
-		"yukon": "Yukon"},
+        "tri-towers": "TriTowers",
+        "will-o-the-wisp": "WillOTheWisp",
+        "yukon": "Yukon"},
         */
         const games = {
             freecell: "Freecell",
@@ -38,9 +38,9 @@ define(["./solitaire"], function(solitaire) {
         const extensions = [
             "auto-turnover",
             "statistics",
-            //"solver-freecell",
+            // "solver-freecell",
             "solitaire-autoplay",
-            //"solitaire-ios"
+            // "solitaire-ios"
             // "solitaire-background-fix"
             "solitaire",
         ];
@@ -295,7 +295,6 @@ define(["./solitaire"], function(solitaire) {
             );
         }
         function attachEvents() {
-            var that = this;
             Y.on("newAppGame", function() {
                 return newGame();
             });
@@ -340,7 +339,7 @@ define(["./solitaire"], function(solitaire) {
                 Y.on("click", hideChromeStoreLink, Y.one(".chromestore"));
 
                 function showDescription() {
-                    GameChooser.select(this._node.id);
+                    // GameChooser.select(this._node.id);
                     GameChooser.choose();
                 }
                 Y.delegate("click", showDescription, "#descriptions", "li");
@@ -390,6 +389,7 @@ define(["./solitaire"], function(solitaire) {
             },
 
             preload: function() {
+                const that = this;
                 var rank,
                     icons = [
                         "agnes",
@@ -416,7 +416,7 @@ define(["./solitaire"], function(solitaire) {
                     ["s", "h", "c", "d"],
                     function(suit) {
                         for (rank = 1; rank <= 13; rank++) {
-                            this.load(
+                            that.load(
                                 Y.Solitaire.Card.base.theme +
                                     "/" +
                                     suit +
@@ -433,9 +433,9 @@ define(["./solitaire"], function(solitaire) {
                 Y.Array.each(
                     icons,
                     function(image) {
-                        this.load("layouts/mini/" + image + ".png");
+                        that.load("layouts/mini/" + image + ".png");
                     },
-                    this,
+                    that,
                 );
 
                 Fade.show();
@@ -490,7 +490,7 @@ define(["./solitaire"], function(solitaire) {
 
         function resize() {
             const game = active.game;
-            let el = game.container(),
+            const el = game.container(),
                 padding = Y.Solitaire.padding,
                 offset = Y.Solitaire.offset,
                 width = el.get("winWidth") - padding.x,

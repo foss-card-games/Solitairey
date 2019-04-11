@@ -15,3 +15,4 @@ rules:
     one-var: off
     quotes: off
     require-jsdoc: off
+    prefer-spread: off
