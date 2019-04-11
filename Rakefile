@@ -3,7 +3,8 @@ JS_SRC_PREFIX = 'src/js'.freeze
 ROOT_PREFIX = 'dest'.freeze
 PREFIX = 'dest/js'.freeze
 BROWSERIFY_JS = %w[big-integer flatted].freeze
-TS_BASE = %w[fcs-validate french-cards prange web-fc-solve--expand-moves web-fc-solve].freeze
+TS_BASE = %w[fcs-validate french-cards prange web-fc-solve--expand-moves
+             web-fc-solve].freeze
 JS_CURATED_SOURCES = %w[solitaire iphone auto-stack-clear auto-turnover
                         autoplay ie-opera-background-fix statistics
                         solver-freecell
@@ -49,9 +50,9 @@ IMAGES.each do |img|
 end
 
 def cpfile(src, dest)
-    file dest => src do
-        cp src, dest
-    end
+  file dest => src do
+    cp src, dest
+  end
 end
 
 cpfile YUI_SRC, YUI
@@ -59,8 +60,11 @@ cpfile YUI_SRC, YUI
 dest_js_s = []
 
 def js_pat_file(filename)
-  ["ext/requirejs/#{filename}", "ext/yui-debug/#{filename}",  ].select {|f| File.file? f}[0] || "#{JS_SRC_PREFIX}/#{filename}"
+  ["ext/requirejs/#{filename}", "ext/yui-debug/#{filename}"].select do |f|
+    File.file? f
+  end [0] || "#{JS_SRC_PREFIX}/#{filename}"
 end
+
 def fcs_pat_file(filename)
   "ext/libfreecell-solver/#{filename}"
 end
@@ -75,6 +79,7 @@ def fcs_file(filename)
   cpfile src, dest
   dest
 end
+
 def js_file(filename)
   src = js_pat_file(filename)
   dest = "#{PREFIX}/#{filename}"
@@ -90,6 +95,7 @@ def fcs_root_file(filename)
   cpfile src, dest
   dest
 end
+
 def js_root_file(filename)
   src = js_pat_file(filename)
   dest = "#{ROOT_PREFIX}/#{filename}"
@@ -98,8 +104,6 @@ def js_root_file(filename)
   cpfile src, dest
   dest
 end
-
-
 
 BROWSERIFY_JS.each do |base|
   dest2 = js_js_pat_file(base)
@@ -169,9 +173,10 @@ file DEST_INDEX => [TEMPLATE, COMBINED] do
   create_index DEST_INDEX, true
 end
 
+T = %w[application solver-freecell].freeze
 task :test do
-  sh ('eslint -c .eslintrc.yml ' + (['application', 'solver-freecell'].map{
-    |bn| 'src/js/'+bn+'.js'}.join(' ')))
+  sh 'eslint -c .eslintrc.yml ' + T.map { |f| "src/js/#{f}.js" }.join(' ')
+  sh 'rubocop Rakefile'
 end
 task :prettier do
   sh 'prettier --arrow-parens always --tab-width 4 --trailing-comma all ' \
