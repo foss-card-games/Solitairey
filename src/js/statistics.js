@@ -6,10 +6,10 @@ define(["./solitaire"], function(solitaire) {
     YUI.add(
         "statistics",
         function(Y) {
-            var loaded,
+            let loaded,
                 won,
-                enabled = true,
-                localStorage = window.localStorage,
+                enabled = true;
+            const localStorage = window.localStorage,
                 Solitaire = Y.Solitaire,
                 Statistics = Y.namespace("Solitaire.Statistics");
 
@@ -44,7 +44,6 @@ define(["./solitaire"], function(solitaire) {
                     return;
                 }
 
-                var winDisplayDelay = 1000;
                 loaded = null;
                 won = true;
 
@@ -54,14 +53,14 @@ define(["./solitaire"], function(solitaire) {
             });
 
             Y.on("beforeSetup", function() {
-                var winDisplay = Y.one("#win_display");
+                const winDisplay = Y.one("#win_display");
 
                 winDisplay && winDisplay.remove();
                 Statistics.enable();
             });
 
             function explodeFoundations() {
-                var delay = 500,
+                const delay = 500,
                     duration = 900,
                     interval = 900;
 
@@ -71,7 +70,7 @@ define(["./solitaire"], function(solitaire) {
                             return;
                         }
 
-                        var node = card.node;
+                        const node = card.node;
                         if (card !== stack.my_Last()) {
                             node.addClass("hidden");
                             return;
@@ -100,7 +99,7 @@ define(["./solitaire"], function(solitaire) {
              * TODO: a templating system might make this less grody
              */
             function winDisplay() {
-                var nameMap = {
+                const nameMap = {
                         Agnes: "Agnes",
                         Klondike: "Klondike",
                         Klondike1T: "Klondike (Vegas style)",
@@ -123,15 +122,11 @@ define(["./solitaire"], function(solitaire) {
                     },
                     stats = Record(
                         localStorage[Solitaire.game.name() + "record"],
-                    ),
-                    streakCount,
-                    winCount,
-                    loseCount,
-                    output = "<div id='win_display'>";
-
-                streakCount = stats.streaks().my_Last().length;
-                winCount = stats.wins().length;
-                loseCount = stats.loses().length;
+                    );
+                let output = "<div id='win_display'>";
+                const streakCount = stats.streaks().my_Last().length;
+                const winCount = stats.wins().length;
+                const loseCount = stats.loses().length;
 
                 output += "<p>You win! You're awesome.</p>";
                 output +=
@@ -158,8 +153,8 @@ define(["./solitaire"], function(solitaire) {
             }
 
             function record(value) {
-                var key = localStorage["currentGame"] + "record",
-                    record = localStorage[key] || "";
+                const key = localStorage["currentGame"] + "record";
+                let record = localStorage[key] || "";
 
                 record += new Date().getTime() + "_" + value + "|";
 
@@ -188,7 +183,7 @@ define(["./solitaire"], function(solitaire) {
 
             function Record(raw) {
                 function parse() {
-                    var entries = raw.split("|");
+                    const entries = raw.split("|");
 
                     entries.splice(entries.length - 1);
 
@@ -206,12 +201,12 @@ define(["./solitaire"], function(solitaire) {
                     return entry.won;
                 }
 
-                var record = parse();
+                const record = parse();
 
                 return {
                     streaks: function() {
-                        var streaks = [],
-                            streak = null;
+                        const streaks = [];
+                        let streak = null;
 
                         Y.Array.each(record, function(entry) {
                             if (!entry.won) {
@@ -242,7 +237,7 @@ define(["./solitaire"], function(solitaire) {
 
             Y.mix(Statistics, {
                 winDisplay: function() {
-                    var Application = Solitaire.Application;
+                    const Application = Solitaire.Application;
 
                     Y.one(".solitairey_body").append(winDisplay());
 
