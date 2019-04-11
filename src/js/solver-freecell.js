@@ -790,8 +790,10 @@ define([
                 },
 
                 hide: function() {
-                    if (this.bar) {
-                        this.bar.remove();
+                    if (false) {
+                        if (this.bar) {
+                            this.bar.remove();
+                        }
                     }
                 },
             };
@@ -827,15 +829,16 @@ define([
                     game.foundation.stacks.forEach(function(stack, suit) {
                         stack.setCards(
                             foundations
-                                ? foundations.foundations.getByIdx(
-                                      0,
-                                      [1, 2, 0, 3][suit],
-                                  )
+                                ? 1 +
+                                      foundations.foundations.getByIdx(
+                                          0,
+                                          [1, 2, 0, 3][suit],
+                                      )
                                 : 0,
                             function(rank) {
                                 return Y.Solitaire.Freecell.Card.create(
                                     rank,
-                                    suit,
+                                    game.deck.suits[suit],
                                 ).faceUp();
                             },
                         );
@@ -910,7 +913,7 @@ define([
                     });
 
                     Y.on("win", function() {
-                        FreecellSolver.disable();
+                        // FreecellSolver.disable();
                     });
 
                     // human interaction stops playing the current solution
@@ -943,15 +946,17 @@ define([
                     that.stop();
 
                     // Remove UI clutter for the demo.
-                    if (WITH_UI) {
-                        withSelector(Y, "#solver_bar .controls", function(
-                            node,
-                        ) {
-                            node.addClass("hidden");
-                        });
-                    }
+                    if (false) {
+                        if (WITH_UI) {
+                            withSelector(Y, "#solver_bar .controls", function(
+                                node,
+                            ) {
+                                node.addClass("hidden");
+                            });
+                        }
 
-                    that.currentSolution = null;
+                        that.currentSolution = null;
+                    }
                     window.clearTimeout(Status.indicatorTimer);
                     Status.indicatorTimer = window.setTimeout(
                         Status.updateIndicator.bind(Status),
