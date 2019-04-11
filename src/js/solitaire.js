@@ -238,14 +238,14 @@ define([], function() {
                     that.unanimated(function() {
                         const numStacks = serialized.charCodeAt(0),
                             lengths = serialized.substr(1, numStacks),
-                            offset = numStacks + 1,
-                            fields = that.fields,
-                            stacks = [];
+                            fields = that.fields;
                         let data,
                             stackIndex,
                             stack,
                             i,
                             length,
+                            offset = numStacks + 1,
+                            stacks = [],
                             fieldIndex = -1;
 
                         for (
