@@ -169,6 +169,10 @@ file DEST_INDEX => [TEMPLATE, COMBINED] do
   create_index DEST_INDEX, true
 end
 
+task :test do
+  sh ('eslint -c .eslintrc.yml ' + (['application', 'solver-freecell'].map{
+    |bn| 'src/js/'+bn+'.js'}.join(' ')))
+end
 task :prettier do
   sh 'prettier --arrow-parens always --tab-width 4 --trailing-comma all ' \
      '--write ' + JS_CURATED_SOURCES.map { |bn| js_js_pat_file(bn) }.join(' ')
