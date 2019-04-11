@@ -362,6 +362,16 @@ define([
             ? _calc__ret_moves(instance._pre_expand_states_and_moves_seq)
             : [];
         Animation.init(solution);
+        (function() {
+            if (!Y.UA.chrome) {
+                return;
+            }
+            let old = document.body.style.zoom;
+            document.body.style.zoom = "80%";
+            setTimeout(function() {
+                document.body.style.zoom = old;
+            }, 10);
+        })();
         if (solution) {
             Status.stopIndicator(true);
             window.setTimeout(function() {
