@@ -1282,10 +1282,7 @@ define([], function() {
                 },
 
                 deleteItem: function(card) {
-                    const cards = this.cards;
-                    const i = cards.indexOf(item);
-
-                    i !== -1 && cards.splice(i, 1);
+                    _deleteItem(this.cards, card);
                 },
 
                 push: function(card, temp) {
