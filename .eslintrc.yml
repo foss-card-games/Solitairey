@@ -1,0 +1,17 @@
+extends: google
+parser: babel-eslint
+parserOptions:
+    ecmaVersion: 7
+rules:
+    camelcase: off
+    comma-dangle: off
+    indent: off
+    no-unused-vars: off
+    no-throw-literal: off
+    new-cap: off
+    max-len: off
+    object-curly-spacing: off
+    one-var: off
+    quotes: off
+    require-jsdoc: off
+    prefer-spread: off
