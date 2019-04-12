@@ -144,7 +144,7 @@ YUI.add(
             Spider.Stack,
             {
                 validCard: function(card) {
-                    return card.suit === this.cards.my_Last().suit;
+                    return card.suit === _.last(this.cards).suit;
                 },
 
                 validTarget: function(stack) {
@@ -165,7 +165,7 @@ YUI.add(
             Spider.Tableau.Stack,
             {
                 setCardPosition: function(card) {
-                    var last = this.cards.my_Last(),
+                    var last = _.last(this.cards),
                         top = last ? last.top + last.rankHeight : this.top,
                         left = this.left;
 

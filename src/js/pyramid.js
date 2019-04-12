@@ -228,7 +228,7 @@ YUI.add(
 
                 setCardPosition: function(card) {
                     var layout = Pyramid.Tableau.stackConfig.layout,
-                        last = this.cards.my_Last(),
+                        last = _.last(this.cards),
                         top = this.top,
                         left = last
                             ? last.left + card.width * layout.cardGap

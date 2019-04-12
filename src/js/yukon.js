@@ -129,7 +129,7 @@ YUI.add(
             Yukon.Tableau.Stack,
             {
                 setCardPosition: function(card) {
-                    var last = this.cards.my_Last(),
+                    var last = _.last(this.cards),
                         top = last ? last.top + last.rankHeight : this.top,
                         left = this.left;
 

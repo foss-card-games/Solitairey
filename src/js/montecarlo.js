@@ -265,7 +265,7 @@ YUI.add(
                 },
 
                 setCardPosition: function(card) {
-                    var last = this.cards.my_Last(),
+                    var last = _.last(this.cards),
                         layout = MonteCarlo.Tableau.stackConfig.layout,
                         top = this.top,
                         left = last

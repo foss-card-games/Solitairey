@@ -124,7 +124,7 @@ define(["./solitaire"], function(solitaire) {
                         localStorage[Solitaire.game.name() + "record"],
                     );
                 let output = "<div id='win_display'>";
-                const streakCount = stats.streaks().my_Last().length;
+                const streakCount = _.last(stats.streaks()).length;
                 const winCount = stats.wins().length;
                 const loseCount = stats.loses().length;
 

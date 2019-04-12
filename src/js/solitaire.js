@@ -23,9 +23,6 @@ define([], function() {
         return Array.prototype.slice.call(args);
     }
 
-    Array.prototype.my_Last = function() {
-        return this[this.length - 1];
-    };
     Array.prototype.deleteItem = function(item) {
         var i = this.indexOf(item);
 
@@ -826,7 +823,7 @@ define([], function() {
                 },
 
                 my_Last: function() {
-                    return this.cards.my_Last();
+                    return _.last(this.cards);
                 },
 
                 pop: function() {
@@ -1442,7 +1439,7 @@ define([], function() {
                 },
 
                 my_Last: function() {
-                    return this.cards.my_Last();
+                    return _.last(this.cards);
                 },
 
                 index: function() {

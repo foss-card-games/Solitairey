@@ -190,7 +190,7 @@ YUI.add(
             Klondike.Tableau.Stack,
             {
                 setCardPosition: function(card) {
-                    var last = this.cards.my_Last(),
+                    var last = _.last(this.cards),
                         top = last ? last.top + last.rankHeight : this.top,
                         left = this.left;
 
@@ -207,7 +207,7 @@ YUI.add(
                 // always display only the last three cards
                 setCardPosition: function(card) {
                     var cards = this.cards,
-                        last = cards.my_Last(),
+                        last = _.last(cards),
                         stack = this;
 
                     Y.Array.each(cards.slice(-2), function(card, i) {

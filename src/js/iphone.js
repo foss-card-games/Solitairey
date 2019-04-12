@@ -100,7 +100,7 @@ define(["./solitaire"], function(solitaire) {
                                 this.Reserve.Stack,
                                 {
                                     setCardPosition: function(card) {
-                                        var last = this.cards.my_Last(),
+                                        var last = _.last(this.cards),
                                             top = last
                                                 ? last.top + 11
                                                 : this.top,

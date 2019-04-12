@@ -13,7 +13,7 @@ JS_CURATED_SOURCES = %w[solitaire iphone auto-stack-clear auto-turnover
                         montecarlo pyramid russian-solitaire scorpion spider
                         spider1s spider2s spiderette tritowers will-o-the-wisp
                         yukon application].freeze
-JS = %w[yui-breakout yui-debug require require--debug] +
+JS = %w[yui-breakout yui-debug require require--debug lodash.custom.min] +
      JS_CURATED_SOURCES + TS_BASE + BROWSERIFY_JS
 YUI_DIST = 'yui-unpack/'.freeze
 YUI_SRC = 'ext/yui/yui-all-min.js'.freeze
@@ -59,8 +59,9 @@ cpfile YUI_SRC, YUI
 
 dest_js_s = []
 
+DIRS = %w[ext/lodash ext/requirejs ext/yui-debug].freeze
 def js_pat_file(filename)
-  ["ext/requirejs/#{filename}", "ext/yui-debug/#{filename}"].select do |f|
+  DIRS.map { |d| d + '/' + filename }.select do |f|
     File.file? f
   end [0] || "#{JS_SRC_PREFIX}/#{filename}"
 end

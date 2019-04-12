@@ -184,7 +184,7 @@ define(["./solitaire"], function(solitaire) {
                 Freecell.Tableau.Stack,
                 {
                     setCardPosition: function(card) {
-                        const last = this.cards.my_Last(),
+                        const last = _.last(this.cards),
                             top = last ? last.top + last.rankHeight : this.top,
                             left = this.left;
 
