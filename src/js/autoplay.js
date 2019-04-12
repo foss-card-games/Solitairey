@@ -4,19 +4,19 @@ define(["./solitaire"], function(solitaire) {
         function(Y) {
             Y.namespace("Solitaire.Autoplay");
 
-            var Solitaire = Y.Solitaire,
-                Autoplay = Solitaire.Autoplay,
-                whenWon = true,
-                autoPlayInterval = null,
-                autoPlayable = [
-                    "Klondike",
-                    "Klondike1T",
-                    "FortyThieves",
-                    "GClock",
-                    "Freecell",
-                    "FlowerGarden",
-                    "Yukon",
-                ];
+            const Solitaire = Y.Solitaire,
+                Autoplay = Solitaire.Autoplay;
+            let whenWon = true,
+                autoPlayInterval = null;
+            const autoPlayable = [
+                "Klondike",
+                "Klondike1T",
+                "FortyThieves",
+                "GClock",
+                "Freecell",
+                "FlowerGarden",
+                "Yukon",
+            ];
 
             Y.on("endTurn", function() {
                 if (
@@ -41,10 +41,10 @@ define(["./solitaire"], function(solitaire) {
             });
 
             function autoPlay() {
-                var played = false;
+                let played = false;
 
                 Solitaire.game.eachStack(function(stack) {
-                    var field = stack.field;
+                    const field = stack.field;
 
                     if (played || field === "foundation" || field === "deck") {
                         return;
@@ -57,18 +57,17 @@ define(["./solitaire"], function(solitaire) {
             }
 
             function isEffectivelyWon() {
-                var stop = false;
+                let stop = false;
 
                 Solitaire.game.eachStack(function(stack) {
-                    var field = stack.field,
-                        prevRank = 14,
-                        decending;
+                    const field = stack.field;
+                    let prevRank = 14;
 
                     if (stop || (field !== "tableau" && field !== "waste")) {
                         return;
                     }
 
-                    decending = stack.eachCard(function(card) {
+                    stack.eachCard(function(card) {
                         if (card.rank > prevRank || card.isFaceDown) {
                             stop = true;
                             return false;

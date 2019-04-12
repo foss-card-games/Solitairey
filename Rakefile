@@ -174,7 +174,7 @@ file DEST_INDEX => [TEMPLATE, COMBINED] do
   create_index DEST_INDEX, true
 end
 
-T = %w[application auto-turnover freecell solitaire
+T = %w[application autoplay auto-turnover freecell solitaire
        solver-freecell statistics].freeze
 task :test do
   sh 'eslint -c .eslintrc.yml ' + T.map { |f| "src/js/#{f}.js" }.join(' ')
