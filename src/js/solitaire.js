@@ -23,58 +23,25 @@ define([], function() {
         return Array.prototype.slice.call(args);
     }
 
-    Array.prototype.deleteItem = function(item) {
-        var i = this.indexOf(item);
+    function _deleteItem(arr, item) {
+        const i = arr.indexOf(item);
 
-        i !== -1 && this.splice(i, 1);
-    };
-    Array.prototype.my_Shuffle = function() {
-        var i = this.length,
+        i !== -1 && arr.splice(i, 1);
+    }
+    function my_Shuffle(arr) {
+        let i = arr.length,
             r,
             item,
             temp;
 
         while (--i) {
             r = ~~(Math.random() * i);
-            item = this[i];
-            temp = this[r];
-            this[r] = item;
-            this[i] = temp;
+            item = arr[i];
+            temp = arr[r];
+            arr[r] = item;
+            arr[i] = temp;
         }
-    };
-    if (false) {
-        Array.prototype.last = function() {
-            return this[this.length - 1];
-        };
-
-        Function.prototype.bind = function(o) {
-            var f = this;
-
-            return function() {
-                var args = argsArray(arguments);
-
-                return f.apply(o, args);
-            };
-        };
-
-        Function.prototype.partial = function() {
-            var f = this,
-                captured = argsArray(arguments);
-
-            return function() {
-                var i,
-                    len,
-                    args = [].concat(captured);
-
-                for (i = 0, len = arguments.length; i < len; i++) {
-                    args.push(arguments[i]);
-                }
-
-                return f.apply(this, args);
-            };
-        };
     }
-
     function instance(proto, attrs) {
         const maker = new Function();
 
@@ -792,7 +759,7 @@ define([], function() {
                     }
 
                     if (seed === undefined) {
-                        this.cards.my_Shuffle();
+                        my_Shuffle(this.cards);
                     } else {
                         this.msSeededShuffle(seed);
                     }
@@ -1206,16 +1173,13 @@ define([], function() {
                 },
 
                 setCards: function(count, cardGen) {
-                    var i,
-                        len,
-                        card,
-                        cards,
-                        empty = instance(Game.Card, {
-                            updatePosition: Solitaire.noop,
-                            ensureDOM: Solitaire.noop,
-                        });
+                    let i, len, card;
+                    const empty = instance(Game.Card, {
+                        updatePosition: Solitaire.noop,
+                        ensureDOM: Solitaire.noop,
+                    });
 
-                    cards = this.cards = [];
+                    const cards = (this.cards = []);
 
                     for (i = 0; i < count; i++) {
                         card = cardGen.call(this, i) || empty;
@@ -1318,7 +1282,10 @@ define([], function() {
                 },
 
                 deleteItem: function(card) {
-                    this.cards.deleteItem(card);
+                    const cards = this.cards;
+                    const i = cards.indexOf(item);
+
+                    i !== -1 && cards.splice(i, 1);
                 },
 
                 push: function(card, temp) {
@@ -1465,21 +1432,21 @@ define([], function() {
                 },
 
                 updateStyle: function() {
-                    var n = this.node;
+                    const n = this.node;
 
                     n && n.setStyles(this.wrapperStyle());
                 },
 
                 createNode: function() {
                     const that = this;
-                    var node = that.node;
-
-                    node = that.node = Y.Node.create("<img class='stack' />")
+                    const node = (that.node = Y.Node.create(
+                        "<img class='stack' />",
+                    )
                         .setAttribute("src", that.imageSrc())
                         .setData("target", that)
                         .plug(Y.Plugin.Drop, {
                             useShim: true,
-                        });
+                        }));
 
                     that.updateStyle();
 
@@ -1497,11 +1464,8 @@ define([], function() {
                 },
 
                 updateDragGroups: function() {
-                    var active = Solitaire.activeCard,
-                        cards = this.cards,
-                        last = this.my_Last(),
-                        drop,
-                        i = cards.length - 1;
+                    const active = Solitaire.activeCard,
+                        last = this.my_Last();
 
                     this.eachCard(function(c) {
                         c.node.drop.removeFromGroup("open");
@@ -1547,7 +1511,7 @@ define([], function() {
                         return;
                     }
 
-                    var node = card.node,
+                    const node = card.node,
                         q = this.queue,
                         speeds = card.animSpeeds,
                         from = mapAppend(
@@ -1556,10 +1520,9 @@ define([], function() {
                                 left: node.getStyle("left"),
                             }),
                             "px",
-                        ),
-                        zIndex = to.zIndex,
-                        duration,
-                        anim;
+                        );
+                    let duration;
+                    const zIndex = to.zIndex;
 
                     if (from.top === to.top && from.left === to.left) {
                         return;
@@ -1583,7 +1546,7 @@ define([], function() {
                     node.setStyle("zIndex", 500 + zIndex);
                     delete to.zIndex;
 
-                    anim = new Y.Anim({
+                    const anim = new Y.Anim({
                         node: node,
                         from: from,
                         to: to,
@@ -1648,7 +1611,7 @@ define([], function() {
                         if (from === card.stack) {
                             cards[cards.indexOf(card)] = null;
                         } else {
-                            cards.deleteItem(card);
+                            _deleteItem(cards, card);
                         }
 
                         from.cards[move.index] = card;
