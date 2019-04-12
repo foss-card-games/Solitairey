@@ -9,11 +9,9 @@
 	<meta name="apple-mobile-web-app-capable" content="yes">
         <meta property="fb:admins" content="100000659492810">
 	<link rel="stylesheet" href="cards.css">
-	<![if lt IE 9]>
-	<link rel="stylesheet" media="only screen and (max-device-width: 480px)" href="iphone.css">
-	<![endif]>
 
-	<script type="text/javascript" src="js/yui-all-min.js"></script>
+	<script src="js/require--debug.js"></script>
+	<script src="js/yui-debug.js"></script>
 	<script type="text/javascript" src="js/yui-breakout.js"></script>
 	<script type="text/javascript" src="js/solitaire.js"></script>
 	<script type="text/javascript" src="js/iphone.js"></script>
@@ -45,7 +43,7 @@
 	<script type="text/javascript" src="js/application.js"></script>
 
 </head>
-<body>
+<body class="solitairey_body">
 
 	<ul id="menu">
 		<li class="begin">
@@ -60,7 +58,7 @@
                 <li class="end">
 			<a id="undo">Undo</a>
 		</li>
-	</ul>
+    </ul>
 	<div id="game-chooser">
 		<div id="game-chooser-contents">
 		<ul id="descriptions">

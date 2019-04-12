@@ -1,7 +1,8 @@
 JS_PREFIX = 'js'.freeze
 JS_SRC_PREFIX = 'src/js'.freeze
 PREFIX = 'dest/js'.freeze
-JS = %w[yui-breakout solitaire iphone auto-stack-clear auto-turnover autoplay
+JS = %w[yui-breakout yui-debug solitaire iphone auto-stack-clear auto-turnover
+        autoplay
         ie-opera-background-fix statistics solver-freecell
         solver-freecell-worker agnes
         golf klondike klondike1t flowergarden fortythieves freecell grandclock
