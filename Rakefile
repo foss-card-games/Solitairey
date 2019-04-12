@@ -46,6 +46,15 @@ end
 
 dest_js_s = []
 
+["yui-unpack"].each do |fn_base|
+  fn = fn_base
+  src = "ext/#{fn}"
+  dest = "#{PREFIX}/#{fn}"
+  dest_js_s << dest
+  file dest => src do
+    sh "rsync -a #{src} #{PREFIX}/"
+  end
+end
 ["yui-debug"].each do |fn_base|
   fn = fn_base + '.js'
   src = "ext/yui-debug/#{fn}"
