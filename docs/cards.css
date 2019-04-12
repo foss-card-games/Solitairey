@@ -1,4 +1,4 @@
-@import url(http://fonts.googleapis.com/css?family=Questrial);
+@import url(https://fonts.googleapis.com/css?family=Questrial);
 
 html, body, div, ul, li, p, img, h1, h2, h3, h4, h5, h6 {
 	position: relative;
@@ -142,7 +142,7 @@ p {
 
 #game-chooser h2 {
 	font: 20px Questrial;
-	
+
 	text-align: center;
 	padding: 6px 0 6px 0;
 	background: rgba(255, 255, 255, 0.5);
