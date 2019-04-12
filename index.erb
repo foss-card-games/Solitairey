@@ -1,8 +1,8 @@
 <!doctype html>
 <% if development %>
-<html>
+<html lang="en">
 <% else %>
-<html manifest="cache.manifest">
+<html lang="en" manifest="cache.manifest">
   <!--
   Hi! There's no useful source code on this page :(
   BUT!! There is at index-dev.html and Solitairey's Github page https://github.com/pharrington/Solitairey :)
@@ -13,44 +13,46 @@
 <head>
 	<title>Solitairey - Beautiful HTML5 Solitaire</title>
 	<meta name="description" content="A modern solitaire collection for the web. Built with HTML5 and Javascript.">
-	<meta name="viewport" content="initial-scale=1.0; maximum-scale=1.0; width=device-width;">
+    <% if false %>
+      <meta name="viewport" content="initial-scale=1.0; maximum-scale=1.0; width=device-width;">
+    <% end %>
 	<meta name="apple-mobile-web-app-capable" content="yes">
         <meta property="fb:admins" content="100000659492810">
 	<link rel="stylesheet" href="cards.css">
 <% if development %>
 	<script src="js/yui-debug.js"></script>
-	<script type="text/javascript" src="js/yui-breakout.js"></script>
-	<script type="text/javascript" src="js/solitaire.js"></script>
-	<script type="text/javascript" src="js/iphone.js"></script>
-	<script type="text/javascript" src="js/auto-stack-clear.js"></script>
-	<script type="text/javascript" src="js/auto-turnover.js"></script>
-	<script type="text/javascript" src="js/autoplay.js"></script>
-	<script type="text/javascript" src="js/ie-opera-background-fix.js"></script>
-	<script type="text/javascript" src="js/statistics.js"></script>
-	<script type="text/javascript" src="js/agnes.js"></script>
-	<script type="text/javascript" src="js/golf.js"></script>
-	<script type="text/javascript" src="js/klondike.js"></script>
-	<script type="text/javascript" src="js/klondike1t.js"></script>
-	<script type="text/javascript" src="js/flowergarden.js"></script>
-	<script type="text/javascript" src="js/fortythieves.js"></script>
-	<script type="text/javascript" src="js/freecell.js"></script>
-	<script type="text/javascript" src="js/grandclock.js"></script>
-	<script type="text/javascript" src="js/montecarlo.js"></script>
-	<script type="text/javascript" src="js/pyramid.js"></script>
-	<script type="text/javascript" src="js/russian-solitaire.js"></script>
-	<script type="text/javascript" src="js/scorpion.js"></script>
-	<script type="text/javascript" src="js/spider.js"></script>
-	<script type="text/javascript" src="js/spider1s.js"></script>
-	<script type="text/javascript" src="js/spider2s.js"></script>
-	<script type="text/javascript" src="js/spiderette.js"></script>
-	<script type="text/javascript" src="js/tritowers.js"></script>
-	<script type="text/javascript" src="js/will-o-the-wisp.js"></script>
-	<script type="text/javascript" src="js/yukon.js"></script>
-	<script type="text/javascript" src="js/solver-freecell.js"></script>
-	<script type="text/javascript" src="js/application.js"></script>
+	<script src="js/yui-breakout.js"></script>
+	<script src="js/solitaire.js"></script>
+	<script src="js/iphone.js"></script>
+	<script src="js/auto-stack-clear.js"></script>
+	<script src="js/auto-turnover.js"></script>
+	<script src="js/autoplay.js"></script>
+	<script src="js/ie-opera-background-fix.js"></script>
+	<script src="js/statistics.js"></script>
+	<script src="js/agnes.js"></script>
+	<script src="js/golf.js"></script>
+	<script src="js/klondike.js"></script>
+	<script src="js/klondike1t.js"></script>
+	<script src="js/flowergarden.js"></script>
+	<script src="js/fortythieves.js"></script>
+	<script src="js/freecell.js"></script>
+	<script src="js/grandclock.js"></script>
+	<script src="js/montecarlo.js"></script>
+	<script src="js/pyramid.js"></script>
+	<script src="js/russian-solitaire.js"></script>
+	<script src="js/scorpion.js"></script>
+	<script src="js/spider.js"></script>
+	<script src="js/spider1s.js"></script>
+	<script src="js/spider2s.js"></script>
+	<script src="js/spiderette.js"></script>
+	<script src="js/tritowers.js"></script>
+	<script src="js/will-o-the-wisp.js"></script>
+	<script src="js/yukon.js"></script>
+	<script src="js/solver-freecell.js"></script>
+	<script src="js/application.js"></script>
 <% else %>
-	<script type="text/javascript" src="js/combined-min.js"></script>
-<script type="text/javascript">
+	<script src="js/combined-min.js"></script>
+<script>
 
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-9447574-2']);
@@ -63,7 +65,7 @@
   })();
 
 </script>
-<script type="text/javascript">var switchTo5x=false;</script><script type="text/javascript" src="https://w.sharethis.com/button/buttons.js"></script><script type="text/javascript">stLight.options({publisher:'85c2f50b-8b7b-41dc-baf0-a2d273906b91'});</script>
+<script>var switchTo5x=false;</script><script src="https://w.sharethis.com/button/buttons.js"></script><script>stLight.options({publisher:'85c2f50b-8b7b-41dc-baf0-a2d273906b91'});</script>
 <% end %>
 </head>
 <body class="solitairey_body">
