@@ -3,21 +3,21 @@ define([], function() {
     // var pre_canned_seeds = [11982, 11982, 11982, 11982];
     const pre_canned_seeds = [];
 
-    Array.prototype.my_Flatten = function() {
+    function my_Flatten(arr) {
         const result = [];
-        let i, len, item;
         const proto = Array.prototype;
+        const len = arr.length;
 
-        for (i = 0, len = this.length; i < len; i++) {
-            item = this[i];
+        for (let i = 0; i < len; i++) {
+            const item = arr[i];
             if (Object.prototype.toString.call(item) === "[object Array]") {
-                proto.push.apply(result, proto.my_Flatten.call(item));
+                proto.push.apply(result, my_Flatten(item));
             } else {
                 result.push(item);
             }
         }
         return result;
-    };
+    }
 
     function argsArray(args) {
         return Array.prototype.slice.call(args);
@@ -560,26 +560,18 @@ define([], function() {
                     if (Game.fields.indexOf("Deck" === -1)) {
                         Game.deck = Game.createField(Game.Deck);
                     }
-
-                    // find the game/card width ratio
-                    const minX = Math.min.apply(
-                        Math,
+                    const vals = my_Flatten(
                         Y.Array.map(fields, function(f) {
                             return Y.Array.map(f.stacks, function(s) {
                                 return s.left;
                             });
-                        }).my_Flatten(),
+                        }),
                     );
 
-                    const maxX =
-                        Math.max.apply(
-                            Math,
-                            Y.Array.map(fields, function(f) {
-                                return Y.Array.map(f.stacks, function(s) {
-                                    return s.left;
-                                });
-                            }).my_Flatten(),
-                        ) + this.Card.width;
+                    // find the game/card width ratio
+                    const minX = Math.min.apply(Math, vals);
+
+                    const maxX = Math.max.apply(Math, vals) + this.Card.width;
 
                     this.widthScale = (maxX - minX) / this.Card.base.width;
                 },
@@ -1638,7 +1630,7 @@ define([], function() {
 
                 undo: function() {
                     const stacks = Y.Array.unique(
-                        Y.Array.map(this.pop(), this.act).my_Flatten(),
+                        my_Flatten(Y.Array.map(this.pop(), this.act)),
                     );
 
                     Y.Array.each(stacks, function(stack) {
