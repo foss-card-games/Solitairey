@@ -1,19 +1,17 @@
 YUI.add(
     "golf",
     function(Y) {
-        var Solitaire = Y.Solitaire,
+        const Solitaire = Y.Solitaire,
             Golf = (Y.Solitaire.Golf = instance(
                 Solitaire,
                 {
                     fields: ["Deck", "Foundation", "Tableau"],
 
                     deal: function() {
-                        var card,
-                            stack,
-                            stacks = this.tableau.stacks,
+                        let card, stack, row;
+                        const stacks = this.tableau.stacks,
                             deck = this.deck,
-                            foundation = this.foundation.stacks[0],
-                            row;
+                            foundation = this.foundation.stacks[0];
 
                         for (row = 0; row < 5; row++) {
                             for (stack = 0; stack < 7; stack++) {
@@ -29,7 +27,7 @@ YUI.add(
                     },
 
                     turnOver: function() {
-                        var deck = this.deck.stacks[0],
+                        const deck = this.deck.stacks[0],
                             foundation = this.foundation.stacks[0],
                             last = deck.my_Last();
 
@@ -37,7 +35,7 @@ YUI.add(
                     },
 
                     isWon: function() {
-                        var won = true;
+                        let won = true;
 
                         this.eachStack(function(stack) {
                             stack.eachCard(function(card) {
@@ -70,7 +68,7 @@ YUI.add(
                         },
 
                         createStack: function() {
-                            var i, len;
+                            let i, len;
 
                             for (i = 0, len = this.cards.length; i < len; i++) {
                                 this.stacks[0].push(this.cards[i]);
@@ -125,7 +123,7 @@ YUI.add(
                                 return false;
                             }
 
-                            var target = stack.my_Last(),
+                            const target = stack.my_Last(),
                                 diff = Math.abs(this.rank - target.rank);
 
                             return diff === 1;
@@ -154,7 +152,7 @@ YUI.add(
             Golf.Tableau.Stack,
             {
                 setCardPosition: function(card) {
-                    var last = _.last(this.cards),
+                    const last = _.last(this.cards),
                         top = last ? last.top + last.rankHeight : this.top,
                         left = this.left;
 
@@ -169,12 +167,10 @@ YUI.add(
             Golf.Deck.Stack,
             {
                 setCardPosition: function(card) {
-                    var last = this.my_Last(),
-                        top,
-                        left,
-                        zIndex;
+                    let left, zIndex;
 
-                    top = this.top;
+                    const last = this.my_Last();
+                    const top = this.top;
                     if (last) {
                         left = last.left + card.width * 0.1;
                         zIndex = last.zIndex + 1;
