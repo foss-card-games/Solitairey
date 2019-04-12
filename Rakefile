@@ -1,7 +1,7 @@
 JS_PREFIX = 'js'.freeze
 JS_SRC_PREFIX = 'src/js'.freeze
 PREFIX = 'dest/js'.freeze
-JS = %w[yui-breakout yui-debug solitaire iphone auto-stack-clear auto-turnover
+JS = %w[yui-breakout solitaire iphone auto-stack-clear auto-turnover
         autoplay
         ie-opera-background-fix statistics solver-freecell
         solver-freecell-worker agnes
@@ -46,6 +46,15 @@ end
 
 dest_js_s = []
 
+["yui-debug"].each do |fn_base|
+  fn = fn_base + '.js'
+  src = "ext/yui-debug/#{fn}"
+  dest = "#{PREFIX}/#{fn}"
+  dest_js_s << dest
+  file dest => src do
+    sh "cp -f #{src} #{dest}"
+  end
+end
 JS.each do |fn_base|
   fn = fn_base + '.js'
   src = "#{JS_SRC_PREFIX}/#{fn}"

@@ -74,7 +74,7 @@ available.
             gconf = (typeof YUI_config !== 'undefined') && YUI_config;
 
         if (!(instanceOf(Y, YUI))) {
-            Y = new YUI();
+            Y = new YUI({base: 'js/yui-unpack/yui/build/'});
         } else {
             // set up the core environment
             Y._init();
@@ -548,7 +548,7 @@ proto = {
             mods = YUI.Env.mods,
             extendedCore = Y.config.extendedCore || [],
             extras = Y.config.core || [].concat(YUI.Env.core).concat(extendedCore); //Clone it..
-   
+
         for (i = 0; i < extras.length; i++) {
             if (mods[extras[i]]) {
                 core.push(extras[i]);
