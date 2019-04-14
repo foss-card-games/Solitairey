@@ -8,7 +8,7 @@ JS = %w[yui-breakout solitaire iphone auto-stack-clear auto-turnover
         golf klondike klondike1t flowergarden fortythieves freecell grandclock
         montecarlo pyramid russian-solitaire scorpion spider spider1s spider2s
         spiderette tritowers will-o-the-wisp yukon application].freeze
-YUI_SRC = 'ext/yui/yui-all-min.js'.freeze
+YUI_SRC = 'dest/js/yui-debug.js'.freeze
 YUI = "#{PREFIX}/yui-all-min.js".freeze
 ALL = "#{PREFIX}/all.js".freeze
 MINIFIED = "#{PREFIX}/all-min.js".freeze
@@ -41,7 +41,7 @@ IMAGES.each do |img|
 end
 
 file YUI => YUI_SRC do
-  sh "cp -f #{YUI_SRC} #{YUI}"
+  sh "java -jar #{COMPRESSOR} -o #{YUI} #{YUI_SRC}"
 end
 
 dest_js_s = []
