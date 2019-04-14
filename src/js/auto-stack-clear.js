@@ -5,7 +5,7 @@ define(["./solitaire"], function(solitaire) {
     YUI.add(
         "auto-stack-clear",
         function(Y) {
-            var Solitaire = Y.Solitaire;
+            const Solitaire = Y.Solitaire;
 
             Y.namespace("Solitaire.AutoStackClear");
 
@@ -16,12 +16,8 @@ define(["./solitaire"], function(solitaire) {
             };
 
             function isComplete(stack, callback) {
-                var cards = stack.cards,
-                    rank,
-                    suit,
-                    card,
-                    complete,
-                    i;
+                const cards = stack.cards;
+                let rank, suit, card, i;
 
                 if (!cards.length) {
                     return false;
@@ -43,7 +39,7 @@ define(["./solitaire"], function(solitaire) {
                     }
                 }
 
-                complete = rank === 14;
+                const complete = rank === 14;
                 complete &&
                     typeof callback === "function" &&
                     callback(stack, i + 1);
@@ -51,12 +47,11 @@ define(["./solitaire"], function(solitaire) {
             }
 
             function clearComplete(stack, startIndex) {
-                var foundation,
-                    cards = stack.cards,
-                    count = cards.length - startIndex;
+                const cards = stack.cards;
+                let count = cards.length - startIndex;
 
                 // find the first empty foundation
-                foundation = Y.Array.find(
+                const foundation = Y.Array.find(
                     Solitaire.game.foundation.stacks,
                     function(stack) {
                         return !stack.cards.length;
