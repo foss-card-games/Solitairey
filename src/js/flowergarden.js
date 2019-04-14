@@ -1,19 +1,18 @@
 YUI.add(
     "flower-garden",
     function(Y) {
-        var Solitaire = Y.Solitaire,
+        const Solitaire = Y.Solitaire,
             FlowerGarden = (Y.Solitaire.FlowerGarden = instance(
                 Solitaire,
                 {
                     fields: ["Foundation", "Reserve", "Tableau"],
 
                     deal: function() {
-                        var card,
-                            deck = this.deck,
-                            reserve = this.reserve.stacks[0],
+                        let card,
                             stack = 0,
-                            i,
-                            stacks = this.tableau.stacks;
+                            i;
+                        const stacks = this.tableau.stacks;
+                        (deck = this.deck), (reserve = this.reserve.stacks[0]);
 
                         for (i = 0; i < 36; i++) {
                             card = deck.pop();
@@ -92,7 +91,7 @@ YUI.add(
                         rankHeight: 24,
 
                         createProxyStack: function() {
-                            var stack;
+                            let stack;
 
                             switch (this.stack.field) {
                                 case "foundation":
@@ -113,10 +112,9 @@ YUI.add(
                         },
 
                         moveTo: function(stack) {
-                            var cards = this.stack.cards,
-                                index = cards.indexOf(this),
-                                i,
-                                len;
+                            const cards = this.stack.cards,
+                                index = cards.indexOf(this);
+                            let i, len;
 
                             /*
                              * TODO: fix this hack
@@ -138,7 +136,7 @@ YUI.add(
                         },
 
                         validTarget: function(stack) {
-                            var target = stack.my_Last();
+                            const target = stack.my_Last();
 
                             switch (stack.field) {
                                 case "tableau":
@@ -207,7 +205,7 @@ YUI.add(
             FlowerGarden.Tableau.Stack,
             {
                 setCardPosition: function(card) {
-                    var last = _.last(this.cards),
+                    const last = _.last(this.cards),
                         top = last
                             ? last.top + Solitaire.game.Card.rankHeight
                             : this.top,
@@ -224,7 +222,7 @@ YUI.add(
             FlowerGarden.Reserve.Stack,
             {
                 setCardPosition: function(card) {
-                    var last = _.last(this.cards),
+                    const last = _.last(this.cards),
                         left = last
                             ? last.left + Solitaire.Card.width * 0.4
                             : this.left,
@@ -239,11 +237,10 @@ YUI.add(
                         return;
                     }
 
-                    var stack = this,
-                        left;
+                    const stack = this;
 
                     Y.Array.each(this.cards, function(card, i) {
-                        left = stack.left + i * card.width * 0.4;
+                        const left = stack.left + i * card.width * 0.4;
 
                         if (left !== card.left) {
                             card.left = left;

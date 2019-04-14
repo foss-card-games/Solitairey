@@ -175,7 +175,7 @@ file DEST_INDEX => [TEMPLATE, COMBINED] do
 end
 
 T = %w[agnes application auto-stack-clear autoplay auto-turnover autoplay
-       freecell golf
+       flowergarden freecell golf
        solitaire
        solver-freecell statistics].freeze
 task :test do
