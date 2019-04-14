@@ -9,7 +9,7 @@ YUI.add(
             return Agnes.foundation.stacks[0].first().rank;
         }
 
-        var Solitaire = Y.Solitaire,
+        const Solitaire = Y.Solitaire,
             Klondike = Solitaire.Klondike,
             Agnes = (Solitaire.Agnes = instance(Klondike, {
                 fields: ["Foundation", "Deck", "Waste", "Tableau", "Reserve"],
@@ -22,7 +22,7 @@ YUI.add(
                 },
 
                 deal: function() {
-                    var deck = this.deck.stacks[0],
+                    const deck = this.deck.stacks[0],
                         foundation = this.foundation.stacks[0];
 
                     Klondike.deal.call(this);
@@ -37,12 +37,10 @@ YUI.add(
                 redeal: Solitaire.noop,
 
                 turnOver: function() {
-                    var deck = this.deck.stacks[0],
+                    const deck = this.deck.stacks[0],
                         reserves = this.reserve.stacks,
-                        waste = this.waste.stacks,
-                        count,
-                        target,
-                        i;
+                        waste = this.waste.stacks;
+                    let count, target, i;
 
                     if (deck.cards.length < 7) {
                         count = 2;
@@ -71,7 +69,7 @@ YUI.add(
 
                     Stack: instance(Solitaire.Stack, {
                         setCardPosition: function(card) {
-                            var last = this.my_Last(),
+                            const last = this.my_Last(),
                                 top = this.top,
                                 left = last
                                     ? last.left + Solitaire.Card.width * 1.5
@@ -100,7 +98,7 @@ YUI.add(
                         images: {},
 
                         setCardPosition: function(card) {
-                            var last = this.my_Last(),
+                            const last = this.my_Last(),
                                 top = last
                                     ? last.top + last.rankHeight
                                     : this.top,
@@ -122,7 +120,7 @@ YUI.add(
                     },
 
                     validTarget: function(stack) {
-                        var target = stack.my_Last();
+                        const target = stack.my_Last();
 
                         switch (stack.field) {
                             case "tableau":
