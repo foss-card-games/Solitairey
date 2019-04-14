@@ -110,8 +110,12 @@ task :clean do
 end
 
 task upload: :default do
-  sh 'rsync --progress --inplace -a -v dest ' \
-    'hostgator:public_html/temp-Solitairey-ekrimyk/'
+  if false
+    sh 'rsync --progress --inplace -a -v dest ' \
+      'hostgator:public_html/temp-Solitairey-ekrimyk/'
+  end
+  sh 'rsync -a dest/ docs/'
+  sh 'git add docs/'
 end
 
 task default: [DEST_INDEX, DEST_INDEX_DEV, :images]
