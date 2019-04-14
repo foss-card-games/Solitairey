@@ -1,15 +1,13 @@
 YUI.add(
     "forty-thieves",
     function(Y) {
-        var Solitaire = Y.Solitaire,
+        const Solitaire = Y.Solitaire,
             FortyThieves = (Y.Solitaire.FortyThieves = instance(Solitaire, {
                 fields: ["Foundation", "Deck", "Waste", "Tableau"],
 
                 deal: function() {
-                    var card,
-                        stack,
-                        row,
-                        deck = this.deck,
+                    let card, stack, row;
+                    const deck = this.deck,
                         stacks = this.tableau.stacks;
 
                     for (row = 0; row < 4; row++) {
@@ -27,13 +25,11 @@ YUI.add(
                 },
 
                 turnOver: function() {
-                    var deck = this.deck.stacks[0],
-                        waste = this.waste.stacks[0],
-                        i,
-                        stop;
+                    const deck = this.deck.stacks[0],
+                        waste = this.waste.stacks[0];
 
                     for (
-                        i = deck.cards.length, stop = i - 1;
+                        let i = deck.cards.length, stop = i - 1;
                         i > stop && i;
                         i--
                     ) {
@@ -81,9 +77,7 @@ YUI.add(
                     },
 
                     createStack: function() {
-                        var i, len;
-
-                        for (i = this.cards.length - 1; i >= 0; i--) {
+                        for (let i = this.cards.length - 1; i >= 0; i--) {
                             this.stacks[0].push(this.cards[i]);
                         }
                     },
@@ -121,7 +115,7 @@ YUI.add(
 
                 Card: instance(Solitaire.Card, {
                     validTarget: function(stack) {
-                        var target = stack.my_Last();
+                        const target = stack.my_Last();
 
                         switch (stack.field) {
                             case "tableau":
@@ -179,7 +173,7 @@ YUI.add(
             FortyThieves.Tableau.Stack,
             {
                 setCardPosition: function(card) {
-                    var last = _.last(this.cards),
+                    const last = _.last(this.cards),
                         top = last ? last.top + last.rankHeight : this.top,
                         left = this.left;
 
