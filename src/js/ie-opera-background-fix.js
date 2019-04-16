@@ -1,13 +1,13 @@
 YUI.add(
     "solitaire-background-fix",
     function(Y) {
-        var _body;
+        let _body;
 
         Y.on("load", resize);
         Y.on("resize", resize);
 
         function resize() {
-            var width = body().get("winWidth"),
+            const width = body().get("winWidth"),
                 height = body().get("winHeight"),
                 style = document.body.style;
 

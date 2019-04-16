@@ -5,14 +5,37 @@ PREFIX = 'dest/js'.freeze
 BROWSERIFY_JS = %w[big-integer flatted].freeze
 TS_BASE = %w[fcs-validate french-cards prange web-fc-solve--expand-moves
              web-fc-solve].freeze
-JS_CURATED_SOURCES = %w[solitaire iphone auto-stack-clear auto-turnover
-                        autoplay ie-opera-background-fix statistics
-                        solver-freecell
-                        solver-freecell-worker agnes golf klondike klondike1t
-                        flowergarden fortythieves freecell grandclock
-                        montecarlo pyramid russian-solitaire scorpion spider
-                        spider1s spider2s spiderette tritowers will-o-the-wisp
-                        yukon application].freeze
+JS_CURATED_SOURCES = %w[
+  agnes
+  application
+  auto-stack-clear
+  auto-turnover
+  autoplay
+  flowergarden
+  fortythieves
+  freecell
+  golf
+  grandclock
+  ie-opera-background-fix
+  iphone
+  klondike
+  klondike1t
+  montecarlo
+  pyramid
+  russian-solitaire
+  scorpion
+  solitaire
+  solver-freecell
+  solver-freecell-worker
+  spider
+  spider1s
+  spider2s
+  spiderette
+  statistics
+  tritowers
+  will-o-the-wisp
+  yukon
+].freeze
 JS = %w[yui-breakout yui-debug require require--debug lodash.custom.min] +
      JS_CURATED_SOURCES + TS_BASE + BROWSERIFY_JS
 YUI_DIST = 'yui-unpack/'.freeze
@@ -174,18 +197,36 @@ file DEST_INDEX => [TEMPLATE, COMBINED] do
   create_index DEST_INDEX, true
 end
 
-T = %w[agnes application auto-stack-clear autoplay auto-turnover autoplay
-       flowergarden fortythieves freecell golf grandclock
-       klondike klondike1t montecarlo pyramid
-       russian-solitaire
-       scorpion
-       solitaire
-       solver-freecell
-       spider spider1s spider2s spiderette
-       statistics
-       tritowers
-       will-o-the-wisp
-       yukon].freeze
+T = %w[
+  agnes
+  application
+  auto-stack-clear
+  auto-turnover
+  autoplay
+  flowergarden
+  fortythieves
+  freecell
+  golf
+  grandclock
+  ie-opera-background-fix
+  klondike
+  klondike1t
+  montecarlo
+  pyramid
+  russian-solitaire
+  scorpion
+  solitaire
+  solver-freecell
+  solver-freecell-worker
+  spider
+  spider1s
+  spider2s
+  spiderette
+  statistics
+  tritowers
+  will-o-the-wisp
+  yukon
+].freeze
 task :test do
   sh 'eslint -c .eslintrc.yml ' + T.map { |f| "src/js/#{f}.js" }.join(' ')
   sh 'rubocop Rakefile'

@@ -4,14 +4,14 @@ importScripts(
     "web-fc-solve.js",
 );
 
-var attempts = 0,
-    maxFastAttempts = 150000;
+let attempts = 0;
+const maxFastAttempts = 150000;
 
 function GameState(obj) {
     if (!obj) {
         return;
     }
-    var i, stack;
+    let i, stack;
 
     this.reserve = new Uint8Array(obj.reserve);
     this.foundation = new Uint8Array(obj.foundation);
@@ -24,7 +24,7 @@ function GameState(obj) {
 }
 
 GameState.fromState = function(other) {
-    var state = new GameState();
+    const state = new GameState();
 
     state.tableau = other.tableau;
     state.reserve = other.reserve;
@@ -43,11 +43,9 @@ GameState.prototype = {
     child: null,
 
     solved: function() {
-        var i,
-            len,
-            foundation = this.foundation;
+        const foundation = this.foundation;
 
-        for (i = 0, len = 4; i < len; i++) {
+        for (let i = 0, len = 4; i < len; i++) {
             if (foundation[i] >> 2 !== 13) {
                 return false;
             }
@@ -57,24 +55,18 @@ GameState.prototype = {
     },
 
     eachTableau: function(callback) {
-        var i,
-            len,
-            stack,
-            tableau = this.tableau;
+        const tableau = this.tableau;
 
-        for (i = 0, len = tableau.length; i < len; i++) {
-            stack = tableau[i];
+        for (let i = 0, len = tableau.length; i < len; i++) {
+            const stack = tableau[i];
             callback.call(this, stack[0], stack[1], i);
         }
     },
 
     validTarget: function(field, value, start) {
-        var rank = value >> 2,
-            suit = value & 3,
-            dest,
-            tableau,
-            i,
-            len;
+        const rank = value >> 2,
+            suit = value & 3;
+        let dest, tableau, i, len;
 
         if (!value) {
             return -1;
@@ -128,12 +120,12 @@ GameState.prototype = {
     },
 
     move: function(sourceField, sourceStack, destField, destStack) {
-        var val = this.pop(sourceField, sourceStack);
+        const val = this.pop(sourceField, sourceStack);
         this.push(destField, destStack, val);
     },
 
     pop: function(field, stack) {
-        var val, newBuffer, bufferLength, tableau, i, len;
+        let val, newBuffer, i, len;
 
         if (field === "reserve" || field === "foundation") {
             val = this[field][stack];
@@ -143,8 +135,8 @@ GameState.prototype = {
             return val;
         }
 
-        tableau = this.tableau;
-        bufferLength = tableau[stack][1];
+        const tableau = this.tableau;
+        const bufferLength = tableau[stack][1];
 
         if (!bufferLength) {
             return 0;
@@ -156,7 +148,6 @@ GameState.prototype = {
     },
 
     push: function(field, stack, val) {
-        var newLength;
         if (!val) {
             return;
         }
@@ -167,25 +158,23 @@ GameState.prototype = {
             return;
         }
 
-        newLength = this.tableau[stack][1] + 1;
+        const newLength = this.tableau[stack][1] + 1;
         this.copyTableau(stack, newLength);
         this.tableau[stack][0][newLength - 1] = val;
     },
 
     copyTableau: function(stack, newLength) {
-        var old = this.tableau,
+        const old = this.tableau,
             tableau = old[stack][0],
-            newBuffer = new Uint8Array(new ArrayBuffer(newLength)),
-            i,
-            len;
+            newBuffer = new Uint8Array(new ArrayBuffer(newLength));
 
-        for (i = 0; i < newLength; ++i) {
+        for (let i = 0; i < newLength; ++i) {
             newBuffer[i] = tableau[i];
         }
 
         this.tableau = [];
 
-        for (i = 0, len = old.length; i < len; ++i) {
+        for (let i = 0, len = old.length; i < len; ++i) {
             if (i !== stack) {
                 this.tableau[i] = old[i];
             } else {
@@ -209,7 +198,7 @@ GameState.prototype = {
             return this._serialized;
         }
 
-        var i, j, len, stack;
+        let i, j, len, stack;
 
         this._serialized = "";
         for (i = 0; i < 4; i++) {
@@ -237,7 +226,7 @@ GameState.prototype = {
 
     // the search heuristic function
     rateMove: function(sourceField, sourceIndex, destField, destIndex) {
-        var RATING_FOUNDATION = 1000,
+        const RATING_FOUNDATION = 1000,
             RATING_CLOSEDTABLEAUFOLLOWUP = 20,
             RATING_FREEFOUNDATIONTARGET = 15,
             RATING_OPENTABLEAU = 15,
@@ -246,8 +235,8 @@ GameState.prototype = {
             RATING_TABLEAU = 2,
             RATING_RESERVE = -1,
             RATING_BURYFOUNDATIONTARGET = -5,
-            RATING_CLOSEDTABLEAU = -10,
-            rating = 0,
+            RATING_CLOSEDTABLEAU = -10;
+        let rating = 0,
             stack,
             card,
             nextCard,
@@ -354,7 +343,7 @@ GameState.prototype = {
     },
 
     transformParentMove: function() {
-        var move = this.parentMove,
+        const move = this.parentMove,
             parent = this.parent;
 
         if (!(move && parent)) {
@@ -366,23 +355,21 @@ GameState.prototype = {
     },
 
     lastCard: function(field, index) {
-        var stack, length;
-
         switch (field) {
             case "reserve":
             case "foundation":
                 return this[field][index];
 
             case "tableau":
-                stack = this[field][index];
-                length = stack[1];
+                const stack = this[field][index];
+                const length = stack[1];
 
                 return stack[0][length - 1];
         }
     },
 
     becomeChild: function() {
-        var parent = this.parent;
+        const parent = this.parent;
 
         if (!parent) {
             return;
@@ -395,8 +382,7 @@ GameState.prototype = {
 
 // returns the depth of tree to jump up to, or 0 if the solution is found
 function solve(state, depth, visited, movesSinceFoundation, fastSearch) {
-    var jumpDepth,
-        maxDepth = 200,
+    let jumpDepth,
         sourceIndex,
         destIndex,
         length,
@@ -404,13 +390,13 @@ function solve(state, depth, visited, movesSinceFoundation, fastSearch) {
         next,
         sourceField,
         destField,
-        tableau,
         move,
-        moves = [],
         scale = 1,
         foundFoundation = false,
         i;
 
+    const moves = [],
+        maxDepth = 200;
     /*
      * if the state is the solved board, return
      * for each reserve and tableau stack, find all valid moves
@@ -466,7 +452,7 @@ function solve(state, depth, visited, movesSinceFoundation, fastSearch) {
     }
 
     // find moves from the tableau
-    tableau = state.tableau;
+    const tableau = state.tableau;
     for (i = 0; i < tableau.length; i++) {
         s = tableau[i][0];
         length = tableau[i][1];
@@ -584,7 +570,7 @@ function solve(state, depth, visited, movesSinceFoundation, fastSearch) {
 }
 
 function mapMoves(state) {
-    var child = state.child,
+    let child = state.child,
         moves = null,
         current;
 
@@ -603,7 +589,7 @@ function mapMoves(state) {
 }
 
 function _render_state_as_string(obj) {
-    var ret = "";
+    let ret = "";
 
     function _render_suit(c) {
         return ["S", "H", "C", "D"][c & 0x3];
@@ -627,8 +613,8 @@ function _render_state_as_string(obj) {
         ][(c >> 2) - 1];
     }
 
-    var reserve = obj.reserve;
-    var foundation = obj.foundation;
+    const reserve = obj.reserve;
+    const foundation = obj.foundation;
     ret +=
         "Foundations:" +
         foundation
@@ -655,14 +641,14 @@ function _render_state_as_string(obj) {
             .join("") +
         "\n";
 
-    for (var i = 0; i < obj.tableau.length; i++) {
-        var stack = obj.tableau[i];
-        var l = stack[1];
-        var s = stack[0];
+    for (let i = 0; i < obj.tableau.length; i++) {
+        const stack = obj.tableau[i];
+        const l = stack[1];
+        const s = stack[0];
 
         ret += ":";
-        for (var j = 0; j < l; j++) {
-            var c = s[j];
+        for (let j = 0; j < l; j++) {
+            const c = s[j];
             ret += " " + _render_rank(c) + _render_suit(c);
         }
         ret += "\n";
@@ -674,11 +660,11 @@ function _render_state_as_string(obj) {
 }
 
 function attemptSolution(obj, fastSearch) {
-    var state_as_string = _render_state_as_string(obj);
+    const state_as_string = _render_state_as_string(obj);
 
     attempts = 0;
 
-    var instance = new FC_Solve({
+    const instance = new FC_Solve({
         cmd_line_preset: "ct",
         // cmd_line_preset: 'default',
         set_status_callback: function() {
@@ -686,32 +672,32 @@ function attemptSolution(obj, fastSearch) {
         },
     });
 
-    var solve_err_code = instance.do_solve(state_as_string);
+    let solve_err_code = instance.do_solve(state_as_string);
 
     while (solve_err_code == FCS_STATE_SUSPEND_PROCESS) {
         solve_err_code = instance.resume_solution();
     }
 
     if (solve_err_code == FCS_STATE_WAS_SOLVED) {
-        var buffer = instance.display_expanded_moves_solution({});
-        var to_int = function(s) {
+        const buffer = instance.display_expanded_moves_solution({});
+        const to_int = function(s) {
             return parseInt(s, 10);
         };
 
-        var moves_ = instance._post_expand_states_and_moves_seq;
+        const moves_ = instance._post_expand_states_and_moves_seq;
 
-        var current = {};
-        var pre_current = current;
+        let current = {};
+        let pre_current = current;
 
-        var ret_moves = current;
-        for (var i = 0; i < moves_.length; i++) {
-            var m = moves_[i];
+        const ret_moves = current;
+        for (let i = 0; i < moves_.length; i++) {
+            const m = moves_[i];
 
             if (m.type == "m") {
-                var str = m.str;
+                const str = m.str;
 
-                var move_content = (function() {
-                    var matched = str.match(
+                const move_content = (function() {
+                    let matched = str.match(
                         /^Move 1 cards from stack ([0-9]+) to stack ([0-9]+)/,
                     );
 
@@ -771,9 +757,8 @@ function attemptSolution(obj, fastSearch) {
 }
 
 onmessage = function(e) {
-    var state,
-        solution,
-        data = e.data;
+    let state, solution;
+    const data = e.data;
 
     if (data.action === "solve") {
         solution = attemptSolution(data.param, true);
