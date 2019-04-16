@@ -180,7 +180,9 @@ T = %w[agnes application auto-stack-clear autoplay auto-turnover autoplay
        russian-solitaire
        scorpion
        solitaire
-       solver-freecell statistics].freeze
+       solver-freecell
+       spider
+       statistics].freeze
 task :test do
   sh 'eslint -c .eslintrc.yml ' + T.map { |f| "src/js/#{f}.js" }.join(' ')
   sh 'rubocop Rakefile'
