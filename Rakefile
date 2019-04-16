@@ -197,36 +197,7 @@ file DEST_INDEX => [TEMPLATE, COMBINED] do
   create_index DEST_INDEX, true
 end
 
-T = %w[
-  agnes
-  application
-  auto-stack-clear
-  auto-turnover
-  autoplay
-  flowergarden
-  fortythieves
-  freecell
-  golf
-  grandclock
-  ie-opera-background-fix
-  klondike
-  klondike1t
-  montecarlo
-  pyramid
-  russian-solitaire
-  scorpion
-  solitaire
-  solver-freecell
-  solver-freecell-worker
-  spider
-  spider1s
-  spider2s
-  spiderette
-  statistics
-  tritowers
-  will-o-the-wisp
-  yukon
-].freeze
+T = JS_CURATED_SOURCES.reject { |x| x == 'iphone' }.freeze
 task :test do
   sh 'eslint -c .eslintrc.yml ' + T.map { |f| "src/js/#{f}.js" }.join(' ')
   sh 'rubocop Rakefile'
