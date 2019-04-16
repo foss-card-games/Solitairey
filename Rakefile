@@ -178,6 +178,7 @@ T = %w[agnes application auto-stack-clear autoplay auto-turnover autoplay
        flowergarden fortythieves freecell golf grandclock
        klondike klondike1t montecarlo pyramid
        russian-solitaire
+       scorpion
        solitaire
        solver-freecell statistics].freeze
 task :test do

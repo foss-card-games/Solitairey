@@ -1,7 +1,7 @@
 YUI.add(
     "scorpion",
     function(Y) {
-        var Solitaire = Y.Solitaire,
+        const Solitaire = Y.Solitaire,
             Scorpion = (Solitaire.Scorpion = instance(Solitaire, {
                 fields: ["Foundation", "Deck", "Tableau"],
 
@@ -11,15 +11,12 @@ YUI.add(
                 },
 
                 deal: function() {
-                    var card,
-                        stack,
-                        row,
-                        deck = this.deck,
+                    const deck = this.deck,
                         stacks = this.tableau.stacks;
 
-                    for (row = 0; row < 7; row++) {
-                        for (stack = 0; stack < 7; stack++) {
-                            card = deck.pop();
+                    for (let row = 0; row < 7; row++) {
+                        for (let stack = 0; stack < 7; stack++) {
+                            const card = deck.pop();
 
                             if (!(row < 3 && stack < 4)) {
                                 card.faceUp();
@@ -33,12 +30,10 @@ YUI.add(
                 },
 
                 turnOver: function() {
-                    var deck = this.deck.stacks[0],
-                        stacks = this.tableau.stacks,
-                        i,
-                        len;
+                    const deck = this.deck.stacks[0],
+                        stacks = this.tableau.stacks;
 
-                    for (i = 0; i < 3; i++) {
+                    for (let i = 0; i < 3; i++) {
                         deck.my_Last()
                             .faceUp()
                             .moveTo(stacks[i]);
@@ -64,9 +59,7 @@ YUI.add(
                     field: "deck",
 
                     createStack: function() {
-                        var i, len;
-
-                        for (i = this.cards.length - 1; i >= 0; i--) {
+                        for (let i = this.cards.length - 1; i >= 0; i--) {
                             this.stacks[0].push(this.cards[i]);
                         }
                     },
@@ -102,7 +95,7 @@ YUI.add(
 
                 Card: instance(Solitaire.Card, {
                     playable: function() {
-                        var field = this.stack.field;
+                        const field = this.stack.field;
 
                         return (
                             field === "deck" ||
@@ -111,7 +104,7 @@ YUI.add(
                     },
 
                     validTarget: function(stack) {
-                        var target = stack.my_Last();
+                        const target = stack.my_Last();
 
                         if (stack.field !== "tableau") {
                             return false;
@@ -149,21 +142,19 @@ YUI.add(
                 },
 
                 validTarget: function(stack) {
-                    var rank,
-                        cards = this.cards,
-                        i;
+                    const cards = this.cards;
 
                     switch (stack.field) {
                         case "tableau":
                             return this.first().validTarget(stack);
                             break;
                         case "foundation":
-                            rank = this.last.rank;
+                            const rank = this.last.rank;
                             if (cards.length !== 13) {
                                 return false;
                             }
 
-                            for (i = 0; i < 13; i++) {
+                            for (let i = 0; i < 13; i++) {
                                 if (cards[i].rank !== rank) {
                                     return false;
                                 }
@@ -181,7 +172,7 @@ YUI.add(
             Scorpion.Tableau.Stack,
             {
                 setCardPosition: function(card) {
-                    var last = _.last(this.cards),
+                    const last = _.last(this.cards),
                         top = last ? last.top + last.rankHeight : this.top,
                         left = this.left;
 
