@@ -1,13 +1,13 @@
 YUI.add(
     "klondike1t",
     function(Y) {
-        var Solitaire = Y.Solitaire,
+        const Solitaire = Y.Solitaire,
             Klondike = Solitaire.Klondike,
             Klondike1T = (Solitaire.Klondike1T = instance(Klondike, {
                 redeal: Solitaire.noop,
 
                 turnOver: function() {
-                    var deck = this.deck.stacks[0],
+                    const deck = this.deck.stacks[0],
                         waste = this.waste.stacks[0],
                         card = deck.my_Last();
 
