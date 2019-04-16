@@ -181,7 +181,7 @@ T = %w[agnes application auto-stack-clear autoplay auto-turnover autoplay
        scorpion
        solitaire
        solver-freecell
-       spider spider1s spider2s
+       spider spider1s spider2s spiderette
        statistics].freeze
 task :test do
   sh 'eslint -c .eslintrc.yml ' + T.map { |f| "src/js/#{f}.js" }.join(' ')
