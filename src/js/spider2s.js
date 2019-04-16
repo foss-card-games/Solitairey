@@ -1,7 +1,7 @@
 YUI.add(
     "spider2s",
     function(Y) {
-        var Spider = (Y.Solitaire.Spider2S = instance(Y.Solitaire.Spider));
+        const Spider = (Y.Solitaire.Spider2S = instance(Y.Solitaire.Spider));
 
         Spider.Deck = instance(Y.Solitaire.Spider.Deck, {
             suits: ["s", "h"],
