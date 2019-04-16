@@ -1,15 +1,15 @@
 YUI.add(
     "klondike",
     function(Y) {
-        var Solitaire = Y.Solitaire,
+        const Solitaire = Y.Solitaire,
             Klondike = (Y.Solitaire.Klondike = instance(Solitaire, {
                 fields: ["Foundation", "Deck", "Waste", "Tableau"],
 
                 deal: function() {
-                    var card,
+                    let card,
                         piles = 6,
-                        stack = 0,
-                        deck = this.deck,
+                        stack = 0;
+                    const deck = this.deck,
                         stacks = this.tableau.stacks;
 
                     while (piles >= 0) {
@@ -27,19 +27,16 @@ YUI.add(
                 },
 
                 turnOver: function() {
-                    var deck = this.deck.stacks[0],
+                    const deck = this.deck.stacks[0],
                         waste = this.waste.stacks[0],
-                        updatePosition = Klondike.Card.updatePosition,
-                        last,
-                        i,
-                        stop;
+                        updatePosition = Klondike.Card.updatePosition;
 
                     Klondike.Card.updatePosition = Solitaire.noop;
 
                     for (
-                        i = deck.cards.length, stop = i - 3;
+                        let i = deck.cards.length, stop = i - 3;
                         i > stop && i;
-                        i--
+                        --i
                     ) {
                         deck.my_Last()
                             .faceUp()
@@ -54,7 +51,7 @@ YUI.add(
                 },
 
                 redeal: function() {
-                    var deck = this.deck.stacks[0],
+                    const deck = this.deck.stacks[0],
                         waste = this.waste.stacks[0];
 
                     while (waste.cards.length) {
@@ -147,7 +144,7 @@ YUI.add(
                     },
 
                     validTarget: function(stack) {
-                        var target = stack.my_Last();
+                        const target = stack.my_Last();
 
                         switch (stack.field) {
                             case "tableau":
@@ -190,9 +187,9 @@ YUI.add(
             Klondike.Tableau.Stack,
             {
                 setCardPosition: function(card) {
-                    var last = _.last(this.cards),
-                        top = last ? last.top + last.rankHeight : this.top,
-                        left = this.left;
+                    const last = _.last(this.cards);
+                    (top = last ? last.top + last.rankHeight : this.top),
+                        (left = this.left);
 
                     card.left = left;
                     card.top = top;
@@ -206,7 +203,7 @@ YUI.add(
             {
                 // always display only the last three cards
                 setCardPosition: function(card) {
-                    var cards = this.cards,
+                    const cards = this.cards,
                         last = _.last(cards),
                         stack = this;
 
