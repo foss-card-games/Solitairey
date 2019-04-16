@@ -1,20 +1,17 @@
 YUI.add(
     "pyramid",
     function(Y) {
-        var Solitaire = Y.Solitaire,
+        const Solitaire = Y.Solitaire,
             Pyramid = (Y.Solitaire.Pyramid = instance(Solitaire, {
                 fields: ["Foundation", "Deck", "Waste", "Tableau"],
 
                 deal: function() {
-                    var card,
-                        stack,
-                        i,
-                        deck = this.deck,
+                    const deck = this.deck,
                         stacks = this.tableau.stacks;
 
-                    for (stack = 0; stack < 7; stack++) {
-                        for (i = 0; i <= stack; i++) {
-                            card = deck.pop().faceUp();
+                    for (let stack = 0; stack < 7; stack++) {
+                        for (let i = 0; i <= stack; i++) {
+                            const card = deck.pop().faceUp();
                             stacks[stack].push(card);
                         }
                     }
@@ -24,7 +21,7 @@ YUI.add(
                 },
 
                 turnOver: function() {
-                    var deck = this.deck.stacks[0],
+                    const deck = this.deck.stacks[0],
                         waste = this.waste.stacks[0];
 
                     if (deck.cards.length === 1) {
@@ -41,7 +38,7 @@ YUI.add(
                     images: {},
 
                     updateDragGroups: function() {
-                        var active = Solitaire.activeCard;
+                        const active = Solitaire.activeCard;
 
                         Y.Array.each(this.cards, function(c) {
                             if (!c) {
@@ -65,7 +62,7 @@ YUI.add(
                     },
 
                     drop: function(e) {
-                        var active = Solitaire.activeCard,
+                        const active = Solitaire.activeCard,
                             foundation = Solitaire.game.foundation.stacks[0],
                             target = e.drop.get("node").getData("target");
 
@@ -108,9 +105,7 @@ YUI.add(
                     field: "deck",
 
                     createStack: function() {
-                        var i, len;
-
-                        for (i = 0, len = this.cards.length; i < len; i++) {
+                        for (let i = 0, len = this.cards.length; i < len; i++) {
                             this.stacks[0].push(this.cards[i]);
                         }
                     },
@@ -167,7 +162,7 @@ YUI.add(
                     },
 
                     createProxyStack: function() {
-                        var stack = null;
+                        let stack = null;
 
                         if (this.isFree()) {
                             stack = instance(this.stack);
@@ -184,7 +179,7 @@ YUI.add(
                     },
 
                     isFree: function() {
-                        var stack = this.stack,
+                        const stack = this.stack,
                             stackIndex = stack.index(),
                             index = stack.cards.indexOf(this),
                             game = Solitaire.game,
@@ -218,7 +213,7 @@ YUI.add(
             Pyramid.Tableau.Stack,
             {
                 deleteItem: function(card) {
-                    var cards = this.cards,
+                    const cards = this.cards,
                         i = cards.indexOf(card);
 
                     if (i !== -1) {
@@ -227,7 +222,7 @@ YUI.add(
                 },
 
                 setCardPosition: function(card) {
-                    var layout = Pyramid.Tableau.stackConfig.layout,
+                    const layout = Pyramid.Tableau.stackConfig.layout,
                         last = _.last(this.cards),
                         top = this.top,
                         left = last
@@ -251,13 +246,13 @@ YUI.add(
                 },
 
                 update: function(undo) {
-                    var last = this.my_Last();
+                    const last = this.my_Last();
 
                     last && last.faceUp(undo);
                 },
 
                 updateDragGroups: function() {
-                    var active = Solitaire.activeCard,
+                    const active = Solitaire.activeCard,
                         card = this.my_Last();
 
                     if (!card) {
