@@ -1,7 +1,7 @@
 YUI.add(
     "monte-carlo",
     function(Y) {
-        var Solitaire = Y.Solitaire,
+        const Solitaire = Y.Solitaire,
             MonteCarlo = (Y.Solitaire.MonteCarlo = instance(Solitaire, {
                 fields: ["Foundation", "Deck", "Tableau"],
 
@@ -20,8 +20,8 @@ YUI.add(
                 },
 
                 deckPlayable: function() {
-                    var gap = false,
-                        node = Game.deck.stacks[0].node;
+                    let gap = false;
+                    const node = Game.deck.stacks[0].node;
 
                     Game.eachStack(function(s) {
                         if (!gap && Y.Array.indexOf(s.cards, null) !== -1) {
@@ -37,15 +37,12 @@ YUI.add(
                 },
 
                 deal: function() {
-                    var card,
-                        stack,
-                        i,
-                        deck = this.deck,
+                    const deck = this.deck,
                         stacks = this.tableau.stacks;
 
-                    for (stack = 0; stack < 5; stack++) {
-                        for (i = 0; i < 5; i++) {
-                            card = deck.pop().faceUp();
+                    for (let stack = 0; stack < 5; stack++) {
+                        for (let i = 0; i < 5; i++) {
+                            const card = deck.pop().faceUp();
                             stacks[stack].push(card);
                         }
                     }
@@ -59,7 +56,7 @@ YUI.add(
                  * 3) deal cards from the deck to fill the remaining free rows
                  */
                 redeal: function() {
-                    var stacks = this.tableau.stacks,
+                    const stacks = this.tableau.stacks,
                         deck = this.deck.stacks[0],
                         cards = Y.Array.reduce(stacks, [], function(
                             compact,
@@ -67,10 +64,8 @@ YUI.add(
                         ) {
                             return compact.concat(stack.compact());
                         }),
-                        len = cards.length,
-                        card,
-                        s,
-                        i;
+                        len = cards.length;
+                    let card, s, i;
 
                     Y.Array.each(stacks, function(stack) {
                         stack.node.remove();
@@ -104,7 +99,7 @@ YUI.add(
                     images: { deck: "freeslot.png" },
 
                     updateDragGroups: function() {
-                        var active = Solitaire.activeCard;
+                        const active = Solitaire.activeCard;
 
                         Y.Array.each(this.cards, function(c) {
                             if (!c) {
@@ -124,7 +119,7 @@ YUI.add(
 
                 Events: instance(Solitaire.Events, {
                     drop: function(e) {
-                        var active = Solitaire.activeCard,
+                        const active = Solitaire.activeCard,
                             foundation = Solitaire.game.foundation.stacks[0],
                             target = e.drop.get("node").getData("target");
 
@@ -169,9 +164,7 @@ YUI.add(
                     field: "deck",
 
                     createStack: function() {
-                        var i, len;
-
-                        for (i = 0, len = this.cards.length; i < len; i++) {
+                        for (let i = 0, len = this.cards.length; i < len; i++) {
                             this.stacks[0].push(this.cards[i]);
                         }
                     },
@@ -221,7 +214,7 @@ YUI.add(
                     },
 
                     createProxyStack: function() {
-                        var stack = null;
+                        let stack = null;
 
                         if (this.isFree()) {
                             stack = instance(this.stack);
@@ -256,7 +249,7 @@ YUI.add(
             MonteCarlo.Tableau.Stack,
             {
                 deleteItem: function(card) {
-                    var cards = this.cards,
+                    const cards = this.cards,
                         i = cards.indexOf(card);
 
                     if (i !== -1) {
@@ -265,7 +258,7 @@ YUI.add(
                 },
 
                 setCardPosition: function(card) {
-                    var last = _.last(this.cards),
+                    const last = _.last(this.cards),
                         layout = MonteCarlo.Tableau.stackConfig.layout,
                         top = this.top,
                         left = last
@@ -277,14 +270,11 @@ YUI.add(
                 },
 
                 compact: function() {
-                    var cards = this.cards,
-                        card,
-                        compact = [],
-                        i,
-                        len;
+                    const cards = this.cards,
+                        compact = [];
 
-                    for (i = 0, len = cards.length; i < len; i++) {
-                        card = cards[i];
+                    for (let i = 0, len = cards.length; i < len; i++) {
+                        const card = cards[i];
                         if (card) {
                             compact.push(card);
                             card.pushPosition();
@@ -305,7 +295,7 @@ YUI.add(
             MonteCarlo.Deck.Stack,
             {
                 updateDragGroups: function() {
-                    var active = Solitaire.activeCard,
+                    const active = Solitaire.activeCard,
                         card = this.my_Last();
 
                     if (!card) {
