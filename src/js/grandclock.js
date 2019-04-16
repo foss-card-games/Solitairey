@@ -179,12 +179,7 @@ YUI.add(
             GClock.Tableau.Stack,
             {
                 setCardPosition: function(card) {
-                    const last = _.last(this.cards),
-                        top = last ? last.top + last.rankHeight : this.top,
-                        left = this.left;
-
-                    card.left = left;
-                    card.top = top;
+                    return this.lastCardSetCardPosition(card);
                 },
             },
             true,

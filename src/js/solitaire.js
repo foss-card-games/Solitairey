@@ -1414,6 +1414,15 @@ define([], function() {
                     return Game[this.field].stacks[this.index() + 1];
                 },
 
+                lastCardSetCardPosition: function(card) {
+                    const last = _.last(this.cards),
+                        top = last ? last.top + last.rankHeight : this.top,
+                        left = this.left;
+
+                    card.left = left;
+                    card.top = top;
+                },
+
                 setCardPosition: function(card) {
                     card.top = this.top;
                     card.left = isNaN(this.left) ? null : this.left;

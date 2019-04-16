@@ -98,14 +98,7 @@ YUI.add(
                         images: {},
 
                         setCardPosition: function(card) {
-                            const last = this.my_Last(),
-                                top = last
-                                    ? last.top + last.rankHeight
-                                    : this.top,
-                                left = this.left;
-
-                            card.top = top;
-                            card.left = left;
+                            return this.lastCardSetCardPosition(card);
                         },
                     }),
                 },
