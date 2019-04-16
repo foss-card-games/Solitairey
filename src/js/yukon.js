@@ -1,15 +1,15 @@
 YUI.add(
     "yukon",
     function(Y) {
-        var Solitaire = Y.Solitaire,
+        const Solitaire = Y.Solitaire,
             Yukon = (Solitaire.Yukon = instance(Solitaire, {
                 fields: ["Foundation", "Tableau"],
 
                 deal: function() {
-                    var card,
+                    let card,
                         piles = 6,
-                        stack = 0,
-                        deck = this.deck,
+                        stack = 0;
+                    const deck = this.deck,
                         stacks = this.tableau.stacks;
 
                     while (piles >= 0) {
@@ -73,7 +73,7 @@ YUI.add(
                     },
 
                     validTarget: function(stack) {
-                        var target = stack.my_Last();
+                        const target = stack.my_Last();
 
                         switch (stack.field) {
                             case "tableau":
@@ -129,7 +129,7 @@ YUI.add(
             Yukon.Tableau.Stack,
             {
                 setCardPosition: function(card) {
-                    var last = _.last(this.cards),
+                    const last = _.last(this.cards),
                         top = last ? last.top + last.rankHeight : this.top,
                         left = this.left;
 

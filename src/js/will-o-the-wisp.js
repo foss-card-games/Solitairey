@@ -1,17 +1,16 @@
 YUI.add(
     "will-o-the-wisp",
     function(Y) {
-        var Solitaire = Y.Solitaire,
+        const Solitaire = Y.Solitaire,
             WillOTheWisp = (Y.Solitaire.WillOTheWisp = instance(
                 Solitaire.Spiderette,
                 {
                     deal: function() {
-                        var deck = this.deck,
-                            row;
+                        const deck = this.deck;
 
-                        for (row = 0; row < 3; row++) {
+                        for (let row = 0; row < 3; row++) {
                             this.eachStack(function(stack) {
-                                var card = deck.pop();
+                                const card = deck.pop();
                                 if (row === 2) {
                                     card.faceUp();
                                 }
