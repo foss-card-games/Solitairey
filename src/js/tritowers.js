@@ -1,7 +1,7 @@
 YUI.add(
     "tri-towers",
     function(Y) {
-        var Solitaire = Y.Solitaire,
+        const Solitaire = Y.Solitaire,
             TriTowers = (Y.Solitaire.TriTowers = instance(
                 Solitaire,
                 {
@@ -15,10 +15,9 @@ YUI.add(
                     },
                     createEvents: function() {
                         Y.on("solitaire|endTurn", function() {
-                            var tableaus = Solitaire.game.tableau.stacks,
-                                i;
+                            const tableaus = Solitaire.game.tableau.stacks;
 
-                            for (i = 0; i < 3; i++) {
+                            for (let i = 0; i < 3; i++) {
                                 Y.fire("tableau:afterPop", tableaus[i]);
                             }
                         });
@@ -27,14 +26,11 @@ YUI.add(
                     },
 
                     deal: function() {
-                        var card,
-                            stack,
-                            stacks = this.tableau.stacks,
-                            deck = this.deck,
-                            foundation = this.foundation.stacks[0],
-                            i,
-                            stackLength;
+                        let card, stack, i, stackLength;
 
+                        const stacks = this.tableau.stacks,
+                            deck = this.deck,
+                            foundation = this.foundation.stacks[0];
                         for (stack = 0; stack < 4; stack++) {
                             stackLength = (stack + 1) * 3;
 
@@ -52,7 +48,7 @@ YUI.add(
                     },
 
                     turnOver: function() {
-                        var deck = this.deck.stacks[0],
+                        const deck = this.deck.stacks[0],
                             foundation = this.foundation.stacks[0],
                             last = deck.my_Last();
 
@@ -60,7 +56,7 @@ YUI.add(
                     },
 
                     isWon: function() {
-                        var won = true;
+                        let won = true;
 
                         this.eachStack(function(stack) {
                             stack.eachCard(function(card) {
@@ -89,9 +85,11 @@ YUI.add(
                         },
 
                         createStack: function() {
-                            var i, len;
-
-                            for (i = 0, len = this.cards.length; i < len; i++) {
+                            for (
+                                let i = 0, len = this.cards.length;
+                                i < len;
+                                i++
+                            ) {
                                 this.stacks[0].push(this.cards[i]);
                             }
                         },
@@ -150,14 +148,14 @@ YUI.add(
                                 return false;
                             }
 
-                            var card = stack.my_Last(),
+                            const card = stack.my_Last(),
                                 diff = Math.abs(this.rank - card.rank);
 
                             return diff === 1 || diff === 12;
                         },
 
                         playable: function() {
-                            var stack = this.stack;
+                            const stack = this.stack;
 
                             return (
                                 (stack.field === "deck" &&
@@ -168,11 +166,10 @@ YUI.add(
                         },
 
                         isFree: function() {
-                            var stack = this.stack,
+                            const stack = this.stack,
                                 next = stack.next(),
                                 tower = this.tower(),
-                                index = stack.cards.indexOf(this),
-                                i;
+                                index = stack.cards.indexOf(this);
 
                             if (stack.field !== "tableau") {
                                 return false;
@@ -182,7 +179,7 @@ YUI.add(
                                 return true;
                             }
 
-                            for (i = 0; i < 2; i++) {
+                            for (let i = 0; i < 2; i++) {
                                 if (next.cards[index + tower + i]) {
                                     return false;
                                 }
@@ -192,7 +189,7 @@ YUI.add(
                         },
 
                         tower: function() {
-                            var stack = this.stack,
+                            const stack = this.stack,
                                 index = stack.cards.indexOf(this),
                                 stackIndex = stack.index() + 1;
 
@@ -215,7 +212,7 @@ YUI.add(
             TriTowers.Tableau.Stack,
             {
                 deleteItem: function(card) {
-                    var cards = this.cards,
+                    const cards = this.cards,
                         i = cards.indexOf(card);
 
                     if (i !== -1) {
@@ -224,11 +221,9 @@ YUI.add(
                 },
 
                 setCardPosition: function(card) {
-                    var last = this.my_Last(),
+                    let left, index, stackIndex;
+                    const last = this.my_Last(),
                         top = this.top,
-                        left,
-                        index,
-                        stackIndex,
                         layout = TriTowers.Tableau.stackConfig.layout,
                         rowGaps = layout.rowGaps,
                         cardGap = layout.cardGap;
@@ -257,12 +252,10 @@ YUI.add(
             TriTowers.Deck.Stack,
             {
                 setCardPosition: function(card) {
-                    var last = this.my_Last(),
-                        top,
-                        left,
-                        zIndex;
+                    const last = this.my_Last();
+                    let left, zIndex;
 
-                    top = this.top;
+                    const top = this.top;
                     if (last) {
                         left = last.left + card.width * 0.1;
                         zIndex = last.zIndex + 1;
