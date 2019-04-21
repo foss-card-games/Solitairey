@@ -1,5 +1,8 @@
 dist: xenial
 install:
+    - cpanm local::lib
+    - eval "$(perl -Mlocal::lib=$HOME/perl_modules)"
+    - cpanm Path::Tiny
     - gem install rake
     - gem install rubocop
     - bash -x bin/install-npm-deps.sh
