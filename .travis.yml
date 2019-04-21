@@ -4,5 +4,6 @@ install:
     - gem install rubocop
     - bash -x bin/install-npm-deps.sh
 script:
+    - PATH="$PATH:$PWD/node_modules/.bin"
     - rake
     - rake test
