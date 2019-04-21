@@ -1,0 +1,8 @@
+dist: xenial
+install:
+    - gem install rake
+    - gem install rubocop
+    - bash -x bin/install-npm-deps.sh
+script:
+    - rake
+    - rake test
