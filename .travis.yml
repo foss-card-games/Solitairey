@@ -1,3 +1,7 @@
+addons:
+    apt:
+        packages:
+            - cpanminus
 dist: xenial
 install:
     - sudo cpanm local::lib
