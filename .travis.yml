@@ -4,7 +4,7 @@ addons:
             - cpanminus
 dist: xenial
 install:
-    - sudo cpanm local::lib
+    - cpanm -L ~/perl_modules local::lib
     - eval "$(perl -Mlocal::lib=$HOME/perl_modules)"
     - cpanm Path::Tiny
     - gem install rake
