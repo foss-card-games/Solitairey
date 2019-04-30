@@ -89,6 +89,12 @@ def js_pat_file(filename)
   end [0] || "#{JS_SRC_PREFIX}/#{filename}"
 end
 
+def ts_pat_file(filename)
+  DIRS.map { |d| d + '/' + filename }.select do |f|
+    File.file? f
+  end [0] || "src/ts/#{filename}"
+end
+
 def fcs_pat_file(filename)
   "ext/libfreecell-solver/#{filename}"
 end
@@ -141,9 +147,9 @@ end
 
 TS_BASE.each do |base|
   dest2 = js_js_pat_file(base)
-  src2 = js_pat_file("#{base}.ts")
+  src2 = ts_pat_file("#{base}.ts")
   file dest2 => [src2] + BROWSERIFY_JS.map { |x| dest_js(x) } do
-    sh "tsc --target es6 --module amd --out #{dest2} #{src2}"
+    sh 'tsc -p .'
   end
 end
 
