@@ -4,18 +4,18 @@ YUI.add(
         const Solitaire = Y.Solitaire,
             Klondike = Solitaire.Klondike,
             Spider = Solitaire.Spider,
-            Spiderette = (Y.Solitaire.Spiderette = instance(Spider, {
+            Spiderette = (Y.Solitaire.Spiderette = Solitaire.instance(Spider, {
                 height: Klondike.height,
                 deal: Klondike.deal,
 
-                Tableau: instance(Spider.Tableau, {
+                Tableau: Solitaire.instance(Spider.Tableau, {
                     stackConfig: Klondike.Tableau.stackConfig,
                 }),
-                Foundation: instance(Spider.Foundation, {
+                Foundation: Solitaire.instance(Spider.Foundation, {
                     stackConfig: Klondike.Foundation.stackConfig,
                 }),
 
-                Deck: instance(Spider.Deck, {
+                Deck: Solitaire.instance(Spider.Deck, {
                     count: 1,
                 }),
             }));

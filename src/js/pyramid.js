@@ -2,7 +2,7 @@ YUI.add(
     "pyramid",
     function(Y) {
         const Solitaire = Y.Solitaire,
-            Pyramid = (Y.Solitaire.Pyramid = instance(Solitaire, {
+            Pyramid = (Y.Solitaire.Pyramid = Solitaire.instance(Solitaire, {
                 fields: ["Foundation", "Deck", "Waste", "Tableau"],
 
                 deal: function() {
@@ -34,7 +34,7 @@ YUI.add(
                     return this.Card.base.height * 4.85;
                 },
 
-                Stack: instance(Solitaire.Stack, {
+                Stack: Solitaire.instance(Solitaire.Stack, {
                     images: {},
 
                     updateDragGroups: function() {
@@ -54,7 +54,7 @@ YUI.add(
                     },
                 }),
 
-                Events: instance(Solitaire.Events, {
+                Events: Solitaire.instance(Solitaire.Events, {
                     dragCheck: function(e) {
                         if (!Solitaire.game.autoPlay.call(this)) {
                             Solitaire.Events.dragCheck.call(this);
@@ -93,7 +93,7 @@ YUI.add(
                     field: "foundation",
                 },
 
-                Deck: instance(Solitaire.Deck, {
+                Deck: Solitaire.instance(Solitaire.Deck, {
                     stackConfig: {
                         total: 1,
                         layout: {
@@ -141,7 +141,7 @@ YUI.add(
                     field: "tableau",
                 },
 
-                Card: instance(Solitaire.Card, {
+                Card: Solitaire.instance(Solitaire.Card, {
                     validTarget: function(card) {
                         if (card.field === "foundation") {
                             // "card" is actually a stack :/
@@ -165,7 +165,7 @@ YUI.add(
                         let stack = null;
 
                         if (this.isFree()) {
-                            stack = instance(this.stack);
+                            stack = Solitaire.instance(this.stack);
                             stack.cards = this.proxyCards();
                         }
 
@@ -206,7 +206,7 @@ YUI.add(
             }));
 
         Y.Array.each(Pyramid.fields, function(field) {
-            Pyramid[field].Stack = instance(Pyramid.Stack);
+            Pyramid[field].Stack = Solitaire.instance(Pyramid.Stack);
         });
 
         Y.mix(

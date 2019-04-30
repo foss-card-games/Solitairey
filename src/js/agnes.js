@@ -11,7 +11,7 @@ YUI.add(
 
         const Solitaire = Y.Solitaire,
             Klondike = Solitaire.Klondike,
-            Agnes = (Solitaire.Agnes = instance(Klondike, {
+            Agnes = (Solitaire.Agnes = Solitaire.instance(Klondike, {
                 fields: ["Foundation", "Deck", "Waste", "Tableau", "Reserve"],
 
                 height: function() {
@@ -57,7 +57,7 @@ YUI.add(
                     }
                 },
 
-                Waste: instance(Klondike.Waste, {
+                Waste: Solitaire.instance(Klondike.Waste, {
                     stackConfig: {
                         total: 2,
                         layout: {
@@ -67,7 +67,7 @@ YUI.add(
                         },
                     },
 
-                    Stack: instance(Solitaire.Stack, {
+                    Stack: Solitaire.instance(Solitaire.Stack, {
                         setCardPosition: function(card) {
                             const last = this.my_Last(),
                                 top = this.top,
@@ -94,7 +94,7 @@ YUI.add(
                         },
                     },
 
-                    Stack: instance(Klondike.Stack, {
+                    Stack: Solitaire.instance(Klondike.Stack, {
                         images: {},
 
                         setCardPosition: function(card) {
@@ -103,7 +103,7 @@ YUI.add(
                     }),
                 },
 
-                Card: instance(Klondike.Card, {
+                Card: Solitaire.instance(Klondike.Card, {
                     playable: function() {
                         if (this.stack.field === "reserve") {
                             return this.isFree();

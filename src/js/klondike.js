@@ -2,7 +2,7 @@ YUI.add(
     "klondike",
     function(Y) {
         const Solitaire = Y.Solitaire,
-            Klondike = (Y.Solitaire.Klondike = instance(Solitaire, {
+            Klondike = (Y.Solitaire.Klondike = Solitaire.instance(Solitaire, {
                 fields: ["Foundation", "Deck", "Waste", "Tableau"],
 
                 deal: function() {
@@ -62,7 +62,7 @@ YUI.add(
                     }
                 },
 
-                Stack: instance(Solitaire.Stack),
+                Stack: Solitaire.instance(Solitaire.Stack),
 
                 Foundation: {
                     stackConfig: {
@@ -78,7 +78,7 @@ YUI.add(
                     field: "foundation",
                 },
 
-                Deck: instance(Solitaire.Deck, {
+                Deck: Solitaire.instance(Solitaire.Deck, {
                     stackConfig: {
                         total: 1,
                         layout: {
@@ -118,7 +118,7 @@ YUI.add(
                     field: "tableau",
                 },
 
-                Card: instance(Solitaire.Card, {
+                Card: Solitaire.instance(Solitaire.Card, {
                     playable: function() {
                         switch (this.stack.field) {
                             case "tableau":
@@ -167,7 +167,7 @@ YUI.add(
             }));
 
         Y.Array.each(Klondike.fields, function(field) {
-            Klondike[field].Stack = instance(Klondike.Stack);
+            Klondike[field].Stack = Solitaire.instance(Klondike.Stack);
         });
 
         Y.mix(

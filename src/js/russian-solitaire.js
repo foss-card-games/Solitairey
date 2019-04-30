@@ -3,9 +3,12 @@ YUI.add(
     function(Y) {
         const Solitaire = Y.Solitaire,
             Yukon = Solitaire.Yukon,
-            RussianSolitaire = (Solitaire.RussianSolitaire = instance(Yukon, {
-                Card: instance(Yukon.Card),
-            }));
+            RussianSolitaire = (Solitaire.RussianSolitaire = Solitaire.instance(
+                Yukon,
+                {
+                    Card: Solitaire.instance(Yukon.Card),
+                },
+            ));
 
         RussianSolitaire.Card.validTarget = function(stack) {
             const target = stack.my_Last();

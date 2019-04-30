@@ -2,7 +2,7 @@ YUI.add(
     "spider",
     function(Y) {
         const Solitaire = Y.Solitaire,
-            Spider = (Solitaire.Spider = instance(Solitaire, {
+            Spider = (Solitaire.Spider = Solitaire.instance(Solitaire, {
                 fields: ["Foundation", "Deck", "Tableau"],
 
                 createEvents: function() {
@@ -52,7 +52,7 @@ YUI.add(
                     }, "tableau");
                 },
 
-                Stack: instance(Solitaire.Stack),
+                Stack: Solitaire.instance(Solitaire.Stack),
 
                 Foundation: {
                     stackConfig: {
@@ -69,7 +69,7 @@ YUI.add(
                     draggable: false,
                 },
 
-                Deck: instance(Solitaire.Deck, {
+                Deck: Solitaire.instance(Solitaire.Deck, {
                     count: 2,
 
                     stackConfig: {
@@ -97,7 +97,7 @@ YUI.add(
                     field: "tableau",
                 },
 
-                Card: instance(Solitaire.Card, {
+                Card: Solitaire.instance(Solitaire.Card, {
                     playable: function() {
                         const previous = this.stack[this.index - 1];
 
@@ -134,7 +134,7 @@ YUI.add(
         }
 
         Y.Array.each(Spider.fields, function(field) {
-            Spider[field].Stack = instance(Spider.Stack);
+            Spider[field].Stack = Solitaire.instance(Spider.Stack);
         });
 
         Y.mix(

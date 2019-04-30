@@ -2,7 +2,7 @@ YUI.add(
     "golf",
     function(Y) {
         const Solitaire = Y.Solitaire,
-            Golf = (Y.Solitaire.Golf = instance(
+            Golf = (Y.Solitaire.Golf = Solitaire.instance(
                 Solitaire,
                 {
                     fields: ["Deck", "Foundation", "Tableau"],
@@ -54,7 +54,7 @@ YUI.add(
                         return this.Card.base.height * 4;
                     },
 
-                    Deck: instance(Solitaire.Deck, {
+                    Deck: Solitaire.instance(Solitaire.Deck, {
                         field: "deck",
                         stackConfig: {
                             total: 1,
@@ -104,7 +104,7 @@ YUI.add(
                         },
                     },
 
-                    Events: instance(Solitaire.Events, {
+                    Events: Solitaire.instance(Solitaire.Events, {
                         dragCheck: function(e) {
                             this.getCard().autoPlay();
 
@@ -114,7 +114,7 @@ YUI.add(
                         },
                     }),
 
-                    Card: instance(Solitaire.Card, {
+                    Card: Solitaire.instance(Solitaire.Card, {
                         /*
                          * return true if the target is 1 rank away from the this card
                          */
@@ -137,7 +137,7 @@ YUI.add(
                         },
                     }),
 
-                    Stack: instance(Solitaire.Stack, {
+                    Stack: Solitaire.instance(Solitaire.Stack, {
                         images: {},
                     }),
                 },
@@ -145,7 +145,7 @@ YUI.add(
             ));
 
         Y.Array.each(Golf.fields, function(field) {
-            Golf[field].Stack = instance(Golf.Stack);
+            Golf[field].Stack = Solitaire.instance(Golf.Stack);
         });
 
         Y.mix(

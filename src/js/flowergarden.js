@@ -2,7 +2,7 @@ YUI.add(
     "flower-garden",
     function(Y) {
         const Solitaire = Y.Solitaire,
-            FlowerGarden = (Y.Solitaire.FlowerGarden = instance(
+            FlowerGarden = (Y.Solitaire.FlowerGarden = Solitaire.instance(
                 Solitaire,
                 {
                     fields: ["Foundation", "Reserve", "Tableau"],
@@ -36,7 +36,7 @@ YUI.add(
                         return this.Card.height * 4.4;
                     },
 
-                    Stack: instance(Solitaire.Stack),
+                    Stack: Solitaire.instance(Solitaire.Stack),
 
                     Foundation: {
                         stackConfig: {
@@ -87,7 +87,7 @@ YUI.add(
                         draggable: true,
                     },
 
-                    Card: instance(Solitaire.Card, {
+                    Card: Solitaire.instance(Solitaire.Card, {
                         rankHeight: 24,
 
                         createProxyStack: function() {
@@ -102,7 +102,7 @@ YUI.add(
                                         this,
                                     );
                                 case "reserve":
-                                    stack = instance(this.stack);
+                                    stack = Solitaire.instance(this.stack);
                                     stack.cards = [this];
                                     this.proxyStack = stack;
                                     break;
@@ -177,7 +177,9 @@ YUI.add(
         Y.Array.each(
             FlowerGarden.fields,
             function(field) {
-                FlowerGarden[field].Stack = instance(FlowerGarden.Stack);
+                FlowerGarden[field].Stack = Solitaire.instance(
+                    FlowerGarden.Stack,
+                );
             },
             true,
         );

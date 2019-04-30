@@ -2,7 +2,7 @@ YUI.add(
     "scorpion",
     function(Y) {
         const Solitaire = Y.Solitaire,
-            Scorpion = (Solitaire.Scorpion = instance(Solitaire, {
+            Scorpion = (Solitaire.Scorpion = Solitaire.instance(Solitaire, {
                 fields: ["Foundation", "Deck", "Tableau"],
 
                 createEvents: function() {
@@ -44,9 +44,9 @@ YUI.add(
                     return this.Card.base.height * 5.6;
                 },
 
-                Stack: instance(Solitaire.Stack),
+                Stack: Solitaire.instance(Solitaire.Stack),
 
-                Deck: instance(Solitaire.Deck, {
+                Deck: Solitaire.instance(Solitaire.Deck, {
                     stackConfig: {
                         total: 1,
                         layout: {
@@ -93,7 +93,7 @@ YUI.add(
                     field: "tableau",
                 },
 
-                Card: instance(Solitaire.Card, {
+                Card: Solitaire.instance(Solitaire.Card, {
                     playable: function() {
                         const field = this.stack.field;
 
@@ -124,7 +124,7 @@ YUI.add(
             }));
 
         Y.Array.each(Scorpion.fields, function(field) {
-            Scorpion[field].Stack = instance(Scorpion.Stack);
+            Scorpion[field].Stack = Solitaire.instance(Scorpion.Stack);
         });
 
         Y.mix(

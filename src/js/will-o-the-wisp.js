@@ -2,7 +2,7 @@ YUI.add(
     "will-o-the-wisp",
     function(Y) {
         const Solitaire = Y.Solitaire,
-            WillOTheWisp = (Y.Solitaire.WillOTheWisp = instance(
+            WillOTheWisp = (Y.Solitaire.WillOTheWisp = Solitaire.instance(
                 Solitaire.Spiderette,
                 {
                     deal: function() {

@@ -110,6 +110,7 @@ define([], function() {
 
             Y.mix(Solitaire, {
                 activeCard: null,
+                instance: instance,
                 moves: null,
                 selector: ".solitairey_body",
                 offset: { left: 50, top: 70 },

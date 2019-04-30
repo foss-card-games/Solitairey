@@ -36,7 +36,7 @@ requirejs.config({
             console.log("loaded solver-freecell");
         require(['./solitaire', './iphone', './auto-stack-clear', './auto-turnover', './statistics', './autoplay', './application', './freecell'],
                 function (solitaire, iphone, auto_stack, auto_turn, statistics, autoplay, application, freecell) {
-                  application.setUI(true)true);
+                  application.setUI(true);
                   application.schedule((Y)=>{Y.fire("newGameRun");});
                 });
         },);

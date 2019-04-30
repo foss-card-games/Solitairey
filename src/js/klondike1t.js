@@ -3,7 +3,7 @@ YUI.add(
     function(Y) {
         const Solitaire = Y.Solitaire,
             Klondike = Solitaire.Klondike,
-            Klondike1T = (Solitaire.Klondike1T = instance(Klondike, {
+            Klondike1T = (Solitaire.Klondike1T = Solitaire.instance(Klondike, {
                 redeal: Solitaire.noop,
 
                 turnOver: function() {
@@ -14,12 +14,12 @@ YUI.add(
                     card && card.faceUp().moveTo(waste);
                 },
 
-                Waste: instance(Klondike.Waste, {
-                    Stack: instance(Solitaire.Stack),
+                Waste: Solitaire.instance(Klondike.Waste, {
+                    Stack: Solitaire.instance(Solitaire.Stack),
                 }),
 
-                Deck: instance(Klondike.Deck, {
-                    Stack: instance(Klondike.Deck.Stack, {
+                Deck: Solitaire.instance(Klondike.Deck, {
+                    Stack: Solitaire.instance(Klondike.Deck.Stack, {
                         createNode: function() {
                             Klondike.Deck.Stack.createNode.call(this);
                             this.node.removeClass("playable");

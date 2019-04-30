@@ -2,7 +2,7 @@ YUI.add(
     "yukon",
     function(Y) {
         const Solitaire = Y.Solitaire,
-            Yukon = (Solitaire.Yukon = instance(Solitaire, {
+            Yukon = (Solitaire.Yukon = Solitaire.instance(Solitaire, {
                 fields: ["Foundation", "Tableau"],
 
                 deal: function() {
@@ -35,7 +35,7 @@ YUI.add(
                     return this.Card.base.height * 4.8;
                 },
 
-                Stack: instance(Solitaire.Stack),
+                Stack: Solitaire.instance(Solitaire.Stack),
 
                 Foundation: {
                     stackConfig: {
@@ -65,7 +65,7 @@ YUI.add(
                     draggable: true,
                 },
 
-                Card: instance(Solitaire.Card, {
+                Card: Solitaire.instance(Solitaire.Card, {
                     playable: function() {
                         return (
                             this.stack.field === "tableau" && !this.isFaceDown
@@ -105,7 +105,7 @@ YUI.add(
             }));
 
         Y.Array.each(Yukon.fields, function(field) {
-            Yukon[field].Stack = instance(Yukon.Stack);
+            Yukon[field].Stack = Solitaire.instance(Yukon.Stack);
         });
 
         Y.mix(

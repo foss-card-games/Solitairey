@@ -2,7 +2,7 @@ YUI.add(
     "tri-towers",
     function(Y) {
         const Solitaire = Y.Solitaire,
-            TriTowers = (Y.Solitaire.TriTowers = instance(
+            TriTowers = (Y.Solitaire.TriTowers = Solitaire.instance(
                 Solitaire,
                 {
                     fields: ["Deck", "Foundation", "Tableau"],
@@ -71,7 +71,7 @@ YUI.add(
                         return won;
                     },
 
-                    Deck: instance(Solitaire.Deck, {
+                    Deck: Solitaire.instance(Solitaire.Deck, {
                         field: "deck",
                         stackConfig: {
                             total: 1,
@@ -128,7 +128,7 @@ YUI.add(
                         },
                     },
 
-                    Events: instance(Solitaire.Events, {
+                    Events: Solitaire.instance(Solitaire.Events, {
                         dragCheck: function(e) {
                             this.getCard().autoPlay();
 
@@ -138,7 +138,7 @@ YUI.add(
                         },
                     }),
 
-                    Card: instance(Solitaire.Card, {
+                    Card: Solitaire.instance(Solitaire.Card, {
                         /*
                          * return true if the target is 1 rank away from the this card
                          * Aces and Kings are valid targets for each other
@@ -197,7 +197,7 @@ YUI.add(
                         },
                     }),
 
-                    Stack: instance(Solitaire.Stack, {
+                    Stack: Solitaire.instance(Solitaire.Stack, {
                         images: {},
                     }),
                 },
@@ -205,7 +205,7 @@ YUI.add(
             ));
 
         Y.Array.each(TriTowers.fields, function(field) {
-            TriTowers[field].Stack = instance(TriTowers.Stack);
+            TriTowers[field].Stack = Solitaire.instance(TriTowers.Stack);
         });
 
         Y.mix(

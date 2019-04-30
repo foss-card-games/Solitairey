@@ -23,7 +23,7 @@ YUI.add(
         Y.namespace("Solitaire.GClock");
 
         const Solitaire = Y.Solitaire,
-            GClock = (Y.Solitaire.GClock = instance(Solitaire, {
+            GClock = (Y.Solitaire.GClock = Solitaire.instance(Solitaire, {
                 fields: ["Foundation", "Tableau"],
 
                 deal: function() {
@@ -71,7 +71,7 @@ YUI.add(
                     return this.Card.base.height * 6.7;
                 },
 
-                Stack: instance(Solitaire.Stack),
+                Stack: Solitaire.instance(Solitaire.Stack),
 
                 Foundation: {
                     stackConfig: {
@@ -105,7 +105,7 @@ YUI.add(
                     draggable: true,
                 },
 
-                Card: instance(Solitaire.Card, {
+                Card: Solitaire.instance(Solitaire.Card, {
                     createProxyStack: function() {
                         switch (this.stack.field) {
                             case "foundation":
@@ -153,7 +153,7 @@ YUI.add(
         Y.Array.each(
             GClock.fields,
             function(field) {
-                GClock[field].Stack = instance(GClock.Stack);
+                GClock[field].Stack = Solitaire.instance(GClock.Stack);
             },
             true,
         );
