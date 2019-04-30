@@ -2,6 +2,7 @@ define(["./solitaire"], function(solitaire) {
     let newGameRun;
     let schedule;
     let schedule_cb;
+    let enable_solitairey_ui = false;
     (function() {
         const active = {
             name: "freecell", // name: "klondike",
@@ -284,7 +285,7 @@ define(["./solitaire"], function(solitaire) {
             Y.on("newAppGame", function() {
                 return newGame();
             });
-            if (false) {
+            if (enable_solitairey_ui) {
                 Y.on("click", restart, Y.one("#restart"));
                 Y.on(
                     "click",
@@ -321,7 +322,7 @@ define(["./solitaire"], function(solitaire) {
                     expires: new Date(new Date().getTime() + expires),
                 });
             }
-            if (false) {
+            if (enable_solitairey_ui) {
                 Y.on("click", hideChromeStoreLink, Y.one(".chromestore"));
 
                 function showDescription() {
@@ -544,5 +545,12 @@ define(["./solitaire"], function(solitaire) {
         }, 400);
     })();
 
-    return { schedule: schedule, newGameRun: newGameRun };
+    return {
+        schedule: schedule,
+        newGameRun: newGameRun,
+        setUI: (v) => {
+            enable_solitairey_ui = v;
+            return;
+        },
+    };
 });
