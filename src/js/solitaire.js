@@ -1,4 +1,5 @@
 define([], function() {
+    let enable_solitairey_ui = false;
     // For debugging.
     // var pre_canned_seeds = [11982, 11982, 11982, 11982];
     const pre_canned_seeds = [];
@@ -259,21 +260,25 @@ define([], function() {
                 newGame: function() {
                     Y.Cookie.remove("saved-game");
                     const that = this;
-                    // set up the cards layout here.
-                    that.setup(function() {
-                        let card,
-                            stack = 0;
-                        const stacks = that.tableau.stacks;
-
-                        while ((card = that.deck.pop())) {
-                            stacks[stack].push(card.faceUp());
-                            if (++stack === 8) {
+                    if (enable_solitairey_ui) {
+                        that.setup(that.deal);
+                    } else {
+                        // set up the cards layout here.
+                        that.setup(function() {
+                            let card,
                                 stack = 0;
-                            }
-                        }
+                            const stacks = that.tableau.stacks;
 
-                        return;
-                    });
+                            while ((card = that.deck.pop())) {
+                                stacks[stack].push(card.faceUp());
+                                if (++stack === 8) {
+                                    stack = 0;
+                                }
+                            }
+
+                            return;
+                        });
+                    }
 
                     Game.save("initial-game");
 
@@ -1655,5 +1660,9 @@ define([], function() {
         instance: instance,
         Game: Game,
         getGame: getGame,
+        setUI: (v) => {
+            enable_solitairey_ui = v;
+            return;
+        },
     };
 });
