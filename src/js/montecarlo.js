@@ -23,9 +23,9 @@ YUI.add(
 
                     deckPlayable: function() {
                         let gap = false;
-                        const node = Game.deck.stacks[0].node;
+                        const node = Solitaire.getGame().deck.stacks[0].node;
 
-                        Game.eachStack(function(s) {
+                        Solitaire.getGame().eachStack(function(s) {
                             if (!gap && Y.Array.indexOf(s.cards, null) !== -1) {
                                 gap = true;
                             }

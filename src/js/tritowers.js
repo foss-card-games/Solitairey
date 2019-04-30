@@ -161,7 +161,10 @@ YUI.add(
                                 (stack.field === "deck" &&
                                     this === stack.my_Last()) ||
                                 (this.isFree() &&
-                                    this.validTarget(Game.foundation.stacks[0]))
+                                    this.validTarget(
+                                        Solitaire.getGame().foundation
+                                            .stacks[0],
+                                    ))
                             );
                         },
 

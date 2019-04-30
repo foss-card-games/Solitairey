@@ -128,7 +128,9 @@ YUI.add(
             }));
 
         function hasFreeTableaus() {
-            return Y.Array.some(Game.tableau.stacks, function(stack) {
+            return Y.Array.some(Solitaire.getGame().tableau.stacks, function(
+                stack,
+            ) {
                 return !stack.cards.length;
             });
         }

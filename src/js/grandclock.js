@@ -185,6 +185,15 @@ YUI.add(
             true,
         );
 
+        function normalize(valOrFunction) {
+            const val =
+                typeof valOrFunction === "function"
+                    ? valOrFunction()
+                    : valOrFunction;
+
+            return isNaN(val) ? undefined : val;
+        }
+
         Y.mix(
             GClock.Foundation.Stack,
             {

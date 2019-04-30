@@ -111,6 +111,7 @@ define([], function() {
 
             Y.mix(Solitaire, {
                 activeCard: null,
+                getGame: getGame,
                 instance: instance,
                 moves: null,
                 selector: ".solitairey_body",
