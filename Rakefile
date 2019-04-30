@@ -37,7 +37,7 @@ JS_CURATED_SOURCES = %w[
   yukon
 ].freeze
 JS = %w[yui-breakout yui-debug require require--debug lodash.custom.min] +
-     JS_CURATED_SOURCES + TS_BASE + BROWSERIFY_JS
+     JS_CURATED_SOURCES + TS_BASE
 YUI_DIST = 'yui-unpack/'.freeze
 YUI_SRC = 'ext/yui/yui-all-min.js'.freeze
 YUI = "#{PREFIX}/yui-all-min.js".freeze
@@ -129,8 +129,11 @@ def js_root_file(filename)
   dest
 end
 
+def dest_js(base)
+  'dest/js/' + base + '.js'
+end
 BROWSERIFY_JS.each do |base|
-  dest2 = js_js_pat_file(base)
+  dest2 = dest_js(base)
   file dest2 do
     sh "browserify -s #{base} -r #{base} -o #{dest2}"
   end
@@ -139,7 +142,7 @@ end
 TS_BASE.each do |base|
   dest2 = js_js_pat_file(base)
   src2 = js_pat_file("#{base}.ts")
-  file dest2 => [src2] + BROWSERIFY_JS.map { |x| js_js_pat_file(x) } do
+  file dest2 => [src2] + BROWSERIFY_JS.map { |x| dest_js(x) } do
     sh "tsc --target es6 --module amd --out #{dest2} #{src2}"
   end
 end
