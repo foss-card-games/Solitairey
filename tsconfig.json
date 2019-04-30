@@ -1,6 +1,9 @@
 {
   "compilerOptions": {
       "baseUrl": ".",
+      "paths": {
+          "big-integer": ["node_modules/"]
+      },
       "rootDirs":["src/js", "dest/js", "src/charts"]
   }
 }
