@@ -10,31 +10,26 @@ define(["./solitaire"], function(solitaire) {
         };
         const yui = YUI({ base: "js/yui-unpack/yui/build/" });
         let Y;
-        /*
-         * We don't need all these games for now.
-        games = {
-        "agnes": "Agnes",
-        "klondike": "Klondike",
-        "klondike1t": "Klondike1T",
-        "flower-garden": "FlowerGarden",
-        "forty-thieves": "FortyThieves",
-        "freecell": "Freecell",
-        "golf": "Golf",
-        "grandfathers-clock": "GClock",
-        "monte-carlo": "MonteCarlo",
-        "pyramid": "Pyramid",
-        "russian-solitaire": "RussianSolitaire",
-        "scorpion": "Scorpion",
-        "spider": "Spider",
-        "spider1s": "Spider1S",
-        "spider2s": "Spider2S",
-                "spiderette": "Spiderette",
-        "tri-towers": "TriTowers",
-        "will-o-the-wisp": "WillOTheWisp",
-        "yukon": "Yukon"},
-        */
         const games = {
+            agnes: "Agnes",
+            klondike: "Klondike",
+            klondike1t: "Klondike1T",
+            "flower-garden": "FlowerGarden",
+            "forty-thieves": "FortyThieves",
             freecell: "Freecell",
+            golf: "Golf",
+            "grandfathers-clock": "GClock",
+            "monte-carlo": "MonteCarlo",
+            pyramid: "Pyramid",
+            "russian-solitaire": "RussianSolitaire",
+            scorpion: "Scorpion",
+            spider: "Spider",
+            spider1s: "Spider1S",
+            spider2s: "Spider2S",
+            spiderette: "Spiderette",
+            "tri-towers": "TriTowers",
+            "will-o-the-wisp": "WillOTheWisp",
+            yukon: "Yukon",
         };
         const extensions = [
             "auto-turnover",

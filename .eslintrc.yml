@@ -12,6 +12,7 @@ rules:
     max-len: off
     object-curly-spacing: off
     one-var: off
+    quote-props: off
     quotes: off
     require-jsdoc: off
     prefer-spread: off
