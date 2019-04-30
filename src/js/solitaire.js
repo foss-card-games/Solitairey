@@ -365,8 +365,6 @@ define([], function() {
                 },
 
                 createDraggables: function() {
-                    console.log("flutt = " + Solitaire.selector);
-                    console.log("flutt2 = " + Y.one(Solitaire.selector));
                     const del = new CardDelegate({
                         dragConfig: {
                             dragMode: "intersect",
@@ -1640,7 +1638,6 @@ define([], function() {
                     return [to, from];
                 },
             };
-            console.log("added solitaire");
         },
         "0.0.1",
         {

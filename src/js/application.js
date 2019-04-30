@@ -233,7 +233,6 @@ define(["./solitaire"], function(solitaire) {
 
             set: function(name, size) {
                 const theme = this[name][size];
-                console.log("width:" + theme.dimensions[0]);
 
                 Y.mix(
                     Y.Solitaire.Card.base,
@@ -442,7 +441,6 @@ define(["./solitaire"], function(solitaire) {
             const save = Y.Cookie.get("saved-game");
 
             attachEvents();
-            console.log("_my_load_func()");
             loadOptions();
 
             Preloader.preload();
@@ -537,7 +535,6 @@ define(["./solitaire"], function(solitaire) {
 
         yui.use.apply(yui, modules().concat(main));
         window.setTimeout(function() {
-            console.log("at use solver");
             yui.use.apply(yui, ["solver-freecell"]);
         }, 400);
     })();

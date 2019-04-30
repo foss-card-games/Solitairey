@@ -654,8 +654,6 @@ function _render_state_as_string(obj) {
         ret += "\n";
     }
 
-    console.log("Board = <<" + ret + ">>");
-
     return ret;
 }
 

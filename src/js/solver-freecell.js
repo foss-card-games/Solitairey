@@ -784,9 +784,7 @@ define([
                     }
                 },
             };
-            console.log("_startSolution_cb");
             _startSolution_cb = function(args) {
-                console.log("called _startSolution_cb");
                 Y.Solitaire.Application.switchToGame("freecell");
                 Y.Solitaire.Application.clearDOM();
                 Y.Solitaire.Freecell.setup(
