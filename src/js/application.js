@@ -320,8 +320,8 @@ define(["./solitaire"], function(solitaire) {
             if (enable_solitairey_ui) {
                 Y.on("click", hideChromeStoreLink, Y.one(".chromestore"));
 
-                function showDescription() {
-                    // GameChooser.select(this._node.id);
+                function showDescription(e) {
+                    GameChooser.select(e.currentTarget._node.id);
                     GameChooser.choose();
                 }
                 Y.delegate("click", showDescription, "#descriptions", "li");
@@ -453,7 +453,9 @@ define(["./solitaire"], function(solitaire) {
                     active.game = Y.Solitaire[games[active.name]];
                     active.game.loadGame(save);
                 } else {
-                    // playGame(active.name);
+                    if (enable_solitairey_ui) {
+                        playGame(active.name);
+                    }
                 }
             });
 
