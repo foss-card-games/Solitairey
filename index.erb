@@ -40,7 +40,7 @@ requirejs.config({
                 });
         },);
     </script>
-<% if false %>
+<% if true %>
 	<script src="js/ie-opera-background-fix.js"></script>
 	<script src="js/agnes.js"></script>
 	<script src="js/golf.js"></script>
@@ -73,11 +73,11 @@ requirejs.config({
 </head>
 <body class="solitairey_body">
 <% unless development %>
-<div id=social>
+<div id="social">
 	<span class='st_sharethis_button' displayText='ShareThis' st_title='Solitairey - A Beautiful HTML5 Solitaire collection'></span>
 </div>
 <% end %>
-<% if false %>
+<% if true %>
 	<ul id="menu">
 		<li class="begin">
 			<a id="new_deal">Deal New Cards</a>
@@ -93,10 +93,304 @@ requirejs.config({
 		</li>
     </ul>
 <% end %>
+<%if false %>
 <button id="redeal">Redeal</button>
 <span style="color:white;">Deal Number:</span> <input id="deal_num_shlomify" size="30" name="deal_num_shlomify" readonly="readonly"/>
+<% end %>
 	<div id="game-chooser">
         <button id="close-chooser">Return to game</button>
+		<div id="game-chooser-contents">
+		<ul id="descriptions">
+			<li id="agnes">
+				<h2>Agnes</h2>
+				<div class="description agnes">
+					<div class="layout"></div>
+                                        <blockquote>
+                                        Agnes tries be an easier Klondike variety by exposing many cards for play simultaneously. Due to how the foundations are built, it is also requires a bit more skill than most solitaire games.</blockquote>
+					<h3>Foundation:</h3>
+					<p>The first card dealt to the foundation (the seed) is the rank the rest of the foundations must start with. Build 13 cards on each foundation in series and suit; Aces wrap around to Kings.</p>
+					<h3>Tableau:</h3>
+					<p>Same as Klondike, cards 1 rank less than the seed are played on empty spaces, and Aces wrap around to Kings.</p>
+					<h3>Reserve:</h3>
+					<p>Click the stock to transfer a card to each of the 7 reserve piles. The top card in any reserve pile is free to play on the tableau or a foundation.</p>
+					<h3>Wastepile</h3>
+					<p>The last two cards from the stock are transferred here; Both cards are playable on the tableau or a foundation.</p>
+					<button class="choose">Play Agnes Solitaire</button>
+				</div>
+			</li>
+			<li id="flower-garden">
+				<h2>Flower Garden</h2>
+				<div class="description flower-garden">
+					<div class="layout"></div>
+                                        <blockquote>
+                                          Flower Garden is a solitaire game that provides a nice mix of skill and luck. You have a good chance of besting this solitaire if you can make a blank tableau space without playing to many cards from the garden.</blockquote>
+					<h3>Foundation:</h3>
+					<p>Built in series from Ace to King, in suit.</p>
+					<h3>Play:</h3>
+					<p>Any card from the bouquet (reserve) may be played on the foundation or garden (tableau). The top card of each garden pile may be played on the foundation or another garden pile. The garden may be built downwards, regardless of suit. Free garden spaces may be filled by any card.</p>
+					<button class="choose">Play Flower Garden</button>
+				</div>
+			</li>
+			<li id="forty-thieves">
+				<h2>Forty Thieves</h2>
+				<div class="description forty-thieves">
+					<div class="layout"></div>
+                                        <blockquote>
+                                        Forty Thieves (aka Napoleon at Saint Helena, Roosevelt at San Juan, Big Forty) is a among the most popular two pack solitaire games. It is also one of the most notoriously difficult solitaires to win in general, requiring a great amount of skill and luck.</blockquote>
+					<h3>Foundation:</h3>
+					<p>Built in series from Ace to King, in suit.</p>
+					<h3>Play:</h3>
+					<p>The top card of each tableau pile may be played on the foundation or another tableau. The tableau is built downwards by suit. Piles may not be moved. Free tableau spaces may be filled by any card.
+					<h3>Wastepile:</h3>
+					<p>Click the stock to transfer 1 card to the wastepile. The top card may be played on the foundation or a tableau pile.</p>
+					<button class="choose">Play Forty Thieves</button>
+				</div>
+			</li>
+			<li id="freecell">
+				<h2>Freecell</h2>
+				<div class="description freecell">
+					<div class="layout"></div>
+                                        <blockquote>
+                                          Freecell is a modern solitaire game, developed for computer play. It is one of the most skillful solitaires; if you stratgize by opening as many spaces as possible early on and build long runs, you can win practically every game.</blockquote>
+					<h3>Foundation:</h3>
+					<p>Built in series from Ace to King, in suit.</p>
+					<h3>Play:</h3>
+					<p>The top card from the tableau can be played on the foundation, another tableau pile/empty space, or a free slot in the reserve. Build the tableau downwards by alternating colors. Whole or partial runs may be moved as long as there's enough free reserve and tableau cells to move all the cards.</p>
+					<button class="choose">Play Freecell</button>
+				</div>
+			</li>
+			<li id="golf">
+				<h2>Golf</h2>
+				<div class="description golf">
+					<div class="layout"></div>
+                                        <blockquote>
+                                          Golf is a simple yet addicting solitaire that allows for a bit of skill.
+                                        </blockquote>
+					<h3>How to win:</h3>
+					<p>Discard all cards from the tableau</p>
+					<h3>Play:</h3>
+					<p>Any free card one rank from the top card in the waste pile may be discarded.</p>
+					<h3>Deck:</h3>
+					<p>Click the deck to transfer the top card to the waste pile.</p>
+					<button class="choose">Play Golf</button>
+				</div>
+			</li>
+			<li id="grandfathers-clock">
+				<h2>Grandfather's Clock</h2>
+				<div class="description grandfathers-clock">
+					<div class="layout"></div>
+                                        <blockquote>
+                                          A pictorial solitaire game, Grandfather's Clock is a relaxing alternative to the mentally taxing solitaires like Spider or Freecell.
+                                        </blockquote>
+					<h3>Foundation:</h3>
+					<p>Built in series and suit up to the pile's hour position on a clock. Jacks through Kings are 11s through 13s.</p>
+					<h3>Play:</h3>
+					<p>The top card from the tableau may be played on the foundation or another tableau pile. The tableu is built downwards, regardless of suit.</p>
+					<button class="choose">Play Grandfather's Clock</button>
+				</div>
+			</li>
+			<li id="klondike">
+				<h2>Klondike</h2>
+				<div class="description klondike">
+					<div class="layout"></div>
+                                        <blockquote>
+                                        Klondike (also called Patience or Fascination) is one of the hardest solitaires to consistently win. Despite this, it is one of, if not the most popular solitaire game, with legions devoted to studying the odds of winning a particular game, finding strategies to overcome its cruel randomness, or just playing it as their favorite idle pastime.
+                                        </blockquote>
+					<h3>Foundation:</h3>
+					<p>Built in series from Ace to King, in suit.</p>
+					<h3>Tableau:</h3>
+					<p>The top card of each pile may be played on another tableau pile or on the foundation. Tableau piles are built downwards by alternating color. Partial or complete face up runs may be moved. Free spaces may only be filled by a King or a pile starting with a King.</p>
+					<h3>Wastepile</h3>
+					<p>Click the stock to transfer 3 cards to the wastepile. The top card on the wastepile may be played on the foundation or tableau. When the stock is deplected, click it to start a new stock with the remaining waste cards.</p>
+					<button class="choose">Play Klondike</button>
+				</div>
+			</li>
+			<li id="klondike1t">
+				<h2>Klondike (Vegas Style)</h2>
+				<div class="description klondike1t">
+					<div class="layout"></div>
+					<blockquote>This popular Klondike variety is no easier than its 3 card turnover brother, despite all cards in the stock always being available for play. But it is a faster solitaire to play through, so it won't take long to find a winning deal.</blockquote>
+					<h3>Foundation:</h3>
+					<p>Built in series from Ace to King, in suit.</p>
+					<h3>Tableau:</h3>
+					<p>The top card of each pile may be played on another tableau pile or on the foundation. Tableau piles are built downwards by alternating color. Partial or complete face up runs may be moved. Free spaces may only be filled by a King or a pile starting with a King.</p>
+					<h3>Wastepile</h3>
+					<p>Click the stock to transfer 1 card to the wastepile. The top card on the wastepile may be played on the foundation or tableau.</p>
+					<button class="choose">Play Klondike (Vegas Style)</button>
+				</div>
+			</li>
+			<li id="monte-carlo">
+				<h2>Monte Carlo</h2>
+				<div class="description monte-carlo">
+					<div class="layout"></div>
+                                        <blockquote>
+                                          Monte Carlo is a simple card matching variety of solitaire, requiring a decent mix of luck and planning to win.
+                                        </blockquote>
+					<h3>How to win:</h3>
+					<p>Discard all cards.</p>
+					<h3>Play:</h3>
+					<p>Cards horizontally, vertically, or diagonally adjacent to each other may be discarded. When play's exahausted, click the deck to collapse all empty spaces and deal cards until all five rows are full or the deck's empty.</p>
+					<button class="choose">Play Monte Carlo</button>
+				</div>
+			</li>
+			<li id="pyramid">
+				<h2>Pyramid</h2>
+				<div class="description pyramid">
+					<div class="layout"></div>
+                                        <blockquote>
+                                          Pyramid is a simple addition solitaire game, but winnable deals are exceedingly rare.
+                                        </blockquote>
+					<h3>How to win:</h3>
+					<p>Discard all cards.</p>
+					<h3>Play:</h3>
+					<p>Any pair of uncovered cards totaling 13 maybe be discarded.</p>
+					<h3>Wastepile</h3>
+					<p>Click the stock to move the top card to the waste and uncover the next card in the stock. The top cards of both the waste and the stock are playable.</p>
+					<button class="choose">Play Pyramid</button>
+				</div>
+			</li>
+			<li id="russian-solitaire">
+				<h2>Russian Solitaire</h2>
+				<div class="description russian-solitaire">
+					<div class="layout"></div>
+                                        <blockquote>
+                                          Russian Solitaire is perfect when you feel Yukon is too easy.
+                                        </blockquote>
+					<h3>Foundation:</h3>
+					<p>Built in series and suit from Ace to King</p>
+					<h3>Play:</h3>
+					<p>Tableau piles are built downwards by suit. Any face up tableau card can be played on the top of another tableau pile; the cards above it are also moved as one stack. Free tableau spaces can only be filled with a King.</p>
+					<button class="choose">Play Russian Solitaire</button>
+				</div>
+			</li>
+			<li id="scorpion">
+				<h2>Scorpion</h2>
+				<div class="description scorpion">
+					<div class="layout"></div>
+                                        <blockquote>
+                                          Scorpion is a luck based solitaire game who's goal, like Spider, is to build single-suited runs. But unlike Spider, there's very little room for skill and a winnable deal is rare.
+                                        </blockquote>
+					<h3>Foundation:</h3>
+					<p>Automatically filled when an in suit run from King to Ace is completed</p>
+					<h3>Play:</h3>
+					<p>The top card of each tableau pile can be built on downwards, in suit. Any face up card in the tableau can be moved; when moved, the cards above it are also moved as one stack. Free tableau spaces can only be filled with a King</p>
+					<h3>Reserve:</h3>
+					<p>Click the reserve to deal all three cards onto the first three tableau piles.</p>
+					<button class="choose">Play Scorpion</button>
+				</div>
+			</li>
+			<li id="spider">
+				<h2>Spider</h2>
+				<div class="description spider">
+					<div class="layout"></div>
+                                        <blockquote>
+                                          Spider has been called the "King of Solitaires," and is rumored to have been a favorite pastime with Franklin D. Roosevelt. This 2 pack solitaire tremendously rewards skill, and while not every hand is winnable, experienced players can overcome even the nastiest of deals.
+                                        </blockquote>
+					<h3>Foundation:</h3>
+					<p>Automatically filled when an in suit run from King to Ace is completed</p>
+					<h3>Play:</h3>
+					<p>Tableau piles are built downwards, regardless of suit. The top card card of any tableau pile can be played on another tableau pile or empty space. Partial or complete in-suit runs may also be played.</p>
+					<h3>Deck:</h3>
+					<p>If there are no empty tableau spaces, click the deck to deal one card to each tableau pile.</p>
+					<button class="choose">Play Spider</button>
+				</div>
+			</li>
+			<li id="spider1s">
+				<h2>Spider (1 Suite)</h2>
+				<div class="description spider1s">
+					<div class="layout"></div>
+                                        <blockquote>
+                                          This version is the easy Spider. One suite Spider is great for learning the basic strategies of quickly uncovering cards and opening free spaces. It also perfect one its own as a slow, relaxing Solitaire game.
+                                        </blockquote>
+					<h3>Foundation:</h3>
+					<p>Automatically filled when an in suit run from King to Ace is completed</p>
+					<h3>Play:</h3>
+					<p>Tableau piles are built downwards, regardless of suit. The top card card of any tableau pile can be played on another tableau pile or empty space. Partial or complete in-suit runs may also be played.</p>
+					<h3>Deck:</h3>
+					<p>If there are no empty tableau spaces, click the deck to deal one card to each tableau pile.</p>
+					<button class="choose">Play Spider 1 Suit</button>
+				</div>
+			</li>
+			<li id="spider2s">
+				<h2>Spider (2 Suite)</h2>
+				<div class="description spider2s">
+					<div class="layout"></div>
+                                        <blockquote>
+                                          This is the medium difficulty Spider. While not a breeze like the one suit Spider, nearly every hand is still winnable, and its by far one of the most skill-dependant solitaire games.
+                                        </blockquote>
+					<h3>Foundation:</h3>
+					<p>Automatically filled when an in suit run from King to Ace is completed</p>
+					<h3>Play:</h3>
+					<p>Tableau piles are built downwards, regardless of suit. The top card card of any tableau pile can be played on another tableau pile or empty space. Partial or complete in-suit runs may also be played.</p>
+					<h3>Deck:</h3>
+					<p>If there are no empty tableau spaces, click the deck to deal one card to each tableau pile.</p>
+					<button class="choose">Play Spider 2 Suit</button>
+				</div>
+			</li>
+			<li id="spiderette">
+				<h2>Spiderette</h2>
+				<div class="description spiderette">
+					<div class="layout"></div>
+                                        <blockquote>
+                                          With the layout of Klondike and the gameplay of Spider, Spiderette is a much more difficult solitaire than either of its parents. Your best hope of winning is to uncover as many cards as possible early on.
+                                        </blockquote>
+					<h3>Foundation:</h3>
+					<p>Automatically filled when an in suit run from King to Ace is completed</p>
+					<h3>Play:</h3>
+					<p>Tableau piles are built downwards, regardless of suit. The top card card of any tableau pile can be played on another tableau pile or empty space. Partial or complete in-suit runs may also be played.</p>
+					<h3>Deck:</h3>
+					<p>If there are no empty tableau spaces, click the deck to deal one card to each tableau pile.</p>
+					<button class="choose">Play Spiderette</button>
+				</div>
+			</li>
+			<li id="tri-towers">
+				<h2>Tri Towers</h2>
+				<div class="description tri-towers">
+					<div class="layout"></div>
+                                        <blockquote>
+                                          Tri-Towers (aka Tri Peaks) is a modern solitaire; like Freecell, it was designed to be played on a computer. Given it's simplicity, fast play, and reliance on luck, it's often seen in casino game machines and bars.
+                                        </blockquote>
+					<h3>How to win:</h3>
+					<p>Discard all cards from the towers</p>
+					<h3>Play:</h3>
+					<p>Any free card one rank from the top card in the waste pile may be discarded. Kings may be placed on Aces, and vice-versa.</p>
+					<h3>Deck:</h3>
+					<p>Click the deck to transfer the top card to the waste pile.</p>
+					<button class="choose">Play Tri Towers</button>
+				</div>
+			</li>
+			<li id="will-o-the-wisp">
+				<h2>Will O' The Wisp</h2>
+				<div class="description will-o-the-wisp">
+					<div class="layout"></div>
+                                        <blockquote>
+                                          Will O' The Wisp makes Spiderette easier by starting with less buried cards. But it's still one of the more difficult Solitaires, requiring great skill and luck.
+                                        </blockquote>
+					<h3>Foundation:</h3>
+					<p>Automatically filled when an in suit run from King to Ace is completed</p>
+					<h3>Play:</h3>
+					<p>Tableau piles are built downwards, regardless of suit. The top card card of any tableau pile can be played on another tableau pile or empty space. Partial or complete in-suit runs may also be played.</p>
+					<h3>Deck:</h3>
+					<p>If there are no empty tableau spaces, click the deck to deal one card to each tableau pile.</p>
+					<button class="choose">Play Will O' The Wisp</button>
+				</div>
+			</li>
+			<li id="yukon">
+				<h2>Yukon</h2>
+				<div class="description yukon">
+					<div class="layout"></div>
+                                        <blockquote>
+                                          Yukon is a blend of two solitaire games, Klondike and Scorpion. Despite its two parents being mostly luck-based, Yukon itself is a largely skill-based solitaire.
+                                        </blockquote>
+					<h3>Foundation:</h3>
+					<p>Built in series and suit from Ace to King</p>
+					<h3>Play:</h3>
+					<p>Tableau piles are built downwards by alternating color. Any face up tableau card can be played on the top of another tableau pile; the cards above it are also moved as one stack. Free tableau spaces can only be filled with a King.</p>
+					<button class="choose">Play Yukon</button>
+				</div>
+			</li>
+		</ul>
+		</div>
 	</div>
 	<img src="loading.gif" class="loading hidden" alt="Loading" />
 	<div class="chromestore hidden">
