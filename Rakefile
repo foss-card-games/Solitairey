@@ -138,6 +138,14 @@ end
 def dest_js(base)
   'dest/js/' + base + '.js'
 end
+
+dest_css = 'cards.css'
+src_css = 'solitairey-cards.scss'
+
+file dest_css => src_css do
+  sh "sass --style compressed #{src_css} #{dest_css}"
+end
+
 BROWSERIFY_JS.each do |base|
   dest2 = dest_js(base)
   file dest2 do
