@@ -49,7 +49,7 @@ COMPRESSOR = 'bin/Run-YUI-Compressor'.freeze
 TEMPLATE = 'index.erb'.freeze
 
 IMAGES = Dir['{dondorf,layouts}/**/*.png', '*.{css,gif,png,jpg}'] +
-  ['cards.css', '.htaccess']
+         ['cards.css', '.htaccess']
 
 DEST_INDEX = 'dest/index.html'.freeze
 DEST_INDEX_DEV = 'dest/index-dev.html'.freeze
@@ -143,7 +143,8 @@ dest_css = 'cards.css'
 src_css = 'solitairey-cards.scss'
 
 file dest_css => src_css do
-  sh "sass --style compressed #{src_css} #{dest_css}"
+  # sh "sass --style compressed #{src_css} #{dest_css}"
+  sh "sass #{src_css} #{dest_css}"
 end
 
 BROWSERIFY_JS.each do |base|
