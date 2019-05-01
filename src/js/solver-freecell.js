@@ -364,18 +364,20 @@ define([
                 document.body.style.zoom = old;
             }, 10);
         })();
-        if (solution) {
-            Status.stopIndicator(true);
-            window.setTimeout(function() {
-                Animation.play(getGame());
-            }, 3000);
-        } else {
-            Status.stopIndicator(false);
-            console.log("no solution");
-            if (false) {
+        if (false) {
+            if (solution) {
+                Status.stopIndicator(true);
                 window.setTimeout(function() {
-                    Y.fire("newAppGame");
+                    Animation.play(getGame());
                 }, 3000);
+            } else {
+                Status.stopIndicator(false);
+                console.log("no solution");
+                if (false) {
+                    window.setTimeout(function() {
+                        Y.fire("newAppGame");
+                    }, 3000);
+                }
             }
         }
         that.solver_active = false;
@@ -739,7 +741,7 @@ define([
                         "<button class='rewind' title=\"Previous move\">⏪︎</button>",
                     );
                     const playPause = Y.Node.create(
-                        "<button class='play' title=\"Play/Pause\">⏸</button>",
+                        "<button class='play' title=\"Play/Pause\">⏵</button>",
                     );
                     const controls = bar;
 
