@@ -49,7 +49,7 @@ COMPRESSOR = 'bin/Run-YUI-Compressor'.freeze
 TEMPLATE = 'index.erb'.freeze
 
 IMAGES = Dir['{dondorf,layouts}/**/*.png', '*.{css,gif,png,jpg}'] +
-         ['.htaccess']
+  ['cards.css', '.htaccess']
 
 DEST_INDEX = 'dest/index.html'.freeze
 DEST_INDEX_DEV = 'dest/index-dev.html'.freeze
@@ -237,7 +237,7 @@ end
 task upload: :default do
   # myrsync "hostgator:public_html/temp-Solitairey-ekrimyk/"
   # myrsync "hostgator:public_html/temp-Solitairey-fc-solve-loop-NjU78o/"
-  myrsync 'hostgator:public_html/temp-Solitairey-fc-solve/'
+  myrsync 'hostgator:public_html/temp-Solitairey-fc-solve2/'
 end
 
 task upload_local: :default do
