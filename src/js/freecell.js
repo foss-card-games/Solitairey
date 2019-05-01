@@ -23,27 +23,20 @@ define(["./solitaire"], function(solitaire) {
 
                 openSlots: function(exclude) {
                     let total = 1,
-                        freeTableaus = 0,
-                        i,
-                        stack;
+                        freeTableaus = 0;
                     const rStacks = this.reserve.stacks,
                         tStacks = this.tableau.stacks;
 
-                    for (i = 0; i < 4; i++) {
-                        stack = rStacks[i];
-                        !stack.my_Last() && total++;
+                    for (let i = 0; i < 4; i++) {
+                        if (!rStacks[i].my_Last()) ++total;
                     }
 
-                    for (i = 0; i < 8; i++) {
-                        stack = tStacks[i];
-                        exclude !== stack &&
-                            !tStacks[i].my_Last() &&
-                            freeTableaus++;
+                    for (let i = 0; i < 8; i++) {
+                        const stack = tStacks[i];
+                        exclude !== stack && !stack.my_Last() && ++freeTableaus;
                     }
 
-                    total *= Math.pow(2, freeTableaus);
-
-                    return total;
+                    return total * Math.pow(2, freeTableaus);
                 },
 
                 Stack: instance(Solitaire.Stack),
@@ -171,10 +164,7 @@ define(["./solitaire"], function(solitaire) {
                             return false;
                         }
 
-                        return (
-                            this.cards.length <=
-                            Freecell.openSlots(stack, this.my_Last())
-                        );
+                        return this.cards.length <= Freecell.openSlots(stack);
                     },
                 },
                 true,

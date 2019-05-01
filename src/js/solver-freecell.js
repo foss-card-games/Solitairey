@@ -10,7 +10,7 @@ define([
     const FCS_STATE_SUSPEND_PROCESS = w.FCS_STATE_SUSPEND_PROCESS;
     const FCS_STATE_WAS_SOLVED = w.FCS_STATE_WAS_SOLVED;
     const ENABLE_VALIDATION = true;
-    const getGame = solitaire.getGame;
+    let getGame; // = solitaire.getGame;
     let _startSolution_cb;
     function startSolution(args) {
         return _startSolution_cb(args);
@@ -323,6 +323,7 @@ define([
         });
 
         const state_as_string = _render_state_as_string(state);
+        // console.log("state=" + state_as_string);
         let solve_err_code;
         try {
             solve_err_code = instance.do_solve(state_as_string);
@@ -465,12 +466,13 @@ define([
 
             const Solitaire = Y.Solitaire,
                 FreecellSolver = Solitaire.Solver.Freecell;
+            getGame = Solitaire.getGame;
 
             const redeal = Y.one("#redeal");
             if (redeal) {
                 redeal.on("click", function() {
                     Solitaire.Application.newGame();
-                    // getGame().redeal();
+                    getGame().redeal();
                     return;
                 });
             }
@@ -592,7 +594,7 @@ define([
 
                 playCurrent: function(game) {
                     const that = this;
-                    const verdict = this._playCurrentHelper(game);
+                    const verdict = that._playCurrentHelper(game);
 
                     if (!verdict) {
                         that._resetGameFoo();
@@ -610,12 +612,12 @@ define([
 
                 next: function(game) {
                     const that = this;
-                    const next = this.remainingMovesIdx + 1;
+                    const next_idx = this.remainingMovesIdx + 1;
 
                     Solitaire.Statistics.disable();
-                    this.playCurrent(game);
+                    that.playCurrent(game);
 
-                    that.remainingMovesIdx = next;
+                    that.remainingMovesIdx = next_idx;
 
                     if (
                         that.remainingMovesIdx >= that.remainingMovesArr.length
@@ -670,7 +672,8 @@ define([
                 delay: 400,
 
                 updateIndicator: function(ticks) {
-                    const indicator = this.indicator;
+                    const that = this;
+                    const indicator = that.indicator;
 
                     if (!indicator) {
                         return;
@@ -684,10 +687,10 @@ define([
 
                     indicator.set("text", text);
 
-                    this.indicatorTimer = window.setTimeout(
-                        this.updateIndicator.partial(ticks + 1).bind(this),
-                        this.indicatorInterval,
-                    );
+                    that.indicatorTimer = window.setTimeout(function() {
+                        // body...
+                        return that.updateIndicator(ticks + 1);
+                    }, that.indicatorInterval);
                 },
 
                 stopIndicator: function(solved) {
@@ -864,36 +867,34 @@ define([
                 },
 
                 attachEvents: function() {
-                    if (this.attached) {
+                    const that = this;
+                    if (that.attached) {
                         return;
                     }
 
                     const pause = Animation.pause.bind(Animation);
 
                     // start the solver if the current game supports it
-                    Y.on(
-                        "afterDealingAnimation",
-                        function() {
-                            if (this.isSupported()) {
-                                // this.solve();
-                            } else {
-                                this.disable();
-                            }
-                        }.bind(this),
-                    );
+                    Y.on("afterDealingAnimation", function() {
+                        if (that.isSupported()) {
+                            that.solver_active = false;
+                            Animation.remainingMovesIdx = null;
+                            Animation.remainingMovesArr = [];
+                            that.solve();
+                        } else {
+                            that.disable();
+                        }
+                    });
 
                     if (false) {
                         // if a solution isn't currently being played,
                         // find a new solution on every new turn
-                        Y.on(
-                            "endTurn",
-                            function(dontResolve) {
-                                if (dontResolve || !this.isSupported()) {
-                                    return;
-                                }
-                                // this.solve();
-                            }.bind(this),
-                        );
+                        Y.on("endTurn", function(dontResolve) {
+                            if (dontResolve || !that.isSupported()) {
+                                return;
+                            }
+                            that.solve();
+                        });
                     }
 
                     Y.on("autoPlay", function() {
@@ -916,7 +917,8 @@ define([
                         true,
                     );
 
-                    this.attached = true;
+                    that.attached = true;
+                    return;
                 },
 
                 createUI: function() {
@@ -945,15 +947,15 @@ define([
 
                         that.currentSolution = null;
                     }
-                    window.clearTimeout(Status.indicatorTimer);
-                    Status.indicatorTimer = window.setTimeout(
-                        Status.updateIndicator.bind(Status),
-                        Status.delay,
-                    );
-
+                    if (false) {
+                        window.clearTimeout(Status.indicatorTimer);
+                        Status.indicatorTimer = window.setTimeout(function() {
+                            return Status.updateIndicator(0);
+                        }, Status.delay);
+                    }
                     const state = gameToState(Y, getGame());
 
-                    _init_my_module(() => {
+                    function _cb() {
                         window.setTimeout(function() {
                             return _solve_cb(
                                 Y,
@@ -963,7 +965,13 @@ define([
                                 Status,
                             );
                         }, 400);
-                    });
+                    }
+
+                    if (!_my_module) {
+                        _init_my_module(_cb);
+                    } else {
+                        _cb();
+                    }
                 },
             });
 
