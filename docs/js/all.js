@@ -20935,7 +20935,7 @@ define([
                             function(node) {
                                 node.removeClass("pause");
                                 node.addClass("play");
-                                node.set("text", "⏵");
+                                // node.set("text", "⏵");
                             },
                         );
                     }
@@ -21079,7 +21079,7 @@ define([
                         withSelector(Y, "#solver_bar .play", function(node) {
                             node.removeClass("play");
                             node.addClass("pause");
-                            node.set("text", "⏸");
+                            // node.set("text", "⏸");
                         });
                     }
 
@@ -21160,9 +21160,7 @@ define([
                         return;
                     }
 
-                    const bar = Y.Node.create(
-                        '<nav id="solver_bar"></nav>',
-                    );
+                    const bar = Y.Node.create('<nav id="solver_bar"></nav>');
                     const indicator = Y.Node.create(
                         '<span class="indicator"></span>',
                     );
@@ -21372,12 +21370,12 @@ define([
 
                     // Remove UI clutter for the demo.
                     if (WITH_UI) {
-                        if (false){
-                        withSelector(Y, "#solver_bar .controls", function(
-                            node,
-                        ) {
-                            node.addClass("hidden");
-                        });
+                        if (false) {
+                            withSelector(Y, "#solver_bar .controls", function(
+                                node,
+                            ) {
+                                node.addClass("hidden");
+                            });
                         }
                     }
 
