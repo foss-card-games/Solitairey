@@ -244,6 +244,7 @@ task upload: :default do
   # myrsync "hostgator:public_html/temp-Solitairey-ekrimyk/"
   # myrsync "hostgator:public_html/temp-Solitairey-fc-solve-loop-NjU78o/"
   myrsync 'hostgator:public_html/temp-Solitairey-fc-solve2/'
+  myrsync 'hostgator:public_html/Solitairey--macklop/'
   cond = false
   if cond
     sh 'rsync --progress --inplace -a -v dest ' \
