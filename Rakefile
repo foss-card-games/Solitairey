@@ -53,6 +53,7 @@ IMAGES = Dir['{dondorf,layouts}/**/*.png', '*.{css,gif,png,jpg}'] +
 
 DEST_INDEX = 'dest/index.html'.freeze
 DEST_INDEX_DEV = 'dest/index-dev.html'.freeze
+DEST_INDEX_DEV_X = 'dest/index-dev.xhtml'.freeze
 
 def create_index(index, development = false)
   require 'erb'
@@ -208,6 +209,9 @@ desc 'development file with seperated, unminified source files'
 file DEST_INDEX_DEV => TEMPLATE do
   create_index DEST_INDEX_DEV, true
 end
+file DEST_INDEX_DEV_X => TEMPLATE do
+  create_index DEST_INDEX_DEV_X, true
+end
 
 desc 'production file with separated, unminified source files'
 file DEST_INDEX => [TEMPLATE, COMBINED] do
@@ -228,7 +232,8 @@ end
 multitask images: dest_images
 
 task :clean do
-  sh "rm -f #{[ALL, MINIFIED, COMBINED, DEST_INDEX, DEST_INDEX_DEV].join(' ')}"
+  sh "rm -f #{[ALL, MINIFIED, COMBINED, DEST_INDEX, DEST_INDEX_DEV,
+               DEST_INDEX_DEV_X].join(' ')}"
 end
 
 def myrsync(remote)
@@ -252,4 +257,5 @@ task upload_local: :default do
   myrsync '/var/www/html/shlomif/temp-Solitairey/'
 end
 
-multitask default: [DEST_INDEX, DEST_INDEX_DEV, :images, dest_css]
+multitask default: [DEST_INDEX, DEST_INDEX_DEV, DEST_INDEX_DEV_X,
+                    :images, dest_css]
