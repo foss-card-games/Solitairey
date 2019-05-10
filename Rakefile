@@ -49,7 +49,7 @@ COMPRESSOR = 'bin/Run-YUI-Compressor'.freeze
 TEMPLATE = 'index.erb'.freeze
 
 IMAGES = Dir['{dondorf,layouts}/**/*.png', '*.{css,gif,png,jpg}'] +
-         ['cards.css', '.htaccess']
+         ['.htaccess']
 
 DEST_INDEX = 'dest/index.html'.freeze
 DEST_INDEX_DEV = 'dest/index-dev.html'.freeze
@@ -139,7 +139,7 @@ def dest_js(base)
   'dest/js/' + base + '.js'
 end
 
-dest_css = 'cards.css'
+dest_css = 'dest/cards.css'
 src_css = 'solitairey-cards.scss'
 
 file dest_css => src_css do
