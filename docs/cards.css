@@ -29,7 +29,7 @@ a {
 p {
   margin-bottom: 1em; }
 
-button {
+button.solitairey {
   font-size: 18px;
   margin-right: 27px;
   background-color: #eec;
@@ -42,7 +42,7 @@ button {
   border: #000 solid 1px;
   text-shadow: 1px 1px 1px white;
   cursor: pointer; }
-  button:hover {
+  button.solitairey:hover {
     background-color: #a1a172;
     background-image: -webkit-linear-gradient(#eec, #a1a172);
     background-image: -moz-linear-gradient(#eec, #a1a172);
@@ -74,7 +74,8 @@ button {
 .hidden {
   display: none; }
 
-.stack, .card {
+.stack,
+.card {
   position: absolute;
   border-radius: 7px; }
 
@@ -255,7 +256,10 @@ button {
   height: 20px;
   margin: -2px 50px 0 0;
   cursor: pointer; }
-  .controls > div {
+  .controls > .control {
+    background: transparent;
+    padding: 0;
+    margin: 0;
     margin-right: 15px;
     float: left;
     position: relative; }
@@ -399,27 +403,6 @@ button {
 .yukon .layout,
 .russian-solitaire .layout {
   background-image: url(layouts/mini/yukon.png); }
-
-button {
-  font-size: 18px;
-  margin-right: 27px;
-  background-color: #eec;
-  background-image: -webkit-linear-gradient(white, #EEC);
-  background-image: -moz-linear-gradient(white, #EEC);
-  background-image: -ms-linear-gradient(white, #EEC);
-  padding: 6px 17px;
-  border-radius: 5px;
-  box-shadow: inset 0 0 3px 1px #fff;
-  border: #000 solid 1px;
-  text-shadow: 1px 1px 1px white;
-  cursor: pointer; }
-
-button:hover {
-  background-color: #a1a172;
-  background-image: -webkit-linear-gradient(#EEC, #a1a172);
-  background-image: -moz-linear-gradient(#EEC, #a1a172);
-  background-image: -ms-linear-gradient(#EEC, #a1a172);
-  box-shadow: none; }
 
 .replay_options {
   display: table;

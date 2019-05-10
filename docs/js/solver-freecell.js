@@ -732,15 +732,27 @@ define([
                     const indicator = Y.Node.create(
                         '<span class="indicator"></span>',
                     );
-                    const next = Y.Node.create(
-                        "<div class='fastforward' title=\"Next move\"></div>",
-                    );
-                    const prev = Y.Node.create(
-                        "<div class='rewind' title=\"Previous move\"></div>",
-                    );
-                    const playPause = Y.Node.create(
-                        "<div class='play' title=\"Play/Pause\"></div>",
-                    );
+                    function _create_button(args) {
+                        return Y.Node.create(
+                            '<button class="control ' +
+                                args.cls +
+                                '" title="' +
+                                args.title +
+                                '"></button>',
+                        );
+                    }
+                    const next = _create_button({
+                        cls: "fastforward",
+                        title: "Next move",
+                    });
+                    const prev = _create_button({
+                        cls: "rewind",
+                        title: "Previous move",
+                    });
+                    const playPause = _create_button({
+                        cls: "play",
+                        title: "Play/Pause",
+                    });
                     const controls = Y.Node.create(
                         "<div class='controls'></div>",
                     );

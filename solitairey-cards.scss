@@ -1,61 +1,62 @@
 @import url(https://fonts.googleapis.com/css?family=Questrial);
 
-@if true {
-    html,
-    div,
-    ul,
-    li,
-    p,
-    img,
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-        // position: relative;
-        margin: 0;
-        border: 0;
-        padding: 0;
-    }
+@mixin clear_style {
+    // position: relative;
+    margin: 0;
+    border: 0;
+    padding: 0;
+}
+html,
+div,
+ul,
+li,
+p,
+img,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    @include clear_style;
+}
 
-    html {
-        z-index: -100;
-    }
+html {
+    z-index: -100;
+}
 
-    ul {
-        list-style-type: none;
-    }
+ul {
+    list-style-type: none;
+}
 
-    a {
-        color: #000;
-        text-decoration: none;
-        cursor: pointer;
-    }
-    p {
-        margin-bottom: 1em;
-    }
-    button {
-        font-size: 18px;
-        margin-right: 27px;
-        background-color: #eec;
-        background-image: -webkit-linear-gradient(white, #eec);
-        background-image: -moz-linear-gradient(white, #eec);
-        background-image: -ms-linear-gradient(white, #eec);
-        padding: 6px 17px;
-        border-radius: 5px;
-        box-shadow: inset 0 0 3px 1px #fff;
-        border: #000 solid 1px;
-        text-shadow: 1px 1px 1px white;
-        cursor: pointer;
+a {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+p {
+    margin-bottom: 1em;
+}
+button.solitairey {
+    font-size: 18px;
+    margin-right: 27px;
+    background-color: #eec;
+    background-image: -webkit-linear-gradient(white, #eec);
+    background-image: -moz-linear-gradient(white, #eec);
+    background-image: -ms-linear-gradient(white, #eec);
+    padding: 6px 17px;
+    border-radius: 5px;
+    box-shadow: inset 0 0 3px 1px #fff;
+    border: #000 solid 1px;
+    text-shadow: 1px 1px 1px white;
+    cursor: pointer;
 
-        &:hover {
-            background-color: #a1a172;
-            background-image: -webkit-linear-gradient(#eec, #a1a172);
-            background-image: -moz-linear-gradient(#eec, #a1a172);
-            background-image: -ms-linear-gradient(#eec, #a1a172);
-            box-shadow: none;
-        }
+    &:hover {
+        background-color: #a1a172;
+        background-image: -webkit-linear-gradient(#eec, #a1a172);
+        background-image: -moz-linear-gradient(#eec, #a1a172);
+        background-image: -ms-linear-gradient(#eec, #a1a172);
+        box-shadow: none;
     }
 }
 .solitairey_body_margin {
@@ -87,7 +88,8 @@
     display: none;
 }
 
-.stack, .card{
+.stack,
+.card {
     position: absolute;
     // position: relative;
     border-radius: 7px;
@@ -321,7 +323,11 @@
     cursor: pointer;
 
     @if true {
-        > div {
+        > .control {
+            // @include clear_style;
+            background: transparent;
+            padding: 0;
+            margin: 0;
             margin-right: 15px;
             float: left;
             position: relative;
@@ -331,129 +337,86 @@
 }
 
 .indicator {
-	float: left;
+    float: left;
 }
 
 .play {
-	height: 0px;
-	width: 0;
-	border-top: 10px solid transparent;
-	border-bottom: 10px solid transparent;
-	border-left: 15px solid #ddd;
+    height: 0px;
+    width: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-left: 15px solid #ddd;
 }
 
 .play:hover {
-	border-left-color: #32c700;
+    border-left-color: #32c700;
 }
 
 .pause {
-	top: 0;
-	width: 4px;
-	height: 20px;
-	border-color: #ddd;
-	border-left: 5px solid;
-	border-right: 5px solid;
+    top: 0;
+    width: 4px;
+    height: 20px;
+    border-color: #ddd;
+    border-left: 5px solid;
+    border-right: 5px solid;
 }
 
 .pause:hover {
-	border-color: #32c700;
+    border-color: #32c700;
 }
 
 .rewind {
-	top: 0;
-	height: 0px;
-	width: 0;
-	border-top: 10px solid transparent;
-	border-bottom: 10px solid transparent;
-	border-right: 15px solid #ddd;
+    top: 0;
+    height: 0px;
+    width: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-right: 15px solid #ddd;
 }
 
 .rewind:after {
-	position: absolute;
-	top: -10px;
-	left: -3px;
-	height: 20px;
-	width: 4px;
-	background: #ddd;
-	content: "";
+    position: absolute;
+    top: -10px;
+    left: -3px;
+    height: 20px;
+    width: 4px;
+    background: #ddd;
+    content: "";
 }
 
 .rewind:hover {
-	border-right-color: #32c700;
+    border-right-color: #32c700;
 }
 
 .rewind:hover:after {
-	background: #32c700;
+    background: #32c700;
 }
 
 .fastforward {
-	top: 0;
-	height: 0px;
-	width: 0;
-	border-top: 10px solid transparent;
-	border-bottom: 10px solid transparent;
-	border-left: 15px solid #ddd;
+    top: 0;
+    height: 0px;
+    width: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-left: 15px solid #ddd;
 }
 
 .fastforward:after {
-	position: absolute;
-	top: -10px;
-	right: -3px;
-	height: 20px;
-	width: 4px;
-	background: #ddd;
-	content: "";
+    position: absolute;
+    top: -10px;
+    right: -3px;
+    height: 20px;
+    width: 4px;
+    background: #ddd;
+    content: "";
 }
 
 .fastforward:hover {
-	border-left-color: #32c700;
+    border-left-color: #32c700;
 }
 
 .fastforward:hover:after {
-	background: #32c700;
-}
-.play,
-.pause,
-.rewind,
-.fastforward {
-    @if false {
-    // display: table-cell;
-    font-family: Arial;
-    font-size: 14px;
-    height: 25px;
-    width: 50px;
-    text-align: center;
-    @if false {
-        top: 0;
-        height: 0px;
-        width: 0;
-        border-top: 10px solid transparent;
-        border-bottom: 10px solid transparent;
-        border-right: 15px solid #ddd;
-    }
-
-    @if false {
-        position: absolute;
-        top: -10px;
-        left: -3px;
-        height: 20px;
-        width: 4px;
-        background: #ddd;
-        content: "";
-    }
-
-    @if true {
-        &:hover {
-            border-right-color: #32c700;
-
-            @if false {
-                &:after {
-                    background: #32c700;
-                }
-            }
-        }
-    }
-}
+    background: #32c700;
 }
 
 .scrollable {
@@ -549,28 +512,6 @@
     background-image: url(layouts/mini/yukon.png);
 }
 
-button {
-	font-size: 18px;
-	margin-right: 27px;
-	background-color: #eec;
-	background-image: -webkit-linear-gradient(white, #EEC);
-	background-image: -moz-linear-gradient(white, #EEC);
-	background-image: -ms-linear-gradient(white, #EEC);
-	padding: 6px 17px;
-	border-radius: 5px;
-	box-shadow: inset 0 0 3px 1px #fff;
-	border: #000 solid 1px;
-	text-shadow: 1px 1px 1px white;
-	cursor: pointer;
-}
-
-button:hover {
-	background-color: #a1a172;
-	background-image: -webkit-linear-gradient(#EEC, #a1a172);
-	background-image: -moz-linear-gradient(#EEC, #a1a172);
-	background-image: -ms-linear-gradient(#EEC, #a1a172);
-	box-shadow: none;
-}
 .replay_options {
     display: table;
     margin: 20px auto;
