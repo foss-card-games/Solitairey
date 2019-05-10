@@ -1,16 +1,5 @@
 JS_PREFIX = 'js'.freeze
 JS_SRC_PREFIX = 'src/js'.freeze
-<<<<<<< HEAD
-PREFIX = 'dest/js'.freeze
-JS = %w[yui-breakout solitaire iphone auto-stack-clear auto-turnover
-        autoplay
-        ie-opera-background-fix statistics solver-freecell
-        solver-freecell-worker agnes
-        golf klondike klondike1t flowergarden fortythieves freecell grandclock
-        montecarlo pyramid russian-solitaire scorpion spider spider1s spider2s
-        spiderette tritowers will-o-the-wisp yukon application].freeze
-YUI_SRC = 'dest/js/yui-debug.js'.freeze
-=======
 ROOT_PREFIX = 'dest'.freeze
 PREFIX = 'dest/js'.freeze
 BROWSERIFY_JS = %w[big-integer flatted].freeze
@@ -51,25 +40,16 @@ JS = %w[yui-breakout yui-debug require require--debug lodash.custom.min] +
      JS_CURATED_SOURCES + TS_BASE
 YUI_DIST = 'yui-unpack/'.freeze
 YUI_SRC = 'ext/yui/yui-all-min.js'.freeze
->>>>>>> fc-solve--deal-and-sol--preview
 YUI = "#{PREFIX}/yui-all-min.js".freeze
 ALL = "#{PREFIX}/all.js".freeze
 MINIFIED = "#{PREFIX}/all-min.js".freeze
 COMBINED = "#{PREFIX}/combined-min.js".freeze
-<<<<<<< HEAD
-COMPRESSOR = 'ext/yuicompressor-2.4.2/build/yuicompressor-2.4.2.jar'.freeze
-TEMPLATE = 'index.erb'.freeze
-
-IMAGES = Dir.glob('{dondorf,layouts}/**/*.png') + \
-         Dir.glob('*.{css,gif,png,jpg}')
-=======
 # COMPRESSOR = "ext/yuicompressor-2.4.2/build/yuicompressor-2.4.2.jar"
 COMPRESSOR = 'bin/Run-YUI-Compressor'.freeze
 TEMPLATE = 'index.erb'.freeze
 
 IMAGES = Dir['{dondorf,layouts}/**/*.png', '*.{css,gif,png,jpg}'] +
          ['.htaccess']
->>>>>>> fc-solve--deal-and-sol--preview
 
 DEST_INDEX = 'dest/index.html'.freeze
 DEST_INDEX_DEV = 'dest/index-dev.html'.freeze
@@ -82,57 +62,6 @@ def create_index(index, development = false)
   end
 end
 
-<<<<<<< HEAD
-DEST_IMAGES = []
-IMAGES.each do |img|
-  d = "dest/#{img}"
-  DEST_IMAGES << d
-  file d => img do
-    sh "mkdir -p $(dirname #{d})"
-    sh "cp -f #{img} #{d}"
-  end
-end
-
-file YUI => YUI_SRC do
-  sh "java -jar #{COMPRESSOR} -o #{YUI} #{YUI_SRC}"
-end
-
-dest_js_s = []
-
-["yui-unpack"].each do |fn_base|
-  fn = fn_base
-  src = "ext/#{fn}"
-  dest = "#{PREFIX}/#{fn}"
-  dest_js_s << dest
-  file dest => src do
-    sh "rsync -a #{src} #{PREFIX}/"
-  end
-end
-["yui-debug"].each do |fn_base|
-  fn = fn_base + '.js'
-  src = "ext/yui-debug/#{fn}"
-  dest = "#{PREFIX}/#{fn}"
-  dest_js_s << dest
-  file dest => src do
-    sh "cp -f #{src} #{dest}"
-  end
-end
-JS.each do |fn_base|
-  fn = fn_base + '.js'
-  src = "#{JS_SRC_PREFIX}/#{fn}"
-  dest = "#{PREFIX}/#{fn}"
-  dest_js_s << dest
-  file dest => src do
-    sh "cp -f #{src} #{dest}"
-  end
-end
-
-desc 'concatenated solitaire sources'
-file ALL => dest_js_s do
-  File.open(ALL, 'w') do |f|
-    JS.each do |fn|
-      f.write(File.read("#{JS_SRC_PREFIX}/#{fn}.js"))
-=======
 dest_images = []
 IMAGES.each do |img|
   d = "dest/#{img}"
@@ -261,7 +190,6 @@ file ALL => dest_js_s + dest_js_extra do
   File.open(ALL, 'w') do |f|
     JS.each do |filename|
       f.write(File.read(js_js_pat_file(filename)))
->>>>>>> fc-solve--deal-and-sol--preview
     end
   end
 end
