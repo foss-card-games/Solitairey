@@ -268,11 +268,13 @@ button.solitairey {
   float: left; }
 
 .play {
+  top: 0;
   height: 0px;
   width: 0;
   border-top: 10px solid transparent;
   border-bottom: 10px solid transparent;
-  border-left: 15px solid #ddd; }
+  border-left: 15px solid #ddd;
+  border-right-width: 0; }
 
 .play:hover {
   border-left-color: #32c700; }
