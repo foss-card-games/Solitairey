@@ -1,54 +1,4 @@
 @import url(https://fonts.googleapis.com/css?family=Questrial);
-html,
-div,
-ul,
-li,
-p,
-img,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  margin: 0;
-  border: 0;
-  padding: 0; }
-
-html {
-  z-index: -100; }
-
-ul {
-  list-style-type: none; }
-
-a {
-  color: #000;
-  text-decoration: none;
-  cursor: pointer; }
-
-p {
-  margin-bottom: 1em; }
-
-button.solitairey {
-  font-size: 18px;
-  margin-right: 27px;
-  background-color: #eec;
-  background-image: -webkit-linear-gradient(white, #eec);
-  background-image: -moz-linear-gradient(white, #eec);
-  background-image: -ms-linear-gradient(white, #eec);
-  padding: 6px 17px;
-  border-radius: 5px;
-  box-shadow: inset 0 0 3px 1px #fff;
-  border: #000 solid 1px;
-  text-shadow: 1px 1px 1px white;
-  cursor: pointer; }
-  button.solitairey:hover {
-    background-color: #a1a172;
-    background-image: -webkit-linear-gradient(#eec, #a1a172);
-    background-image: -moz-linear-gradient(#eec, #a1a172);
-    background-image: -ms-linear-gradient(#eec, #a1a172);
-    box-shadow: none; }
-
 .solitairey_body_margin {
   padding: 50px; }
 
@@ -245,9 +195,11 @@ button.solitairey {
   color: #ddd;
   font-size: 16px;
   font-weight: bold;
-  box-shadow: 0 1px 12px 0.5px #000; }
+  box-shadow: 0 1px 12px 0.5px #000;
+  z-index: 10000; }
 
 .indicator {
+  padding-right: 2em;
   float: left; }
 
 .controls {
@@ -434,5 +386,55 @@ button.solitairey {
   .chromestore img {
     background: #fff;
     display: block; }
+
+html,
+div,
+ul,
+li,
+p,
+img,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+  border: 0;
+  padding: 0; }
+
+html {
+  z-index: -100; }
+
+ul {
+  list-style-type: none; }
+
+a {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer; }
+
+p {
+  margin-bottom: 1em; }
+
+button.solitairey {
+  font-size: 18px;
+  margin-right: 27px;
+  background-color: #eec;
+  background-image: -webkit-linear-gradient(white, #eec);
+  background-image: -moz-linear-gradient(white, #eec);
+  background-image: -ms-linear-gradient(white, #eec);
+  padding: 6px 17px;
+  border-radius: 5px;
+  box-shadow: inset 0 0 3px 1px #fff;
+  border: #000 solid 1px;
+  text-shadow: 1px 1px 1px white;
+  cursor: pointer; }
+  button.solitairey:hover {
+    background-color: #a1a172;
+    background-image: -webkit-linear-gradient(#eec, #a1a172);
+    background-image: -moz-linear-gradient(#eec, #a1a172);
+    background-image: -ms-linear-gradient(#eec, #a1a172);
+    box-shadow: none; }
 
 /*# sourceMappingURL=cards.css.map */
