@@ -729,7 +729,7 @@ define([
                     }
 
                     const bar = Y.Node.create(
-                        '<nav id="solver_bar" class="controls"></nav>',
+                        '<nav id="solver_bar"></nav>',
                     );
                     const indicator = Y.Node.create(
                         '<span class="indicator"></span>',
@@ -743,8 +743,9 @@ define([
                     const playPause = Y.Node.create(
                         "<div class='play' title=\"Play/Pause\"></div>",
                     );
-                    const controls = bar;
-
+                    const controls = Y.Node.create(
+                        "<div class='controls'></div>",
+                    );
                     next.on("click", function() {
                         Animation.pause();
                         Animation.next(getGame());
@@ -768,12 +769,12 @@ define([
                         }
                     });
 
-                    bar.append(indicator);
                     controls.append(prev);
                     controls.append(playPause);
                     controls.append(next);
 
-                    // bar.append(controls);
+                    bar.append(indicator);
+                    bar.append(controls);
                     Y.one(".solitairey_body").append(bar);
 
                     this.indicator = indicator;
@@ -938,17 +939,17 @@ define([
                     that.stop();
 
                     // Remove UI clutter for the demo.
-                    if (false) {
-                        if (WITH_UI) {
-                            withSelector(Y, "#solver_bar .controls", function(
-                                node,
-                            ) {
-                                node.addClass("hidden");
-                            });
+                    if (WITH_UI) {
+                        if (false){
+                        withSelector(Y, "#solver_bar .controls", function(
+                            node,
+                        ) {
+                            node.addClass("hidden");
+                        });
                         }
-
-                        that.currentSolution = null;
                     }
+
+                    that.currentSolution = null;
                     if (false) {
                         window.clearTimeout(Status.indicatorTimer);
                         Status.indicatorTimer = window.setTimeout(function() {
