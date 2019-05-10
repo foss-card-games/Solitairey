@@ -239,7 +239,8 @@ task upload: :default do
   # myrsync "hostgator:public_html/temp-Solitairey-ekrimyk/"
   # myrsync "hostgator:public_html/temp-Solitairey-fc-solve-loop-NjU78o/"
   myrsync 'hostgator:public_html/temp-Solitairey-fc-solve2/'
-  if false
+  cond = false
+  if cond
     sh 'rsync --progress --inplace -a -v dest ' \
       'hostgator:public_html/temp-Solitairey-ekrimyk/'
   end
@@ -251,4 +252,4 @@ task upload_local: :default do
   myrsync '/var/www/html/shlomif/temp-Solitairey/'
 end
 
-multitask default: [DEST_INDEX, DEST_INDEX_DEV, :images]
+multitask default: [DEST_INDEX, DEST_INDEX_DEV, :images, dest_css]

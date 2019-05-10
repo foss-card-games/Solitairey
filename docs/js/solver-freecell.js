@@ -735,13 +735,13 @@ define([
                         '<span class="indicator"></span>',
                     );
                     const next = Y.Node.create(
-                        "<button class='fastforward' title=\"Next move\">⏩︎</button>",
+                        "<div class='fastforward' title=\"Next move\"></div>",
                     );
                     const prev = Y.Node.create(
-                        "<button class='rewind' title=\"Previous move\">⏪︎</button>",
+                        "<div class='rewind' title=\"Previous move\"></div>",
                     );
                     const playPause = Y.Node.create(
-                        "<button class='play' title=\"Play/Pause\">⏵</button>",
+                        "<div class='play' title=\"Play/Pause\"></div>",
                     );
                     const controls = bar;
 
