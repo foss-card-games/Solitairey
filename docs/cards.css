@@ -262,7 +262,8 @@ button.solitairey {
     margin: 0;
     margin-right: 15px;
     float: left;
-    position: relative; }
+    position: relative;
+    border-right-width: 0; }
 
 .indicator {
   float: left; }
@@ -273,8 +274,7 @@ button.solitairey {
   width: 0;
   border-top: 10px solid transparent;
   border-bottom: 10px solid transparent;
-  border-left: 15px solid #ddd;
-  border-right-width: 0; }
+  border-left: 15px solid #ddd; }
 
 .play:hover {
   border-left-color: #32c700; }
