@@ -1,159 +1,183 @@
-YUI.add("scorpion", function (Y) {
+YUI.add(
+    "scorpion",
+    function(Y) {
+        const Solitaire = Y.Solitaire,
+            Scorpion = (Solitaire.Scorpion = Solitaire.instance(Solitaire, {
+                fields: ["Foundation", "Deck", "Tableau"],
 
-var Solitaire = Y.Solitaire,
-    Scorpion = Solitaire.Scorpion = instance(Solitaire, {
-	fields: ["Foundation", "Deck", "Tableau"],
+                createEvents: function() {
+                    Solitaire.AutoStackClear.register();
+                    Solitaire.createEvents.call(this);
+                },
 
-	createEvents: function () {
-		Solitaire.AutoStackClear.register();
-		Solitaire.createEvents.call(this);
-	},
+                deal: function() {
+                    const deck = this.deck,
+                        stacks = this.tableau.stacks;
 
-	deal: function () {
-		var card,
-		    stack,
-		    row,
-		    deck = this.deck,
-		    stacks = this.tableau.stacks;
+                    for (let row = 0; row < 7; row++) {
+                        for (let stack = 0; stack < 7; stack++) {
+                            const card = deck.pop();
 
-		for (row = 0; row < 7; row++) {
-			for (stack = 0; stack < 7; stack++) {
-				card = deck.pop();
+                            if (!(row < 3 && stack < 4)) {
+                                card.faceUp();
+                            }
 
-				if (!(row < 3 && stack < 4)) { card.faceUp(); }
+                            stacks[stack].push(card);
+                        }
+                    }
 
-				stacks[stack].push(card);
-			}
-		}
+                    deck.createStack();
+                },
 
-		deck.createStack();
-	},
+                turnOver: function() {
+                    const deck = this.deck.stacks[0],
+                        stacks = this.tableau.stacks;
 
-	turnOver: function () {
-		var deck = this.deck.stacks[0],
-		    stacks = this.tableau.stacks,
-		    i, len;
+                    for (let i = 0; i < 3; i++) {
+                        deck.my_Last()
+                            .faceUp()
+                            .moveTo(stacks[i]);
+                    }
+                },
 
-		for (i = 0; i < 3; i++) {
-			deck.last().faceUp().moveTo(stacks[i]);
-		}
-	},
+                height: function() {
+                    return this.Card.base.height * 5.6;
+                },
 
-	height: function () { return this.Card.base.height * 5.6; },
+                Stack: Solitaire.instance(Solitaire.Stack),
 
-	Stack: instance(Solitaire.Stack),
+                Deck: Solitaire.instance(Solitaire.Deck, {
+                    stackConfig: {
+                        total: 1,
+                        layout: {
+                            top: 0,
+                            left: function() {
+                                return Solitaire.Card.width * 9;
+                            },
+                        },
+                    },
+                    field: "deck",
 
-	Deck: instance(Solitaire.Deck, {
-		stackConfig: {
-			total: 1,
-			layout: {
-				top: 0,
-				left: function () { return Solitaire.Card.width * 9; }
-			},
-		},
-		field: "deck",
+                    createStack: function() {
+                        for (let i = this.cards.length - 1; i >= 0; i--) {
+                            this.stacks[0].push(this.cards[i]);
+                        }
+                    },
+                }),
 
-		createStack: function () {
-			var i, len;
+                Foundation: {
+                    stackConfig: {
+                        total: 4,
+                        layout: {
+                            top: function() {
+                                return Solitaire.Card.height * 1.1;
+                            },
+                            left: function() {
+                                return Solitaire.Card.width * 9;
+                            },
+                            vspacing: 1.1,
+                        },
+                    },
+                    field: "foundation",
+                },
 
-			for (i = this.cards.length - 1; i >= 0; i--) {
-				this.stacks[0].push(this.cards[i]);
-			}
-		},
-	}),
+                Tableau: {
+                    stackConfig: {
+                        total: 7,
+                        layout: {
+                            hspacing: 1.25,
+                            top: 0,
+                            left: 0,
+                        },
+                    },
+                    field: "tableau",
+                },
 
-	Foundation: {
-		stackConfig: {
-			total: 4,
-			layout: {
-				top: function () { return Solitaire.Card.height * 1.1; },
-				left: function () { return Solitaire.Card.width * 9; },
-				vspacing: 1.1,
-			}
-		},
-		field: "foundation"
-	},
+                Card: Solitaire.instance(Solitaire.Card, {
+                    playable: function() {
+                        const field = this.stack.field;
 
-	Tableau: {
-		stackConfig: {
-			total: 7,
-			layout: {
-				hspacing: 1.25,
-				top: 0,
-				left: 0
-			}
-		},
-		field: "tableau"
-	},
+                        return (
+                            field === "deck" ||
+                            (field === "tableau" && !this.isFaceDown)
+                        );
+                    },
 
-	Card: instance(Solitaire.Card, {
-		playable: function () {
-			var field = this.stack.field;
+                    validTarget: function(stack) {
+                        const target = stack.my_Last();
 
-			return field === "deck" || field === "tableau" && !this.isFaceDown;
-		},
+                        if (stack.field !== "tableau") {
+                            return false;
+                        }
 
-		validTarget: function (stack) {
-			var target = stack.last();
+                        if (!target) {
+                            return this.rank === 13;
+                        } else {
+                            return (
+                                !target.isFaceDown &&
+                                target.suit === this.suit &&
+                                target.rank === this.rank + 1
+                            );
+                        }
+                    },
+                }),
+            }));
 
-			if (stack.field !== "tableau") { return false; }
+        Y.Array.each(Scorpion.fields, function(field) {
+            Scorpion[field].Stack = Solitaire.instance(Scorpion.Stack);
+        });
 
-			if (!target) {
-				return this.rank === 13;
-			} else {
-				return !target.isFaceDown && target.suit === this.suit && target.rank === this.rank + 1;
-			}
-		}
-	})
-});
+        Y.mix(
+            Scorpion.Stack,
+            {
+                validTarget: function(stack) {
+                    return (
+                        stack.field === "tableau" &&
+                        this.first().validTarget(stack)
+                    );
+                },
 
-Y.Array.each(Scorpion.fields, function (field) {
-	Scorpion[field].Stack = instance(Scorpion.Stack);
-});
+                validProxy: function(card) {
+                    return true;
+                },
 
+                validTarget: function(stack) {
+                    const cards = this.cards;
 
-Y.mix(Scorpion.Stack, {
-	validTarget: function (stack) {
-		return stack.field === "tableau" &&
-		    this.first().validTarget(stack);
-	},
+                    switch (stack.field) {
+                        case "tableau":
+                            return this.first().validTarget(stack);
+                            break;
+                        case "foundation":
+                            const rank = this.last.rank;
+                            if (cards.length !== 13) {
+                                return false;
+                            }
 
-	validProxy: function (card) {
-		return true;
-	},
+                            for (let i = 0; i < 13; i++) {
+                                if (cards[i].rank !== rank) {
+                                    return false;
+                                }
+                            }
 
-	validTarget: function (stack) {
-		var rank,
-		    cards = this.cards,
-		    i;
+                            return true;
+                            break;
+                    }
+                },
+            },
+            true,
+        );
 
-		switch (stack.field) {
-		case "tableau":
-			return this.first().validTarget(stack);
-			break;
-		case "foundation":
-			rank = this.last.rank;
-			if (cards.length !== 13) { return false; }
-
-			for (i = 0; i < 13; i++) {
-				if (cards[i].rank !== rank) { return false; }
-			}
-
-			return true;
-			break;
-		}
-	}
-}, true);
-
-Y.mix(Scorpion.Tableau.Stack, {
-	setCardPosition: function (card) {
-		var last = this.cards.last(),
-		    top = last ? last.top + last.rankHeight : this.top,
-		    left = this.left;
-
-		card.left = left;
-		card.top = top;
-	}
-}, true);
-
-}, "0.0.1", {requires: ["auto-stack-clear"]});
+        Y.mix(
+            Scorpion.Tableau.Stack,
+            {
+                setCardPosition: function(card) {
+                    return this.lastCardSetCardPosition(card);
+                },
+            },
+            true,
+        );
+    },
+    "0.0.1",
+    { requires: ["auto-stack-clear"] },
+);

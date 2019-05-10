@@ -1,245 +1,277 @@
-YUI.add("pyramid", function (Y) {
+YUI.add(
+    "pyramid",
+    function(Y) {
+        const Solitaire = Y.Solitaire,
+            Pyramid = (Y.Solitaire.Pyramid = Solitaire.instance(Solitaire, {
+                fields: ["Foundation", "Deck", "Waste", "Tableau"],
 
-var Solitaire = Y.Solitaire,
-    Pyramid = Y.Solitaire.Pyramid = instance(Solitaire, {
-	fields: ["Foundation", "Deck", "Waste", "Tableau"],
+                deal: function() {
+                    const deck = this.deck,
+                        stacks = this.tableau.stacks;
 
-	deal: function () {
-		var card,
-		    stack,
-		    i,
-		    deck = this.deck,
-		    stacks = this.tableau.stacks;
+                    for (let stack = 0; stack < 7; stack++) {
+                        for (let i = 0; i <= stack; i++) {
+                            const card = deck.pop().faceUp();
+                            stacks[stack].push(card);
+                        }
+                    }
 
-		for (stack = 0; stack < 7; stack++) {
-			for (i = 0; i <= stack; i++) {
-				card = deck.pop().faceUp();
-				stacks[stack].push(card);
-			}
-		}
+                    deck.createStack();
+                    deck.my_Last().faceUp();
+                },
 
-		deck.createStack();
-		deck.last().faceUp();
-	},
+                turnOver: function() {
+                    const deck = this.deck.stacks[0],
+                        waste = this.waste.stacks[0];
 
-	turnOver: function () {
-		var deck = this.deck.stacks[0],
-		    waste = this.waste.stacks[0];
+                    if (deck.cards.length === 1) {
+                        return;
+                    }
+                    deck.my_Last().moveTo(waste);
+                },
 
-		if (deck.cards.length === 1) { return; }
-		deck.last().moveTo(waste);
-	},
+                height: function() {
+                    return this.Card.base.height * 4.85;
+                },
 
-	height: function () { return this.Card.base.height * 4.85; },
+                Stack: Solitaire.instance(Solitaire.Stack, {
+                    images: {},
 
-	Stack: instance(Solitaire.Stack, {
-		images: {},
+                    updateDragGroups: function() {
+                        const active = Solitaire.activeCard;
 
-		updateDragGroups: function () {
-			var active = Solitaire.activeCard;
+                        Y.Array.each(this.cards, function(c) {
+                            if (!c) {
+                                return;
+                            }
 
-			Y.Array.each(this.cards, function (c) {
-				if (!c) { return; }
+                            if (active.validTarget(c)) {
+                                c.node.drop.addToGroup("open");
+                            } else {
+                                c.node.drop.removeFromGroup("open");
+                            }
+                        });
+                    },
+                }),
 
-				if (active.validTarget(c)) {
-					c.node.drop.addToGroup("open");
-				} else {
-					c.node.drop.removeFromGroup("open");
-				}
-			});
-		}
-	}),
+                Events: Solitaire.instance(Solitaire.Events, {
+                    dragCheck: function(e) {
+                        if (!Solitaire.game.autoPlay.call(this)) {
+                            Solitaire.Events.dragCheck.call(this);
+                        }
+                    },
 
-	Events: instance(Solitaire.Events, {
-		dragCheck: function (e) {
-			if (!Solitaire.game.autoPlay.call(this)) {
-				Solitaire.Events.dragCheck.call(this);
-			}
-		},
+                    drop: function(e) {
+                        const active = Solitaire.activeCard,
+                            foundation = Solitaire.game.foundation.stacks[0],
+                            target = e.drop.get("node").getData("target");
 
-		drop: function (e) {
-			var active = Solitaire.activeCard,
-			    foundation = Solitaire.game.foundation.stacks[0],
-			    target = e.drop.get("node").getData("target");
+                        if (!active) {
+                            return;
+                        }
 
-			if (!active) { return; }
+                        Solitaire.stationary(function() {
+                            target.moveTo(foundation);
+                            active.moveTo(foundation);
+                        });
 
-			Solitaire.stationary(function () {
-				target.moveTo(foundation);
-				active.moveTo(foundation);
-			});
+                        Solitaire.endTurn();
+                    },
+                }),
 
-			Solitaire.endTurn();
-		}
-	}),
+                Foundation: {
+                    stackConfig: {
+                        total: 1,
+                        layout: {
+                            hspacing: 0,
+                            top: 0,
+                            left: function() {
+                                return Solitaire.Card.width * 8;
+                            },
+                        },
+                    },
+                    field: "foundation",
+                },
 
-	Foundation: {
-		stackConfig: {
-			total: 1,
-			layout: {
-				hspacing: 0,
-				top: 0,
-				left: function () { return Solitaire.Card.width * 8; }
-			}
-		},
-		field: "foundation"
-	},
+                Deck: Solitaire.instance(Solitaire.Deck, {
+                    stackConfig: {
+                        total: 1,
+                        layout: {
+                            hspacing: 0,
+                            top: 0,
+                            left: 0,
+                        },
+                    },
+                    field: "deck",
 
-	Deck: instance(Solitaire.Deck, {
-		stackConfig: {
-			total: 1,
-			layout: {
-				hspacing: 0,
-				top: 0,
-				left: 0
-			}
-		},
-		field: "deck",
+                    createStack: function() {
+                        for (let i = 0, len = this.cards.length; i < len; i++) {
+                            this.stacks[0].push(this.cards[i]);
+                        }
+                    },
+                }),
 
-		createStack: function () {
-			var i, len;
+                Waste: {
+                    stackConfig: {
+                        total: 1,
+                        layout: {
+                            hspacing: 0,
+                            top: 0,
+                            left: function() {
+                                return Solitaire.Card.width * 1.5;
+                            },
+                        },
+                    },
+                    field: "waste",
+                },
 
-			for (i = 0, len = this.cards.length; i < len; i++) {
-				this.stacks[0].push(this.cards[i]);
-			}
-		}
-	}),
+                Tableau: {
+                    stackConfig: {
+                        total: 7,
+                        layout: {
+                            vspacing: 0.6,
+                            hspacing: -0.625,
+                            cardGap: 1.25,
+                            top: 0,
+                            left: function() {
+                                return Solitaire.Card.width * 5;
+                            },
+                        },
+                    },
+                    field: "tableau",
+                },
 
-	Waste: {
-		stackConfig: {
-			total: 1,
-			layout: {
-				hspacing: 0,
-				top: 0,
-				left: function () { return Solitaire.Card.width * 1.5; }
-			}
-		},
-		field: "waste"
-	},
+                Card: Solitaire.instance(Solitaire.Card, {
+                    validTarget: function(card) {
+                        if (card.field === "foundation") {
+                            // "card" is actually a stack :/
+                            return this.isFree() && this.rank === 13;
+                        }
 
-	Tableau: {
-		stackConfig: {
-			total: 7,
-			layout: {
-				vspacing: 0.6,
-				hspacing: -0.625,
-				cardGap: 1.25,
-				top: 0,
-				left: function () { return Solitaire.Card.width * 5; }
-			}
-		},
-		field: "tableau"
-	},
+                        if (card.isFree()) {
+                            return this.rank + card.rank === 13;
+                        }
 
-	Card: instance(Solitaire.Card, {
-		validTarget: function (card) {
-			if (card.field === "foundation") { // "card" is actually a stack :/
-				return this.isFree() && this.rank === 13;
-			}
+                        return false;
+                    },
 
-			if (card.isFree()) {
-				return this.rank + card.rank === 13;
-			}
+                    createProxyNode: function() {
+                        return this.rank === 13
+                            ? ""
+                            : Solitaire.Card.createProxyNode.call(this);
+                    },
 
-			return false;
-		},
+                    createProxyStack: function() {
+                        let stack = null;
 
-		createProxyNode: function () {
-			return this.rank === 13 ?
-				"" :
-				Solitaire.Card.createProxyNode.call(this);
-		},
+                        if (this.isFree()) {
+                            stack = Solitaire.instance(this.stack);
+                            stack.cards = this.proxyCards();
+                        }
 
-		createProxyStack: function () {
-			var stack = null;
+                        this.proxyStack = stack;
 
-			if (this.isFree()) {
-				stack = instance(this.stack);
-				stack.cards = this.proxyCards();
-			}
+                        return this.proxyStack;
+                    },
 
-			this.proxyStack = stack;
+                    proxyCards: function() {
+                        return [this];
+                    },
 
-			return this.proxyStack;
-		},
+                    isFree: function() {
+                        const stack = this.stack,
+                            stackIndex = stack.index(),
+                            index = stack.cards.indexOf(this),
+                            game = Solitaire.game,
+                            next = stack.next();
 
-		proxyCards: function () {
-			return [this];
-		},
+                        if (stack.field === "deck" || stack.field === "waste") {
+                            return !this.isFaceDown;
+                        } else {
+                            return !(
+                                this.stack.field === "foundation" ||
+                                (next &&
+                                    (next.cards[index] ||
+                                        next.cards[index + 1]))
+                            );
+                        }
+                    },
 
-		isFree: function () {
-			var stack = this.stack,
-			    stackIndex = stack.index(),
-			    index = stack.cards.indexOf(this),
-			    game = Solitaire.game,
-			    next = stack.next();
+                    turnOver: function() {
+                        this.stack.field === "deck" &&
+                            !this.isFaceDown &&
+                            Solitaire.game.turnOver();
+                    },
+                }),
+            }));
 
-			if (stack.field === "deck" || stack.field === "waste") {
-				return !this.isFaceDown;
-			} else {
-				return !(this.stack.field === "foundation" ||
-					next &&
-					(next.cards[index] || next.cards[index + 1]));
-			}
-		},
+        Y.Array.each(Pyramid.fields, function(field) {
+            Pyramid[field].Stack = Solitaire.instance(Pyramid.Stack);
+        });
 
-		turnOver: function () {
-			this.stack.field === "deck" && !this.isFaceDown && Solitaire.game.turnOver();
-		}
-	})
-});
+        Y.mix(
+            Pyramid.Tableau.Stack,
+            {
+                deleteItem: function(card) {
+                    const cards = this.cards,
+                        i = cards.indexOf(card);
 
-Y.Array.each(Pyramid.fields, function (field) {
-	Pyramid[field].Stack = instance(Pyramid.Stack);
-});
+                    if (i !== -1) {
+                        cards[i] = null;
+                    }
+                },
 
-Y.mix(Pyramid.Tableau.Stack, {
-	deleteItem: function (card) {
-		var cards = this.cards,
-		    i = cards.indexOf(card);
+                setCardPosition: function(card) {
+                    const layout = Pyramid.Tableau.stackConfig.layout,
+                        last = _.last(this.cards),
+                        top = this.top,
+                        left = last
+                            ? last.left + card.width * layout.cardGap
+                            : this.left;
 
-		if (i !== -1) { cards[i] = null; }
-	},
+                    card.left = left;
+                    card.top = top;
+                    card.zIndex = this.index() * 10;
+                },
+            },
+            true,
+        );
 
-	setCardPosition: function (card) {
-		var layout = Pyramid.Tableau.stackConfig.layout,
-		    last = this.cards.last(),
-		    top = this.top,
-		    left = last ? last.left + card.width * layout.cardGap : this.left;
+        Y.mix(
+            Pyramid.Deck.Stack,
+            {
+                deleteItem: function(card) {
+                    Pyramid.Stack.deleteItem.call(this, card);
+                    this.update();
+                },
 
-		card.left = left;
-		card.top = top;
-		card.zIndex = this.index() * 10;
-	}
-}, true);
+                update: function(undo) {
+                    const last = this.my_Last();
 
-Y.mix(Pyramid.Deck.Stack, {
-	deleteItem: function (card) {
-		Pyramid.Stack.deleteItem.call(this, card);
-		this.update();
-	},
+                    last && last.faceUp(undo);
+                },
 
-	update: function (undo) {
-		var last = this.last();
+                updateDragGroups: function() {
+                    const active = Solitaire.activeCard,
+                        card = this.my_Last();
 
-		last && last.faceUp(undo);
-	},
+                    if (!card) {
+                        return;
+                    }
 
+                    if (active.validTarget(card)) {
+                        card.node.drop.addToGroup("open");
+                    } else {
+                        card.node.drop.removeFromGroup("open");
+                    }
+                },
+            },
+            true,
+        );
 
-	updateDragGroups: function () {
-		var active = Solitaire.activeCard,
-		    card = this.last();
-
-		if (!card) { return; }
-
-		if (active.validTarget(card)) {
-			card.node.drop.addToGroup("open");
-		} else {
-			card.node.drop.removeFromGroup("open");
-		}
-	}
-}, true);
-
-Pyramid.Waste.Stack.updateDragGroups = Pyramid.Deck.Stack.updateDragGroups;
-
-}, "0.0.1", {requires: ["solitaire"]});
+        Pyramid.Waste.Stack.updateDragGroups =
+            Pyramid.Deck.Stack.updateDragGroups;
+    },
+    "0.0.1",
+    { requires: ["solitaire"] },
+);

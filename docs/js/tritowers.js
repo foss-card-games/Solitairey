@@ -1,238 +1,280 @@
-YUI.add("tri-towers", function (Y) {
-	var Solitaire = Y.Solitaire,
-	TriTowers = Y.Solitaire.TriTowers = instance(Solitaire, {
-		fields: ["Deck", "Foundation", "Tableau"],
+YUI.add(
+    "tri-towers",
+    function(Y) {
+        const Solitaire = Y.Solitaire,
+            TriTowers = (Y.Solitaire.TriTowers = Solitaire.instance(
+                Solitaire,
+                {
+                    fields: ["Deck", "Foundation", "Tableau"],
 
-		width: function () { return this.Card.base.width * 15; },
-		height: function () { return this.Card.base.height * 5; },
-		createEvents: function () {
-			Y.on("solitaire|endTurn", function () {
-				var tableaus = Solitaire.game.tableau.stacks,
-				    i;
+                    width: function() {
+                        return this.Card.base.width * 15;
+                    },
+                    height: function() {
+                        return this.Card.base.height * 5;
+                    },
+                    createEvents: function() {
+                        Y.on("solitaire|endTurn", function() {
+                            const tableaus = Solitaire.game.tableau.stacks;
 
-				for (i = 0; i < 3; i++) {
-					Y.fire("tableau:afterPop", tableaus[i]);
-				}
-			});
+                            for (let i = 0; i < 3; i++) {
+                                Y.fire("tableau:afterPop", tableaus[i]);
+                            }
+                        });
 
-			Solitaire.createEvents.call(this);
-		},
+                        Solitaire.createEvents.call(this);
+                    },
 
-		deal: function () {
-			var card,
-			    stack,
-			    stacks = this.tableau.stacks,
-			    deck = this.deck,
-			    foundation = this.foundation.stacks[0],
+                    deal: function() {
+                        let card, stack, i, stackLength;
 
-			    i, stackLength;
+                        const stacks = this.tableau.stacks,
+                            deck = this.deck,
+                            foundation = this.foundation.stacks[0];
+                        for (stack = 0; stack < 4; stack++) {
+                            stackLength = (stack + 1) * 3;
 
-			for (stack = 0; stack < 4; stack++) {
-				stackLength = (stack + 1) * 3;
+                            for (i = 0; i < stackLength; i++) {
+                                card = deck.pop();
+                                stacks[stack].push(card);
+                                stack === 3 && card.faceUp();
+                            }
+                        }
 
-				for (i = 0; i < stackLength; i++) {
-					card = deck.pop();
-					stacks[stack].push(card);
-					stack === 3 && card.faceUp();
-				}
-			}
+                        card = deck.pop().faceUp();
+                        foundation.push(card);
 
-			card = deck.pop().faceUp();
-			foundation.push(card);
+                        deck.createStack();
+                    },
 
-			deck.createStack();
-		},
+                    turnOver: function() {
+                        const deck = this.deck.stacks[0],
+                            foundation = this.foundation.stacks[0],
+                            last = deck.my_Last();
 
-		turnOver: function () {
-			var deck = this.deck.stacks[0],
-			    foundation = this.foundation.stacks[0],
-			    last = deck.last();
+                        last && last.faceUp().moveTo(foundation);
+                    },
 
-			last && last.faceUp().moveTo(foundation);
-		},
+                    isWon: function() {
+                        let won = true;
 
-		isWon: function () {
-			var won = true;
+                        this.eachStack(function(stack) {
+                            stack.eachCard(function(card) {
+                                if (card) {
+                                    won = false;
+                                }
 
-			this.eachStack(function (stack) {
-				stack.eachCard(function (card) {
-					if (card) { won = false; }
+                                return won;
+                            });
+                        }, "tableau");
 
-					return won;
-				});
-			}, "tableau");
+                        return won;
+                    },
 
-			return won;
-		},
+                    Deck: Solitaire.instance(Solitaire.Deck, {
+                        field: "deck",
+                        stackConfig: {
+                            total: 1,
+                            layout: {
+                                hspacing: 0,
+                                top: function() {
+                                    return Solitaire.Card.height * 4;
+                                },
+                                left: 0,
+                            },
+                        },
 
-		Deck: instance(Solitaire.Deck, {
-			field: "deck",
-			stackConfig: {
-				total: 1,
-				layout: {
-					hspacing: 0,
-					top: function () { return Solitaire.Card.height * 4; },
-					left: 0
-				}
-			},
+                        createStack: function() {
+                            for (
+                                let i = 0, len = this.cards.length;
+                                i < len;
+                                i++
+                            ) {
+                                this.stacks[0].push(this.cards[i]);
+                            }
+                        },
+                    }),
 
-			createStack: function () {
-				var i, len;
+                    Tableau: {
+                        field: "tableau",
+                        stackConfig: {
+                            total: 4,
+                            layout: {
+                                rowGaps: [3.75, 2.5, 1.25, 0],
+                                cardGap: 1.25,
+                                vspacing: 0.6,
+                                hspacing: -0.625,
+                                top: 0,
+                                left: function() {
+                                    return Solitaire.Card.width * 1.875;
+                                },
+                            },
+                        },
+                    },
 
-				for (i = 0, len = this.cards.length; i < len; i++) {
-					this.stacks[0].push(this.cards[i]);
-				}
-			}
-		}),
+                    Foundation: {
+                        field: "foundation",
+                        stackConfig: {
+                            total: 1,
+                            layout: {
+                                hspacing: 0,
+                                top: function() {
+                                    return Solitaire.Card.height * 4;
+                                },
+                                left: function() {
+                                    return Solitaire.Card.width * 4;
+                                },
+                            },
+                        },
+                    },
 
-		Tableau: {
-			field: "tableau",
-			stackConfig: {
-				total: 4,
-				layout: {
-					rowGaps: [3.75, 2.5, 1.25, 0],
-					cardGap: 1.25,
-					vspacing: 0.6,
-					hspacing: -0.625,
-					top: 0,
-					left: function () { return Solitaire.Card.width * 1.875; }
-				}
-			}
-		},
+                    Events: Solitaire.instance(Solitaire.Events, {
+                        dragCheck: function(e) {
+                            this.getCard().autoPlay();
 
-		Foundation: {
-			field: "foundation",
-			stackConfig: {
-				total: 1,
-				layout: {
-					hspacing: 0,
-					top: function () { return Solitaire.Card.height * 4; },
-					left: function () { return Solitaire.Card.width * 4; }
-				}
-			}
-		},
+                            /* workaround because YUI retains stale drag information if we halt the event :\ */
+                            this._afterDragEnd();
+                            e.halt();
+                        },
+                    }),
 
-		Events: instance(Solitaire.Events, {
-			dragCheck: function (e) {
-				this.getCard().autoPlay();
+                    Card: Solitaire.instance(Solitaire.Card, {
+                        /*
+                         * return true if the target is 1 rank away from the this card
+                         * Aces and Kings are valid targets for each other
+                         */
+                        validTarget: function(stack) {
+                            if (stack.field !== "foundation") {
+                                return false;
+                            }
 
-				/* workaround because YUI retains stale drag information if we halt the event :\ */
-				this._afterDragEnd();
-				e.halt();
-			}
-		}),
+                            const card = stack.my_Last(),
+                                diff = Math.abs(this.rank - card.rank);
 
-		Card: instance(Solitaire.Card, {
-			/*
-			 * return true if the target is 1 rank away from the this card
-			 * Aces and Kings are valid targets for each other
-			 */
-			validTarget: function (stack) {
-				if (stack.field !== "foundation") { return false; }
+                            return diff === 1 || diff === 12;
+                        },
 
-				var card = stack.last(),
-				    diff = Math.abs(this.rank - card.rank);
+                        playable: function() {
+                            const stack = this.stack;
 
-				return diff === 1 || diff === 12;
-			},
+                            return (
+                                (stack.field === "deck" &&
+                                    this === stack.my_Last()) ||
+                                (this.isFree() &&
+                                    this.validTarget(
+                                        Solitaire.getGame().foundation
+                                            .stacks[0],
+                                    ))
+                            );
+                        },
 
-			playable: function () {
-				var stack = this.stack;
+                        isFree: function() {
+                            const stack = this.stack,
+                                next = stack.next(),
+                                tower = this.tower(),
+                                index = stack.cards.indexOf(this);
 
-				return (stack.field === "deck" && this === stack.last()) ||
-					(this.isFree() && this.validTarget(Game.foundation.stacks[0]));
-			},
+                            if (stack.field !== "tableau") {
+                                return false;
+                            }
 
-			isFree: function () {
-				var stack = this.stack,
-				    next = stack.next(),
-				    tower = this.tower(),
-				    index = stack.cards.indexOf(this),
-				    i;
+                            if (!next) {
+                                return true;
+                            }
 
-				if (stack.field !== "tableau") { return false; }
+                            for (let i = 0; i < 2; i++) {
+                                if (next.cards[index + tower + i]) {
+                                    return false;
+                                }
+                            }
 
-				if (!next) { return true; }
+                            return true;
+                        },
 
-				for (i = 0; i < 2; i++) {
-					if (next.cards[index + tower + i]) { return false; }
-				}
+                        tower: function() {
+                            const stack = this.stack,
+                                index = stack.cards.indexOf(this),
+                                stackIndex = stack.index() + 1;
 
-				return true;
-			},
+                            return Math.floor(index / stackIndex);
+                        },
+                    }),
 
-			tower: function () {
-				var stack = this.stack,
-				    index = stack.cards.indexOf(this),
-				    stackIndex = stack.index() + 1;
+                    Stack: Solitaire.instance(Solitaire.Stack, {
+                        images: {},
+                    }),
+                },
+                true,
+            ));
 
-				return Math.floor(index / stackIndex);
-			}
-		}),
-		     
-		Stack: instance(Solitaire.Stack, {
-			images: {}
-		})
-	}, true);
+        Y.Array.each(TriTowers.fields, function(field) {
+            TriTowers[field].Stack = Solitaire.instance(TriTowers.Stack);
+        });
 
-	Y.Array.each(TriTowers.fields, function (field) {
-		TriTowers[field].Stack = instance(TriTowers.Stack);
-	});
+        Y.mix(
+            TriTowers.Tableau.Stack,
+            {
+                deleteItem: function(card) {
+                    const cards = this.cards,
+                        i = cards.indexOf(card);
 
-	Y.mix(TriTowers.Tableau.Stack, {
-		deleteItem: function (card) {
-			var cards = this.cards,
-			    i = cards.indexOf(card);
+                    if (i !== -1) {
+                        cards[i] = null;
+                    }
+                },
 
-			if (i !== -1) { cards[i] = null; }
-		},
+                setCardPosition: function(card) {
+                    let left, index, stackIndex;
+                    const last = this.my_Last(),
+                        top = this.top,
+                        layout = TriTowers.Tableau.stackConfig.layout,
+                        rowGaps = layout.rowGaps,
+                        cardGap = layout.cardGap;
 
-		setCardPosition: function (card) {
-			var last = this.last(),
-			    top = this.top,
-			    left,
-			    index,
-			    stackIndex,
+                    if (last) {
+                        left = last.left + card.width * cardGap;
+                        index = this.cards.length;
+                        stackIndex = this.index() + 1;
 
-			    layout = TriTowers.Tableau.stackConfig.layout,
-			    rowGaps = layout.rowGaps,
-			    cardGap = layout.cardGap;
+                        if (!(index % stackIndex)) {
+                            left += rowGaps[stackIndex - 1] * card.width;
+                        }
+                    } else {
+                        left = this.left;
+                    }
 
-			if (last) {
-				left = last.left + card.width * cardGap;
-				index = this.cards.length;
-				stackIndex = this.index() + 1;
+                    card.top = top;
+                    card.left = left;
+                    card.zIndex = this.index() * 10;
+                },
+            },
+            true,
+        );
 
-				if (!(index % stackIndex)) { left += rowGaps[stackIndex - 1] * card.width; }
-			} else {
-				left = this.left;
-			}
+        Y.mix(
+            TriTowers.Deck.Stack,
+            {
+                setCardPosition: function(card) {
+                    const last = this.my_Last();
+                    let left, zIndex;
 
-			card.top = top;
-			card.left = left;
-			card.zIndex = this.index() * 10;
-		}
-	}, true);
+                    const top = this.top;
+                    if (last) {
+                        left = last.left + card.width * 0.1;
+                        zIndex = last.zIndex + 1;
+                    } else {
+                        left = this.left;
+                        zIndex = 0;
+                    }
 
-	Y.mix(TriTowers.Deck.Stack, {
-		setCardPosition: function (card) {
-			var last = this.last(),
-			    top,
-			    left,
-			    zIndex;
-
-			top = this.top;
-			if (last) {
-				left = last.left + card.width * 0.1;
-				zIndex = last.zIndex + 1;
-			} else {
-				left = this.left;
-				zIndex = 0;
-			}
-
-			card.top = top;
-			card.left = left;
-			card.zIndex = zIndex;
-		}
-	}, true);
-}, "0.0.1", {requires: ["solitaire"]});
+                    card.top = top;
+                    card.left = left;
+                    card.zIndex = zIndex;
+                },
+            },
+            true,
+        );
+    },
+    "0.0.1",
+    { requires: ["solitaire"] },
+);

@@ -1,236 +1,276 @@
-/*
- * record win/lose records, streaks, etc
- */
-YUI.add("statistics", function (Y) {
-	var loaded,
-	    won,
-	    enabled = true,
-	    localStorage = window.localStorage,
-	    Solitaire = Y.Solitaire,
-	    Statistics = Y.namespace("Solitaire.Statistics");
+define(["./solitaire"], function(solitaire) {
+    const getGame = solitaire.getGame;
+    /*
+     * record win/lose records, streaks, etc
+     */
+    YUI.add(
+        "statistics",
+        function(Y) {
+            let loaded,
+                won,
+                enabled = true;
+            const localStorage = window.localStorage,
+                Solitaire = Y.Solitaire,
+                Statistics = Y.namespace("Solitaire.Statistics");
 
-	if (!localStorage) { return; }
+            if (!localStorage) {
+                return;
+            }
 
-	Y.on("newGame", function () {
-		if (loaded) { recordLose(); }
+            Y.on("newGame", function() {
+                if (loaded) {
+                    recordLose();
+                }
 
-		won = false;
-		loaded = null;
-	});
+                won = false;
+                loaded = null;
+            });
 
-	Y.on("loadGame", function () {
-		loaded = Solitaire.game.name();
-		saveProgress();
-		won = false;
-	});
+            Y.on("loadGame", function() {
+                loaded = Solitaire.game.name();
+                saveProgress();
+                won = false;
+            });
 
-	Y.on("endTurn", function () {
-		if (!loaded) {
-			loaded = Solitaire.game.name();
-			saveProgress();
-		}
-	});
+            Y.on("endTurn", function() {
+                if (!loaded) {
+                    loaded = Solitaire.game.name();
+                    saveProgress();
+                }
+            });
 
-	Y.on("win", function () {
-		if (won || !enabled) { return; }
+            Y.on("win", function() {
+                if (won || !enabled) {
+                    return;
+                }
 
-		var winDisplayDelay = 1000;
-		loaded = null;
-		won = true;
+                loaded = null;
+                won = true;
 
-		recordWin();
+                recordWin();
 
-		explodeFoundations();
-	});
+                explodeFoundations();
+            });
 
-	Y.on("beforeSetup", function () {
-		var winDisplay = Y.one("#win_display");
+            Y.on("beforeSetup", function() {
+                const winDisplay = Y.one("#win_display");
 
-		winDisplay && winDisplay.remove();
-		Statistics.enable();
-	});
+                winDisplay && winDisplay.remove();
+                Statistics.enable();
+            });
 
-	function explodeFoundations() {
-		var delay = 500,
-		    duration = 900,
-		    interval = 900;
+            function explodeFoundations() {
+                const delay = 500,
+                    duration = 900,
+                    interval = 900;
 
-		Game.eachStack(function (stack) {
-			stack.eachCard(function (card) {
-				if (!card) { return; }
+                getGame().eachStack(function(stack) {
+                    stack.eachCard(function(card) {
+                        if (!card) {
+                            return;
+                        }
 
-				var node = card.node;
-				if (card !== stack.last()) {
-					node.addClass("hidden");
-					return;
-				}
+                        const node = card.node;
+                        if (card !== stack.my_Last()) {
+                            node.addClass("hidden");
+                            return;
+                        }
 
-				node.plug(Y.Breakout, {columns: 5});
-				(function (node) {
-					setTimeout(function () {
-						node.breakout.explode({random: 0.65, duration: duration});
-					}, delay);
-				})(node);
+                        node.plug(Y.Breakout, { columns: 5 });
+                        (function(node) {
+                            setTimeout(function() {
+                                node.breakout.explode({
+                                    random: 0.65,
+                                    duration: duration,
+                                });
+                            }, delay);
+                        })(node);
 
-				delay += interval;
-			});
-		}, "foundation");
+                        delay += interval;
+                    });
+                }, "foundation");
 
-		setTimeout(function () {
-			Statistics.winDisplay();
-		}, delay + 200);
-	}
+                setTimeout(function() {
+                    Statistics.winDisplay();
+                }, delay + 200);
+            }
 
-	/*
-	 * TODO: a templating system might make this less grody
-	 */
-	function winDisplay() {
-		var nameMap = {
-			Agnes: "Agnes",
-			Klondike: "Klondike",
-			Klondike1T: "Klondike (Vegas style)",
-			FlowerGarden: "Flower Garden",
-			FortyThieves: "Forty Thieves",
-			Freecell: "Freecell",
+            /*
+             * TODO: a templating system might make this less grody
+             */
+            function winDisplay() {
+                const nameMap = {
+                        Agnes: "Agnes",
+                        Klondike: "Klondike",
+                        Klondike1T: "Klondike (Vegas style)",
+                        FlowerGarden: "Flower Garden",
+                        FortyThieves: "Forty Thieves",
+                        Freecell: "Freecell",
                         Golf: "Golf",
-			GClock: "Grandfather's Clock",
-			MonteCarlo: "Monte Carlo",
-			Pyramid: "Pyramid",
-			RussianSolitaire: "Russian Solitaire",
-			Scorpion: "Scorpion",
-			Spider: "Spider",
-			Spider1S: "Spider (1 Suit)",
-			Spider2S: "Spider (2 Suit)",
+                        GClock: "Grandfather's Clock",
+                        MonteCarlo: "Monte Carlo",
+                        Pyramid: "Pyramid",
+                        RussianSolitaire: "Russian Solitaire",
+                        Scorpion: "Scorpion",
+                        Spider: "Spider",
+                        Spider1S: "Spider (1 Suit)",
+                        Spider2S: "Spider (2 Suit)",
                         Spiderette: "Spiderette",
                         WillOTheWisp: "Will O' The Wisp",
-			TriTowers: "Tri Towers",
-			Yukon: "Yukon"},
-		    
-		    stats = Record(localStorage[Solitaire.game.name() + "record"]),
+                        TriTowers: "Tri Towers",
+                        Yukon: "Yukon",
+                    },
+                    stats = Record(
+                        localStorage[Solitaire.game.name() + "record"],
+                    );
+                let output = "<div id='win_display'>";
+                const streakCount = _.last(stats.streaks()).length;
+                const winCount = stats.wins().length;
+                const loseCount = stats.loses().length;
 
-		    streakCount, winCount, loseCount,
+                output += "<p>You win! You're awesome.</p>";
+                output +=
+                    "<h2>" + nameMap[Solitaire.game.name()] + " stats:</h2>";
+                output += "<ul>";
+                output +=
+                    "<li>Current win streak: <span class='streak'>" +
+                    streakCount +
+                    "</span></li>";
+                output +=
+                    "<li>Total wins: <span class='wins'>" +
+                    winCount +
+                    "</span></li>";
+                output +=
+                    "<li>Total loses: <span class='loses'>" +
+                    loseCount +
+                    "</span></li>";
+                output +=
+                    '<div class="replay_options"><button class="new_deal">New Deal</button><button class="choose_game">Choose Game</button></div>';
 
-		    output = "<div id='win_display'>";
+                output += "</ul></div>";
 
-		streakCount = stats.streaks().last().length;
-		winCount = stats.wins().length;
-		loseCount = stats.loses().length;
+                return output;
+            }
 
+            function record(value) {
+                const key = localStorage["currentGame"] + "record";
+                let record = localStorage[key] || "";
 
-		output += "<p>You win! You're awesome.</p>";
-		output += "<h2>" + nameMap[Solitaire.game.name()] + " stats:</h2>";
-		output += "<ul>";
-		output += "<li>Current win streak: <span class='streak'>" + streakCount + "</li>";
-		output += "<li>Total wins: <span class='wins'>" + winCount + "</li>";
-		output += "<li>Total loses: <span class='loses'>" + loseCount + "</li>";
-		output += "<div class=replay_options><button class=new_deal>New Deal</button><button class=choose_game>Choose Game</button></div>";
+                record += new Date().getTime() + "_" + value + "|";
 
-		output += "</ul></div>";
+                localStorage[key] = record;
+            }
 
-		return output;
-	}
+            function recordLose() {
+                record(0);
 
-	function record(value) {
-		var key = localStorage["currentGame"] + "record",
-		    record = localStorage[key] || "";
+                clearProgress();
+            }
 
-		record += new Date().getTime() + "_" + value + "|";
+            function recordWin() {
+                record(1);
 
-		localStorage[key] = record;
-	}
+                clearProgress();
+            }
 
-	function recordLose() {
-		record(0);
+            function clearProgress() {
+                localStorage.removeItem("currentGame");
+            }
 
-		clearProgress();
-	}
+            function saveProgress() {
+                localStorage["currentGame"] = Solitaire.game.name();
+            }
 
-	function recordWin() {
-		record(1);
+            function Record(raw) {
+                function parse() {
+                    const entries = raw.split("|");
 
-		clearProgress();
-	}
+                    entries.splice(entries.length - 1);
 
-	function clearProgress() {
-		localStorage.removeItem("currentGame");
-	}
+                    return Y.Array.map(entries, function(entry) {
+                        entry = entry.split("_");
 
-	function saveProgress() {
-		localStorage["currentGame"] = Solitaire.game.name();
-	}
+                        return {
+                            date: new Date(entry[0]),
+                            won: !!parseInt(entry[1], 10),
+                        };
+                    });
+                }
 
-	function Record(raw) {
-		function parse() {
-			var entries = raw.split("|");
+                function won(entry) {
+                    return entry.won;
+                }
 
-			entries.splice(entries.length - 1);
+                const record = parse();
 
-			return Y.Array.map(entries, function (entry) {
-				entry = entry.split("_");
+                return {
+                    streaks: function() {
+                        const streaks = [];
+                        let streak = null;
 
-				return {date: new Date(entry[0]), won: !!parseInt(entry[1], 10)};
-			});
-		}
+                        Y.Array.each(record, function(entry) {
+                            if (!entry.won) {
+                                streak && streaks.push(streak);
+                                streak = null;
+                            } else {
+                                if (!streak) {
+                                    streak = [];
+                                }
+                                streak.push(entry);
+                            }
+                        });
 
-		function won(entry) {
-			return entry.won;
-		}
+                        streak && streaks.push(streak);
 
-		var record = parse();
+                        return streaks;
+                    },
 
-		return {
-			streaks: function () {
-				var streaks = [],
-				    streak = null;
+                    wins: function() {
+                        return Y.Array.filter(record, won);
+                    },
 
-				Y.Array.each(record, function (entry) {
-					if (!entry.won) {
-						streak && streaks.push(streak);
-						streak = null;
-					} else {
-						if (!streak) { streak = []; }
-						streak.push(entry);
-					}
-				});
+                    loses: function() {
+                        return Y.Array.reject(record, won);
+                    },
+                };
+            }
 
-				streak && streaks.push(streak);
+            Y.mix(Statistics, {
+                winDisplay: function() {
+                    const Application = Solitaire.Application;
 
-				return streaks;
-			},
+                    Y.one(".solitairey_body").append(winDisplay());
 
-			wins: function () {
-				return Y.Array.filter(record, won);
-			},
+                    Y.on(
+                        "click",
+                        function() {
+                            Application.newGame();
+                        },
+                        Y.one("#win_display .new_deal"),
+                    );
 
-			loses: function () {
-				return Y.Array.reject(record, won);
-			}
-		};
-	}
+                    if (false) {
+                        Y.on(
+                            "click",
+                            function() {
+                                Application.GameChooser.show(true);
+                            },
+                            Y.one("#win_display .choose_game"),
+                        );
+                    }
+                },
 
-	Y.mix(Statistics, {
-		winDisplay: function () {
-			var Application = Solitaire.Application;
+                enable: function() {
+                    enabled = true;
+                },
 
-			Y.one("body").append(winDisplay());
-
-			Y.on("click", function () {
-				Application.newGame();
-			}, Y.one("#win_display .new_deal"));
-
-			Y.on("click", function () {
-				Application.GameChooser.show(true);
-			}, Y.one("#win_display .choose_game"));
-
-		},
-
-		enable: function () {
-			enabled = true;
-		},
-
-		disable: function () {
-			enabled = false;
-		}
-	});
-
-}, "0.0.1", {requires: ["solitaire", "array-extras", "breakout"]});
+                disable: function() {
+                    enabled = false;
+                },
+            });
+        },
+        "0.0.1",
+        { requires: ["solitaire", "array-extras", "breakout"] },
+    );
+    return {};
+});
