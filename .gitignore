@@ -16,9 +16,7 @@
 /dest/layouts
 /dest/libfreecell-solver.js.mem
 /node_modules/
-/src/js/big-integer.js
 /src/js/fcs-validate.js
-/src/js/flatted.js
 /src/js/french-cards.js
 /src/js/prange.js
 /src/js/web-fc-solve--expand-moves.js

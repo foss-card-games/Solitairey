@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+      "baseUrl": ".",
+      "module": "amd",
+      "outDir": "src/js",
+      "paths": {
+          "big-integer": ["node_modules/big-integer/BigInteger.d.ts"]
+      },
+      "rootDirs":["src/ts"],
+      "target": "es6"
+  }
+}

@@ -1,0 +1,16 @@
+addons:
+    apt:
+        packages:
+            - cpanminus
+dist: xenial
+install:
+    - cpanm -L ~/perl_modules local::lib
+    - eval "$(perl -Mlocal::lib=$HOME/perl_modules)"
+    - cpanm Path::Tiny
+    - gem install rake
+    - gem install rubocop
+    - bash -x bin/install-npm-deps.sh
+script:
+    - PATH="$PATH:$PWD/node_modules/.bin"
+    - rake
+    - rake test
