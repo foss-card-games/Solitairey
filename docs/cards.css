@@ -262,8 +262,7 @@ button.solitairey {
     margin: 0;
     margin-right: 15px;
     float: left;
-    position: relative;
-    border-right-width: 0; }
+    position: relative; }
 
 .indicator {
   float: left; }
@@ -274,18 +273,20 @@ button.solitairey {
   width: 0;
   border-top: 10px solid transparent;
   border-bottom: 10px solid transparent;
-  border-left: 15px solid #ddd; }
+  border-left: 15px solid #ddd;
+  border-right-width: 0; }
 
 .play:hover {
   border-left-color: #32c700; }
 
 .pause {
   top: 0;
-  width: 4px;
+  width: 15px;
   height: 20px;
-  border-color: #ddd;
-  border-left: 5px solid;
-  border-right: 5px solid; }
+  border-left: 5px solid #ddd;
+  border-right: 5px solid #ddd;
+  border-top-width: 0;
+  border-bottom-width: 0; }
 
 .pause:hover {
   border-color: #32c700; }
