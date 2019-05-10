@@ -151,8 +151,8 @@ YUI.add(
         Y.mix(
             Golf.Tableau.Stack,
             {
-                setcardposition: function(card) {
-                    return this.lastcardsetcardposition(card);
+                setCardPosition: function(card) {
+                    return this.lastCardSetCardPosition(card);
                 },
             },
             true,
