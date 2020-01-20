@@ -1,7 +1,9 @@
-JS_PREFIX = 'js'.freeze
-JS_SRC_PREFIX = 'src/js'.freeze
-ROOT_PREFIX = 'dest'.freeze
-PREFIX = 'dest/js'.freeze
+# frozen_string_literal: true
+
+JS_PREFIX = 'js'
+JS_SRC_PREFIX = 'src/js'
+ROOT_PREFIX = 'dest'
+PREFIX = 'dest/js'
 BROWSERIFY_JS = %w[big-integer flatted].freeze
 TS_BASE = %w[fcs-validate french-cards prange web-fc-solve--expand-moves
              web-fc-solve].freeze
@@ -38,22 +40,22 @@ JS_CURATED_SOURCES = %w[
 ].freeze
 JS = %w[yui-breakout yui-debug require require--debug lodash.custom.min] +
      JS_CURATED_SOURCES + TS_BASE
-YUI_DIST = 'yui-unpack/'.freeze
-YUI_SRC = 'ext/yui/yui-all-min.js'.freeze
-YUI = "#{PREFIX}/yui-all-min.js".freeze
-ALL = "#{PREFIX}/all.js".freeze
-MINIFIED = "#{PREFIX}/all-min.js".freeze
-COMBINED = "#{PREFIX}/combined-min.js".freeze
+YUI_DIST = 'yui-unpack/'
+YUI_SRC = 'ext/yui/yui-all-min.js'
+YUI = "#{PREFIX}/yui-all-min.js"
+ALL = "#{PREFIX}/all.js"
+MINIFIED = "#{PREFIX}/all-min.js"
+COMBINED = "#{PREFIX}/combined-min.js"
 # COMPRESSOR = "ext/yuicompressor-2.4.2/build/yuicompressor-2.4.2.jar"
-COMPRESSOR = 'bin/Run-YUI-Compressor'.freeze
-TEMPLATE = 'index.erb'.freeze
+COMPRESSOR = 'bin/Run-YUI-Compressor'
+TEMPLATE = 'index.erb'
 
 IMAGES = Dir['{dondorf,layouts}/**/*.png', '*.{css,gif,png,jpg}'] +
          ['.htaccess']
 
-DEST_INDEX = 'dest/index.html'.freeze
-DEST_INDEX_DEV = 'dest/index-dev.html'.freeze
-DEST_INDEX_DEV_X = 'dest/index-dev.xhtml'.freeze
+DEST_INDEX = 'dest/index.html'
+DEST_INDEX_DEV = 'dest/index-dev.html'
+DEST_INDEX_DEV_X = 'dest/index-dev.xhtml'
 
 def create_index(index, development = false)
   require 'erb'
