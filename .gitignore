@@ -4,8 +4,10 @@
 /dest/*.png
 /dest/*.wasm
 /dest/.htaccess
+/dest/cards.css.map
 /dest/dondorf
 /dest/index-dev.html
+/dest/index-dev.xhtml
 /dest/index.html
 /dest/js/*.js
 /dest/js/*.wasm

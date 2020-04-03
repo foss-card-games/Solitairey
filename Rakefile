@@ -222,7 +222,7 @@ file DEST_INDEX => [TEMPLATE, COMBINED] do
 end
 
 T = JS_CURATED_SOURCES.reject { |x| x == 'iphone' }.freeze
-task :test do
+task test: :default do
   sh 'eslint -c .eslintrc.yml ' + T.map { |f| "src/js/#{f}.js" }.join(' ')
   sh 'rubocop Rakefile'
 end
