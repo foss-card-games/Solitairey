@@ -2,7 +2,7 @@ addons:
     apt:
         packages:
             - cpanminus
-dist: xenial
+dist: bionic
 install:
     - cpanm -L ~/perl_modules local::lib
     - eval "$(perl -Mlocal::lib=$HOME/perl_modules)"
