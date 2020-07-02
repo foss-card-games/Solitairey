@@ -146,8 +146,9 @@ dest_css = 'dest/cards.css'
 src_css = 'solitairey-cards.scss'
 
 file dest_css => src_css do
-  # sh "sass --style compressed #{src_css} #{dest_css}"
-  sh "sass #{src_css} #{dest_css}"
+  mkdir_p File.dirname(dest_css)
+  # sh "pysassc --style compressed #{src_css} #{dest_css}"
+  sh "pysassc #{src_css} #{dest_css}"
 end
 
 BROWSERIFY_JS.each do |base|

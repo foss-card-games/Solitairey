@@ -118,6 +118,7 @@
   width: 100%;
   height: 127px;
   overflow: hidden; }
+
 #descriptions li {
   border: 2px solid #eec;
   border-radius: 7px;
@@ -436,5 +437,3 @@ button.solitairey {
     background-image: -moz-linear-gradient(#eec, #a1a172);
     background-image: -ms-linear-gradient(#eec, #a1a172);
     box-shadow: none; }
-
-/*# sourceMappingURL=cards.css.map */
