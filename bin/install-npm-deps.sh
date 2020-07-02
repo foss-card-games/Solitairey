@@ -8,5 +8,5 @@ set -e -x
 npm install
 
 # npm install \
-#     amdefine babel-cli babel-eslint babel-preset-env babel-preset-stage-2 big-integer browserify camel-case coffeescript eslint eslint-config-google flatted html-minifier prettier qunit qunit-cli requirejs sass typescript uglify-es \
-#     @types/jquery @types/qunit \
+#     amdefine babel-cli babel-eslint babel-preset-env babel-preset-stage-2 big-integer browserify camel-case coffeescript eslint eslint-config-google flatted html-minifier prettier requirejs sass typescript uglify-es \
+#     @types/jquery \
