@@ -1,6 +1,7 @@
 define(["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    exports.fc_solve_expand_move = void 0;
     function _to_int(s) {
         return parseInt(s, 10);
     }

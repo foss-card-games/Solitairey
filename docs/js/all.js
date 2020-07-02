@@ -23155,6 +23155,7 @@ YUI.add(
 define(["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    exports.BoardParseResult = exports.ParseErrorType = exports.ErrorLocationType = exports.fcs_js__foundations_from_string = exports.Foundations = exports.fcs_js__freecells_from_string = exports.fcs_js__column_from_string = exports.fcs_js__card_from_string = exports.capitalize_cards = exports.suits__str_to_int = exports.MAX_RANK = exports.MIN_RANK = exports.NUM_SUITS = exports.ranks__str_to_int = void 0;
     // Adapted from http://www.inventpartners.com/javascript_is_int - thanks.
     function is_int(input) {
         const value = "" + input;
@@ -23770,6 +23771,7 @@ define(["require", "exports"], function (require, exports) {
 define(["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    exports.rank_re = exports.rank_str = exports.suit_re = exports.suits__int_to_str = void 0;
     exports.suits__int_to_str = "HCDS";
     exports.suit_re = "[" + exports.suits__int_to_str + "]";
     exports.rank_str = "A23456789TJQK";
@@ -23778,6 +23780,7 @@ define(["require", "exports"], function (require, exports) {
 define(["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    exports.perl_range = void 0;
     function perl_range(start, end) {
         const ret = [];
         for (let i = start; i <= end; ++i) {
@@ -23790,6 +23793,7 @@ define(["require", "exports"], function (require, exports) {
 define(["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    exports.fc_solve_expand_move = void 0;
     function _to_int(s) {
         return parseInt(s, 10);
     }
@@ -24001,6 +24005,7 @@ define(["require", "exports"], function (require, exports) {
 define(["require", "exports", "big-integer", "./fcs-validate", "./web-fc-solve--expand-moves", "./prange", "./french-cards"], function (require, exports, bigInt, validate, expand, prange_1, french_cards_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    exports.Freecell_Deal_Finder = exports.deal_ms_fc_board = exports.FC_Solve = exports.DisplayFilter = exports.FCS_STATE_SUSPEND_PROCESS = exports.FCS_STATE_WAS_SOLVED = exports.FC_Solve_init_wrappers_with_module = void 0;
     const fc_solve_expand_move = expand.fc_solve_expand_move;
     let fc_solve__hll_ms_rand__get_singleton = null;
     let fc_solve__hll_ms_rand__init = null;

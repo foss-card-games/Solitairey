@@ -1,6 +1,7 @@
 define(["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    exports.BoardParseResult = exports.ParseErrorType = exports.ErrorLocationType = exports.fcs_js__foundations_from_string = exports.Foundations = exports.fcs_js__freecells_from_string = exports.fcs_js__column_from_string = exports.fcs_js__card_from_string = exports.capitalize_cards = exports.suits__str_to_int = exports.MAX_RANK = exports.MIN_RANK = exports.NUM_SUITS = exports.ranks__str_to_int = void 0;
     // Adapted from http://www.inventpartners.com/javascript_is_int - thanks.
     function is_int(input) {
         const value = "" + input;

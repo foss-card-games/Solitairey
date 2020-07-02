@@ -2,8 +2,11 @@
 #
 # Copyright (C) 2018 shlomif <shlomif@cpan.org>
 #
-# Distributed under terms of the MIT license.
+# Distributed under the terms of the MIT license.
 #
-npm install \
-    amdefine babel-cli babel-eslint babel-preset-env babel-preset-stage-2 big-integer browserify camel-case coffeescript eslint eslint-config-google flatted html-minifier prettier qunit qunit-cli requirejs sass typescript uglify-es \
-    @types/jquery @types/qunit \
+set -e -x
+npm install
+
+# npm install \
+#     amdefine babel-cli babel-eslint babel-preset-env babel-preset-stage-2 big-integer browserify camel-case coffeescript eslint eslint-config-google flatted html-minifier prettier qunit qunit-cli requirejs sass typescript uglify-es \
+#     @types/jquery @types/qunit \
