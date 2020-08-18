@@ -31,6 +31,8 @@
     "eslint-config-google": "^0.14.0",
     "flatted": "^3.0.4",
     "html-minifier": "^4.0.0",
+    "lodash": "^4.17.20",
+    "lodash-cli": "^4.17.5",
     "prettier": "^2.0.5",
     "requirejs": "^2.3.6",
     "typescript": "^3.9.7",
