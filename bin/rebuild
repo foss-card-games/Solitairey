@@ -1,0 +1,16 @@
+#!/bin/bash
+rebuild()
+{
+    (
+        set -x
+        set -e
+        time git clean -dfqx .
+        time gem install rake
+        time gem install rubocop
+        time bash -x bin/install-npm-deps.sh
+        PATH="$PATH:$PWD/node_modules/.bin"
+        time rake
+        time rake test
+    )
+}
+rebuild
