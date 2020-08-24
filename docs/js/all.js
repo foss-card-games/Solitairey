@@ -20453,6 +20453,7 @@ define([
     let WITH_UI = false; // Remove UI clutter for the demo.
     WITH_UI = true;
 
+    let _my_non_promise_module;
     let _my_module;
     const MAX_MOD_COUNTER = 5;
     let _my_mod_counter = MAX_MOD_COUNTER;
@@ -20595,10 +20596,13 @@ define([
         if (_my_mod_counter >= MAX_MOD_COUNTER) {
             // Create a fresh instance to avoid failed allocs due to
             // memory fragmentation.
-            _my_module = Module()({
+            _my_module = Module({
                 onRuntimeInitialized: () => {
-                    w.FC_Solve_init_wrappers_with_module(_my_module);
-                    callback();
+                    _my_module.then((result) => {
+                        _my_non_promise_module = result;
+                        w.FC_Solve_init_wrappers_with_module(_my_non_promise_module);
+                        callback();
+                    });
                 },
             });
             _my_mod_counter = 0;
@@ -21412,7 +21416,7 @@ define([
                         }, 400);
                     }
 
-                    if (!_my_module) {
+                    if (!_my_non_promise_module) {
                         _init_my_module(_cb);
                     } else {
                         _cb();
