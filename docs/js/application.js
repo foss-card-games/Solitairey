@@ -3,6 +3,7 @@ define(["./solitaire"], function (solitaire) {
     let schedule;
     let schedule_cb;
     let enable_solitairey_ui = false;
+    const enable_cookies = false;
     (function () {
         const active = {
             name: "freecell", // name: "klondike",
@@ -88,9 +89,11 @@ define(["./solitaire"], function (solitaire) {
             const twoWeeks = 1000 * 3600 * 24 * 14;
             switchToGame(name);
 
-            Y.Cookie.set("options", name, {
-                expires: new Date(new Date().getTime() + twoWeeks),
-            });
+            if (enable_cookies) {
+                Y.Cookie.set("options", name, {
+                    expires: new Date(new Date().getTime() + twoWeeks),
+                });
+            }
             newGame();
         }
         const GameChooser = {
@@ -249,9 +252,11 @@ define(["./solitaire"], function (solitaire) {
         };
 
         function loadOptions() {
-            const options = Y.Cookie.get("options");
+            if (enable_cookies) {
+                const options = Y.Cookie.get("options");
 
-            options && (active.name = options);
+                options && (active.name = options);
+            }
 
             Themes.load("dondorf");
         }
@@ -312,9 +317,11 @@ define(["./solitaire"], function (solitaire) {
                 if (chromestore) {
                     chromestore.addClass("hidden");
                 }
-                Y.Cookie.set("disable-chromestore-link", true, {
-                    expires: new Date(new Date().getTime() + expires),
-                });
+                if (enable_cookies) {
+                    Y.Cookie.set("disable-chromestore-link", true, {
+                        expires: new Date(new Date().getTime() + expires),
+                    });
+                }
             }
             if (enable_solitairey_ui) {
                 Y.on("click", hideChromeStoreLink, Y.one(".chromestore"));
@@ -429,18 +436,20 @@ define(["./solitaire"], function (solitaire) {
             },
         };
         function showChromeStoreLink() {
-            if (
-                Y.UA.chrome &&
-                !Y.Cookie.get("disable-chromestore-link", Boolean)
-            ) {
-                const chromestore = Y.one(".chromestore");
-                if (chromestore) {
-                    chromestore.removeClass("hidden");
+            if (enable_cookies) {
+                if (
+                    Y.UA.chrome &&
+                    !Y.Cookie.get("disable-chromestore-link", Boolean)
+                ) {
+                    const chromestore = Y.one(".chromestore");
+                    if (chromestore) {
+                        chromestore.removeClass("hidden");
+                    }
                 }
             }
         }
         function _my_load_func() {
-            const save = Y.Cookie.get("saved-game");
+            const save = enable_cookies ? Y.Cookie.get("saved-game") : false;
 
             attachEvents();
             loadOptions();
@@ -495,14 +504,16 @@ define(["./solitaire"], function (solitaire) {
         }
 
         function restart() {
-            const init = Y.Cookie.get("initial-game");
+            if (enable_cookies) {
+                const init = Y.Cookie.get("initial-game");
 
-            if (init) {
-                clearDOM();
-                const game = active.game;
-                game.cleanup();
-                game.loadGame(init);
-                game.save();
+                if (init) {
+                    clearDOM();
+                    const game = active.game;
+                    game.cleanup();
+                    game.loadGame(init);
+                    game.save();
+                }
             }
         }
         function clearGame() {

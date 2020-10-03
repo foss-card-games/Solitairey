@@ -1,5 +1,6 @@
 define([], function () {
     let enable_solitairey_ui = false;
+    const enable_cookies = false;
     // For debugging.
     // var pre_canned_seeds = [11982, 11982, 11982, 11982];
     const pre_canned_seeds = [];
@@ -242,9 +243,11 @@ define([], function () {
                     const data = this.serialize(),
                         twoWeeks = 1206900000;
 
-                    Y.Cookie.set(name || "saved-game", data, {
-                        expires: new Date(new Date().getTime() + twoWeeks),
-                    });
+                    if (enable_cookies) {
+                        Y.Cookie.set(name || "saved-game", data, {
+                            expires: new Date(new Date().getTime() + twoWeeks),
+                        });
+                    }
                 },
 
                 loadGame: function (data) {
@@ -259,7 +262,9 @@ define([], function () {
                 },
 
                 newGame: function () {
-                    Y.Cookie.remove("saved-game");
+                    if (enable_cookies) {
+                        Y.Cookie.remove("saved-game");
+                    }
                     const that = this;
                     if (enable_solitairey_ui) {
                         that.setup(that.deal);
@@ -575,7 +580,9 @@ define([], function () {
 
                 win: function () {
                     Y.fire("win");
-                    Y.Cookie.remove("saved-game");
+                    if (enable_cookies) {
+                        Y.Cookie.remove("saved-game");
+                    }
                 },
 
                 endTurn: function () {
