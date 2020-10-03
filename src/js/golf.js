@@ -144,7 +144,7 @@ YUI.add(
                 true,
             ));
 
-        Y.Array.each(Golf.fields, function (field) {
+        Golf.fields.forEach(function (field) {
             Golf[field].Stack = Solitaire.instance(Golf.Stack);
         });
 

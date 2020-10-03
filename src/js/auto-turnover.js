@@ -4,7 +4,7 @@ define(["./solitaire"], function (solitaire) {
         "auto-turnover",
         function (Y) {
             Y.on("tableau:afterPop", function (stack) {
-                Y.Array.each(stack.cards, function (card) {
+                stack.cards.forEach(function (card) {
                     if (card && card.isFaceDown && card.isFree()) {
                         card.faceUp();
                     }

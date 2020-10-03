@@ -104,7 +104,7 @@ YUI.add(
                 }),
             }));
 
-        Y.Array.each(Yukon.fields, function (field) {
+        Yukon.fields.forEach(function (field) {
             Yukon[field].Stack = Solitaire.instance(Yukon.Stack);
         });
 

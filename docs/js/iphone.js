@@ -486,7 +486,7 @@ define(["./solitaire"], function (solitaire) {
                 return function () {
                     var that = this;
 
-                    Y.each(layouts, function (layout) {
+                    layouts.forEach(function (layout) {
                         Y.mix(
                             that[layout[0]].stackConfig.layout,
                             layout[1],

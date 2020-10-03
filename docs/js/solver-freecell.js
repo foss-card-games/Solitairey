@@ -63,12 +63,12 @@ define([
         });
 
         const reserve = [];
-        Y.Array.forEach(sortedStacks(Y, game.reserve), function (s, i) {
+        sortedStacks(Y, game.reserve).forEach(function (s, i) {
             reserve[i] = cardToValue(s.my_Last());
         });
 
         const foundation = [];
-        Y.Array.forEach(sortedStacks(Y, game.foundation), function (s, i) {
+        sortedStacks(Y, game.foundation).forEach(function (s, i) {
             foundation[i] = cardToValue(s.my_Last());
         });
 
@@ -574,7 +574,7 @@ define([
                             });
                         }
 
-                        Y.Array.each(proxyStack.cards, function (card) {
+                        proxyStack.cards.forEach(function (card) {
                             if (!card) {
                                 return;
                             }

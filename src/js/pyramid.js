@@ -40,7 +40,7 @@ YUI.add(
                     updateDragGroups: function () {
                         const active = Solitaire.activeCard;
 
-                        Y.Array.each(this.cards, function (c) {
+                        this.cards.forEach(function (c) {
                             if (!c) {
                                 return;
                             }
@@ -205,7 +205,7 @@ YUI.add(
                 }),
             }));
 
-        Y.Array.each(Pyramid.fields, function (field) {
+        Pyramid.fields.forEach(function (field) {
             Pyramid[field].Stack = Solitaire.instance(Pyramid.Stack);
         });
 

@@ -208,7 +208,7 @@ define(["./solitaire"], function (solitaire) {
                         const streaks = [];
                         let streak = null;
 
-                        Y.Array.each(record, function (entry) {
+                        record.forEach(function (entry) {
                             if (!entry.won) {
                                 streak && streaks.push(streak);
                                 streak = null;

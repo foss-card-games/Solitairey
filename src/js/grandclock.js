@@ -150,13 +150,9 @@ YUI.add(
                 }),
             }));
 
-        Y.Array.each(
-            GClock.fields,
-            function (field) {
-                GClock[field].Stack = Solitaire.instance(GClock.Stack);
-            },
-            true,
-        );
+        GClock.fields.forEach(function (field) {
+            GClock[field].Stack = Solitaire.instance(GClock.Stack);
+        });
 
         Y.mix(
             GClock.Stack,

@@ -145,13 +145,9 @@ define(["./solitaire"], function (solitaire) {
                 }),
             }));
 
-            Y.Array.each(
-                Freecell.fields,
-                function (field) {
-                    Freecell[field].Stack = instance(Freecell.Stack);
-                },
-                true,
-            );
+            Freecell.fields.forEach(function (field) {
+                Freecell[field].Stack = instance(Freecell.Stack);
+            });
 
             Y.mix(
                 Freecell.Stack,
