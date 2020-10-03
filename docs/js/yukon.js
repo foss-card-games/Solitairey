@@ -1,11 +1,11 @@
 YUI.add(
     "yukon",
-    function(Y) {
+    function (Y) {
         const Solitaire = Y.Solitaire,
             Yukon = (Solitaire.Yukon = Solitaire.instance(Solitaire, {
                 fields: ["Foundation", "Tableau"],
 
-                deal: function() {
+                deal: function () {
                     let card,
                         piles = 6,
                         stack = 0;
@@ -31,7 +31,7 @@ YUI.add(
                     }
                 },
 
-                height: function() {
+                height: function () {
                     return this.Card.base.height * 4.8;
                 },
 
@@ -43,7 +43,7 @@ YUI.add(
                         layout: {
                             vspacing: 1.25,
                             top: 0,
-                            left: function() {
+                            left: function () {
                                 return Solitaire.Card.width * 9;
                             },
                         },
@@ -66,13 +66,13 @@ YUI.add(
                 },
 
                 Card: Solitaire.instance(Solitaire.Card, {
-                    playable: function() {
+                    playable: function () {
                         return (
                             this.stack.field === "tableau" && !this.isFaceDown
                         );
                     },
 
-                    validTarget: function(stack) {
+                    validTarget: function (stack) {
                         const target = stack.my_Last();
 
                         switch (stack.field) {
@@ -104,21 +104,21 @@ YUI.add(
                 }),
             }));
 
-        Y.Array.each(Yukon.fields, function(field) {
+        Y.Array.each(Yukon.fields, function (field) {
             Yukon[field].Stack = Solitaire.instance(Yukon.Stack);
         });
 
         Y.mix(
             Yukon.Stack,
             {
-                validTarget: function(stack) {
+                validTarget: function (stack) {
                     return (
                         stack.field === "tableau" &&
                         this.first().validTarget(stack)
                     );
                 },
 
-                validProxy: function(card) {
+                validProxy: function (card) {
                     return true;
                 },
             },
@@ -128,7 +128,7 @@ YUI.add(
         Y.mix(
             Yukon.Tableau.Stack,
             {
-                setCardPosition: function(card) {
+                setCardPosition: function (card) {
                     return this.lastCardSetCardPosition(card);
                 },
             },

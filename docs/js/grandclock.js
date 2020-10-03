@@ -1,6 +1,6 @@
 YUI.add(
     "grandfathers-clock",
-    function(Y) {
+    function (Y) {
         function wrap(array, index) {
             const len = array.length;
 
@@ -26,7 +26,7 @@ YUI.add(
             GClock = (Y.Solitaire.GClock = Solitaire.instance(Solitaire, {
                 fields: ["Foundation", "Tableau"],
 
-                deal: function() {
+                deal: function () {
                     let card,
                         found,
                         stack = 0,
@@ -67,7 +67,7 @@ YUI.add(
                     }
                 },
 
-                height: function() {
+                height: function () {
                     return this.Card.base.height * 6.7;
                 },
 
@@ -78,10 +78,10 @@ YUI.add(
                         total: 12,
                         layout: {
                             hspacing: 1.25,
-                            top: function() {
+                            top: function () {
                                 return Solitaire.Card.height * 3;
                             },
-                            left: function() {
+                            left: function () {
                                 return Solitaire.Card.width * 3.25;
                             },
                         },
@@ -96,7 +96,7 @@ YUI.add(
                         layout: {
                             hspacing: 1.25,
                             top: 0,
-                            left: function() {
+                            left: function () {
                                 return Solitaire.Card.width * 7.25;
                             },
                         },
@@ -106,7 +106,7 @@ YUI.add(
                 },
 
                 Card: Solitaire.instance(Solitaire.Card, {
-                    createProxyStack: function() {
+                    createProxyStack: function () {
                         switch (this.stack.field) {
                             case "foundation":
                                 this.proxyStack = null;
@@ -120,7 +120,7 @@ YUI.add(
                         return this.proxyStack;
                     },
 
-                    validTarget: function(stack) {
+                    validTarget: function (stack) {
                         const target = stack.my_Last();
                         let rank, hour;
 
@@ -152,7 +152,7 @@ YUI.add(
 
         Y.Array.each(
             GClock.fields,
-            function(field) {
+            function (field) {
                 GClock[field].Stack = Solitaire.instance(GClock.Stack);
             },
             true,
@@ -161,14 +161,14 @@ YUI.add(
         Y.mix(
             GClock.Stack,
             {
-                validTarget: function(stack) {
+                validTarget: function (stack) {
                     return (
                         stack.field === "tableau" &&
                         this.first().validTarget(stack)
                     );
                 },
 
-                validCard: function() {
+                validCard: function () {
                     return false;
                 },
             },
@@ -178,7 +178,7 @@ YUI.add(
         Y.mix(
             GClock.Tableau.Stack,
             {
-                setCardPosition: function(card) {
+                setCardPosition: function (card) {
                     return this.lastCardSetCardPosition(card);
                 },
             },
@@ -197,11 +197,11 @@ YUI.add(
         Y.mix(
             GClock.Foundation.Stack,
             {
-                index: function() {
+                index: function () {
                     return GClock.foundation.stacks.indexOf(this);
                 },
 
-                layout: function(layout, i) {
+                layout: function (layout, i) {
                     const top =
                             Math.sin((Math.PI * i) / 6) *
                             Solitaire.Card.height *

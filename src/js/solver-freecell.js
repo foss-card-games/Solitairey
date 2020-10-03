@@ -4,7 +4,7 @@ define([
     "./web-fc-solve",
     "./solitaire",
     "./flatted",
-], function(Module, w, solitaire, flatted) {
+], function (Module, w, solitaire, flatted) {
     "use strict";
     const FC_Solve = w.FC_Solve;
     const FCS_STATE_SUSPEND_PROCESS = w.FCS_STATE_SUSPEND_PROCESS;
@@ -42,18 +42,20 @@ define([
         }
     }
     function sortedStacks(Y, field) {
-        return Y.Array.map(field.stacks, function(s) {
+        return Y.Array.map(field.stacks, function (s) {
             return s;
-        }).sort(function(s1, s2) {
+        }).sort(function (s1, s2) {
             return cardToValue(s1.first()) - cardToValue(s2.first());
         });
     }
 
     function gameToState(Y, game) {
-        const tableau = Y.Array.map(sortedStacks(Y, game.tableau), function(s) {
+        const tableau = Y.Array.map(sortedStacks(Y, game.tableau), function (
+            s,
+        ) {
             const buffer = [];
 
-            s.eachCard(function(c, i) {
+            s.eachCard(function (c, i) {
                 buffer[i] = cardToValue(c);
             });
 
@@ -61,12 +63,12 @@ define([
         });
 
         const reserve = [];
-        Y.Array.forEach(sortedStacks(Y, game.reserve), function(s, i) {
+        Y.Array.forEach(sortedStacks(Y, game.reserve), function (s, i) {
             reserve[i] = cardToValue(s.my_Last());
         });
 
         const foundation = [];
-        Y.Array.forEach(sortedStacks(Y, game.foundation), function(s, i) {
+        Y.Array.forEach(sortedStacks(Y, game.foundation), function (s, i) {
             foundation[i] = cardToValue(s.my_Last());
         });
 
@@ -168,7 +170,9 @@ define([
                 onRuntimeInitialized: () => {
                     _my_module.then((result) => {
                         _my_non_promise_module = result;
-                        w.FC_Solve_init_wrappers_with_module(_my_non_promise_module);
+                        w.FC_Solve_init_wrappers_with_module(
+                            _my_non_promise_module,
+                        );
                         callback();
                     });
                 },
@@ -288,9 +292,9 @@ define([
             };
         }
 
-        throw "Must not happen - _calc__move_content() failed with <" +
-            str +
-            ">";
+        throw (
+            "Must not happen - _calc__move_content() failed with <" + str + ">"
+        );
     }
     function _calc__ret_moves(moves_) {
         const ret_moves = [];
@@ -319,7 +323,7 @@ define([
             // cmd_line_preset: "lg",
             // cmd_line_preset: 'as',
             // cmd_line_preset: 'default',
-            set_status_callback: function(status) {
+            set_status_callback: function (status) {
                 if (status == "exceeded") {
                     exceeded_iters = true;
                 }
@@ -358,27 +362,27 @@ define([
             ? _calc__ret_moves(instance._pre_expand_states_and_moves_seq)
             : [];
         Animation.init(solution);
-        (function() {
+        (function () {
             if (!Y.UA.chrome) {
                 return;
             }
             const old = document.body.style.zoom;
             document.body.style.zoom = "80%";
-            setTimeout(function() {
+            setTimeout(function () {
                 document.body.style.zoom = old;
             }, 10);
         })();
         if (false) {
             if (solution) {
                 Status.stopIndicator(true);
-                window.setTimeout(function() {
+                window.setTimeout(function () {
                     Animation.play(getGame());
                 }, 3000);
             } else {
                 Status.stopIndicator(false);
                 console.log("no solution");
                 if (false) {
-                    window.setTimeout(function() {
+                    window.setTimeout(function () {
                         Y.fire("newAppGame");
                     }, 3000);
                 }
@@ -395,13 +399,13 @@ define([
 
         let value = source[1];
         const source_type = source[0];
-        game.eachStack(function(stack) {
+        game.eachStack(function (stack) {
             if (ret.card) {
                 return;
             }
             const len = stack.cards.length;
 
-            stack.eachCard(function(card, i) {
+            stack.eachCard(function (card, i) {
                 if (ret.card) {
                     return false;
                 }
@@ -428,7 +432,7 @@ define([
         }
 
         value = dest[1];
-        game.eachStack(function(stack) {
+        game.eachStack(function (stack) {
             if (ret.stack) {
                 return;
             }
@@ -441,16 +445,19 @@ define([
 
             if (
                 card &&
-                (card.rank === cardRank(value) && card.suit === cardSuit(value))
+                card.rank === cardRank(value) &&
+                card.suit === cardSuit(value)
             ) {
                 ret.stack = stack;
             }
         }, dest[0]);
 
         if (!ret.stack) {
-            throw "Must not happen - could not find dest stack for <" +
+            throw (
+                "Must not happen - could not find dest stack for <" +
                 value +
-                ">";
+                ">"
+            );
         }
         // console.log("found for <" + value + ">");
 
@@ -461,7 +468,7 @@ define([
 
     YUI.add(
         "solver-freecell",
-        function(Y) {
+        function (Y) {
             Y.namespace("Solitaire.Solver.Freecell");
 
             // only let this work with typed arrays
@@ -476,7 +483,7 @@ define([
 
             const redeal = Y.one("#redeal");
             if (redeal) {
-                redeal.on("click", function() {
+                redeal.on("click", function () {
                     Solitaire.Application.newGame();
                     getGame().redeal();
                     return;
@@ -489,12 +496,12 @@ define([
                 remainingMovesIdx: null,
                 remainingMovesArr: [],
 
-                init: function(moves) {
+                init: function (moves) {
                     this.remainingMovesArr = moves;
                     this.remainingMovesIdx = 0;
                 },
 
-                pause: function() {
+                pause: function () {
                     // Solitaire.Autoplay.enable();
 
                     window.clearTimeout(this.timer);
@@ -504,7 +511,7 @@ define([
                         /* Remove UI clutter for the demo */ withSelector(
                             Y,
                             "#solver_bar .pause",
-                            function(node) {
+                            function (node) {
                                 node.removeClass("pause");
                                 node.addClass("play");
                                 // node.set("text", "⏵");
@@ -513,7 +520,7 @@ define([
                     }
                 },
 
-                _playCurrentHelper: function(game) {
+                _playCurrentHelper: function (game) {
                     const that = this;
 
                     if (
@@ -535,7 +542,7 @@ define([
                     const origin = card.stack;
 
                     if (false) {
-                        card.after(function() {
+                        card.after(function () {
                             origin.updateCardsPosition();
                             move.stack.updateCardsPosition();
                         });
@@ -562,12 +569,12 @@ define([
                         // alert("proxyStack " + flatted.stringify(proxyStack));
 
                         if (false) {
-                            getGame().unanimated(function() {
+                            getGame().unanimated(function () {
                                 proxyStack.updateCardsPosition();
                             });
                         }
 
-                        Y.Array.each(proxyStack.cards, function(card) {
+                        Y.Array.each(proxyStack.cards, function (card) {
                             if (!card) {
                                 return;
                             }
@@ -585,20 +592,20 @@ define([
                     return true;
                 },
 
-                _resetGameFoo: function() {
+                _resetGameFoo: function () {
                     const that = this;
                     if (false) {
                         // window.clearTimeout(that.timer);
                         // that.timer = undefined;
                         Animation.pause();
-                        window.setTimeout(function() {
+                        window.setTimeout(function () {
                             Y.fire("newAppGame");
                         }, 2000);
                         // Y.fire("newAppGame");
                     }
                 },
 
-                playCurrent: function(game) {
+                playCurrent: function (game) {
                     const that = this;
                     const verdict = that._playCurrentHelper(game);
 
@@ -608,7 +615,7 @@ define([
                     }
                 },
 
-                prev: function(game) {
+                prev: function (game) {
                     const that = this;
                     if (that.remainingMovesIdx > 0) {
                         Y.fire("undo", true);
@@ -616,7 +623,7 @@ define([
                     }
                 },
 
-                next: function(game) {
+                next: function (game) {
                     const that = this;
                     const next_idx = this.remainingMovesIdx + 1;
 
@@ -634,7 +641,7 @@ define([
                     Y.fire("endTurn", true);
                 },
 
-                play: function(game) {
+                play: function (game) {
                     const that = this;
 
                     if (
@@ -648,7 +655,7 @@ define([
                     Solitaire.Autoplay.disable();
 
                     if (WITH_UI) {
-                        withSelector(Y, "#solver_bar .play", function(node) {
+                        withSelector(Y, "#solver_bar .play", function (node) {
                             node.removeClass("play");
                             node.addClass("pause");
                             // node.set("text", "⏸");
@@ -663,7 +670,7 @@ define([
                             that.remainingMovesIdx < 0
                         )
                     ) {
-                        that.timer = window.setTimeout(function() {
+                        that.timer = window.setTimeout(function () {
                             that.play(game);
                         }, that.interval);
                     }
@@ -677,7 +684,7 @@ define([
                 indicatorInterval: 750,
                 delay: 400,
 
-                updateIndicator: function(ticks) {
+                updateIndicator: function (ticks) {
                     const that = this;
                     const indicator = that.indicator;
 
@@ -693,13 +700,13 @@ define([
 
                     indicator.set("text", text);
 
-                    that.indicatorTimer = window.setTimeout(function() {
+                    that.indicatorTimer = window.setTimeout(function () {
                         // body...
                         return that.updateIndicator(ticks + 1);
                     }, that.indicatorInterval);
                 },
 
-                stopIndicator: function(solved) {
+                stopIndicator: function (solved) {
                     const indicator = this.indicator;
 
                     window.clearTimeout(this.indicatorTimer);
@@ -710,7 +717,7 @@ define([
                     if (solved) {
                         indicator.set("text", "Solution found");
                         if (WITH_UI) {
-                            withSelector(Y, "#solver_bar .controls", function(
+                            withSelector(Y, "#solver_bar .controls", function (
                                 node,
                             ) {
                                 node.removeClass("hidden");
@@ -723,7 +730,7 @@ define([
                     this.indicatorTimer = null;
                 },
 
-                show: function() {
+                show: function () {
                     if (!WITH_UI) {
                         return;
                     } // remove UI clutter for the demo
@@ -760,15 +767,15 @@ define([
                     const controls = Y.Node.create(
                         "<div class='controls'></div>",
                     );
-                    next.on("click", function() {
+                    next.on("click", function () {
                         Animation.pause();
                         Animation.next(getGame());
                     });
-                    prev.on("click", function() {
+                    prev.on("click", function () {
                         Animation.pause();
                         Animation.prev(getGame());
                     });
-                    playPause.on("click", function() {
+                    playPause.on("click", function () {
                         const that = playPause;
                         /*
                          * Here I tie up state with the DOM
@@ -796,7 +803,7 @@ define([
                     this.bar = bar;
                 },
 
-                hide: function() {
+                hide: function () {
                     if (false) {
                         if (this.bar) {
                             this.bar.remove();
@@ -804,7 +811,7 @@ define([
                     }
                 },
             };
-            _startSolution_cb = function(args) {
+            _startSolution_cb = function (args) {
                 Y.Solitaire.Application.switchToGame("freecell");
                 Y.Solitaire.Application.clearDOM();
                 Y.Solitaire.Freecell.setup(
@@ -820,19 +827,19 @@ define([
                         const tableau = game.tableau.stacks;
                         board.columns.forEach((col, ci) => {
                             const column = col.col;
-                            tableau[ci].setCards(column.getLen(), function(i) {
+                            tableau[ci].setCards(column.getLen(), function (i) {
                                 return _from_card(column.getCard(i));
                             });
                         });
                         const fc = board.freecells;
                         game.reserve.stacks.forEach((stack, i) => {
                             const card = fc ? fc.freecells.getCard(i) : null;
-                            stack.setCards(card ? 1 : 0, function(_unused) {
+                            stack.setCards(card ? 1 : 0, function (_unused) {
                                 return _from_card(card);
                             });
                         });
                         const foundations = board.foundations;
-                        game.foundation.stacks.forEach(function(stack, suit) {
+                        game.foundation.stacks.forEach(function (stack, suit) {
                             stack.setCards(
                                 foundations
                                     ? 1 +
@@ -841,7 +848,7 @@ define([
                                               [1, 2, 0, 3][suit],
                                           )
                                     : 0,
-                                function(rank) {
+                                function (rank) {
                                     return Y.Solitaire.Freecell.Card.create(
                                         rank,
                                         game.deck.suits[suit],
@@ -868,22 +875,22 @@ define([
                 attached: false,
                 supportedGames: ["Freecell"],
 
-                isSupported: function() {
+                isSupported: function () {
                     return this.supportedGames.indexOf(getGame().name()) !== -1;
                 },
 
-                enable: function() {
+                enable: function () {
                     if (this.isSupported()) {
                         this.createUI();
                     }
                     this.attachEvents();
                 },
 
-                disable: function() {
+                disable: function () {
                     Status.hide();
                 },
 
-                attachEvents: function() {
+                attachEvents: function () {
                     const that = this;
                     if (that.attached) {
                         return;
@@ -892,7 +899,7 @@ define([
                     const pause = Animation.pause.bind(Animation);
 
                     // start the solver if the current game supports it
-                    Y.on("afterDealingAnimation", function() {
+                    Y.on("afterDealingAnimation", function () {
                         if (that.isSupported()) {
                             that.solver_active = false;
                             Animation.remainingMovesIdx = null;
@@ -906,7 +913,7 @@ define([
                     if (false) {
                         // if a solution isn't currently being played,
                         // find a new solution on every new turn
-                        Y.on("endTurn", function(dontResolve) {
+                        Y.on("endTurn", function (dontResolve) {
                             if (dontResolve || !that.isSupported()) {
                                 return;
                             }
@@ -914,18 +921,18 @@ define([
                         });
                     }
 
-                    Y.on("autoPlay", function() {
+                    Y.on("autoPlay", function () {
                         FreecellSolver.disable();
                     });
 
-                    Y.on("win", function() {
+                    Y.on("win", function () {
                         // FreecellSolver.disable();
                     });
 
                     // human interaction stops playing the current solution
                     document.documentElement.addEventListener(
                         "mousedown",
-                        function(e) {
+                        function (e) {
                             if (e.target.className.match(/\bpause\b/)) {
                                 return;
                             }
@@ -938,13 +945,13 @@ define([
                     return;
                 },
 
-                createUI: function() {
+                createUI: function () {
                     Status.show();
                 },
 
-                stop: function() {},
+                stop: function () {},
 
-                solve: function() {
+                solve: function () {
                     const that = this;
                     if (that.solver_active) {
                         return;
@@ -955,7 +962,7 @@ define([
                     // Remove UI clutter for the demo.
                     if (WITH_UI) {
                         if (false) {
-                            withSelector(Y, "#solver_bar .controls", function(
+                            withSelector(Y, "#solver_bar .controls", function (
                                 node,
                             ) {
                                 node.addClass("hidden");
@@ -966,14 +973,14 @@ define([
                     that.currentSolution = null;
                     if (false) {
                         window.clearTimeout(Status.indicatorTimer);
-                        Status.indicatorTimer = window.setTimeout(function() {
+                        Status.indicatorTimer = window.setTimeout(function () {
                             return Status.updateIndicator(0);
                         }, Status.delay);
                     }
                     const state = gameToState(Y, getGame());
 
                     function _cb() {
-                        window.setTimeout(function() {
+                        window.setTimeout(function () {
                             return _solve_cb(
                                 Y,
                                 that,

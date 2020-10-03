@@ -23,7 +23,7 @@ function GameState(obj) {
     }
 }
 
-GameState.fromState = function(other) {
+GameState.fromState = function (other) {
     const state = new GameState();
 
     state.tableau = other.tableau;
@@ -42,7 +42,7 @@ GameState.prototype = {
     parent: null,
     child: null,
 
-    solved: function() {
+    solved: function () {
         const foundation = this.foundation;
 
         for (let i = 0, len = 4; i < len; i++) {
@@ -54,7 +54,7 @@ GameState.prototype = {
         return true;
     },
 
-    eachTableau: function(callback) {
+    eachTableau: function (callback) {
         const tableau = this.tableau;
 
         for (let i = 0, len = tableau.length; i < len; i++) {
@@ -63,7 +63,7 @@ GameState.prototype = {
         }
     },
 
-    validTarget: function(field, value, start) {
+    validTarget: function (field, value, start) {
         const rank = value >> 2,
             suit = value & 3;
         let dest, tableau, i, len;
@@ -119,12 +119,12 @@ GameState.prototype = {
         return -1;
     },
 
-    move: function(sourceField, sourceStack, destField, destStack) {
+    move: function (sourceField, sourceStack, destField, destStack) {
         const val = this.pop(sourceField, sourceStack);
         this.push(destField, destStack, val);
     },
 
-    pop: function(field, stack) {
+    pop: function (field, stack) {
         let val, newBuffer, i, len;
 
         if (field === "reserve" || field === "foundation") {
@@ -147,7 +147,7 @@ GameState.prototype = {
         return val;
     },
 
-    push: function(field, stack, val) {
+    push: function (field, stack, val) {
         if (!val) {
             return;
         }
@@ -163,7 +163,7 @@ GameState.prototype = {
         this.tableau[stack][0][newLength - 1] = val;
     },
 
-    copyTableau: function(stack, newLength) {
+    copyTableau: function (stack, newLength) {
         const old = this.tableau,
             tableau = old[stack][0],
             newBuffer = new Uint8Array(new ArrayBuffer(newLength));
@@ -183,17 +183,17 @@ GameState.prototype = {
         }
     },
 
-    sort: function() {
+    sort: function () {
         Array.prototype.sort.call(this.reserve);
         Array.prototype.sort.call(this.foundation);
-        this.tableau.sort(function(a, b) {
+        this.tableau.sort(function (a, b) {
             return a[0][0] - b[0][0];
         });
     },
 
     _serialized: null,
     // TODO write a real hash function
-    serialize: function() {
+    serialize: function () {
         if (this._serialized !== null) {
             return this._serialized;
         }
@@ -225,7 +225,7 @@ GameState.prototype = {
     },
 
     // the search heuristic function
-    rateMove: function(sourceField, sourceIndex, destField, destIndex) {
+    rateMove: function (sourceField, sourceIndex, destField, destIndex) {
         const RATING_FOUNDATION = 1000,
             RATING_CLOSEDTABLEAUFOLLOWUP = 20,
             RATING_FREEFOUNDATIONTARGET = 15,
@@ -342,7 +342,7 @@ GameState.prototype = {
         return rating;
     },
 
-    transformParentMove: function() {
+    transformParentMove: function () {
         const move = this.parentMove,
             parent = this.parent;
 
@@ -354,7 +354,7 @@ GameState.prototype = {
         move.dest[1] = parent.lastCard(move.dest[0], move.dest[1]);
     },
 
-    lastCard: function(field, index) {
+    lastCard: function (field, index) {
         switch (field) {
             case "reserve":
             case "foundation":
@@ -368,7 +368,7 @@ GameState.prototype = {
         }
     },
 
-    becomeChild: function() {
+    becomeChild: function () {
         const parent = this.parent;
 
         if (!parent) {
@@ -523,7 +523,7 @@ function solve(state, depth, visited, movesSinceFoundation, fastSearch) {
         moves[i] = next;
     }
 
-    moves.sort(function(a, b) {
+    moves.sort(function (a, b) {
         return b.rating - a.rating;
     });
 
@@ -618,7 +618,7 @@ function _render_state_as_string(obj) {
     ret +=
         "Foundations:" +
         foundation
-            .map(function(c) {
+            .map(function (c) {
                 if (c == 0) {
                     return "";
                 } else {
@@ -631,7 +631,7 @@ function _render_state_as_string(obj) {
     ret +=
         "Freecells:" +
         reserve
-            .map(function(c) {
+            .map(function (c) {
                 if (c == 0) {
                     return " -";
                 } else {
@@ -665,7 +665,7 @@ function attemptSolution(obj, fastSearch) {
     const instance = new FC_Solve({
         cmd_line_preset: "ct",
         // cmd_line_preset: 'default',
-        set_status_callback: function() {
+        set_status_callback: function () {
             return;
         },
     });
@@ -678,7 +678,7 @@ function attemptSolution(obj, fastSearch) {
 
     if (solve_err_code == FCS_STATE_WAS_SOLVED) {
         const buffer = instance.display_expanded_moves_solution({});
-        const to_int = function(s) {
+        const to_int = function (s) {
             return parseInt(s, 10);
         };
 
@@ -694,7 +694,7 @@ function attemptSolution(obj, fastSearch) {
             if (m.type == "m") {
                 const str = m.str;
 
-                const move_content = (function() {
+                const move_content = (function () {
                     let matched = str.match(
                         /^Move 1 cards from stack ([0-9]+) to stack ([0-9]+)/,
                     );
@@ -754,7 +754,7 @@ function attemptSolution(obj, fastSearch) {
     return;
 }
 
-onmessage = function(e) {
+onmessage = function (e) {
     let state, solution;
     const data = e.data;
 

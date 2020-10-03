@@ -1,6 +1,6 @@
 YUI.add(
     "spiderette",
-    function(Y) {
+    function (Y) {
         const Solitaire = Y.Solitaire,
             Klondike = Solitaire.Klondike,
             Spider = Solitaire.Spider,

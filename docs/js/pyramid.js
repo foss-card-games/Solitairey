@@ -1,11 +1,11 @@
 YUI.add(
     "pyramid",
-    function(Y) {
+    function (Y) {
         const Solitaire = Y.Solitaire,
             Pyramid = (Y.Solitaire.Pyramid = Solitaire.instance(Solitaire, {
                 fields: ["Foundation", "Deck", "Waste", "Tableau"],
 
-                deal: function() {
+                deal: function () {
                     const deck = this.deck,
                         stacks = this.tableau.stacks;
 
@@ -20,7 +20,7 @@ YUI.add(
                     deck.my_Last().faceUp();
                 },
 
-                turnOver: function() {
+                turnOver: function () {
                     const deck = this.deck.stacks[0],
                         waste = this.waste.stacks[0];
 
@@ -30,17 +30,17 @@ YUI.add(
                     deck.my_Last().moveTo(waste);
                 },
 
-                height: function() {
+                height: function () {
                     return this.Card.base.height * 4.85;
                 },
 
                 Stack: Solitaire.instance(Solitaire.Stack, {
                     images: {},
 
-                    updateDragGroups: function() {
+                    updateDragGroups: function () {
                         const active = Solitaire.activeCard;
 
-                        Y.Array.each(this.cards, function(c) {
+                        Y.Array.each(this.cards, function (c) {
                             if (!c) {
                                 return;
                             }
@@ -55,13 +55,13 @@ YUI.add(
                 }),
 
                 Events: Solitaire.instance(Solitaire.Events, {
-                    dragCheck: function(e) {
+                    dragCheck: function (e) {
                         if (!Solitaire.game.autoPlay.call(this)) {
                             Solitaire.Events.dragCheck.call(this);
                         }
                     },
 
-                    drop: function(e) {
+                    drop: function (e) {
                         const active = Solitaire.activeCard,
                             foundation = Solitaire.game.foundation.stacks[0],
                             target = e.drop.get("node").getData("target");
@@ -70,7 +70,7 @@ YUI.add(
                             return;
                         }
 
-                        Solitaire.stationary(function() {
+                        Solitaire.stationary(function () {
                             target.moveTo(foundation);
                             active.moveTo(foundation);
                         });
@@ -85,7 +85,7 @@ YUI.add(
                         layout: {
                             hspacing: 0,
                             top: 0,
-                            left: function() {
+                            left: function () {
                                 return Solitaire.Card.width * 8;
                             },
                         },
@@ -104,7 +104,7 @@ YUI.add(
                     },
                     field: "deck",
 
-                    createStack: function() {
+                    createStack: function () {
                         for (let i = 0, len = this.cards.length; i < len; i++) {
                             this.stacks[0].push(this.cards[i]);
                         }
@@ -117,7 +117,7 @@ YUI.add(
                         layout: {
                             hspacing: 0,
                             top: 0,
-                            left: function() {
+                            left: function () {
                                 return Solitaire.Card.width * 1.5;
                             },
                         },
@@ -133,7 +133,7 @@ YUI.add(
                             hspacing: -0.625,
                             cardGap: 1.25,
                             top: 0,
-                            left: function() {
+                            left: function () {
                                 return Solitaire.Card.width * 5;
                             },
                         },
@@ -142,7 +142,7 @@ YUI.add(
                 },
 
                 Card: Solitaire.instance(Solitaire.Card, {
-                    validTarget: function(card) {
+                    validTarget: function (card) {
                         if (card.field === "foundation") {
                             // "card" is actually a stack :/
                             return this.isFree() && this.rank === 13;
@@ -155,13 +155,13 @@ YUI.add(
                         return false;
                     },
 
-                    createProxyNode: function() {
+                    createProxyNode: function () {
                         return this.rank === 13
                             ? ""
                             : Solitaire.Card.createProxyNode.call(this);
                     },
 
-                    createProxyStack: function() {
+                    createProxyStack: function () {
                         let stack = null;
 
                         if (this.isFree()) {
@@ -174,11 +174,11 @@ YUI.add(
                         return this.proxyStack;
                     },
 
-                    proxyCards: function() {
+                    proxyCards: function () {
                         return [this];
                     },
 
-                    isFree: function() {
+                    isFree: function () {
                         const stack = this.stack,
                             stackIndex = stack.index(),
                             index = stack.cards.indexOf(this),
@@ -197,7 +197,7 @@ YUI.add(
                         }
                     },
 
-                    turnOver: function() {
+                    turnOver: function () {
                         this.stack.field === "deck" &&
                             !this.isFaceDown &&
                             Solitaire.game.turnOver();
@@ -205,14 +205,14 @@ YUI.add(
                 }),
             }));
 
-        Y.Array.each(Pyramid.fields, function(field) {
+        Y.Array.each(Pyramid.fields, function (field) {
             Pyramid[field].Stack = Solitaire.instance(Pyramid.Stack);
         });
 
         Y.mix(
             Pyramid.Tableau.Stack,
             {
-                deleteItem: function(card) {
+                deleteItem: function (card) {
                     const cards = this.cards,
                         i = cards.indexOf(card);
 
@@ -221,7 +221,7 @@ YUI.add(
                     }
                 },
 
-                setCardPosition: function(card) {
+                setCardPosition: function (card) {
                     const layout = Pyramid.Tableau.stackConfig.layout,
                         last = _.last(this.cards),
                         top = this.top,
@@ -240,18 +240,18 @@ YUI.add(
         Y.mix(
             Pyramid.Deck.Stack,
             {
-                deleteItem: function(card) {
+                deleteItem: function (card) {
                     Pyramid.Stack.deleteItem.call(this, card);
                     this.update();
                 },
 
-                update: function(undo) {
+                update: function (undo) {
                     const last = this.my_Last();
 
                     last && last.faceUp(undo);
                 },
 
-                updateDragGroups: function() {
+                updateDragGroups: function () {
                     const active = Solitaire.activeCard,
                         card = this.my_Last();
 

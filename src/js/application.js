@@ -1,9 +1,9 @@
-define(["./solitaire"], function(solitaire) {
+define(["./solitaire"], function (solitaire) {
     let newGameRun;
     let schedule;
     let schedule_cb;
     let enable_solitairey_ui = false;
-    (function() {
+    (function () {
         const active = {
             name: "freecell", // name: "klondike",
             game: null,
@@ -40,7 +40,7 @@ define(["./solitaire"], function(solitaire) {
             // "solitaire-background-fix"
             "solitaire",
         ];
-        const Fade = (function() {
+        const Fade = (function () {
             let el = null,
                 body;
             const css = {
@@ -54,7 +54,7 @@ define(["./solitaire"], function(solitaire) {
                     height: 0,
                     zIndex: 1000,
                 },
-                element = function() {
+                element = function () {
                     if (el === null) {
                         el = Y.Node.create("<div></div>");
                         el.setStyles(css);
@@ -64,7 +64,7 @@ define(["./solitaire"], function(solitaire) {
                 };
 
             return {
-                show: function() {
+                show: function () {
                     const el = element();
 
                     css.display = "block";
@@ -74,7 +74,7 @@ define(["./solitaire"], function(solitaire) {
                     el.setStyles(css);
                 },
 
-                hide: function() {
+                hide: function () {
                     css.display = "none";
                     element().setStyles(css);
                 },
@@ -97,11 +97,11 @@ define(["./solitaire"], function(solitaire) {
             selected: null,
             fade: false,
 
-            init: function() {
+            init: function () {
                 this.refit();
             },
 
-            refit: function() {
+            refit: function () {
                 const node = Y.one("#game-chooser");
                 if (!node) {
                     return;
@@ -111,7 +111,7 @@ define(["./solitaire"], function(solitaire) {
                 node.setStyle("min-height", height);
             },
 
-            show: function(fade) {
+            show: function (fade) {
                 if (!this.selected) {
                     this.select(active.name);
                 }
@@ -125,7 +125,7 @@ define(["./solitaire"], function(solitaire) {
                 Y.one(".solitairey_body").addClass("scrollable");
             },
 
-            hide: function() {
+            hide: function () {
                 if (this.fade) {
                     Fade.hide();
                 }
@@ -135,7 +135,7 @@ define(["./solitaire"], function(solitaire) {
                 Y.one(".solitairey_body").removeClass("scrollable");
             },
 
-            choose: function() {
+            choose: function () {
                 if (!this.selected) {
                     return;
                 }
@@ -144,7 +144,7 @@ define(["./solitaire"], function(solitaire) {
                 playGame(this.selected);
             },
 
-            select: function(game) {
+            select: function (game) {
                 const node = Y.one("#" + game + "> div"),
                     previous = this.selected;
 
@@ -164,7 +164,7 @@ define(["./solitaire"], function(solitaire) {
                 }
             },
 
-            unSelect: function() {
+            unSelect: function () {
                 if (!this.selected) {
                     return;
                 }
@@ -218,7 +218,7 @@ define(["./solitaire"], function(solitaire) {
                 },
             },
 
-            load: function(name) {
+            load: function (name) {
                 const Solitaire = Y.Solitaire,
                     base = Solitaire.Card.base;
 
@@ -231,7 +231,7 @@ define(["./solitaire"], function(solitaire) {
                 }
             },
 
-            set: function(name, size) {
+            set: function (name, size) {
                 const theme = this[name][size];
 
                 Y.mix(
@@ -268,7 +268,7 @@ define(["./solitaire"], function(solitaire) {
 
             window[attachEvent](
                 Y.Solitaire.Application.resizeEvent,
-                function() {
+                function () {
                     clearTimeout(timer);
                     timer = setTimeout(resize, delay);
                 },
@@ -276,14 +276,14 @@ define(["./solitaire"], function(solitaire) {
             );
         }
         function attachEvents() {
-            Y.on("newAppGame", function() {
+            Y.on("newAppGame", function () {
                 return newGame();
             });
             if (enable_solitairey_ui) {
                 Y.on("click", restart, Y.one("#restart"));
                 Y.on(
                     "click",
-                    function() {
+                    function () {
                         GameChooser.show(false);
                     },
                     Y.one("#choose_game"),
@@ -291,14 +291,14 @@ define(["./solitaire"], function(solitaire) {
                 Y.on("click", newGame, Y.one("#new_deal"));
                 Y.on(
                     "click",
-                    function() {
+                    function () {
                         GameChooser.hide();
                     },
                     Y.one("#close-chooser"),
                 );
                 Y.on(
                     "click",
-                    function() {
+                    function () {
                         active.game.undo();
                     },
                     Y.one("#undo"),
@@ -325,12 +325,12 @@ define(["./solitaire"], function(solitaire) {
                 }
                 Y.delegate("click", showDescription, "#descriptions", "li");
             }
-            Y.one("document").on("keydown", function(e) {
+            Y.one("document").on("keydown", function (e) {
                 e.keyCode === 27 && GameChooser.hide();
             });
 
-            Y.on("afterSetup", function() {
-                active.game.stationary(function() {
+            Y.on("afterSetup", function () {
+                active.game.stationary(function () {
                     resize();
                 });
             });
@@ -340,10 +340,10 @@ define(["./solitaire"], function(solitaire) {
         const Preloader = {
             loadingCount: 0,
 
-            loaded: function(callback) {
+            loaded: function (callback) {
                 if (this.loadingCount) {
                     setTimeout(
-                        function() {
+                        function () {
                             this.loaded(callback);
                         }.bind(this),
                         100,
@@ -358,10 +358,10 @@ define(["./solitaire"], function(solitaire) {
                 }
             },
 
-            load: function(path) {
+            load: function (path) {
                 const image = new Image();
 
-                image.onload = function() {
+                image.onload = function () {
                     --this.loadingCount;
                 }.bind(this);
                 image.src = path;
@@ -369,7 +369,7 @@ define(["./solitaire"], function(solitaire) {
                 this.loadingCount++;
             },
 
-            preload: function() {
+            preload: function () {
                 const that = this;
                 let rank;
                 const icons = [
@@ -395,8 +395,8 @@ define(["./solitaire"], function(solitaire) {
 
                 Y.Array.each(
                     ["s", "h", "c", "d"],
-                    function(suit) {
-                        for (rank = 1; rank <= 13; rank++) {
+                    function (suit) {
+                        for (let rank = 1; rank <= 13; ++rank) {
                             that.load(
                                 Y.Solitaire.Card.base.theme +
                                     "/" +
@@ -411,13 +411,15 @@ define(["./solitaire"], function(solitaire) {
 
                 this.load(Y.Solitaire.Card.base.theme + "/facedown.png");
 
-                Y.Array.each(
-                    icons,
-                    function(image) {
-                        that.load("layouts/mini/" + image + ".png");
-                    },
-                    that,
-                );
+                if (enable_solitairey_ui) {
+                    Y.Array.each(
+                        icons,
+                        function (image) {
+                            that.load("layouts/mini/" + image + ".png");
+                        },
+                        that,
+                    );
+                }
 
                 Fade.show();
                 const loading = Y.one(".loading");
@@ -444,7 +446,7 @@ define(["./solitaire"], function(solitaire) {
             loadOptions();
 
             Preloader.preload();
-            Preloader.loaded(function() {
+            Preloader.loaded(function () {
                 // showChromeStoreLink();
                 if (save) {
                     clearDOM();
@@ -514,7 +516,7 @@ define(["./solitaire"], function(solitaire) {
             clearGame();
             active.game.newGame();
         }
-        newGameRun = function() {
+        newGameRun = function () {
             playGame("freecell");
         };
 
@@ -529,12 +531,12 @@ define(["./solitaire"], function(solitaire) {
                 switchToGame: switchToGame,
             };
         }
-        schedule = function(cb) {
+        schedule = function (cb) {
             schedule_cb = cb;
         };
 
         yui.use.apply(yui, modules().concat(main));
-        window.setTimeout(function() {
+        window.setTimeout(function () {
             yui.use.apply(yui, ["solver-freecell"]);
         }, 400);
     })();

@@ -1,20 +1,20 @@
 YUI.add(
     "tri-towers",
-    function(Y) {
+    function (Y) {
         const Solitaire = Y.Solitaire,
             TriTowers = (Y.Solitaire.TriTowers = Solitaire.instance(
                 Solitaire,
                 {
                     fields: ["Deck", "Foundation", "Tableau"],
 
-                    width: function() {
+                    width: function () {
                         return this.Card.base.width * 15;
                     },
-                    height: function() {
+                    height: function () {
                         return this.Card.base.height * 5;
                     },
-                    createEvents: function() {
-                        Y.on("solitaire|endTurn", function() {
+                    createEvents: function () {
+                        Y.on("solitaire|endTurn", function () {
                             const tableaus = Solitaire.game.tableau.stacks;
 
                             for (let i = 0; i < 3; i++) {
@@ -25,7 +25,7 @@ YUI.add(
                         Solitaire.createEvents.call(this);
                     },
 
-                    deal: function() {
+                    deal: function () {
                         let card, stack, i, stackLength;
 
                         const stacks = this.tableau.stacks,
@@ -47,7 +47,7 @@ YUI.add(
                         deck.createStack();
                     },
 
-                    turnOver: function() {
+                    turnOver: function () {
                         const deck = this.deck.stacks[0],
                             foundation = this.foundation.stacks[0],
                             last = deck.my_Last();
@@ -55,11 +55,11 @@ YUI.add(
                         last && last.faceUp().moveTo(foundation);
                     },
 
-                    isWon: function() {
+                    isWon: function () {
                         let won = true;
 
-                        this.eachStack(function(stack) {
-                            stack.eachCard(function(card) {
+                        this.eachStack(function (stack) {
+                            stack.eachCard(function (card) {
                                 if (card) {
                                     won = false;
                                 }
@@ -77,14 +77,14 @@ YUI.add(
                             total: 1,
                             layout: {
                                 hspacing: 0,
-                                top: function() {
+                                top: function () {
                                     return Solitaire.Card.height * 4;
                                 },
                                 left: 0,
                             },
                         },
 
-                        createStack: function() {
+                        createStack: function () {
                             for (
                                 let i = 0, len = this.cards.length;
                                 i < len;
@@ -105,7 +105,7 @@ YUI.add(
                                 vspacing: 0.6,
                                 hspacing: -0.625,
                                 top: 0,
-                                left: function() {
+                                left: function () {
                                     return Solitaire.Card.width * 1.875;
                                 },
                             },
@@ -118,10 +118,10 @@ YUI.add(
                             total: 1,
                             layout: {
                                 hspacing: 0,
-                                top: function() {
+                                top: function () {
                                     return Solitaire.Card.height * 4;
                                 },
-                                left: function() {
+                                left: function () {
                                     return Solitaire.Card.width * 4;
                                 },
                             },
@@ -129,7 +129,7 @@ YUI.add(
                     },
 
                     Events: Solitaire.instance(Solitaire.Events, {
-                        dragCheck: function(e) {
+                        dragCheck: function (e) {
                             this.getCard().autoPlay();
 
                             /* workaround because YUI retains stale drag information if we halt the event :\ */
@@ -143,7 +143,7 @@ YUI.add(
                          * return true if the target is 1 rank away from the this card
                          * Aces and Kings are valid targets for each other
                          */
-                        validTarget: function(stack) {
+                        validTarget: function (stack) {
                             if (stack.field !== "foundation") {
                                 return false;
                             }
@@ -154,7 +154,7 @@ YUI.add(
                             return diff === 1 || diff === 12;
                         },
 
-                        playable: function() {
+                        playable: function () {
                             const stack = this.stack;
 
                             return (
@@ -168,7 +168,7 @@ YUI.add(
                             );
                         },
 
-                        isFree: function() {
+                        isFree: function () {
                             const stack = this.stack,
                                 next = stack.next(),
                                 tower = this.tower(),
@@ -191,7 +191,7 @@ YUI.add(
                             return true;
                         },
 
-                        tower: function() {
+                        tower: function () {
                             const stack = this.stack,
                                 index = stack.cards.indexOf(this),
                                 stackIndex = stack.index() + 1;
@@ -207,14 +207,14 @@ YUI.add(
                 true,
             ));
 
-        Y.Array.each(TriTowers.fields, function(field) {
+        Y.Array.each(TriTowers.fields, function (field) {
             TriTowers[field].Stack = Solitaire.instance(TriTowers.Stack);
         });
 
         Y.mix(
             TriTowers.Tableau.Stack,
             {
-                deleteItem: function(card) {
+                deleteItem: function (card) {
                     const cards = this.cards,
                         i = cards.indexOf(card);
 
@@ -223,7 +223,7 @@ YUI.add(
                     }
                 },
 
-                setCardPosition: function(card) {
+                setCardPosition: function (card) {
                     let left, index, stackIndex;
                     const last = this.my_Last(),
                         top = this.top,
@@ -254,7 +254,7 @@ YUI.add(
         Y.mix(
             TriTowers.Deck.Stack,
             {
-                setCardPosition: function(card) {
+                setCardPosition: function (card) {
                     const last = this.my_Last();
                     let left, zIndex;
 

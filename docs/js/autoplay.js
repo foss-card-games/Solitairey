@@ -1,7 +1,7 @@
-define(["./solitaire"], function(solitaire) {
+define(["./solitaire"], function (solitaire) {
     YUI.add(
         "solitaire-autoplay",
-        function(Y) {
+        function (Y) {
             Y.namespace("Solitaire.Autoplay");
 
             const Solitaire = Y.Solitaire,
@@ -18,7 +18,7 @@ define(["./solitaire"], function(solitaire) {
                 "Yukon",
             ];
 
-            Y.on("endTurn", function() {
+            Y.on("endTurn", function () {
                 if (
                     !whenWon ||
                     autoPlayable.indexOf(Solitaire.game.name()) === -1
@@ -31,26 +31,26 @@ define(["./solitaire"], function(solitaire) {
                 }
             });
 
-            Y.on("win", function() {
+            Y.on("win", function () {
                 clearInterval(autoPlayInterval);
                 autoPlayInterval = null;
             });
 
-            Y.on("autoPlay", function() {
+            Y.on("autoPlay", function () {
                 autoPlayInterval = setInterval(autoPlay, 130);
             });
 
             function autoPlay() {
                 let played = false;
 
-                Solitaire.game.eachStack(function(stack) {
+                Solitaire.game.eachStack(function (stack) {
                     const field = stack.field;
 
                     if (played || field === "foundation" || field === "deck") {
                         return;
                     }
 
-                    played = !stack.eachCard(function(card) {
+                    played = !stack.eachCard(function (card) {
                         return !card.autoPlay();
                     });
                 });
@@ -59,7 +59,7 @@ define(["./solitaire"], function(solitaire) {
             function isEffectivelyWon() {
                 let stop = false;
 
-                Solitaire.game.eachStack(function(stack) {
+                Solitaire.game.eachStack(function (stack) {
                     const field = stack.field;
                     let prevRank = 14;
 
@@ -67,7 +67,7 @@ define(["./solitaire"], function(solitaire) {
                         return;
                     }
 
-                    stack.eachCard(function(card) {
+                    stack.eachCard(function (card) {
                         if (card.rank > prevRank || card.isFaceDown) {
                             stop = true;
                             return false;
@@ -81,11 +81,11 @@ define(["./solitaire"], function(solitaire) {
             }
 
             Y.mix(Autoplay, {
-                enable: function() {
+                enable: function () {
                     whenWon = true;
                 },
 
-                disable: function() {
+                disable: function () {
                     whenWon = false;
                 },
             });

@@ -1,11 +1,11 @@
 YUI.add(
     "klondike",
-    function(Y) {
+    function (Y) {
         const Solitaire = Y.Solitaire,
             Klondike = (Y.Solitaire.Klondike = Solitaire.instance(Solitaire, {
                 fields: ["Foundation", "Deck", "Waste", "Tableau"],
 
-                deal: function() {
+                deal: function () {
                     let card,
                         piles = 6,
                         stack = 0;
@@ -26,7 +26,7 @@ YUI.add(
                     deck.createStack();
                 },
 
-                turnOver: function() {
+                turnOver: function () {
                     const deck = this.deck.stacks[0],
                         waste = this.waste.stacks[0],
                         updatePosition = Klondike.Card.updatePosition;
@@ -38,27 +38,22 @@ YUI.add(
                         i > stop && i;
                         --i
                     ) {
-                        deck.my_Last()
-                            .faceUp()
-                            .moveTo(waste);
+                        deck.my_Last().faceUp().moveTo(waste);
                     }
 
                     Klondike.Card.updatePosition = updatePosition;
 
-                    waste.eachCard(function(c) {
+                    waste.eachCard(function (c) {
                         c.updatePosition();
                     });
                 },
 
-                redeal: function() {
+                redeal: function () {
                     const deck = this.deck.stacks[0],
                         waste = this.waste.stacks[0];
 
                     while (waste.cards.length) {
-                        waste
-                            .my_Last()
-                            .faceDown()
-                            .moveTo(deck);
+                        waste.my_Last().faceDown().moveTo(deck);
                     }
                 },
 
@@ -70,7 +65,7 @@ YUI.add(
                         layout: {
                             hspacing: 1.25,
                             top: 0,
-                            left: function() {
+                            left: function () {
                                 return Solitaire.Card.width * 3.75;
                             },
                         },
@@ -96,7 +91,7 @@ YUI.add(
                         layout: {
                             hspacing: 0,
                             top: 0,
-                            left: function() {
+                            left: function () {
                                 return Solitaire.Card.width * 1.5;
                             },
                         },
@@ -109,7 +104,7 @@ YUI.add(
                         total: 7,
                         layout: {
                             hspacing: 1.25,
-                            top: function() {
+                            top: function () {
                                 return Solitaire.Card.height * 1.5;
                             },
                             left: 0,
@@ -119,7 +114,7 @@ YUI.add(
                 },
 
                 Card: Solitaire.instance(Solitaire.Card, {
-                    playable: function() {
+                    playable: function () {
                         switch (this.stack.field) {
                             case "tableau":
                                 return !this.isFaceDown;
@@ -132,7 +127,7 @@ YUI.add(
                         }
                     },
 
-                    validFoundationTarget: function(target) {
+                    validFoundationTarget: function (target) {
                         if (!target) {
                             return this.rank === 1;
                         } else {
@@ -143,7 +138,7 @@ YUI.add(
                         }
                     },
 
-                    validTarget: function(stack) {
+                    validTarget: function (stack) {
                         const target = stack.my_Last();
 
                         switch (stack.field) {
@@ -166,14 +161,14 @@ YUI.add(
                 }),
             }));
 
-        Y.Array.each(Klondike.fields, function(field) {
+        Y.Array.each(Klondike.fields, function (field) {
             Klondike[field].Stack = Solitaire.instance(Klondike.Stack);
         });
 
         Y.mix(
             Klondike.Stack,
             {
-                validTarget: function(stack) {
+                validTarget: function (stack) {
                     return (
                         stack.field === "tableau" &&
                         this.first().validTarget(stack)
@@ -186,7 +181,7 @@ YUI.add(
         Y.mix(
             Klondike.Tableau.Stack,
             {
-                setCardPosition: function(card) {
+                setCardPosition: function (card) {
                     return this.lastCardSetCardPosition(card);
                 },
             },
@@ -197,12 +192,12 @@ YUI.add(
             Klondike.Waste.Stack,
             {
                 // always display only the last three cards
-                setCardPosition: function(card) {
+                setCardPosition: function (card) {
                     const cards = this.cards,
                         last = _.last(cards),
                         stack = this;
 
-                    Y.Array.each(cards.slice(-2), function(card, i) {
+                    Y.Array.each(cards.slice(-2), function (card, i) {
                         card.left = stack.left;
                         card.top = stack.top;
                     });
@@ -228,7 +223,7 @@ YUI.add(
         Y.mix(
             Klondike.Deck.Stack,
             {
-                createNode: function() {
+                createNode: function () {
                     Solitaire.Stack.createNode.call(this);
                     this.node.on("click", Solitaire.Events.clickEmptyDeck);
                     this.node.addClass("playable");

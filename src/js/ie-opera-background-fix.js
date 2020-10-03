@@ -1,6 +1,6 @@
 YUI.add(
     "solitaire-background-fix",
-    function(Y) {
+    function (Y) {
         let _body;
 
         Y.on("load", resize);

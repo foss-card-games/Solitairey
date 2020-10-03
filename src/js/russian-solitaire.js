@@ -1,6 +1,6 @@
 YUI.add(
     "russian-solitaire",
-    function(Y) {
+    function (Y) {
         const Solitaire = Y.Solitaire,
             Yukon = Solitaire.Yukon,
             RussianSolitaire = (Solitaire.RussianSolitaire = Solitaire.instance(
@@ -10,7 +10,7 @@ YUI.add(
                 },
             ));
 
-        RussianSolitaire.Card.validTarget = function(stack) {
+        RussianSolitaire.Card.validTarget = function (stack) {
             const target = stack.my_Last();
 
             switch (stack.field) {

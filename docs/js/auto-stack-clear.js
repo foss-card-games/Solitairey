@@ -1,16 +1,16 @@
-define(["./solitaire"], function(solitaire) {
+define(["./solitaire"], function (solitaire) {
     /*
      * Stack extension class to automatically move complete stacks/runs to the foundation
      */
     YUI.add(
         "auto-stack-clear",
-        function(Y) {
+        function (Y) {
             const Solitaire = Y.Solitaire;
 
             Y.namespace("Solitaire.AutoStackClear");
 
-            Solitaire.AutoStackClear.register = function() {
-                Y.on("solitaire|tableau:afterPush", function(stack) {
+            Solitaire.AutoStackClear.register = function () {
+                Y.on("solitaire|tableau:afterPush", function (stack) {
                     isComplete(stack, clearComplete);
                 });
             };
@@ -53,12 +53,12 @@ define(["./solitaire"], function(solitaire) {
                 // find the first empty foundation
                 const foundation = Y.Array.find(
                     Solitaire.game.foundation.stacks,
-                    function(stack) {
+                    function (stack) {
                         return !stack.cards.length;
                     },
                 );
 
-                Solitaire.stationary(function() {
+                Solitaire.stationary(function () {
                     while (count) {
                         _.last(cards).moveTo(foundation);
                         count--;

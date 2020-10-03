@@ -1,13 +1,13 @@
 YUI.add(
     "flower-garden",
-    function(Y) {
+    function (Y) {
         const Solitaire = Y.Solitaire,
             FlowerGarden = (Y.Solitaire.FlowerGarden = Solitaire.instance(
                 Solitaire,
                 {
                     fields: ["Foundation", "Reserve", "Tableau"],
 
-                    deal: function() {
+                    deal: function () {
                         let card,
                             stack = 0,
                             i;
@@ -29,10 +29,10 @@ YUI.add(
                         }
                     },
 
-                    height: function() {
+                    height: function () {
                         return this.Card.base.height * 5.5;
                     },
-                    maxStackHeight: function() {
+                    maxStackHeight: function () {
                         return this.Card.height * 4.4;
                     },
 
@@ -44,7 +44,7 @@ YUI.add(
                             layout: {
                                 hspacing: 1.25,
                                 top: 0,
-                                left: function() {
+                                left: function () {
                                     return Solitaire.Card.width * 4.25;
                                 },
                             },
@@ -58,10 +58,10 @@ YUI.add(
                             total: 1,
                             layout: {
                                 hspacing: 1.25,
-                                top: function() {
+                                top: function () {
                                     return Solitaire.Card.height * 4.5;
                                 },
-                                left: function() {
+                                left: function () {
                                     return Solitaire.Card.width * 3;
                                 },
                             },
@@ -75,10 +75,10 @@ YUI.add(
                             total: 6,
                             layout: {
                                 hspacing: 1.25,
-                                top: function() {
+                                top: function () {
                                     return Solitaire.Card.height * 1.25;
                                 },
-                                left: function() {
+                                left: function () {
                                     return Solitaire.Card.width * 3;
                                 },
                             },
@@ -90,7 +90,7 @@ YUI.add(
                     Card: Solitaire.instance(Solitaire.Card, {
                         rankHeight: 24,
 
-                        createProxyStack: function() {
+                        createProxyStack: function () {
                             let stack;
 
                             switch (this.stack.field) {
@@ -111,7 +111,7 @@ YUI.add(
                             return this.proxyStack;
                         },
 
-                        moveTo: function(stack) {
+                        moveTo: function (stack) {
                             const cards = this.stack.cards,
                                 index = cards.indexOf(this);
                             let i, len;
@@ -135,7 +135,7 @@ YUI.add(
                             cards.splice(index, 1);
                         },
 
-                        validTarget: function(stack) {
+                        validTarget: function (stack) {
                             const target = stack.my_Last();
 
                             switch (stack.field) {
@@ -162,7 +162,7 @@ YUI.add(
                             }
                         },
 
-                        isFree: function() {
+                        isFree: function () {
                             if (this.stack.field === "reserve") {
                                 return true;
                             } else {
@@ -176,7 +176,7 @@ YUI.add(
 
         Y.Array.each(
             FlowerGarden.fields,
-            function(field) {
+            function (field) {
                 FlowerGarden[field].Stack = Solitaire.instance(
                     FlowerGarden.Stack,
                 );
@@ -189,14 +189,14 @@ YUI.add(
             {
                 images: { foundation: "freeslot.png", tableau: "freeslot.png" },
 
-                validTarget: function(stack) {
+                validTarget: function (stack) {
                     return (
                         stack.field === "tableau" &&
                         this.first().validTarget(stack)
                     );
                 },
 
-                validCard: function() {
+                validCard: function () {
                     return false;
                 },
             },
@@ -206,7 +206,7 @@ YUI.add(
         Y.mix(
             FlowerGarden.Tableau.Stack,
             {
-                setCardPosition: function(card) {
+                setCardPosition: function (card) {
                     return this.lastCardSetCardPosition(card);
                 },
             },
@@ -216,7 +216,7 @@ YUI.add(
         Y.mix(
             FlowerGarden.Reserve.Stack,
             {
-                setCardPosition: function(card) {
+                setCardPosition: function (card) {
                     const last = _.last(this.cards),
                         left = last
                             ? last.left + Solitaire.Card.width * 0.4
@@ -227,14 +227,14 @@ YUI.add(
                     card.top = top;
                 },
 
-                update: function(undo) {
+                update: function (undo) {
                     if (undo) {
                         return;
                     }
 
                     const stack = this;
 
-                    Y.Array.each(this.cards, function(card, i) {
+                    Y.Array.each(this.cards, function (card, i) {
                         const left = stack.left + i * card.width * 0.4;
 
                         if (left !== card.left) {

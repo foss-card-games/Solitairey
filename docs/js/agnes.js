@@ -1,6 +1,6 @@
 YUI.add(
     "agnes",
-    function(Y) {
+    function (Y) {
         function inSeries(first, second) {
             return (first + 1) % 13 === second % 13;
         }
@@ -14,29 +14,27 @@ YUI.add(
             Agnes = (Solitaire.Agnes = Solitaire.instance(Klondike, {
                 fields: ["Foundation", "Deck", "Waste", "Tableau", "Reserve"],
 
-                height: function() {
+                height: function () {
                     return this.Card.base.height * 5.6;
                 },
-                maxStackHeight: function() {
+                maxStackHeight: function () {
                     return this.Card.height * 4.3;
                 },
 
-                deal: function() {
+                deal: function () {
                     const deck = this.deck.stacks[0],
                         foundation = this.foundation.stacks[0];
 
                     Klondike.deal.call(this);
 
-                    deck.my_Last()
-                        .faceUp()
-                        .moveTo(foundation);
+                    deck.my_Last().faceUp().moveTo(foundation);
 
                     this.turnOver();
                 },
 
                 redeal: Solitaire.noop,
 
-                turnOver: function() {
+                turnOver: function () {
                     const deck = this.deck.stacks[0],
                         reserves = this.reserve.stacks,
                         waste = this.waste.stacks;
@@ -51,9 +49,7 @@ YUI.add(
                     }
 
                     for (i = 0; i < count; i++) {
-                        deck.my_Last()
-                            .faceUp()
-                            .moveTo(target[i]);
+                        deck.my_Last().faceUp().moveTo(target[i]);
                     }
                 },
 
@@ -68,7 +64,7 @@ YUI.add(
                     },
 
                     Stack: Solitaire.instance(Solitaire.Stack, {
-                        setCardPosition: function(card) {
+                        setCardPosition: function (card) {
                             const last = this.my_Last(),
                                 top = this.top,
                                 left = last
@@ -88,7 +84,7 @@ YUI.add(
                         layout: {
                             hspacing: 1.25,
                             left: 0,
-                            top: function() {
+                            top: function () {
                                 return Solitaire.Card.height * 4.4;
                             },
                         },
@@ -97,14 +93,14 @@ YUI.add(
                     Stack: Solitaire.instance(Klondike.Stack, {
                         images: {},
 
-                        setCardPosition: function(card) {
+                        setCardPosition: function (card) {
                             return this.lastCardSetCardPosition(card);
                         },
                     }),
                 },
 
                 Card: Solitaire.instance(Klondike.Card, {
-                    playable: function() {
+                    playable: function () {
                         if (this.stack.field === "reserve") {
                             return this.isFree();
                         } else {
@@ -112,7 +108,7 @@ YUI.add(
                         }
                     },
 
-                    validTarget: function(stack) {
+                    validTarget: function (stack) {
                         const target = stack.my_Last();
 
                         switch (stack.field) {
@@ -133,7 +129,7 @@ YUI.add(
                         }
                     },
 
-                    validFoundationTarget: function(target) {
+                    validFoundationTarget: function (target) {
                         if (!target) {
                             return this.rank === seedRank();
                         } else {

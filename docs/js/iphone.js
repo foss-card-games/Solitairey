@@ -1,7 +1,7 @@
-define(["./solitaire"], function(solitaire) {
+define(["./solitaire"], function (solitaire) {
     YUI.add(
         "solitaire-ios",
-        function(Y) {
+        function (Y) {
             if (!Y.UA.ios) {
                 return;
             }
@@ -47,7 +47,7 @@ define(["./solitaire"], function(solitaire) {
                     },
                 },
                 gameOverrides = {
-                    Agnes: function() {
+                    Agnes: function () {
                         var hspacing = { hspacing: 1.13 };
 
                         fieldLayout(
@@ -76,7 +76,7 @@ define(["./solitaire"], function(solitaire) {
                     },
 
                     FlowerGarden: [
-                        function() {
+                        function () {
                             this.Card.rankHeight = 15;
 
                             fieldLayout(this, "Reserve", {
@@ -99,7 +99,7 @@ define(["./solitaire"], function(solitaire) {
                             Y.mix(
                                 this.Reserve.Stack,
                                 {
-                                    setCardPosition: function(card) {
+                                    setCardPosition: function (card) {
                                         var last = _.last(this.cards),
                                             top = last
                                                 ? last.top + 11
@@ -116,12 +116,12 @@ define(["./solitaire"], function(solitaire) {
                             );
                         },
 
-                        (function() {
+                        (function () {
                             var setCardPosition =
                                 Solitaire.FlowerGarden.Reserve.Stack
                                     .setCardPosition;
 
-                            return function() {
+                            return function () {
                                 fieldLayout(this, "Tableau", {
                                     left: 10,
                                     top: 120,
@@ -158,7 +158,7 @@ define(["./solitaire"], function(solitaire) {
                             "Tableau",
                         ]),
 
-                        function() {
+                        function () {
                             var hspacing = { hspacing: 1.05 };
 
                             fieldLayout(this, "Tableau", hspacing);
@@ -178,13 +178,13 @@ define(["./solitaire"], function(solitaire) {
                     Golf: [
                         originalLayout("Golf", ["Tableau", "Foundation"]),
 
-                        function() {
+                        function () {
                             fieldLayout(this, "Tableau", { hspacing: 1.1 });
                             fieldLayout(this, "Foundation", { left: 132 });
                         },
                     ],
 
-                    GClock: function() {
+                    GClock: function () {
                         fieldLayout(this, "Foundation", {
                             left: 143,
                         });
@@ -197,12 +197,12 @@ define(["./solitaire"], function(solitaire) {
                     },
 
                     Klondike: [
-                        function() {
+                        function () {
                             originalLayout("Klondike", "Foundation").call(this);
                             originalLayout("Klondike", "Tableau").call(this);
                         },
 
-                        function() {
+                        function () {
                             Y.mix(
                                 this.Foundation.stackConfig.layout,
                                 { left: 135, hspacing: 1.13 },
@@ -216,7 +216,7 @@ define(["./solitaire"], function(solitaire) {
                         },
                     ],
 
-                    MonteCarlo: function() {
+                    MonteCarlo: function () {
                         fieldLayout(this, "Tableau", {
                             cardGap: 1.1,
                             vspacing: 1.05,
@@ -224,11 +224,11 @@ define(["./solitaire"], function(solitaire) {
                     },
 
                     Pyramid: [
-                        (function() {
+                        (function () {
                             var deck = originalLayout("Pyramid", "Deck");
                             var waste = originalLayout("Pyramid", "Waste");
 
-                            return function() {
+                            return function () {
                                 deck.call(this);
                                 waste.call(this);
 
@@ -244,7 +244,7 @@ define(["./solitaire"], function(solitaire) {
                             };
                         })(),
 
-                        function() {
+                        function () {
                             Y.mix(
                                 this.Deck.stackConfig.layout,
                                 {
@@ -275,7 +275,7 @@ define(["./solitaire"], function(solitaire) {
                     ],
 
                     Scorpion: [
-                        function() {
+                        function () {
                             fieldLayout(this, "Deck", { top: 0, left: 0 });
                             fieldLayout(this, "Foundation", {
                                 top: 0,
@@ -290,7 +290,7 @@ define(["./solitaire"], function(solitaire) {
                             });
                         },
 
-                        function() {
+                        function () {
                             fieldLayout(this, "Deck", { left: 10, top: 0 });
 
                             fieldLayout(this, "Foundation", {
@@ -309,7 +309,7 @@ define(["./solitaire"], function(solitaire) {
                     ],
 
                     Spider: [
-                        function() {
+                        function () {
                             fieldLayout(this, "Foundation", {
                                 left: 94,
                                 hspacing: 1.05,
@@ -320,7 +320,7 @@ define(["./solitaire"], function(solitaire) {
                                 hspacing: 1.05,
                             });
                         },
-                        function() {
+                        function () {
                             fieldLayout(this, "Foundation", {
                                 left: 62,
                                 hspacing: 1,
@@ -332,7 +332,7 @@ define(["./solitaire"], function(solitaire) {
                         },
                     ],
 
-                    TriTowers: function() {
+                    TriTowers: function () {
                         Y.mix(
                             this.Tableau.stackConfig.layout,
                             {
@@ -350,7 +350,7 @@ define(["./solitaire"], function(solitaire) {
                             "Foundation",
                         ]),
 
-                        function() {
+                        function () {
                             fieldLayout(this, "Tableau", {
                                 top: 55,
                                 hspacing: 1.13,
@@ -368,7 +368,7 @@ define(["./solitaire"], function(solitaire) {
                     Yukon: [
                         originalLayout("Yukon", ["Tableau", "Foundation"]),
 
-                        function() {
+                        function () {
                             fieldLayout(this, "Tableau", {
                                 top: 55,
                                 hspacing: 1.13,
@@ -401,7 +401,7 @@ define(["./solitaire"], function(solitaire) {
                 {
                     useHash: false, // :\
                     _pg_activate: Solitaire.noop,
-                    _pg_size: function() {
+                    _pg_size: function () {
                         if (this.activeDrag) {
                             this._pg.setStyles({
                                 width: "100%",
@@ -417,7 +417,7 @@ define(["./solitaire"], function(solitaire) {
             Y.mix(
                 Y.DD.Drop.prototype,
                 {
-                    _activateShim: function() {
+                    _activateShim: function () {
                         var DDM = Y.DD.DDM;
 
                         if (!DDM.activeDrag) {
@@ -442,14 +442,14 @@ define(["./solitaire"], function(solitaire) {
                         }
                     },
 
-                    _deactivateShim: function() {
+                    _deactivateShim: function () {
                         this.overTarget = false;
                     },
                 },
                 true,
             );
 
-            Solitaire.Statistics.winDisplay = function() {
+            Solitaire.Statistics.winDisplay = function () {
                 alert("You win!");
             };
 
@@ -471,7 +471,7 @@ define(["./solitaire"], function(solitaire) {
 
             function originalLayout(game, fields) {
                 var layouts,
-                    normalizeLayout = function(field) {
+                    normalizeLayout = function (field) {
                         return [
                             field,
                             Y.merge(
@@ -483,10 +483,10 @@ define(["./solitaire"], function(solitaire) {
 
                 layouts = Y.Array.map(Y.Array(fields), normalizeLayout);
 
-                return function() {
+                return function () {
                     var that = this;
 
-                    Y.each(layouts, function(layout) {
+                    Y.each(layouts, function (layout) {
                         Y.mix(
                             that[layout[0]].stackConfig.layout,
                             layout[1],
@@ -554,7 +554,7 @@ define(["./solitaire"], function(solitaire) {
             function disableStyles() {
                 function stylesheet(index) {
                     return {
-                        deleteSelector: function(selector) {
+                        deleteSelector: function (selector) {
                             var ss = document.styleSheets[index],
                                 rules,
                                 idx;
@@ -565,7 +565,7 @@ define(["./solitaire"], function(solitaire) {
 
                             rules = Array.prototype.splice.call(ss.rules, 0);
                             idx = rules.indexOf(
-                                rules.filter(function(rule) {
+                                rules.filter(function (rule) {
                                     return rule.selectorText === selector;
                                 })[0],
                             );
@@ -595,7 +595,7 @@ define(["./solitaire"], function(solitaire) {
                     body,
                     nav,
                     fb,
-                    closeMenu = function() {
+                    closeMenu = function () {
                         menu.removeClass("show");
                     };
 
@@ -615,7 +615,7 @@ define(["./solitaire"], function(solitaire) {
 
                 undo.get("parentNode").remove();
 
-                showMenu.on("click", function() {
+                showMenu.on("click", function () {
                     menu.addClass("show");
                 });
 
@@ -643,7 +643,7 @@ define(["./solitaire"], function(solitaire) {
 
                 Y.delegate(
                     "touchstart",
-                    function(e) {
+                    function (e) {
                         e.target.ancestor("li", true).addClass("hover");
                     },
                     "#descriptions",
@@ -652,19 +652,19 @@ define(["./solitaire"], function(solitaire) {
 
                 Y.delegate(
                     "touchend",
-                    function(e) {
+                    function (e) {
                         e.target.ancestor("li", true).removeClass("hover");
                     },
                     "#descriptions",
                     "li",
                 );
 
-                Y.on("gamechooser:select", function(chooser) {
+                Y.on("gamechooser:select", function (chooser) {
                     chooser.choose();
                     closeMenu();
                 });
 
-                Y.on("gamechooser:hide", function() {
+                Y.on("gamechooser:hide", function () {
                     scrollToTop();
                 });
 
@@ -702,14 +702,14 @@ define(["./solitaire"], function(solitaire) {
                 runOverrides();
 
                 Solitaire.offset = { left: offsetLeft(), top: 10 };
-                Solitaire.maxStackHeight = function() {
+                Solitaire.maxStackHeight = function () {
                     return msh;
                 };
                 scale();
             }
 
             function scrollToTop() {
-                setTimeout(function() {
+                setTimeout(function () {
                     scrollTo(0, 0);
                 }, 10);
             }
@@ -721,7 +721,7 @@ define(["./solitaire"], function(solitaire) {
 
             Y.on(
                 "touchstart",
-                function(e) {
+                function (e) {
                     if (e.target._node === document.body) {
                         e.preventDefault();
                     }

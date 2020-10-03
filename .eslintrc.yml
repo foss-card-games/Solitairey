@@ -13,7 +13,8 @@ rules:
     object-curly-spacing: off
     one-var: off
     operator-linebreak: off
+    prefer-spread: off
+    require-jsdoc: off
+    space-before-function-paren: off
     quote-props: off
     quotes: off
-    require-jsdoc: off
-    prefer-spread: off

@@ -1,16 +1,16 @@
 YUI.add(
     "spider",
-    function(Y) {
+    function (Y) {
         const Solitaire = Y.Solitaire,
             Spider = (Solitaire.Spider = Solitaire.instance(Solitaire, {
                 fields: ["Foundation", "Deck", "Tableau"],
 
-                createEvents: function() {
+                createEvents: function () {
                     Solitaire.AutoStackClear.register();
                     Solitaire.createEvents.call(this);
                 },
 
-                deal: function() {
+                deal: function () {
                     const deck = this.deck,
                         stacks = this.tableau.stacks;
 
@@ -29,9 +29,9 @@ YUI.add(
                     deck.createStack();
                 },
 
-                redeal: function() {},
+                redeal: function () {},
 
-                turnOver: function() {
+                turnOver: function () {
                     const deck = this.deck.stacks[0];
                     const that = this;
 
@@ -39,13 +39,13 @@ YUI.add(
                         return;
                     }
 
-                    this.eachStack(function(stack) {
+                    this.eachStack(function (stack) {
                         const card = deck.my_Last();
 
                         if (card) {
                             card.faceUp()
                                 .moveTo(stack)
-                                .after(function() {
+                                .after(function () {
                                     that.stack.updateCardsPosition();
                                 });
                         }
@@ -60,7 +60,7 @@ YUI.add(
                         layout: {
                             hspacing: 1.25,
                             top: 0,
-                            left: function() {
+                            left: function () {
                                 return Solitaire.Card.width * 2.5;
                             },
                         },
@@ -88,7 +88,7 @@ YUI.add(
                         total: 10,
                         layout: {
                             hspacing: 1.25,
-                            top: function() {
+                            top: function () {
                                 return Solitaire.Card.height * 1.5;
                             },
                             left: 0,
@@ -98,7 +98,7 @@ YUI.add(
                 },
 
                 Card: Solitaire.instance(Solitaire.Card, {
-                    playable: function() {
+                    playable: function () {
                         const previous = this.stack[this.index - 1];
 
                         switch (this.stack.field) {
@@ -111,7 +111,7 @@ YUI.add(
                         }
                     },
 
-                    validTarget: function(stack) {
+                    validTarget: function (stack) {
                         if (stack.field !== "tableau") {
                             return false;
                         }
@@ -128,25 +128,25 @@ YUI.add(
             }));
 
         function hasFreeTableaus() {
-            return Y.Array.some(Solitaire.getGame().tableau.stacks, function(
+            return Y.Array.some(Solitaire.getGame().tableau.stacks, function (
                 stack,
             ) {
                 return !stack.cards.length;
             });
         }
 
-        Y.Array.each(Spider.fields, function(field) {
+        Y.Array.each(Spider.fields, function (field) {
             Spider[field].Stack = Solitaire.instance(Spider.Stack);
         });
 
         Y.mix(
             Spider.Stack,
             {
-                validCard: function(card) {
+                validCard: function (card) {
                     return card.suit === _.last(this.cards).suit;
                 },
 
-                validTarget: function(stack) {
+                validTarget: function (stack) {
                     switch (stack.field) {
                         case "tableau":
                             return this.first().validTarget(stack);
@@ -163,7 +163,7 @@ YUI.add(
         Y.mix(
             Spider.Tableau.Stack,
             {
-                setCardPosition: function(card) {
+                setCardPosition: function (card) {
                     return this.lastCardSetCardPosition(card);
                 },
             },

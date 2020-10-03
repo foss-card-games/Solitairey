@@ -1,13 +1,13 @@
 YUI.add(
     "golf",
-    function(Y) {
+    function (Y) {
         const Solitaire = Y.Solitaire,
             Golf = (Y.Solitaire.Golf = Solitaire.instance(
                 Solitaire,
                 {
                     fields: ["Deck", "Foundation", "Tableau"],
 
-                    deal: function() {
+                    deal: function () {
                         let card, stack, row;
                         const stacks = this.tableau.stacks,
                             deck = this.deck,
@@ -26,7 +26,7 @@ YUI.add(
                         deck.createStack();
                     },
 
-                    turnOver: function() {
+                    turnOver: function () {
                         const deck = this.deck.stacks[0],
                             foundation = this.foundation.stacks[0],
                             last = deck.my_Last();
@@ -34,11 +34,11 @@ YUI.add(
                         last && last.faceUp().moveTo(foundation);
                     },
 
-                    isWon: function() {
+                    isWon: function () {
                         let won = true;
 
-                        this.eachStack(function(stack) {
-                            stack.eachCard(function(card) {
+                        this.eachStack(function (stack) {
+                            stack.eachCard(function (card) {
                                 if (card) {
                                     won = false;
                                 }
@@ -50,7 +50,7 @@ YUI.add(
                         return won;
                     },
 
-                    height: function() {
+                    height: function () {
                         return this.Card.base.height * 4;
                     },
 
@@ -60,14 +60,14 @@ YUI.add(
                             total: 1,
                             layout: {
                                 hspacing: 0,
-                                top: function() {
+                                top: function () {
                                     return Solitaire.Card.height * 3;
                                 },
                                 left: 0,
                             },
                         },
 
-                        createStack: function() {
+                        createStack: function () {
                             let i, len;
 
                             for (i = 0, len = this.cards.length; i < len; i++) {
@@ -94,10 +94,10 @@ YUI.add(
                             total: 1,
                             layout: {
                                 hspacing: 0,
-                                top: function() {
+                                top: function () {
                                     return Solitaire.Card.height * 3;
                                 },
-                                left: function() {
+                                left: function () {
                                     return Solitaire.Card.width * 3.75;
                                 },
                             },
@@ -105,7 +105,7 @@ YUI.add(
                     },
 
                     Events: Solitaire.instance(Solitaire.Events, {
-                        dragCheck: function(e) {
+                        dragCheck: function (e) {
                             this.getCard().autoPlay();
 
                             /* workaround because YUI retains stale drag information if we halt the event :\ */
@@ -118,7 +118,7 @@ YUI.add(
                         /*
                          * return true if the target is 1 rank away from the this card
                          */
-                        validTarget: function(stack) {
+                        validTarget: function (stack) {
                             if (stack.field !== "foundation") {
                                 return false;
                             }
@@ -129,7 +129,7 @@ YUI.add(
                             return diff === 1;
                         },
 
-                        isFree: function() {
+                        isFree: function () {
                             return (
                                 !this.isFaceDown &&
                                 this === this.stack.my_Last()
@@ -144,14 +144,14 @@ YUI.add(
                 true,
             ));
 
-        Y.Array.each(Golf.fields, function(field) {
+        Y.Array.each(Golf.fields, function (field) {
             Golf[field].Stack = Solitaire.instance(Golf.Stack);
         });
 
         Y.mix(
             Golf.Tableau.Stack,
             {
-                setCardPosition: function(card) {
+                setCardPosition: function (card) {
                     return this.lastCardSetCardPosition(card);
                 },
             },
@@ -161,7 +161,7 @@ YUI.add(
         Y.mix(
             Golf.Deck.Stack,
             {
-                setCardPosition: function(card) {
+                setCardPosition: function (card) {
                     let left, zIndex;
 
                     const last = this.my_Last();

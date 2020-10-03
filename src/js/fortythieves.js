@@ -1,13 +1,13 @@
 YUI.add(
     "forty-thieves",
-    function(Y) {
+    function (Y) {
         const Solitaire = Y.Solitaire,
             FortyThieves = (Y.Solitaire.FortyThieves = Solitaire.instance(
                 Solitaire,
                 {
                     fields: ["Foundation", "Deck", "Waste", "Tableau"],
 
-                    deal: function() {
+                    deal: function () {
                         let card, stack, row;
                         const deck = this.deck,
                             stacks = this.tableau.stacks;
@@ -22,11 +22,11 @@ YUI.add(
                         deck.createStack();
                     },
 
-                    redeal: function() {
+                    redeal: function () {
                         // ggpo
                     },
 
-                    turnOver: function() {
+                    turnOver: function () {
                         const deck = this.deck.stacks[0],
                             waste = this.waste.stacks[0];
 
@@ -35,9 +35,7 @@ YUI.add(
                             i > stop && i;
                             i--
                         ) {
-                            deck.my_Last()
-                                .faceUp()
-                                .moveTo(waste);
+                            deck.my_Last().faceUp().moveTo(waste);
                         }
                     },
 
@@ -49,7 +47,7 @@ YUI.add(
                             layout: {
                                 hspacing: 1.25,
                                 top: 0,
-                                left: function() {
+                                left: function () {
                                     return Solitaire.Card.width * 3;
                                 },
                             },
@@ -71,14 +69,14 @@ YUI.add(
                         },
                         field: "deck",
 
-                        init: function() {
+                        init: function () {
                             Solitaire.Deck.init.call(this);
-                            Y.Array.each(this.cards, function(c) {
+                            Y.Array.each(this.cards, function (c) {
                                 c.faceDown();
                             });
                         },
 
-                        createStack: function() {
+                        createStack: function () {
                             for (let i = this.cards.length - 1; i >= 0; i--) {
                                 this.stacks[0].push(this.cards[i]);
                             }
@@ -91,7 +89,7 @@ YUI.add(
                             layout: {
                                 hspacing: 0,
                                 top: 0,
-                                left: function() {
+                                left: function () {
                                     return Solitaire.Card.width * 1.25;
                                 },
                             },
@@ -105,7 +103,7 @@ YUI.add(
                             total: 10,
                             layout: {
                                 hspacing: 1.31,
-                                top: function() {
+                                top: function () {
                                     return Solitaire.Card.height * 1.5;
                                 },
                                 left: 0,
@@ -116,7 +114,7 @@ YUI.add(
                     },
 
                     Card: Solitaire.instance(Solitaire.Card, {
-                        validTarget: function(stack) {
+                        validTarget: function (stack) {
                             const target = stack.my_Last();
 
                             switch (stack.field) {
@@ -149,7 +147,7 @@ YUI.add(
                 },
             ));
 
-        Y.Array.each(FortyThieves.fields, function(field) {
+        Y.Array.each(FortyThieves.fields, function (field) {
             FortyThieves[field].Stack = Solitaire.instance(FortyThieves.Stack);
         });
 
@@ -158,14 +156,14 @@ YUI.add(
             {
                 cssClass: "freestack",
 
-                validTarget: function(stack) {
+                validTarget: function (stack) {
                     return (
                         stack.field === "tableau" &&
                         this.first().validTarget(stack)
                     );
                 },
 
-                validCard: function() {
+                validCard: function () {
                     return false;
                 },
             },
@@ -175,7 +173,7 @@ YUI.add(
         Y.mix(
             FortyThieves.Tableau.Stack,
             {
-                setCardPosition: function(card) {
+                setCardPosition: function (card) {
                     return this.lastCardSetCardPosition(card);
                 },
             },
@@ -185,7 +183,7 @@ YUI.add(
         Y.mix(
             FortyThieves.Deck.Stack,
             {
-                createDOMElement: function() {
+                createDOMElement: function () {
                     Solitaire.Stack.createDOMElement.call(this);
                     this.node.on("click", Solitaire.Events.clickEmptyDeck);
                 },

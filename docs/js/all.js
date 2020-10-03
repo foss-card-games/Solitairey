@@ -14932,7 +14932,7 @@ var t=null==n?0:n.length;return t?n[t-1]:Z},o.max=function(n){return n&&n.length
 var n={};return s(o,function(t,r){pn.call(o.prototype,r)||(n[r]=t)}),n}(),{chain:false}),o.VERSION="4.17.5",mn("pop join replace reverse split push shift sort splice unshift".split(" "),function(n){var t=(/^(?:replace|split)$/.test(n)?String.prototype:an)[n],r=/^(?:push|sort|unshift)$/.test(n)?"tap":"thru",e=/^(?:pop|join|replace|shift)$/.test(n);o.prototype[n]=function(){var n=arguments;if(e&&!this.__chain__){var u=this.value();return t.apply(Nn(u)?u:[],n)}return this[r](function(r){return t.apply(Nn(r)?r:[],n);
 })}}),o.prototype.toJSON=o.prototype.valueOf=o.prototype.value=function(){return w(this.__wrapped__,this.__actions__)},typeof define=="function"&&typeof define.amd=="object"&&define.amd?(on._=o, define(function(){return o})):cn?((cn.exports=o)._=o,un._=o):on._=o}).call(this);YUI.add(
     "agnes",
-    function(Y) {
+    function (Y) {
         function inSeries(first, second) {
             return (first + 1) % 13 === second % 13;
         }
@@ -14946,29 +14946,27 @@ var n={};return s(o,function(t,r){pn.call(o.prototype,r)||(n[r]=t)}),n}(),{chain
             Agnes = (Solitaire.Agnes = Solitaire.instance(Klondike, {
                 fields: ["Foundation", "Deck", "Waste", "Tableau", "Reserve"],
 
-                height: function() {
+                height: function () {
                     return this.Card.base.height * 5.6;
                 },
-                maxStackHeight: function() {
+                maxStackHeight: function () {
                     return this.Card.height * 4.3;
                 },
 
-                deal: function() {
+                deal: function () {
                     const deck = this.deck.stacks[0],
                         foundation = this.foundation.stacks[0];
 
                     Klondike.deal.call(this);
 
-                    deck.my_Last()
-                        .faceUp()
-                        .moveTo(foundation);
+                    deck.my_Last().faceUp().moveTo(foundation);
 
                     this.turnOver();
                 },
 
                 redeal: Solitaire.noop,
 
-                turnOver: function() {
+                turnOver: function () {
                     const deck = this.deck.stacks[0],
                         reserves = this.reserve.stacks,
                         waste = this.waste.stacks;
@@ -14983,9 +14981,7 @@ var n={};return s(o,function(t,r){pn.call(o.prototype,r)||(n[r]=t)}),n}(),{chain
                     }
 
                     for (i = 0; i < count; i++) {
-                        deck.my_Last()
-                            .faceUp()
-                            .moveTo(target[i]);
+                        deck.my_Last().faceUp().moveTo(target[i]);
                     }
                 },
 
@@ -15000,7 +14996,7 @@ var n={};return s(o,function(t,r){pn.call(o.prototype,r)||(n[r]=t)}),n}(),{chain
                     },
 
                     Stack: Solitaire.instance(Solitaire.Stack, {
-                        setCardPosition: function(card) {
+                        setCardPosition: function (card) {
                             const last = this.my_Last(),
                                 top = this.top,
                                 left = last
@@ -15020,7 +15016,7 @@ var n={};return s(o,function(t,r){pn.call(o.prototype,r)||(n[r]=t)}),n}(),{chain
                         layout: {
                             hspacing: 1.25,
                             left: 0,
-                            top: function() {
+                            top: function () {
                                 return Solitaire.Card.height * 4.4;
                             },
                         },
@@ -15029,14 +15025,14 @@ var n={};return s(o,function(t,r){pn.call(o.prototype,r)||(n[r]=t)}),n}(),{chain
                     Stack: Solitaire.instance(Klondike.Stack, {
                         images: {},
 
-                        setCardPosition: function(card) {
+                        setCardPosition: function (card) {
                             return this.lastCardSetCardPosition(card);
                         },
                     }),
                 },
 
                 Card: Solitaire.instance(Klondike.Card, {
-                    playable: function() {
+                    playable: function () {
                         if (this.stack.field === "reserve") {
                             return this.isFree();
                         } else {
@@ -15044,7 +15040,7 @@ var n={};return s(o,function(t,r){pn.call(o.prototype,r)||(n[r]=t)}),n}(),{chain
                         }
                     },
 
-                    validTarget: function(stack) {
+                    validTarget: function (stack) {
                         const target = stack.my_Last();
 
                         switch (stack.field) {
@@ -15065,7 +15061,7 @@ var n={};return s(o,function(t,r){pn.call(o.prototype,r)||(n[r]=t)}),n}(),{chain
                         }
                     },
 
-                    validFoundationTarget: function(target) {
+                    validFoundationTarget: function (target) {
                         if (!target) {
                             return this.rank === seedRank();
                         } else {
@@ -15081,12 +15077,12 @@ var n={};return s(o,function(t,r){pn.call(o.prototype,r)||(n[r]=t)}),n}(),{chain
     "0.0.1",
     { requires: ["klondike"] },
 );
-define(["./solitaire"], function(solitaire) {
+define(["./solitaire"], function (solitaire) {
     let newGameRun;
     let schedule;
     let schedule_cb;
     let enable_solitairey_ui = false;
-    (function() {
+    (function () {
         const active = {
             name: "freecell", // name: "klondike",
             game: null,
@@ -15123,7 +15119,7 @@ define(["./solitaire"], function(solitaire) {
             // "solitaire-background-fix"
             "solitaire",
         ];
-        const Fade = (function() {
+        const Fade = (function () {
             let el = null,
                 body;
             const css = {
@@ -15137,7 +15133,7 @@ define(["./solitaire"], function(solitaire) {
                     height: 0,
                     zIndex: 1000,
                 },
-                element = function() {
+                element = function () {
                     if (el === null) {
                         el = Y.Node.create("<div></div>");
                         el.setStyles(css);
@@ -15147,7 +15143,7 @@ define(["./solitaire"], function(solitaire) {
                 };
 
             return {
-                show: function() {
+                show: function () {
                     const el = element();
 
                     css.display = "block";
@@ -15157,7 +15153,7 @@ define(["./solitaire"], function(solitaire) {
                     el.setStyles(css);
                 },
 
-                hide: function() {
+                hide: function () {
                     css.display = "none";
                     element().setStyles(css);
                 },
@@ -15180,11 +15176,11 @@ define(["./solitaire"], function(solitaire) {
             selected: null,
             fade: false,
 
-            init: function() {
+            init: function () {
                 this.refit();
             },
 
-            refit: function() {
+            refit: function () {
                 const node = Y.one("#game-chooser");
                 if (!node) {
                     return;
@@ -15194,7 +15190,7 @@ define(["./solitaire"], function(solitaire) {
                 node.setStyle("min-height", height);
             },
 
-            show: function(fade) {
+            show: function (fade) {
                 if (!this.selected) {
                     this.select(active.name);
                 }
@@ -15208,7 +15204,7 @@ define(["./solitaire"], function(solitaire) {
                 Y.one(".solitairey_body").addClass("scrollable");
             },
 
-            hide: function() {
+            hide: function () {
                 if (this.fade) {
                     Fade.hide();
                 }
@@ -15218,7 +15214,7 @@ define(["./solitaire"], function(solitaire) {
                 Y.one(".solitairey_body").removeClass("scrollable");
             },
 
-            choose: function() {
+            choose: function () {
                 if (!this.selected) {
                     return;
                 }
@@ -15227,7 +15223,7 @@ define(["./solitaire"], function(solitaire) {
                 playGame(this.selected);
             },
 
-            select: function(game) {
+            select: function (game) {
                 const node = Y.one("#" + game + "> div"),
                     previous = this.selected;
 
@@ -15247,7 +15243,7 @@ define(["./solitaire"], function(solitaire) {
                 }
             },
 
-            unSelect: function() {
+            unSelect: function () {
                 if (!this.selected) {
                     return;
                 }
@@ -15301,7 +15297,7 @@ define(["./solitaire"], function(solitaire) {
                 },
             },
 
-            load: function(name) {
+            load: function (name) {
                 const Solitaire = Y.Solitaire,
                     base = Solitaire.Card.base;
 
@@ -15314,7 +15310,7 @@ define(["./solitaire"], function(solitaire) {
                 }
             },
 
-            set: function(name, size) {
+            set: function (name, size) {
                 const theme = this[name][size];
 
                 Y.mix(
@@ -15351,7 +15347,7 @@ define(["./solitaire"], function(solitaire) {
 
             window[attachEvent](
                 Y.Solitaire.Application.resizeEvent,
-                function() {
+                function () {
                     clearTimeout(timer);
                     timer = setTimeout(resize, delay);
                 },
@@ -15359,14 +15355,14 @@ define(["./solitaire"], function(solitaire) {
             );
         }
         function attachEvents() {
-            Y.on("newAppGame", function() {
+            Y.on("newAppGame", function () {
                 return newGame();
             });
             if (enable_solitairey_ui) {
                 Y.on("click", restart, Y.one("#restart"));
                 Y.on(
                     "click",
-                    function() {
+                    function () {
                         GameChooser.show(false);
                     },
                     Y.one("#choose_game"),
@@ -15374,14 +15370,14 @@ define(["./solitaire"], function(solitaire) {
                 Y.on("click", newGame, Y.one("#new_deal"));
                 Y.on(
                     "click",
-                    function() {
+                    function () {
                         GameChooser.hide();
                     },
                     Y.one("#close-chooser"),
                 );
                 Y.on(
                     "click",
-                    function() {
+                    function () {
                         active.game.undo();
                     },
                     Y.one("#undo"),
@@ -15408,12 +15404,12 @@ define(["./solitaire"], function(solitaire) {
                 }
                 Y.delegate("click", showDescription, "#descriptions", "li");
             }
-            Y.one("document").on("keydown", function(e) {
+            Y.one("document").on("keydown", function (e) {
                 e.keyCode === 27 && GameChooser.hide();
             });
 
-            Y.on("afterSetup", function() {
-                active.game.stationary(function() {
+            Y.on("afterSetup", function () {
+                active.game.stationary(function () {
                     resize();
                 });
             });
@@ -15423,10 +15419,10 @@ define(["./solitaire"], function(solitaire) {
         const Preloader = {
             loadingCount: 0,
 
-            loaded: function(callback) {
+            loaded: function (callback) {
                 if (this.loadingCount) {
                     setTimeout(
-                        function() {
+                        function () {
                             this.loaded(callback);
                         }.bind(this),
                         100,
@@ -15441,10 +15437,10 @@ define(["./solitaire"], function(solitaire) {
                 }
             },
 
-            load: function(path) {
+            load: function (path) {
                 const image = new Image();
 
-                image.onload = function() {
+                image.onload = function () {
                     --this.loadingCount;
                 }.bind(this);
                 image.src = path;
@@ -15452,7 +15448,7 @@ define(["./solitaire"], function(solitaire) {
                 this.loadingCount++;
             },
 
-            preload: function() {
+            preload: function () {
                 const that = this;
                 let rank;
                 const icons = [
@@ -15478,8 +15474,8 @@ define(["./solitaire"], function(solitaire) {
 
                 Y.Array.each(
                     ["s", "h", "c", "d"],
-                    function(suit) {
-                        for (rank = 1; rank <= 13; rank++) {
+                    function (suit) {
+                        for (let rank = 1; rank <= 13; ++rank) {
                             that.load(
                                 Y.Solitaire.Card.base.theme +
                                     "/" +
@@ -15494,13 +15490,15 @@ define(["./solitaire"], function(solitaire) {
 
                 this.load(Y.Solitaire.Card.base.theme + "/facedown.png");
 
-                Y.Array.each(
-                    icons,
-                    function(image) {
-                        that.load("layouts/mini/" + image + ".png");
-                    },
-                    that,
-                );
+                if (enable_solitairey_ui) {
+                    Y.Array.each(
+                        icons,
+                        function (image) {
+                            that.load("layouts/mini/" + image + ".png");
+                        },
+                        that,
+                    );
+                }
 
                 Fade.show();
                 const loading = Y.one(".loading");
@@ -15527,7 +15525,7 @@ define(["./solitaire"], function(solitaire) {
             loadOptions();
 
             Preloader.preload();
-            Preloader.loaded(function() {
+            Preloader.loaded(function () {
                 // showChromeStoreLink();
                 if (save) {
                     clearDOM();
@@ -15597,7 +15595,7 @@ define(["./solitaire"], function(solitaire) {
             clearGame();
             active.game.newGame();
         }
-        newGameRun = function() {
+        newGameRun = function () {
             playGame("freecell");
         };
 
@@ -15612,12 +15610,12 @@ define(["./solitaire"], function(solitaire) {
                 switchToGame: switchToGame,
             };
         }
-        schedule = function(cb) {
+        schedule = function (cb) {
             schedule_cb = cb;
         };
 
         yui.use.apply(yui, modules().concat(main));
-        window.setTimeout(function() {
+        window.setTimeout(function () {
             yui.use.apply(yui, ["solver-freecell"]);
         }, 400);
     })();
@@ -15631,19 +15629,19 @@ define(["./solitaire"], function(solitaire) {
         },
     };
 });
-define(["./solitaire"], function(solitaire) {
+define(["./solitaire"], function (solitaire) {
     /*
      * Stack extension class to automatically move complete stacks/runs to the foundation
      */
     YUI.add(
         "auto-stack-clear",
-        function(Y) {
+        function (Y) {
             const Solitaire = Y.Solitaire;
 
             Y.namespace("Solitaire.AutoStackClear");
 
-            Solitaire.AutoStackClear.register = function() {
-                Y.on("solitaire|tableau:afterPush", function(stack) {
+            Solitaire.AutoStackClear.register = function () {
+                Y.on("solitaire|tableau:afterPush", function (stack) {
                     isComplete(stack, clearComplete);
                 });
             };
@@ -15686,12 +15684,12 @@ define(["./solitaire"], function(solitaire) {
                 // find the first empty foundation
                 const foundation = Y.Array.find(
                     Solitaire.game.foundation.stacks,
-                    function(stack) {
+                    function (stack) {
                         return !stack.cards.length;
                     },
                 );
 
-                Solitaire.stationary(function() {
+                Solitaire.stationary(function () {
                     while (count) {
                         _.last(cards).moveTo(foundation);
                         count--;
@@ -15709,13 +15707,13 @@ define(["./solitaire"], function(solitaire) {
         auto_stack: true,
     };
 });
-define(["./solitaire"], function(solitaire) {
+define(["./solitaire"], function (solitaire) {
     // automatically turn over the first open faceup card in a stack
     YUI.add(
         "auto-turnover",
-        function(Y) {
-            Y.on("tableau:afterPop", function(stack) {
-                Y.Array.each(stack.cards, function(card) {
+        function (Y) {
+            Y.on("tableau:afterPop", function (stack) {
+                Y.Array.each(stack.cards, function (card) {
                     if (card && card.isFaceDown && card.isFree()) {
                         card.faceUp();
                     }
@@ -15727,10 +15725,10 @@ define(["./solitaire"], function(solitaire) {
     );
     return {};
 });
-define(["./solitaire"], function(solitaire) {
+define(["./solitaire"], function (solitaire) {
     YUI.add(
         "solitaire-autoplay",
-        function(Y) {
+        function (Y) {
             Y.namespace("Solitaire.Autoplay");
 
             const Solitaire = Y.Solitaire,
@@ -15747,7 +15745,7 @@ define(["./solitaire"], function(solitaire) {
                 "Yukon",
             ];
 
-            Y.on("endTurn", function() {
+            Y.on("endTurn", function () {
                 if (
                     !whenWon ||
                     autoPlayable.indexOf(Solitaire.game.name()) === -1
@@ -15760,26 +15758,26 @@ define(["./solitaire"], function(solitaire) {
                 }
             });
 
-            Y.on("win", function() {
+            Y.on("win", function () {
                 clearInterval(autoPlayInterval);
                 autoPlayInterval = null;
             });
 
-            Y.on("autoPlay", function() {
+            Y.on("autoPlay", function () {
                 autoPlayInterval = setInterval(autoPlay, 130);
             });
 
             function autoPlay() {
                 let played = false;
 
-                Solitaire.game.eachStack(function(stack) {
+                Solitaire.game.eachStack(function (stack) {
                     const field = stack.field;
 
                     if (played || field === "foundation" || field === "deck") {
                         return;
                     }
 
-                    played = !stack.eachCard(function(card) {
+                    played = !stack.eachCard(function (card) {
                         return !card.autoPlay();
                     });
                 });
@@ -15788,7 +15786,7 @@ define(["./solitaire"], function(solitaire) {
             function isEffectivelyWon() {
                 let stop = false;
 
-                Solitaire.game.eachStack(function(stack) {
+                Solitaire.game.eachStack(function (stack) {
                     const field = stack.field;
                     let prevRank = 14;
 
@@ -15796,7 +15794,7 @@ define(["./solitaire"], function(solitaire) {
                         return;
                     }
 
-                    stack.eachCard(function(card) {
+                    stack.eachCard(function (card) {
                         if (card.rank > prevRank || card.isFaceDown) {
                             stop = true;
                             return false;
@@ -15810,11 +15808,11 @@ define(["./solitaire"], function(solitaire) {
             }
 
             Y.mix(Autoplay, {
-                enable: function() {
+                enable: function () {
                     whenWon = true;
                 },
 
-                disable: function() {
+                disable: function () {
                     whenWon = false;
                 },
             });
@@ -15826,14 +15824,14 @@ define(["./solitaire"], function(solitaire) {
 });
 YUI.add(
     "flower-garden",
-    function(Y) {
+    function (Y) {
         const Solitaire = Y.Solitaire,
             FlowerGarden = (Y.Solitaire.FlowerGarden = Solitaire.instance(
                 Solitaire,
                 {
                     fields: ["Foundation", "Reserve", "Tableau"],
 
-                    deal: function() {
+                    deal: function () {
                         let card,
                             stack = 0,
                             i;
@@ -15855,10 +15853,10 @@ YUI.add(
                         }
                     },
 
-                    height: function() {
+                    height: function () {
                         return this.Card.base.height * 5.5;
                     },
-                    maxStackHeight: function() {
+                    maxStackHeight: function () {
                         return this.Card.height * 4.4;
                     },
 
@@ -15870,7 +15868,7 @@ YUI.add(
                             layout: {
                                 hspacing: 1.25,
                                 top: 0,
-                                left: function() {
+                                left: function () {
                                     return Solitaire.Card.width * 4.25;
                                 },
                             },
@@ -15884,10 +15882,10 @@ YUI.add(
                             total: 1,
                             layout: {
                                 hspacing: 1.25,
-                                top: function() {
+                                top: function () {
                                     return Solitaire.Card.height * 4.5;
                                 },
-                                left: function() {
+                                left: function () {
                                     return Solitaire.Card.width * 3;
                                 },
                             },
@@ -15901,10 +15899,10 @@ YUI.add(
                             total: 6,
                             layout: {
                                 hspacing: 1.25,
-                                top: function() {
+                                top: function () {
                                     return Solitaire.Card.height * 1.25;
                                 },
-                                left: function() {
+                                left: function () {
                                     return Solitaire.Card.width * 3;
                                 },
                             },
@@ -15916,7 +15914,7 @@ YUI.add(
                     Card: Solitaire.instance(Solitaire.Card, {
                         rankHeight: 24,
 
-                        createProxyStack: function() {
+                        createProxyStack: function () {
                             let stack;
 
                             switch (this.stack.field) {
@@ -15937,7 +15935,7 @@ YUI.add(
                             return this.proxyStack;
                         },
 
-                        moveTo: function(stack) {
+                        moveTo: function (stack) {
                             const cards = this.stack.cards,
                                 index = cards.indexOf(this);
                             let i, len;
@@ -15961,7 +15959,7 @@ YUI.add(
                             cards.splice(index, 1);
                         },
 
-                        validTarget: function(stack) {
+                        validTarget: function (stack) {
                             const target = stack.my_Last();
 
                             switch (stack.field) {
@@ -15988,7 +15986,7 @@ YUI.add(
                             }
                         },
 
-                        isFree: function() {
+                        isFree: function () {
                             if (this.stack.field === "reserve") {
                                 return true;
                             } else {
@@ -16002,7 +16000,7 @@ YUI.add(
 
         Y.Array.each(
             FlowerGarden.fields,
-            function(field) {
+            function (field) {
                 FlowerGarden[field].Stack = Solitaire.instance(
                     FlowerGarden.Stack,
                 );
@@ -16015,14 +16013,14 @@ YUI.add(
             {
                 images: { foundation: "freeslot.png", tableau: "freeslot.png" },
 
-                validTarget: function(stack) {
+                validTarget: function (stack) {
                     return (
                         stack.field === "tableau" &&
                         this.first().validTarget(stack)
                     );
                 },
 
-                validCard: function() {
+                validCard: function () {
                     return false;
                 },
             },
@@ -16032,7 +16030,7 @@ YUI.add(
         Y.mix(
             FlowerGarden.Tableau.Stack,
             {
-                setCardPosition: function(card) {
+                setCardPosition: function (card) {
                     return this.lastCardSetCardPosition(card);
                 },
             },
@@ -16042,7 +16040,7 @@ YUI.add(
         Y.mix(
             FlowerGarden.Reserve.Stack,
             {
-                setCardPosition: function(card) {
+                setCardPosition: function (card) {
                     const last = _.last(this.cards),
                         left = last
                             ? last.left + Solitaire.Card.width * 0.4
@@ -16053,14 +16051,14 @@ YUI.add(
                     card.top = top;
                 },
 
-                update: function(undo) {
+                update: function (undo) {
                     if (undo) {
                         return;
                     }
 
                     const stack = this;
 
-                    Y.Array.each(this.cards, function(card, i) {
+                    Y.Array.each(this.cards, function (card, i) {
                         const left = stack.left + i * card.width * 0.4;
 
                         if (left !== card.left) {
@@ -16078,14 +16076,14 @@ YUI.add(
 );
 YUI.add(
     "forty-thieves",
-    function(Y) {
+    function (Y) {
         const Solitaire = Y.Solitaire,
             FortyThieves = (Y.Solitaire.FortyThieves = Solitaire.instance(
                 Solitaire,
                 {
                     fields: ["Foundation", "Deck", "Waste", "Tableau"],
 
-                    deal: function() {
+                    deal: function () {
                         let card, stack, row;
                         const deck = this.deck,
                             stacks = this.tableau.stacks;
@@ -16100,11 +16098,11 @@ YUI.add(
                         deck.createStack();
                     },
 
-                    redeal: function() {
+                    redeal: function () {
                         // ggpo
                     },
 
-                    turnOver: function() {
+                    turnOver: function () {
                         const deck = this.deck.stacks[0],
                             waste = this.waste.stacks[0];
 
@@ -16113,9 +16111,7 @@ YUI.add(
                             i > stop && i;
                             i--
                         ) {
-                            deck.my_Last()
-                                .faceUp()
-                                .moveTo(waste);
+                            deck.my_Last().faceUp().moveTo(waste);
                         }
                     },
 
@@ -16127,7 +16123,7 @@ YUI.add(
                             layout: {
                                 hspacing: 1.25,
                                 top: 0,
-                                left: function() {
+                                left: function () {
                                     return Solitaire.Card.width * 3;
                                 },
                             },
@@ -16149,14 +16145,14 @@ YUI.add(
                         },
                         field: "deck",
 
-                        init: function() {
+                        init: function () {
                             Solitaire.Deck.init.call(this);
-                            Y.Array.each(this.cards, function(c) {
+                            Y.Array.each(this.cards, function (c) {
                                 c.faceDown();
                             });
                         },
 
-                        createStack: function() {
+                        createStack: function () {
                             for (let i = this.cards.length - 1; i >= 0; i--) {
                                 this.stacks[0].push(this.cards[i]);
                             }
@@ -16169,7 +16165,7 @@ YUI.add(
                             layout: {
                                 hspacing: 0,
                                 top: 0,
-                                left: function() {
+                                left: function () {
                                     return Solitaire.Card.width * 1.25;
                                 },
                             },
@@ -16183,7 +16179,7 @@ YUI.add(
                             total: 10,
                             layout: {
                                 hspacing: 1.31,
-                                top: function() {
+                                top: function () {
                                     return Solitaire.Card.height * 1.5;
                                 },
                                 left: 0,
@@ -16194,7 +16190,7 @@ YUI.add(
                     },
 
                     Card: Solitaire.instance(Solitaire.Card, {
-                        validTarget: function(stack) {
+                        validTarget: function (stack) {
                             const target = stack.my_Last();
 
                             switch (stack.field) {
@@ -16227,7 +16223,7 @@ YUI.add(
                 },
             ));
 
-        Y.Array.each(FortyThieves.fields, function(field) {
+        Y.Array.each(FortyThieves.fields, function (field) {
             FortyThieves[field].Stack = Solitaire.instance(FortyThieves.Stack);
         });
 
@@ -16236,14 +16232,14 @@ YUI.add(
             {
                 cssClass: "freestack",
 
-                validTarget: function(stack) {
+                validTarget: function (stack) {
                     return (
                         stack.field === "tableau" &&
                         this.first().validTarget(stack)
                     );
                 },
 
-                validCard: function() {
+                validCard: function () {
                     return false;
                 },
             },
@@ -16253,7 +16249,7 @@ YUI.add(
         Y.mix(
             FortyThieves.Tableau.Stack,
             {
-                setCardPosition: function(card) {
+                setCardPosition: function (card) {
                     return this.lastCardSetCardPosition(card);
                 },
             },
@@ -16263,7 +16259,7 @@ YUI.add(
         Y.mix(
             FortyThieves.Deck.Stack,
             {
-                createDOMElement: function() {
+                createDOMElement: function () {
                     Solitaire.Stack.createDOMElement.call(this);
                     this.node.on("click", Solitaire.Events.clickEmptyDeck);
                 },
@@ -16276,16 +16272,16 @@ YUI.add(
     "0.0.1",
     { requires: ["solitaire"] },
 );
-define(["./solitaire"], function(solitaire) {
+define(["./solitaire"], function (solitaire) {
     const instance = solitaire.instance;
     YUI.add(
         "freecell",
-        function(Y) {
+        function (Y) {
             const Solitaire = Y.Solitaire;
             const Freecell = (Y.Solitaire.Freecell = instance(Solitaire, {
                 fields: ["Foundation", "Reserve", "Tableau"],
 
-                deal: function() {
+                deal: function () {
                     let card,
                         stack = 0;
                     const stacks = this.tableau.stacks;
@@ -16299,7 +16295,7 @@ define(["./solitaire"], function(solitaire) {
                     }
                 },
 
-                openSlots: function(exclude) {
+                openSlots: function (exclude) {
                     let total = 1,
                         freeTableaus = 0;
                     const rStacks = this.reserve.stacks,
@@ -16319,7 +16315,7 @@ define(["./solitaire"], function(solitaire) {
 
                 Stack: instance(Solitaire.Stack),
 
-                height: function() {
+                height: function () {
                     return this.Card.base.height * 5;
                 },
 
@@ -16329,7 +16325,7 @@ define(["./solitaire"], function(solitaire) {
                         layout: {
                             hspacing: 1.25,
                             top: 0,
-                            left: function() {
+                            left: function () {
                                 return Solitaire.Card.width * 6;
                             },
                         },
@@ -16356,7 +16352,7 @@ define(["./solitaire"], function(solitaire) {
                         total: 8,
                         layout: {
                             hspacing: 1.25,
-                            top: function() {
+                            top: function () {
                                 return Solitaire.Card.height * 1.5;
                             },
                             left: 0,
@@ -16367,7 +16363,7 @@ define(["./solitaire"], function(solitaire) {
                 },
 
                 Card: instance(Solitaire.Card, {
-                    playable: function() {
+                    playable: function () {
                         switch (this.stack.field) {
                             case "reserve":
                                 return true;
@@ -16378,7 +16374,7 @@ define(["./solitaire"], function(solitaire) {
                         }
                     },
 
-                    createProxyStack: function() {
+                    createProxyStack: function () {
                         const stack = Solitaire.Card.createProxyStack.call(
                             this,
                         );
@@ -16391,7 +16387,7 @@ define(["./solitaire"], function(solitaire) {
                         return this.proxyStack;
                     },
 
-                    validTarget: function(stack) {
+                    validTarget: function (stack) {
                         const target = stack.my_Last();
 
                         switch (stack.field) {
@@ -16425,7 +16421,7 @@ define(["./solitaire"], function(solitaire) {
 
             Y.Array.each(
                 Freecell.fields,
-                function(field) {
+                function (field) {
                     Freecell[field].Stack = instance(Freecell.Stack);
                 },
                 true,
@@ -16434,7 +16430,7 @@ define(["./solitaire"], function(solitaire) {
             Y.mix(
                 Freecell.Stack,
                 {
-                    validTarget: function(stack) {
+                    validTarget: function (stack) {
                         if (
                             stack.field !== "tableau" ||
                             !this.first().validTarget(stack)
@@ -16451,7 +16447,7 @@ define(["./solitaire"], function(solitaire) {
             Y.mix(
                 Freecell.Tableau.Stack,
                 {
-                    setCardPosition: function(card) {
+                    setCardPosition: function (card) {
                         return this.lastCardSetCardPosition(card);
                     },
                 },
@@ -16467,14 +16463,14 @@ define(["./solitaire"], function(solitaire) {
 });
 YUI.add(
     "golf",
-    function(Y) {
+    function (Y) {
         const Solitaire = Y.Solitaire,
             Golf = (Y.Solitaire.Golf = Solitaire.instance(
                 Solitaire,
                 {
                     fields: ["Deck", "Foundation", "Tableau"],
 
-                    deal: function() {
+                    deal: function () {
                         let card, stack, row;
                         const stacks = this.tableau.stacks,
                             deck = this.deck,
@@ -16493,7 +16489,7 @@ YUI.add(
                         deck.createStack();
                     },
 
-                    turnOver: function() {
+                    turnOver: function () {
                         const deck = this.deck.stacks[0],
                             foundation = this.foundation.stacks[0],
                             last = deck.my_Last();
@@ -16501,11 +16497,11 @@ YUI.add(
                         last && last.faceUp().moveTo(foundation);
                     },
 
-                    isWon: function() {
+                    isWon: function () {
                         let won = true;
 
-                        this.eachStack(function(stack) {
-                            stack.eachCard(function(card) {
+                        this.eachStack(function (stack) {
+                            stack.eachCard(function (card) {
                                 if (card) {
                                     won = false;
                                 }
@@ -16517,7 +16513,7 @@ YUI.add(
                         return won;
                     },
 
-                    height: function() {
+                    height: function () {
                         return this.Card.base.height * 4;
                     },
 
@@ -16527,14 +16523,14 @@ YUI.add(
                             total: 1,
                             layout: {
                                 hspacing: 0,
-                                top: function() {
+                                top: function () {
                                     return Solitaire.Card.height * 3;
                                 },
                                 left: 0,
                             },
                         },
 
-                        createStack: function() {
+                        createStack: function () {
                             let i, len;
 
                             for (i = 0, len = this.cards.length; i < len; i++) {
@@ -16561,10 +16557,10 @@ YUI.add(
                             total: 1,
                             layout: {
                                 hspacing: 0,
-                                top: function() {
+                                top: function () {
                                     return Solitaire.Card.height * 3;
                                 },
-                                left: function() {
+                                left: function () {
                                     return Solitaire.Card.width * 3.75;
                                 },
                             },
@@ -16572,7 +16568,7 @@ YUI.add(
                     },
 
                     Events: Solitaire.instance(Solitaire.Events, {
-                        dragCheck: function(e) {
+                        dragCheck: function (e) {
                             this.getCard().autoPlay();
 
                             /* workaround because YUI retains stale drag information if we halt the event :\ */
@@ -16585,7 +16581,7 @@ YUI.add(
                         /*
                          * return true if the target is 1 rank away from the this card
                          */
-                        validTarget: function(stack) {
+                        validTarget: function (stack) {
                             if (stack.field !== "foundation") {
                                 return false;
                             }
@@ -16596,7 +16592,7 @@ YUI.add(
                             return diff === 1;
                         },
 
-                        isFree: function() {
+                        isFree: function () {
                             return (
                                 !this.isFaceDown &&
                                 this === this.stack.my_Last()
@@ -16611,14 +16607,14 @@ YUI.add(
                 true,
             ));
 
-        Y.Array.each(Golf.fields, function(field) {
+        Y.Array.each(Golf.fields, function (field) {
             Golf[field].Stack = Solitaire.instance(Golf.Stack);
         });
 
         Y.mix(
             Golf.Tableau.Stack,
             {
-                setCardPosition: function(card) {
+                setCardPosition: function (card) {
                     return this.lastCardSetCardPosition(card);
                 },
             },
@@ -16628,7 +16624,7 @@ YUI.add(
         Y.mix(
             Golf.Deck.Stack,
             {
-                setCardPosition: function(card) {
+                setCardPosition: function (card) {
                     let left, zIndex;
 
                     const last = this.my_Last();
@@ -16654,7 +16650,7 @@ YUI.add(
 );
 YUI.add(
     "grandfathers-clock",
-    function(Y) {
+    function (Y) {
         function wrap(array, index) {
             const len = array.length;
 
@@ -16680,7 +16676,7 @@ YUI.add(
             GClock = (Y.Solitaire.GClock = Solitaire.instance(Solitaire, {
                 fields: ["Foundation", "Tableau"],
 
-                deal: function() {
+                deal: function () {
                     let card,
                         found,
                         stack = 0,
@@ -16721,7 +16717,7 @@ YUI.add(
                     }
                 },
 
-                height: function() {
+                height: function () {
                     return this.Card.base.height * 6.7;
                 },
 
@@ -16732,10 +16728,10 @@ YUI.add(
                         total: 12,
                         layout: {
                             hspacing: 1.25,
-                            top: function() {
+                            top: function () {
                                 return Solitaire.Card.height * 3;
                             },
-                            left: function() {
+                            left: function () {
                                 return Solitaire.Card.width * 3.25;
                             },
                         },
@@ -16750,7 +16746,7 @@ YUI.add(
                         layout: {
                             hspacing: 1.25,
                             top: 0,
-                            left: function() {
+                            left: function () {
                                 return Solitaire.Card.width * 7.25;
                             },
                         },
@@ -16760,7 +16756,7 @@ YUI.add(
                 },
 
                 Card: Solitaire.instance(Solitaire.Card, {
-                    createProxyStack: function() {
+                    createProxyStack: function () {
                         switch (this.stack.field) {
                             case "foundation":
                                 this.proxyStack = null;
@@ -16774,7 +16770,7 @@ YUI.add(
                         return this.proxyStack;
                     },
 
-                    validTarget: function(stack) {
+                    validTarget: function (stack) {
                         const target = stack.my_Last();
                         let rank, hour;
 
@@ -16806,7 +16802,7 @@ YUI.add(
 
         Y.Array.each(
             GClock.fields,
-            function(field) {
+            function (field) {
                 GClock[field].Stack = Solitaire.instance(GClock.Stack);
             },
             true,
@@ -16815,14 +16811,14 @@ YUI.add(
         Y.mix(
             GClock.Stack,
             {
-                validTarget: function(stack) {
+                validTarget: function (stack) {
                     return (
                         stack.field === "tableau" &&
                         this.first().validTarget(stack)
                     );
                 },
 
-                validCard: function() {
+                validCard: function () {
                     return false;
                 },
             },
@@ -16832,7 +16828,7 @@ YUI.add(
         Y.mix(
             GClock.Tableau.Stack,
             {
-                setCardPosition: function(card) {
+                setCardPosition: function (card) {
                     return this.lastCardSetCardPosition(card);
                 },
             },
@@ -16851,11 +16847,11 @@ YUI.add(
         Y.mix(
             GClock.Foundation.Stack,
             {
-                index: function() {
+                index: function () {
                     return GClock.foundation.stacks.indexOf(this);
                 },
 
-                layout: function(layout, i) {
+                layout: function (layout, i) {
                     const top =
                             Math.sin((Math.PI * i) / 6) *
                             Solitaire.Card.height *
@@ -16877,7 +16873,7 @@ YUI.add(
 );
 YUI.add(
     "solitaire-background-fix",
-    function(Y) {
+    function (Y) {
         let _body;
 
         Y.on("load", resize);
@@ -16918,10 +16914,10 @@ YUI.add(
     "0.0.1",
     { requires: ["solitaire"] },
 );
-define(["./solitaire"], function(solitaire) {
+define(["./solitaire"], function (solitaire) {
     YUI.add(
         "solitaire-ios",
-        function(Y) {
+        function (Y) {
             if (!Y.UA.ios) {
                 return;
             }
@@ -16967,7 +16963,7 @@ define(["./solitaire"], function(solitaire) {
                     },
                 },
                 gameOverrides = {
-                    Agnes: function() {
+                    Agnes: function () {
                         var hspacing = { hspacing: 1.13 };
 
                         fieldLayout(
@@ -16996,7 +16992,7 @@ define(["./solitaire"], function(solitaire) {
                     },
 
                     FlowerGarden: [
-                        function() {
+                        function () {
                             this.Card.rankHeight = 15;
 
                             fieldLayout(this, "Reserve", {
@@ -17019,7 +17015,7 @@ define(["./solitaire"], function(solitaire) {
                             Y.mix(
                                 this.Reserve.Stack,
                                 {
-                                    setCardPosition: function(card) {
+                                    setCardPosition: function (card) {
                                         var last = _.last(this.cards),
                                             top = last
                                                 ? last.top + 11
@@ -17036,12 +17032,12 @@ define(["./solitaire"], function(solitaire) {
                             );
                         },
 
-                        (function() {
+                        (function () {
                             var setCardPosition =
                                 Solitaire.FlowerGarden.Reserve.Stack
                                     .setCardPosition;
 
-                            return function() {
+                            return function () {
                                 fieldLayout(this, "Tableau", {
                                     left: 10,
                                     top: 120,
@@ -17078,7 +17074,7 @@ define(["./solitaire"], function(solitaire) {
                             "Tableau",
                         ]),
 
-                        function() {
+                        function () {
                             var hspacing = { hspacing: 1.05 };
 
                             fieldLayout(this, "Tableau", hspacing);
@@ -17098,13 +17094,13 @@ define(["./solitaire"], function(solitaire) {
                     Golf: [
                         originalLayout("Golf", ["Tableau", "Foundation"]),
 
-                        function() {
+                        function () {
                             fieldLayout(this, "Tableau", { hspacing: 1.1 });
                             fieldLayout(this, "Foundation", { left: 132 });
                         },
                     ],
 
-                    GClock: function() {
+                    GClock: function () {
                         fieldLayout(this, "Foundation", {
                             left: 143,
                         });
@@ -17117,12 +17113,12 @@ define(["./solitaire"], function(solitaire) {
                     },
 
                     Klondike: [
-                        function() {
+                        function () {
                             originalLayout("Klondike", "Foundation").call(this);
                             originalLayout("Klondike", "Tableau").call(this);
                         },
 
-                        function() {
+                        function () {
                             Y.mix(
                                 this.Foundation.stackConfig.layout,
                                 { left: 135, hspacing: 1.13 },
@@ -17136,7 +17132,7 @@ define(["./solitaire"], function(solitaire) {
                         },
                     ],
 
-                    MonteCarlo: function() {
+                    MonteCarlo: function () {
                         fieldLayout(this, "Tableau", {
                             cardGap: 1.1,
                             vspacing: 1.05,
@@ -17144,11 +17140,11 @@ define(["./solitaire"], function(solitaire) {
                     },
 
                     Pyramid: [
-                        (function() {
+                        (function () {
                             var deck = originalLayout("Pyramid", "Deck");
                             var waste = originalLayout("Pyramid", "Waste");
 
-                            return function() {
+                            return function () {
                                 deck.call(this);
                                 waste.call(this);
 
@@ -17164,7 +17160,7 @@ define(["./solitaire"], function(solitaire) {
                             };
                         })(),
 
-                        function() {
+                        function () {
                             Y.mix(
                                 this.Deck.stackConfig.layout,
                                 {
@@ -17195,7 +17191,7 @@ define(["./solitaire"], function(solitaire) {
                     ],
 
                     Scorpion: [
-                        function() {
+                        function () {
                             fieldLayout(this, "Deck", { top: 0, left: 0 });
                             fieldLayout(this, "Foundation", {
                                 top: 0,
@@ -17210,7 +17206,7 @@ define(["./solitaire"], function(solitaire) {
                             });
                         },
 
-                        function() {
+                        function () {
                             fieldLayout(this, "Deck", { left: 10, top: 0 });
 
                             fieldLayout(this, "Foundation", {
@@ -17229,7 +17225,7 @@ define(["./solitaire"], function(solitaire) {
                     ],
 
                     Spider: [
-                        function() {
+                        function () {
                             fieldLayout(this, "Foundation", {
                                 left: 94,
                                 hspacing: 1.05,
@@ -17240,7 +17236,7 @@ define(["./solitaire"], function(solitaire) {
                                 hspacing: 1.05,
                             });
                         },
-                        function() {
+                        function () {
                             fieldLayout(this, "Foundation", {
                                 left: 62,
                                 hspacing: 1,
@@ -17252,7 +17248,7 @@ define(["./solitaire"], function(solitaire) {
                         },
                     ],
 
-                    TriTowers: function() {
+                    TriTowers: function () {
                         Y.mix(
                             this.Tableau.stackConfig.layout,
                             {
@@ -17270,7 +17266,7 @@ define(["./solitaire"], function(solitaire) {
                             "Foundation",
                         ]),
 
-                        function() {
+                        function () {
                             fieldLayout(this, "Tableau", {
                                 top: 55,
                                 hspacing: 1.13,
@@ -17288,7 +17284,7 @@ define(["./solitaire"], function(solitaire) {
                     Yukon: [
                         originalLayout("Yukon", ["Tableau", "Foundation"]),
 
-                        function() {
+                        function () {
                             fieldLayout(this, "Tableau", {
                                 top: 55,
                                 hspacing: 1.13,
@@ -17321,7 +17317,7 @@ define(["./solitaire"], function(solitaire) {
                 {
                     useHash: false, // :\
                     _pg_activate: Solitaire.noop,
-                    _pg_size: function() {
+                    _pg_size: function () {
                         if (this.activeDrag) {
                             this._pg.setStyles({
                                 width: "100%",
@@ -17337,7 +17333,7 @@ define(["./solitaire"], function(solitaire) {
             Y.mix(
                 Y.DD.Drop.prototype,
                 {
-                    _activateShim: function() {
+                    _activateShim: function () {
                         var DDM = Y.DD.DDM;
 
                         if (!DDM.activeDrag) {
@@ -17362,14 +17358,14 @@ define(["./solitaire"], function(solitaire) {
                         }
                     },
 
-                    _deactivateShim: function() {
+                    _deactivateShim: function () {
                         this.overTarget = false;
                     },
                 },
                 true,
             );
 
-            Solitaire.Statistics.winDisplay = function() {
+            Solitaire.Statistics.winDisplay = function () {
                 alert("You win!");
             };
 
@@ -17391,7 +17387,7 @@ define(["./solitaire"], function(solitaire) {
 
             function originalLayout(game, fields) {
                 var layouts,
-                    normalizeLayout = function(field) {
+                    normalizeLayout = function (field) {
                         return [
                             field,
                             Y.merge(
@@ -17403,10 +17399,10 @@ define(["./solitaire"], function(solitaire) {
 
                 layouts = Y.Array.map(Y.Array(fields), normalizeLayout);
 
-                return function() {
+                return function () {
                     var that = this;
 
-                    Y.each(layouts, function(layout) {
+                    Y.each(layouts, function (layout) {
                         Y.mix(
                             that[layout[0]].stackConfig.layout,
                             layout[1],
@@ -17474,7 +17470,7 @@ define(["./solitaire"], function(solitaire) {
             function disableStyles() {
                 function stylesheet(index) {
                     return {
-                        deleteSelector: function(selector) {
+                        deleteSelector: function (selector) {
                             var ss = document.styleSheets[index],
                                 rules,
                                 idx;
@@ -17485,7 +17481,7 @@ define(["./solitaire"], function(solitaire) {
 
                             rules = Array.prototype.splice.call(ss.rules, 0);
                             idx = rules.indexOf(
-                                rules.filter(function(rule) {
+                                rules.filter(function (rule) {
                                     return rule.selectorText === selector;
                                 })[0],
                             );
@@ -17515,7 +17511,7 @@ define(["./solitaire"], function(solitaire) {
                     body,
                     nav,
                     fb,
-                    closeMenu = function() {
+                    closeMenu = function () {
                         menu.removeClass("show");
                     };
 
@@ -17535,7 +17531,7 @@ define(["./solitaire"], function(solitaire) {
 
                 undo.get("parentNode").remove();
 
-                showMenu.on("click", function() {
+                showMenu.on("click", function () {
                     menu.addClass("show");
                 });
 
@@ -17563,7 +17559,7 @@ define(["./solitaire"], function(solitaire) {
 
                 Y.delegate(
                     "touchstart",
-                    function(e) {
+                    function (e) {
                         e.target.ancestor("li", true).addClass("hover");
                     },
                     "#descriptions",
@@ -17572,19 +17568,19 @@ define(["./solitaire"], function(solitaire) {
 
                 Y.delegate(
                     "touchend",
-                    function(e) {
+                    function (e) {
                         e.target.ancestor("li", true).removeClass("hover");
                     },
                     "#descriptions",
                     "li",
                 );
 
-                Y.on("gamechooser:select", function(chooser) {
+                Y.on("gamechooser:select", function (chooser) {
                     chooser.choose();
                     closeMenu();
                 });
 
-                Y.on("gamechooser:hide", function() {
+                Y.on("gamechooser:hide", function () {
                     scrollToTop();
                 });
 
@@ -17622,14 +17618,14 @@ define(["./solitaire"], function(solitaire) {
                 runOverrides();
 
                 Solitaire.offset = { left: offsetLeft(), top: 10 };
-                Solitaire.maxStackHeight = function() {
+                Solitaire.maxStackHeight = function () {
                     return msh;
                 };
                 scale();
             }
 
             function scrollToTop() {
-                setTimeout(function() {
+                setTimeout(function () {
                     scrollTo(0, 0);
                 }, 10);
             }
@@ -17641,7 +17637,7 @@ define(["./solitaire"], function(solitaire) {
 
             Y.on(
                 "touchstart",
-                function(e) {
+                function (e) {
                     if (e.target._node === document.body) {
                         e.preventDefault();
                     }
@@ -17662,12 +17658,12 @@ define(["./solitaire"], function(solitaire) {
 });
 YUI.add(
     "klondike",
-    function(Y) {
+    function (Y) {
         const Solitaire = Y.Solitaire,
             Klondike = (Y.Solitaire.Klondike = Solitaire.instance(Solitaire, {
                 fields: ["Foundation", "Deck", "Waste", "Tableau"],
 
-                deal: function() {
+                deal: function () {
                     let card,
                         piles = 6,
                         stack = 0;
@@ -17688,7 +17684,7 @@ YUI.add(
                     deck.createStack();
                 },
 
-                turnOver: function() {
+                turnOver: function () {
                     const deck = this.deck.stacks[0],
                         waste = this.waste.stacks[0],
                         updatePosition = Klondike.Card.updatePosition;
@@ -17700,27 +17696,22 @@ YUI.add(
                         i > stop && i;
                         --i
                     ) {
-                        deck.my_Last()
-                            .faceUp()
-                            .moveTo(waste);
+                        deck.my_Last().faceUp().moveTo(waste);
                     }
 
                     Klondike.Card.updatePosition = updatePosition;
 
-                    waste.eachCard(function(c) {
+                    waste.eachCard(function (c) {
                         c.updatePosition();
                     });
                 },
 
-                redeal: function() {
+                redeal: function () {
                     const deck = this.deck.stacks[0],
                         waste = this.waste.stacks[0];
 
                     while (waste.cards.length) {
-                        waste
-                            .my_Last()
-                            .faceDown()
-                            .moveTo(deck);
+                        waste.my_Last().faceDown().moveTo(deck);
                     }
                 },
 
@@ -17732,7 +17723,7 @@ YUI.add(
                         layout: {
                             hspacing: 1.25,
                             top: 0,
-                            left: function() {
+                            left: function () {
                                 return Solitaire.Card.width * 3.75;
                             },
                         },
@@ -17758,7 +17749,7 @@ YUI.add(
                         layout: {
                             hspacing: 0,
                             top: 0,
-                            left: function() {
+                            left: function () {
                                 return Solitaire.Card.width * 1.5;
                             },
                         },
@@ -17771,7 +17762,7 @@ YUI.add(
                         total: 7,
                         layout: {
                             hspacing: 1.25,
-                            top: function() {
+                            top: function () {
                                 return Solitaire.Card.height * 1.5;
                             },
                             left: 0,
@@ -17781,7 +17772,7 @@ YUI.add(
                 },
 
                 Card: Solitaire.instance(Solitaire.Card, {
-                    playable: function() {
+                    playable: function () {
                         switch (this.stack.field) {
                             case "tableau":
                                 return !this.isFaceDown;
@@ -17794,7 +17785,7 @@ YUI.add(
                         }
                     },
 
-                    validFoundationTarget: function(target) {
+                    validFoundationTarget: function (target) {
                         if (!target) {
                             return this.rank === 1;
                         } else {
@@ -17805,7 +17796,7 @@ YUI.add(
                         }
                     },
 
-                    validTarget: function(stack) {
+                    validTarget: function (stack) {
                         const target = stack.my_Last();
 
                         switch (stack.field) {
@@ -17828,14 +17819,14 @@ YUI.add(
                 }),
             }));
 
-        Y.Array.each(Klondike.fields, function(field) {
+        Y.Array.each(Klondike.fields, function (field) {
             Klondike[field].Stack = Solitaire.instance(Klondike.Stack);
         });
 
         Y.mix(
             Klondike.Stack,
             {
-                validTarget: function(stack) {
+                validTarget: function (stack) {
                     return (
                         stack.field === "tableau" &&
                         this.first().validTarget(stack)
@@ -17848,7 +17839,7 @@ YUI.add(
         Y.mix(
             Klondike.Tableau.Stack,
             {
-                setCardPosition: function(card) {
+                setCardPosition: function (card) {
                     return this.lastCardSetCardPosition(card);
                 },
             },
@@ -17859,12 +17850,12 @@ YUI.add(
             Klondike.Waste.Stack,
             {
                 // always display only the last three cards
-                setCardPosition: function(card) {
+                setCardPosition: function (card) {
                     const cards = this.cards,
                         last = _.last(cards),
                         stack = this;
 
-                    Y.Array.each(cards.slice(-2), function(card, i) {
+                    Y.Array.each(cards.slice(-2), function (card, i) {
                         card.left = stack.left;
                         card.top = stack.top;
                     });
@@ -17890,7 +17881,7 @@ YUI.add(
         Y.mix(
             Klondike.Deck.Stack,
             {
-                createNode: function() {
+                createNode: function () {
                     Solitaire.Stack.createNode.call(this);
                     this.node.on("click", Solitaire.Events.clickEmptyDeck);
                     this.node.addClass("playable");
@@ -17904,13 +17895,13 @@ YUI.add(
 );
 YUI.add(
     "klondike1t",
-    function(Y) {
+    function (Y) {
         const Solitaire = Y.Solitaire,
             Klondike = Solitaire.Klondike,
             Klondike1T = (Solitaire.Klondike1T = Solitaire.instance(Klondike, {
                 redeal: Solitaire.noop,
 
-                turnOver: function() {
+                turnOver: function () {
                     const deck = this.deck.stacks[0],
                         waste = this.waste.stacks[0],
                         card = deck.my_Last();
@@ -17924,7 +17915,7 @@ YUI.add(
 
                 Deck: Solitaire.instance(Klondike.Deck, {
                     Stack: Solitaire.instance(Klondike.Deck.Stack, {
-                        createNode: function() {
+                        createNode: function () {
                             Klondike.Deck.Stack.createNode.call(this);
                             this.node.removeClass("playable");
                         },
@@ -17937,14 +17928,14 @@ YUI.add(
 );
 YUI.add(
     "monte-carlo",
-    function(Y) {
+    function (Y) {
         const Solitaire = Y.Solitaire,
             MonteCarlo = (Y.Solitaire.MonteCarlo = Solitaire.instance(
                 Solitaire,
                 {
                     fields: ["Foundation", "Deck", "Tableau"],
 
-                    createEvents: function() {
+                    createEvents: function () {
                         Solitaire.createEvents.call(this);
 
                         Y.delegate(
@@ -17958,11 +17949,11 @@ YUI.add(
                         Y.on("solitaire|afterSetup", this.deckPlayable);
                     },
 
-                    deckPlayable: function() {
+                    deckPlayable: function () {
                         let gap = false;
                         const node = Solitaire.getGame().deck.stacks[0].node;
 
-                        Solitaire.getGame().eachStack(function(s) {
+                        Solitaire.getGame().eachStack(function (s) {
                             if (!gap && Y.Array.indexOf(s.cards, null) !== -1) {
                                 gap = true;
                             }
@@ -17975,7 +17966,7 @@ YUI.add(
                         }
                     },
 
-                    deal: function() {
+                    deal: function () {
                         const deck = this.deck,
                             stacks = this.tableau.stacks;
 
@@ -17994,10 +17985,10 @@ YUI.add(
                      * 2) clear every tableau row/stack, then redeal the cards from the previous step onto the tableau
                      * 3) deal cards from the deck to fill the remaining free rows
                      */
-                    redeal: function() {
+                    redeal: function () {
                         const stacks = this.tableau.stacks,
                             deck = this.deck.stacks[0],
-                            cards = Y.Array.reduce(stacks, [], function(
+                            cards = Y.Array.reduce(stacks, [], function (
                                 compact,
                                 stack,
                             ) {
@@ -18006,7 +17997,7 @@ YUI.add(
                             len = cards.length;
                         let card, s, i;
 
-                        Y.Array.each(stacks, function(stack) {
+                        Y.Array.each(stacks, function (stack) {
                             stack.node.remove();
                             stack.cards = [];
                             stack.createNode();
@@ -18030,17 +18021,17 @@ YUI.add(
                         }
                     },
 
-                    height: function() {
+                    height: function () {
                         return this.Card.base.height * 6;
                     },
 
                     Stack: Solitaire.instance(Solitaire.Stack, {
                         images: { deck: "freeslot.png" },
 
-                        updateDragGroups: function() {
+                        updateDragGroups: function () {
                             const active = Solitaire.activeCard;
 
-                            Y.Array.each(this.cards, function(c) {
+                            Y.Array.each(this.cards, function (c) {
                                 if (!c) {
                                     return;
                                 }
@@ -18051,13 +18042,13 @@ YUI.add(
                             });
                         },
 
-                        index: function() {
+                        index: function () {
                             return 0;
                         },
                     }),
 
                     Events: Solitaire.instance(Solitaire.Events, {
-                        drop: function(e) {
+                        drop: function (e) {
                             const active = Solitaire.activeCard,
                                 foundation =
                                     Solitaire.game.foundation.stacks[0],
@@ -18067,7 +18058,7 @@ YUI.add(
                                 return;
                             }
 
-                            Solitaire.stationary(function() {
+                            Solitaire.stationary(function () {
                                 target.moveTo(foundation);
                                 active.moveTo(foundation);
                             });
@@ -18082,7 +18073,7 @@ YUI.add(
                             layout: {
                                 spacing: 0,
                                 top: 0,
-                                left: function() {
+                                left: function () {
                                     return Solitaire.Card.width * 10.5;
                                 },
                             },
@@ -18096,14 +18087,14 @@ YUI.add(
                             layout: {
                                 spacing: 0,
                                 top: 0,
-                                left: function() {
+                                left: function () {
                                     return Solitaire.Card.width * 2;
                                 },
                             },
                         },
                         field: "deck",
 
-                        createStack: function() {
+                        createStack: function () {
                             for (
                                 let i = 0, len = this.cards.length;
                                 i < len;
@@ -18122,7 +18113,7 @@ YUI.add(
                                 vspacing: 1.25,
                                 hspacing: 0,
                                 top: 0,
-                                left: function() {
+                                left: function () {
                                     return Solitaire.Card.width * 3.5;
                                 },
                             },
@@ -18131,11 +18122,11 @@ YUI.add(
                     },
 
                     Card: Solitaire.instance(Solitaire.Card, {
-                        row: function() {
+                        row: function () {
                             return this.stack.index();
                         },
 
-                        column: function() {
+                        column: function () {
                             return this.stack.cards.indexOf(this);
                         },
 
@@ -18146,7 +18137,7 @@ YUI.add(
                          * 3) both cards are adjacent vertically, horizontally, or diagonally
                          */
 
-                        validTarget: function(card) {
+                        validTarget: function (card) {
                             if (!(this.rank === card.rank && card.isFree())) {
                                 return false;
                             }
@@ -18157,7 +18148,7 @@ YUI.add(
                             );
                         },
 
-                        createProxyStack: function() {
+                        createProxyStack: function () {
                             let stack = null;
 
                             if (this.isFree()) {
@@ -18170,15 +18161,15 @@ YUI.add(
                             return this.proxyStack;
                         },
 
-                        proxyCards: function() {
+                        proxyCards: function () {
                             return [this];
                         },
 
-                        isFree: function() {
+                        isFree: function () {
                             return this.stack.field === "tableau";
                         },
 
-                        turnOver: function() {
+                        turnOver: function () {
                             this.stack.field === "deck" &&
                                 Solitaire.game.redeal();
                         },
@@ -18186,7 +18177,7 @@ YUI.add(
                 },
             ));
 
-        Y.Array.each(MonteCarlo.fields, function(field) {
+        Y.Array.each(MonteCarlo.fields, function (field) {
             MonteCarlo[field].Stack = Solitaire.instance(MonteCarlo.Stack);
         });
 
@@ -18194,7 +18185,7 @@ YUI.add(
         Y.mix(
             MonteCarlo.Tableau.Stack,
             {
-                deleteItem: function(card) {
+                deleteItem: function (card) {
                     const cards = this.cards,
                         i = cards.indexOf(card);
 
@@ -18203,7 +18194,7 @@ YUI.add(
                     }
                 },
 
-                setCardPosition: function(card) {
+                setCardPosition: function (card) {
                     const last = _.last(this.cards),
                         layout = MonteCarlo.Tableau.stackConfig.layout,
                         top = this.top,
@@ -18215,7 +18206,7 @@ YUI.add(
                     card.top = top;
                 },
 
-                compact: function() {
+                compact: function () {
                     const cards = this.cards,
                         compact = [];
 
@@ -18230,7 +18221,7 @@ YUI.add(
                     return compact;
                 },
 
-                index: function() {
+                index: function () {
                     return Solitaire.game.tableau.stacks.indexOf(this);
                 },
             },
@@ -18240,7 +18231,7 @@ YUI.add(
         Y.mix(
             MonteCarlo.Deck.Stack,
             {
-                updateDragGroups: function() {
+                updateDragGroups: function () {
                     const active = Solitaire.activeCard,
                         card = this.my_Last();
 
@@ -18263,12 +18254,12 @@ YUI.add(
 );
 YUI.add(
     "pyramid",
-    function(Y) {
+    function (Y) {
         const Solitaire = Y.Solitaire,
             Pyramid = (Y.Solitaire.Pyramid = Solitaire.instance(Solitaire, {
                 fields: ["Foundation", "Deck", "Waste", "Tableau"],
 
-                deal: function() {
+                deal: function () {
                     const deck = this.deck,
                         stacks = this.tableau.stacks;
 
@@ -18283,7 +18274,7 @@ YUI.add(
                     deck.my_Last().faceUp();
                 },
 
-                turnOver: function() {
+                turnOver: function () {
                     const deck = this.deck.stacks[0],
                         waste = this.waste.stacks[0];
 
@@ -18293,17 +18284,17 @@ YUI.add(
                     deck.my_Last().moveTo(waste);
                 },
 
-                height: function() {
+                height: function () {
                     return this.Card.base.height * 4.85;
                 },
 
                 Stack: Solitaire.instance(Solitaire.Stack, {
                     images: {},
 
-                    updateDragGroups: function() {
+                    updateDragGroups: function () {
                         const active = Solitaire.activeCard;
 
-                        Y.Array.each(this.cards, function(c) {
+                        Y.Array.each(this.cards, function (c) {
                             if (!c) {
                                 return;
                             }
@@ -18318,13 +18309,13 @@ YUI.add(
                 }),
 
                 Events: Solitaire.instance(Solitaire.Events, {
-                    dragCheck: function(e) {
+                    dragCheck: function (e) {
                         if (!Solitaire.game.autoPlay.call(this)) {
                             Solitaire.Events.dragCheck.call(this);
                         }
                     },
 
-                    drop: function(e) {
+                    drop: function (e) {
                         const active = Solitaire.activeCard,
                             foundation = Solitaire.game.foundation.stacks[0],
                             target = e.drop.get("node").getData("target");
@@ -18333,7 +18324,7 @@ YUI.add(
                             return;
                         }
 
-                        Solitaire.stationary(function() {
+                        Solitaire.stationary(function () {
                             target.moveTo(foundation);
                             active.moveTo(foundation);
                         });
@@ -18348,7 +18339,7 @@ YUI.add(
                         layout: {
                             hspacing: 0,
                             top: 0,
-                            left: function() {
+                            left: function () {
                                 return Solitaire.Card.width * 8;
                             },
                         },
@@ -18367,7 +18358,7 @@ YUI.add(
                     },
                     field: "deck",
 
-                    createStack: function() {
+                    createStack: function () {
                         for (let i = 0, len = this.cards.length; i < len; i++) {
                             this.stacks[0].push(this.cards[i]);
                         }
@@ -18380,7 +18371,7 @@ YUI.add(
                         layout: {
                             hspacing: 0,
                             top: 0,
-                            left: function() {
+                            left: function () {
                                 return Solitaire.Card.width * 1.5;
                             },
                         },
@@ -18396,7 +18387,7 @@ YUI.add(
                             hspacing: -0.625,
                             cardGap: 1.25,
                             top: 0,
-                            left: function() {
+                            left: function () {
                                 return Solitaire.Card.width * 5;
                             },
                         },
@@ -18405,7 +18396,7 @@ YUI.add(
                 },
 
                 Card: Solitaire.instance(Solitaire.Card, {
-                    validTarget: function(card) {
+                    validTarget: function (card) {
                         if (card.field === "foundation") {
                             // "card" is actually a stack :/
                             return this.isFree() && this.rank === 13;
@@ -18418,13 +18409,13 @@ YUI.add(
                         return false;
                     },
 
-                    createProxyNode: function() {
+                    createProxyNode: function () {
                         return this.rank === 13
                             ? ""
                             : Solitaire.Card.createProxyNode.call(this);
                     },
 
-                    createProxyStack: function() {
+                    createProxyStack: function () {
                         let stack = null;
 
                         if (this.isFree()) {
@@ -18437,11 +18428,11 @@ YUI.add(
                         return this.proxyStack;
                     },
 
-                    proxyCards: function() {
+                    proxyCards: function () {
                         return [this];
                     },
 
-                    isFree: function() {
+                    isFree: function () {
                         const stack = this.stack,
                             stackIndex = stack.index(),
                             index = stack.cards.indexOf(this),
@@ -18460,7 +18451,7 @@ YUI.add(
                         }
                     },
 
-                    turnOver: function() {
+                    turnOver: function () {
                         this.stack.field === "deck" &&
                             !this.isFaceDown &&
                             Solitaire.game.turnOver();
@@ -18468,14 +18459,14 @@ YUI.add(
                 }),
             }));
 
-        Y.Array.each(Pyramid.fields, function(field) {
+        Y.Array.each(Pyramid.fields, function (field) {
             Pyramid[field].Stack = Solitaire.instance(Pyramid.Stack);
         });
 
         Y.mix(
             Pyramid.Tableau.Stack,
             {
-                deleteItem: function(card) {
+                deleteItem: function (card) {
                     const cards = this.cards,
                         i = cards.indexOf(card);
 
@@ -18484,7 +18475,7 @@ YUI.add(
                     }
                 },
 
-                setCardPosition: function(card) {
+                setCardPosition: function (card) {
                     const layout = Pyramid.Tableau.stackConfig.layout,
                         last = _.last(this.cards),
                         top = this.top,
@@ -18503,18 +18494,18 @@ YUI.add(
         Y.mix(
             Pyramid.Deck.Stack,
             {
-                deleteItem: function(card) {
+                deleteItem: function (card) {
                     Pyramid.Stack.deleteItem.call(this, card);
                     this.update();
                 },
 
-                update: function(undo) {
+                update: function (undo) {
                     const last = this.my_Last();
 
                     last && last.faceUp(undo);
                 },
 
-                updateDragGroups: function() {
+                updateDragGroups: function () {
                     const active = Solitaire.activeCard,
                         card = this.my_Last();
 
@@ -18540,7 +18531,7 @@ YUI.add(
 );
 YUI.add(
     "russian-solitaire",
-    function(Y) {
+    function (Y) {
         const Solitaire = Y.Solitaire,
             Yukon = Solitaire.Yukon,
             RussianSolitaire = (Solitaire.RussianSolitaire = Solitaire.instance(
@@ -18550,7 +18541,7 @@ YUI.add(
                 },
             ));
 
-        RussianSolitaire.Card.validTarget = function(stack) {
+        RussianSolitaire.Card.validTarget = function (stack) {
             const target = stack.my_Last();
 
             switch (stack.field) {
@@ -18583,17 +18574,17 @@ YUI.add(
 );
 YUI.add(
     "scorpion",
-    function(Y) {
+    function (Y) {
         const Solitaire = Y.Solitaire,
             Scorpion = (Solitaire.Scorpion = Solitaire.instance(Solitaire, {
                 fields: ["Foundation", "Deck", "Tableau"],
 
-                createEvents: function() {
+                createEvents: function () {
                     Solitaire.AutoStackClear.register();
                     Solitaire.createEvents.call(this);
                 },
 
-                deal: function() {
+                deal: function () {
                     const deck = this.deck,
                         stacks = this.tableau.stacks;
 
@@ -18612,18 +18603,16 @@ YUI.add(
                     deck.createStack();
                 },
 
-                turnOver: function() {
+                turnOver: function () {
                     const deck = this.deck.stacks[0],
                         stacks = this.tableau.stacks;
 
                     for (let i = 0; i < 3; i++) {
-                        deck.my_Last()
-                            .faceUp()
-                            .moveTo(stacks[i]);
+                        deck.my_Last().faceUp().moveTo(stacks[i]);
                     }
                 },
 
-                height: function() {
+                height: function () {
                     return this.Card.base.height * 5.6;
                 },
 
@@ -18634,14 +18623,14 @@ YUI.add(
                         total: 1,
                         layout: {
                             top: 0,
-                            left: function() {
+                            left: function () {
                                 return Solitaire.Card.width * 9;
                             },
                         },
                     },
                     field: "deck",
 
-                    createStack: function() {
+                    createStack: function () {
                         for (let i = this.cards.length - 1; i >= 0; i--) {
                             this.stacks[0].push(this.cards[i]);
                         }
@@ -18652,10 +18641,10 @@ YUI.add(
                     stackConfig: {
                         total: 4,
                         layout: {
-                            top: function() {
+                            top: function () {
                                 return Solitaire.Card.height * 1.1;
                             },
-                            left: function() {
+                            left: function () {
                                 return Solitaire.Card.width * 9;
                             },
                             vspacing: 1.1,
@@ -18677,7 +18666,7 @@ YUI.add(
                 },
 
                 Card: Solitaire.instance(Solitaire.Card, {
-                    playable: function() {
+                    playable: function () {
                         const field = this.stack.field;
 
                         return (
@@ -18686,7 +18675,7 @@ YUI.add(
                         );
                     },
 
-                    validTarget: function(stack) {
+                    validTarget: function (stack) {
                         const target = stack.my_Last();
 
                         if (stack.field !== "tableau") {
@@ -18706,25 +18695,25 @@ YUI.add(
                 }),
             }));
 
-        Y.Array.each(Scorpion.fields, function(field) {
+        Y.Array.each(Scorpion.fields, function (field) {
             Scorpion[field].Stack = Solitaire.instance(Scorpion.Stack);
         });
 
         Y.mix(
             Scorpion.Stack,
             {
-                validTarget: function(stack) {
+                validTarget: function (stack) {
                     return (
                         stack.field === "tableau" &&
                         this.first().validTarget(stack)
                     );
                 },
 
-                validProxy: function(card) {
+                validProxy: function (card) {
                     return true;
                 },
 
-                validTarget: function(stack) {
+                validTarget: function (stack) {
                     const cards = this.cards;
 
                     switch (stack.field) {
@@ -18754,7 +18743,7 @@ YUI.add(
         Y.mix(
             Scorpion.Tableau.Stack,
             {
-                setCardPosition: function(card) {
+                setCardPosition: function (card) {
                     return this.lastCardSetCardPosition(card);
                 },
             },
@@ -18764,7 +18753,7 @@ YUI.add(
     "0.0.1",
     { requires: ["auto-stack-clear"] },
 );
-define([], function() {
+define([], function () {
     let enable_solitairey_ui = false;
     // For debugging.
     // var pre_canned_seeds = [11982, 11982, 11982, 11982];
@@ -18844,7 +18833,7 @@ define([], function() {
         return that;
     }
 
-    mapAppend = function(that, str) {
+    mapAppend = function (that, str) {
         for (const p in that) {
             if (that.hasOwnProperty(p)) {
                 that[p] += str;
@@ -18862,7 +18851,7 @@ define([], function() {
 
     YUI.add(
         "solitaire",
-        function(Y) {
+        function (Y) {
             const Solitaire = Y.namespace("Solitaire");
 
             function CardDelegate(cfg) {
@@ -18870,7 +18859,7 @@ define([], function() {
             }
 
             Y.extend(CardDelegate, Y.DD.Delegate, {
-                getCard: function() {
+                getCard: function () {
                     return this.get("currentNode").getData("target");
                 },
             });
@@ -18885,9 +18874,9 @@ define([], function() {
                 padding: { x: 50, y: 50 },
                 widthScale: 0,
 
-                noop: function() {},
+                noop: function () {},
 
-                name: function() {
+                name: function () {
                     for (const p in Solitaire) {
                         if (
                             Solitaire.hasOwnProperty(p) &&
@@ -18898,17 +18887,17 @@ define([], function() {
                     }
                 },
 
-                container: function() {
+                container: function () {
                     return Y.one(Solitaire.selector);
                 },
 
-                width: function() {
+                width: function () {
                     return this.Card.base.width * this.widthScale;
                 },
-                height: function() {
+                height: function () {
                     return this.Card.base.height * 4.2;
                 },
-                maxStackHeight: function() {
+                maxStackHeight: function () {
                     return (
                         Solitaire.Application.windowHeight -
                         normalize(this.Tableau.stackConfig.layout.top) -
@@ -18916,23 +18905,23 @@ define([], function() {
                     );
                 },
 
-                undo: function() {
+                undo: function () {
                     Y.fire("undo");
                 },
 
-                pushMove: function(move) {
+                pushMove: function (move) {
                     const moves = Solitaire.moves;
                     moves && moves.push(move);
                 },
 
-                serialize: function() {
+                serialize: function () {
                     const that = this;
                     const serialized = [],
                         lengths = [];
 
                     Y.Array.each(
                         this.fields,
-                        function(field) {
+                        function (field) {
                             const stacks = that[field.toLowerCase()].stacks;
 
                             for (let i = 0, len = stacks.length; i < len; i++) {
@@ -18949,7 +18938,7 @@ define([], function() {
                         .join("");
                 },
 
-                stationary: function(callback) {
+                stationary: function (callback) {
                     const updatePosition = Game.Card.updatePosition;
 
                     Game.Card.updatePosition = Solitaire.noop;
@@ -18957,7 +18946,7 @@ define([], function() {
                     Game.Card.updatePosition = updatePosition;
                 },
 
-                unanimated: function(callback) {
+                unanimated: function (callback) {
                     const anim = Y.Solitaire.Animation,
                         animate = anim.animate;
 
@@ -18966,9 +18955,9 @@ define([], function() {
                     anim.animate = animate;
                 },
 
-                unserialize: function(serialized) {
+                unserialize: function (serialized) {
                     const that = this;
-                    that.unanimated(function() {
+                    that.unanimated(function () {
                         const numStacks = serialized.charCodeAt(0),
                             lengths = serialized.substr(1, numStacks),
                             fields = that.fields;
@@ -19004,7 +18993,7 @@ define([], function() {
                     });
                 },
 
-                save: function(name) {
+                save: function (name) {
                     const data = this.serialize(),
                         twoWeeks = 1206900000;
 
@@ -19013,10 +19002,10 @@ define([], function() {
                     });
                 },
 
-                loadGame: function(data) {
+                loadGame: function (data) {
                     const that = this;
-                    that.unanimated(function() {
-                        that.setup(function() {
+                    that.unanimated(function () {
+                        that.setup(function () {
                             that.unserialize(data);
                         });
                     });
@@ -19024,14 +19013,14 @@ define([], function() {
                     Y.fire("loadGame");
                 },
 
-                newGame: function() {
+                newGame: function () {
                     Y.Cookie.remove("saved-game");
                     const that = this;
                     if (enable_solitairey_ui) {
                         that.setup(that.deal);
                     } else {
                         // set up the cards layout here.
-                        that.setup(function() {
+                        that.setup(function () {
                             let card,
                                 stack = 0;
                             const stacks = that.tableau.stacks;
@@ -19052,18 +19041,18 @@ define([], function() {
                     Y.fire("newGame");
                 },
 
-                cleanup: function() {
+                cleanup: function () {
                     Y.Event.purgeElement(this.container());
 
                     // remove custom events
                     Y.detach("solitaire|*");
 
-                    this.eachStack(function(stack) {
+                    this.eachStack(function (stack) {
                         stack.cleanup();
                     });
                 },
 
-                setup: function(callback, args) {
+                setup: function (callback, args) {
                     Game = Solitaire.game = this;
 
                     Y.fire("beforeSetup");
@@ -19071,7 +19060,7 @@ define([], function() {
                     Solitaire.moves = null;
                     Undo.clear();
 
-                    this.stationary(function() {
+                    this.stationary(function () {
                         const seed = pre_canned_seeds.length
                             ? pre_canned_seeds.shift()
                             : Math.floor(
@@ -19099,7 +19088,7 @@ define([], function() {
                     Y.Solitaire.Animation.animate = false;
                     Y.Solitaire.Animation.dealing = false;
 
-                    Game.eachStack(function(s) {
+                    Game.eachStack(function (s) {
                         s.updateCardsStyle();
                         s.updateCardsPosition();
                     });
@@ -19109,7 +19098,7 @@ define([], function() {
                     Y.fire("afterDealingAnimation");
                 },
 
-                createEvents: function() {
+                createEvents: function () {
                     const container = Y.one(Solitaire.selector);
                     if (false) {
                         container.delegate("dblclick", Game.autoPlay, ".card");
@@ -19131,7 +19120,7 @@ define([], function() {
                     Y.on("solitaire|undo", Game.Events.undo);
                 },
 
-                createDraggables: function() {
+                createDraggables: function () {
                     const del = new CardDelegate({
                         dragConfig: {
                             dragMode: "intersect",
@@ -19155,7 +19144,7 @@ define([], function() {
                     del.on("drag:end", Game.Events.dragEnd);
                 },
 
-                createField: function(field) {
+                createField: function (field) {
                     if (!field) {
                         return;
                     }
@@ -19191,16 +19180,16 @@ define([], function() {
                     return f;
                 },
 
-                createStacks: function() {
-                    this.eachStack(function(stack) {
+                createStacks: function () {
+                    this.eachStack(function (stack) {
                         stack.cards = [];
                         stack.createNode();
                     });
                 },
 
-                eachStack: function(callback, fieldName) {
+                eachStack: function (callback, fieldName) {
                     Game &&
-                        Y.Array.each(Game.fields, function(name) {
+                        Y.Array.each(Game.fields, function (name) {
                             const currentName = name.toLowerCase(),
                                 field = Game[currentName],
                                 fname = fieldName || currentName;
@@ -19211,14 +19200,14 @@ define([], function() {
                         });
                 },
 
-                resize: function(scale) {
+                resize: function (scale) {
                     const that = this;
                     Y.fire("beforeResize");
 
                     that.scale(scale);
 
-                    that.unanimated(function() {
-                        that.eachStack(function(stack, i) {
+                    that.unanimated(function () {
+                        that.eachStack(function (stack, i) {
                             const cards = stack.cards,
                                 layout = stack.configLayout;
 
@@ -19234,7 +19223,7 @@ define([], function() {
 
                             stack.updateStyle();
 
-                            stack.setCards(cards.length, function(i) {
+                            stack.setCards(cards.length, function (i) {
                                 const card = cards[i];
 
                                 card && card.updateStyle();
@@ -19248,7 +19237,7 @@ define([], function() {
                     Y.fire("afterResize");
                 },
 
-                scale: function(scale) {
+                scale: function (scale) {
                     const Card = Y.Solitaire.Card,
                         base = Card.base;
 
@@ -19261,7 +19250,7 @@ define([], function() {
                     }
                 },
 
-                init: function() {
+                init: function () {
                     const cancel = Solitaire.preventDefault;
 
                     if (false) {
@@ -19269,7 +19258,7 @@ define([], function() {
                         Y.on("mousedown", cancel, document.body);
                         Y.on(
                             "contextmenu",
-                            function(e) {
+                            function (e) {
                                 const target = e.target;
 
                                 if (
@@ -19285,7 +19274,7 @@ define([], function() {
 
                     this.scale(1);
 
-                    const fields = Y.Array.map(Game.fields, function(field) {
+                    const fields = Y.Array.map(Game.fields, function (field) {
                         return (Game[field.toLowerCase()] = Game.createField(
                             Game[field],
                         ));
@@ -19296,8 +19285,8 @@ define([], function() {
                         Game.deck = Game.createField(Game.Deck);
                     }
                     const vals = my_Flatten(
-                        Y.Array.map(fields, function(f) {
-                            return Y.Array.map(f.stacks, function(s) {
+                        Y.Array.map(fields, function (f) {
+                            return Y.Array.map(f.stacks, function (s) {
                                 return s.left;
                             });
                         }),
@@ -19311,11 +19300,11 @@ define([], function() {
                     this.widthScale = (maxX - minX) / this.Card.base.width;
                 },
 
-                preventDefault: function(e) {
+                preventDefault: function (e) {
                     e.preventDefault();
                 },
 
-                autoPlay: function() {
+                autoPlay: function () {
                     const card =
                         typeof this.getCard === "function"
                             ? this.getCard()
@@ -19324,7 +19313,7 @@ define([], function() {
                     card.autoPlay();
                 },
 
-                isWon: function() {
+                isWon: function () {
                     const foundations = this.foundation.stacks,
                         deck = this.deck;
                     let placed = 0,
@@ -19339,12 +19328,12 @@ define([], function() {
                     return placed === total;
                 },
 
-                win: function() {
+                win: function () {
                     Y.fire("win");
                     Y.Cookie.remove("saved-game");
                 },
 
-                endTurn: function() {
+                endTurn: function () {
                     Y.fire("endTurn");
                 },
             });
@@ -19365,17 +19354,17 @@ define([], function() {
                     e.preventDefault();
                 },*/
 
-                clickEmptyDeck: function() {
+                clickEmptyDeck: function () {
                     Game.redeal();
                     Solitaire.moves.reverse();
                     Solitaire.endTurn();
                 },
 
-                drag: function() {
+                drag: function () {
                     this.getCard().dragging = true;
                 },
 
-                dragCheck: function() {
+                dragCheck: function () {
                     const card = this.getCard(),
                         stack = card.createProxyStack();
 
@@ -19385,12 +19374,12 @@ define([], function() {
 
                     Solitaire.activeCard = card;
 
-                    Game.eachStack(function(stack) {
+                    Game.eachStack(function (stack) {
                         stack.updateDragGroups();
                     });
                 },
 
-                dragStart: function() {
+                dragStart: function () {
                     const card = this.getCard(),
                         node = this.get("dragNode"),
                         proxy = card.createProxyNode();
@@ -19405,15 +19394,15 @@ define([], function() {
                     }
                 },
 
-                dragMiss: function() {
+                dragMiss: function () {
                     const card = this.getCard();
 
-                    Game.unanimated(function() {
+                    Game.unanimated(function () {
                         card.updatePosition();
                     });
                 },
 
-                dragEnd: function() {
+                dragEnd: function () {
                     const target = this.getCard(),
                         root = Solitaire.container(),
                         fragment = new Y.Node(
@@ -19439,11 +19428,11 @@ define([], function() {
                     proxyStack.left = dragXY[0] - containerXY[0];
                     proxyStack.top = dragXY[1] - containerXY[1];
 
-                    Game.unanimated(function() {
+                    Game.unanimated(function () {
                         proxyStack.updateCardsPosition();
                     });
 
-                    Y.Array.each(cards, function(card) {
+                    Y.Array.each(cards, function (card) {
                         if (!card) {
                             return;
                         }
@@ -19457,7 +19446,7 @@ define([], function() {
                     stack.updateCardsPosition();
                 },
 
-                drop: function(e) {
+                drop: function (e) {
                     if (!Solitaire.activeCard) {
                         return;
                     }
@@ -19484,11 +19473,11 @@ define([], function() {
                     Solitaire.endTurn();
                 },
 
-                endTurn: function() {
+                endTurn: function () {
                     Solitaire.moves.length && Undo.push(Solitaire.moves);
                     Solitaire.moves = [];
                     Solitaire.activeCard = null;
-                    Game.eachStack(function(s) {
+                    Game.eachStack(function (s) {
                         s.updateCardsStyle();
                     });
 
@@ -19499,7 +19488,7 @@ define([], function() {
                     }
                 },
 
-                undo: function(...rest) {
+                undo: function (...rest) {
                     const args = argsArray(rest);
 
                     args.unshift("endTurn");
@@ -19512,7 +19501,7 @@ define([], function() {
                 count: 1,
                 suits: ["c", "d", "h", "s"],
 
-                init: function(seed) {
+                init: function (seed) {
                     const suits = this.suits;
                     let suit, s, rank, count;
                     const Card = Game.Card;
@@ -19537,7 +19526,7 @@ define([], function() {
                 },
 
                 // shuffle the deck using the "Microsoft Number"
-                msSeededShuffle: function(seed) {
+                msSeededShuffle: function (seed) {
                     const cards = this.cards,
                         maxInt = Math.pow(2, 31);
                     let rand, temp, i;
@@ -19554,17 +19543,17 @@ define([], function() {
                     }
                 },
 
-                createStack: function() {
+                createStack: function () {
                     for (let i = this.cards.length - 1; i >= 0; i--) {
                         this.stacks[0].push(this.cards[i]);
                     }
                 },
 
-                my_Last: function() {
+                my_Last: function () {
                     return _.last(this.cards);
                 },
 
-                pop: function() {
+                pop: function () {
                     return this.cards.pop();
                 },
             };
@@ -19591,12 +19580,12 @@ define([], function() {
                 base: {},
 
                 origin: {
-                    left: function() {
+                    left: function () {
                         const offset = Solitaire.container().getXY()[0];
 
                         return -offset - Y.Solitaire.Card.width;
                     },
-                    top: function() {
+                    top: function () {
                         const offset = Solitaire.container().getXY()[1];
 
                         return -offset - Y.Solitaire.Card.height;
@@ -19605,7 +19594,7 @@ define([], function() {
 
                 animSpeeds: { slow: 0.5, mid: 0.2, fast: 0.1 },
 
-                create: function(rank, suit) {
+                create: function (rank, suit) {
                     const colors = { c: 0, s: 0, h: 1, d: 1 };
 
                     return instance(this, {
@@ -19615,12 +19604,12 @@ define([], function() {
                     });
                 },
 
-                truncatePosition: function() {
+                truncatePosition: function () {
                     this.left = Math.floor(this.left);
                     this.top = Math.floor(this.top);
                 },
 
-                faceDown: function(undo) {
+                faceDown: function (undo) {
                     this.isFaceDown = true;
                     this.setRankHeight();
                     this.setImageSrc();
@@ -19630,7 +19619,7 @@ define([], function() {
                     return this;
                 },
 
-                faceUp: function(undo) {
+                faceUp: function (undo) {
                     this.isFaceDown = false;
                     this.setRankHeight();
                     this.setImageSrc();
@@ -19640,7 +19629,7 @@ define([], function() {
                     return this;
                 },
 
-                setRankHeight: function() {
+                setRankHeight: function () {
                     const stack = this.stack;
                     let rh, hh;
 
@@ -19655,7 +19644,7 @@ define([], function() {
                     this.rankHeight = this.isFaceDown ? hh : rh;
                 },
 
-                imageSrc: function() {
+                imageSrc: function () {
                     let src = this.base.theme + "/";
 
                     src += this.isFaceDown ? "facedown" : this.suit + this.rank;
@@ -19665,13 +19654,13 @@ define([], function() {
                     return src;
                 },
 
-                setImageSrc: function() {
+                setImageSrc: function () {
                     const n = this.node;
 
                     n && n.setAttribute("src", this.imageSrc());
                 },
 
-                wrapperStyle: function() {
+                wrapperStyle: function () {
                     return {
                         left: this.left,
                         top: this.top,
@@ -19680,14 +19669,14 @@ define([], function() {
                     };
                 },
 
-                updateStyle: function() {
+                updateStyle: function () {
                     const n = this.node;
 
                     n && n.setStyles(this.wrapperStyle());
                     this.setRankHeight();
                 },
 
-                turnOver: function(e) {
+                turnOver: function (e) {
                     if (!this.isFaceDown) {
                         return;
                     }
@@ -19703,7 +19692,7 @@ define([], function() {
                     e.stopPropagation();
                 },
 
-                autoPlay: function() {
+                autoPlay: function () {
                     const origin = this.stack,
                         last = origin.my_Last();
                     let foundation, i, len;
@@ -19728,22 +19717,22 @@ define([], function() {
                     return false;
                 },
 
-                ensureDOM: function() {
+                ensureDOM: function () {
                     !this.node && this.createNode();
                 },
 
-                isFree: function() {
+                isFree: function () {
                     return this === this.stack.my_Last();
                 },
 
-                playable: function() {
+                playable: function () {
                     return (
                         this.stack.field === "deck" ||
                         (this.isFree() && this.stack.field !== "foundation")
                     );
                 },
 
-                createNode: function() {
+                createNode: function () {
                     let groups;
                     const card = this;
 
@@ -19763,13 +19752,13 @@ define([], function() {
                     Solitaire.container().append(node);
                 },
 
-                destroyNode: function() {
+                destroyNode: function () {
                     const n = this.node;
 
                     n && n.clearData().destroy(true);
                 },
 
-                createProxyStack: function() {
+                createProxyStack: function () {
                     if (this.isFaceDown || this.stack.field === "foundation") {
                         this.proxyStack = null;
                         return null;
@@ -19803,11 +19792,11 @@ define([], function() {
                     return this.proxyStack;
                 },
 
-                proxyCards: function() {
+                proxyCards: function () {
                     return this.proxyStack.cards;
                 },
 
-                createProxyNode: function() {
+                createProxyNode: function () {
                     const node = Y.Node.create("<div></div>"),
                         stack = this.proxyStack;
 
@@ -19829,7 +19818,7 @@ define([], function() {
                             left: -this.left,
                         });
 
-                        Y.Array.each(this.proxyCards(), function(c) {
+                        Y.Array.each(this.proxyCards(), function (c) {
                             c.proxyStack = stack;
                             node.append(c.node);
                         });
@@ -19838,7 +19827,7 @@ define([], function() {
                     return node;
                 },
 
-                updatePosition: function(fields) {
+                updatePosition: function (fields) {
                     if (!this.node) {
                         return;
                     }
@@ -19860,7 +19849,7 @@ define([], function() {
                     Y.Solitaire.Animation.init(this, to, fields);
                 },
 
-                pushPosition: function() {
+                pushPosition: function () {
                     const index =
                         this.index >= 0
                             ? this.index
@@ -19873,7 +19862,7 @@ define([], function() {
                     });
                 },
 
-                moveTo: function(stack) {
+                moveTo: function (stack) {
                     const origin = this.stack;
 
                     this.pushPosition();
@@ -19885,11 +19874,11 @@ define([], function() {
                     return this;
                 },
 
-                after: function(callback) {
+                after: function (callback) {
                     this.callback = callback;
                 },
 
-                runCallback: function() {
+                runCallback: function () {
                     if (this.callback) {
                         this.callback.call(this);
                         this.callback = null;
@@ -19907,7 +19896,7 @@ define([], function() {
                     foundation: "freeslot.png",
                 },
 
-                serialize: function() {
+                serialize: function () {
                     let i, len, card, bite;
                     const cards = this.cards,
                         serialized = [],
@@ -19928,7 +19917,7 @@ define([], function() {
                     return serialized.join("");
                 },
 
-                eachCard: function(callback) {
+                eachCard: function (callback) {
                     let i, len;
                     const cards = this.cards;
 
@@ -19943,7 +19932,7 @@ define([], function() {
                     return true;
                 },
 
-                setCards: function(count, cardGen) {
+                setCards: function (count, cardGen) {
                     let i, len, card;
                     const empty = instance(Game.Card, {
                         updatePosition: Solitaire.noop,
@@ -19964,14 +19953,14 @@ define([], function() {
                     }
                 },
 
-                updateCardsPosition: function() {
+                updateCardsPosition: function () {
                     const cards = this.cards;
 
                     Game.stationary(
-                        function() {
+                        function () {
                             const that = this;
                             this.proxy || this.adjustRankHeight();
-                            this.setCards(cards.length, function(i) {
+                            this.setCards(cards.length, function (i) {
                                 const card = cards[i];
 
                                 if (card) {
@@ -19984,16 +19973,16 @@ define([], function() {
                         }.bind(this),
                     );
 
-                    this.eachCard(function(c) {
+                    this.eachCard(function (c) {
                         c.updatePosition();
                     });
                 },
 
-                updateCardsStyle: function() {
+                updateCardsStyle: function () {
                     const field = this.field;
 
                     field === "foundation" ||
-                        this.eachCard(function(c) {
+                        this.eachCard(function (c) {
                             if (c.playable()) {
                                 c.node.addClass("playable");
                             } else {
@@ -20002,11 +19991,11 @@ define([], function() {
                         });
                 },
 
-                unserialize: function(serialized) {
+                unserialize: function (serialized) {
                     const deck = Game.deck,
                         Card = Game.Card;
 
-                    this.setCards(serialized.length, function(i) {
+                    this.setCards(serialized.length, function (i) {
                         let card;
 
                         const value = serialized.charCodeAt(i);
@@ -20030,7 +20019,7 @@ define([], function() {
                     this.update();
                 },
 
-                imageSrc: function() {
+                imageSrc: function () {
                     const basename = this.images[this.field];
 
                     return basename
@@ -20038,13 +20027,13 @@ define([], function() {
                         : "trans.gif";
                 },
 
-                layout: function(layout) {
+                layout: function (layout) {
                     const hoffset = layout.hoffset * Y.Solitaire.Card.width,
                         voffset = layout.voffset * Y.Solitaire.Card.height,
                         gameOffset = Solitaire.offset,
                         self = this;
 
-                    Y.Array.each(["top", "left"], function(p) {
+                    Y.Array.each(["top", "left"], function (p) {
                         self[p] = normalize(layout[p]);
                     });
 
@@ -20052,11 +20041,11 @@ define([], function() {
                     this.top += voffset + gameOffset.top;
                 },
 
-                deleteItem: function(card) {
+                deleteItem: function (card) {
                     _deleteItem(this.cards, card);
                 },
 
-                push: function(card, temp) {
+                push: function (card, temp) {
                     const last = this.my_Last(),
                         to = this.field,
                         from = card.stack ? card.stack.field : "deck";
@@ -20084,21 +20073,21 @@ define([], function() {
                     temp || card.updatePosition({ from: from, to: to });
                 },
 
-                pushStack: function(proxy) {
+                pushStack: function (proxy) {
                     const origin = Solitaire.activeCard.stack,
                         stack = this;
 
                     /* save the card's index in the stack so we can properly undo this move */
-                    origin.eachCard(function(card, i) {
+                    origin.eachCard(function (card, i) {
                         card.index = i;
                     });
 
-                    Game.stationary(function() {
-                        proxy.eachCard(function(card) {
+                    Game.stationary(function () {
+                        proxy.eachCard(function (card) {
                             card.moveTo(stack);
                             card.index = -1;
                         });
-                        origin.eachCard(function(card) {
+                        origin.eachCard(function (card) {
                             card.index = -1;
                         });
                     });
@@ -20109,7 +20098,7 @@ define([], function() {
                     Y.fire(stack.field + ":afterPush", stack);
                 },
 
-                adjustRankHeight: function() {
+                adjustRankHeight: function () {
                     const cards = this.cards,
                         last = this.my_Last(),
                         max = Game.maxStackHeight();
@@ -20169,23 +20158,23 @@ define([], function() {
                     this.rankHeight = Math.floor(rhVisible);
                 },
 
-                first: function() {
+                first: function () {
                     return this.cards[0];
                 },
 
-                my_Last: function() {
+                my_Last: function () {
                     return _.last(this.cards);
                 },
 
-                index: function() {
+                index: function () {
                     return Game[this.field].stacks.indexOf(this);
                 },
 
-                next: function() {
+                next: function () {
                     return Game[this.field].stacks[this.index() + 1];
                 },
 
-                lastCardSetCardPosition: function(card) {
+                lastCardSetCardPosition: function (card) {
                     const last = _.last(this.cards),
                         top = last ? last.top + last.rankHeight : this.top,
                         left = this.left;
@@ -20194,12 +20183,12 @@ define([], function() {
                     card.top = top;
                 },
 
-                setCardPosition: function(card) {
+                setCardPosition: function (card) {
                     card.top = this.top;
                     card.left = isNaN(this.left) ? null : this.left;
                 },
 
-                wrapperStyle: function() {
+                wrapperStyle: function () {
                     return {
                         left: Math.floor(this.left),
                         top: Math.floor(this.top),
@@ -20208,13 +20197,13 @@ define([], function() {
                     };
                 },
 
-                updateStyle: function() {
+                updateStyle: function () {
                     const n = this.node;
 
                     n && n.setStyles(this.wrapperStyle());
                 },
 
-                createNode: function() {
+                createNode: function () {
                     const that = this;
                     const node = (that.node = Y.Node.create(
                         "<img class='stack' />",
@@ -20230,21 +20219,21 @@ define([], function() {
                     Solitaire.container().append(node);
                 },
 
-                cleanup: function() {
+                cleanup: function () {
                     const n = this.node;
 
                     n && n.clearData().destroy(true);
 
-                    this.eachCard(function(c) {
+                    this.eachCard(function (c) {
                         c.destroyNode();
                     });
                 },
 
-                updateDragGroups: function() {
+                updateDragGroups: function () {
                     const active = Solitaire.activeCard,
                         last = this.my_Last();
 
-                    this.eachCard(function(c) {
+                    this.eachCard(function (c) {
                         c.node.drop.removeFromGroup("open");
                     });
 
@@ -20258,17 +20247,17 @@ define([], function() {
                     }
                 },
 
-                validCard: function() {
+                validCard: function () {
                     return true;
                 },
 
-                validProxy: function(card) {
+                validProxy: function (card) {
                     return (
                         card && card.validTarget(this) && this.validCard(card)
                     );
                 },
 
-                update: function() {},
+                update: function () {},
             };
 
             Y.Solitaire.Animation = {
@@ -20278,11 +20267,11 @@ define([], function() {
                 interval: 20, // milliseconds
                 queue: new Y.AsyncQueue(),
 
-                init: function(card, to, fields) {
+                init: function (card, to, fields) {
                     if (!this.animate) {
                         card.node.setStyles(to);
                         card.positioned = true;
-                        setTimeout(function() {
+                        setTimeout(function () {
                             card.runCallback();
                         }, 0);
                         return;
@@ -20331,19 +20320,19 @@ define([], function() {
                         duration: duration,
                     });
 
-                    anim.on("end", function() {
+                    anim.on("end", function () {
                         card.positioned = true;
                         node.setStyle("zIndex", zIndex);
                         card.runCallback();
                     });
 
-                    q.add(function() {
+                    q.add(function () {
                         anim.run();
                     });
                     q.run();
                 },
 
-                initQueue: function() {
+                initQueue: function () {
                     const q = this.queue;
 
                     q.defaults.timeout = this.interval;
@@ -20353,24 +20342,24 @@ define([], function() {
             const Undo = {
                 stack: null,
 
-                clear: function() {
+                clear: function () {
                     this.stack = [];
                 },
 
-                push: function(moves) {
+                push: function (moves) {
                     this.stack.push(moves);
                 },
 
-                pop: function() {
+                pop: function () {
                     return this.stack.pop() || [];
                 },
 
-                undo: function() {
+                undo: function () {
                     const stacks = Y.Array.unique(
                         my_Flatten(Y.Array.map(this.pop(), this.act)),
                     );
 
-                    Y.Array.each(stacks, function(stack) {
+                    Y.Array.each(stacks, function (stack) {
                         if (stack) {
                             stack.updateCardsPosition();
                             stack.update(true);
@@ -20378,7 +20367,7 @@ define([], function() {
                     });
                 },
 
-                act: function(move) {
+                act: function (move) {
                     const from = move.from,
                         card = move.card,
                         to = card.stack,
@@ -20436,7 +20425,7 @@ define([
     "./web-fc-solve",
     "./solitaire",
     "./flatted",
-], function(Module, w, solitaire, flatted) {
+], function (Module, w, solitaire, flatted) {
     "use strict";
     const FC_Solve = w.FC_Solve;
     const FCS_STATE_SUSPEND_PROCESS = w.FCS_STATE_SUSPEND_PROCESS;
@@ -20474,18 +20463,20 @@ define([
         }
     }
     function sortedStacks(Y, field) {
-        return Y.Array.map(field.stacks, function(s) {
+        return Y.Array.map(field.stacks, function (s) {
             return s;
-        }).sort(function(s1, s2) {
+        }).sort(function (s1, s2) {
             return cardToValue(s1.first()) - cardToValue(s2.first());
         });
     }
 
     function gameToState(Y, game) {
-        const tableau = Y.Array.map(sortedStacks(Y, game.tableau), function(s) {
+        const tableau = Y.Array.map(sortedStacks(Y, game.tableau), function (
+            s,
+        ) {
             const buffer = [];
 
-            s.eachCard(function(c, i) {
+            s.eachCard(function (c, i) {
                 buffer[i] = cardToValue(c);
             });
 
@@ -20493,12 +20484,12 @@ define([
         });
 
         const reserve = [];
-        Y.Array.forEach(sortedStacks(Y, game.reserve), function(s, i) {
+        Y.Array.forEach(sortedStacks(Y, game.reserve), function (s, i) {
             reserve[i] = cardToValue(s.my_Last());
         });
 
         const foundation = [];
-        Y.Array.forEach(sortedStacks(Y, game.foundation), function(s, i) {
+        Y.Array.forEach(sortedStacks(Y, game.foundation), function (s, i) {
             foundation[i] = cardToValue(s.my_Last());
         });
 
@@ -20600,7 +20591,9 @@ define([
                 onRuntimeInitialized: () => {
                     _my_module.then((result) => {
                         _my_non_promise_module = result;
-                        w.FC_Solve_init_wrappers_with_module(_my_non_promise_module);
+                        w.FC_Solve_init_wrappers_with_module(
+                            _my_non_promise_module,
+                        );
                         callback();
                     });
                 },
@@ -20720,9 +20713,9 @@ define([
             };
         }
 
-        throw "Must not happen - _calc__move_content() failed with <" +
-            str +
-            ">";
+        throw (
+            "Must not happen - _calc__move_content() failed with <" + str + ">"
+        );
     }
     function _calc__ret_moves(moves_) {
         const ret_moves = [];
@@ -20751,7 +20744,7 @@ define([
             // cmd_line_preset: "lg",
             // cmd_line_preset: 'as',
             // cmd_line_preset: 'default',
-            set_status_callback: function(status) {
+            set_status_callback: function (status) {
                 if (status == "exceeded") {
                     exceeded_iters = true;
                 }
@@ -20790,27 +20783,27 @@ define([
             ? _calc__ret_moves(instance._pre_expand_states_and_moves_seq)
             : [];
         Animation.init(solution);
-        (function() {
+        (function () {
             if (!Y.UA.chrome) {
                 return;
             }
             const old = document.body.style.zoom;
             document.body.style.zoom = "80%";
-            setTimeout(function() {
+            setTimeout(function () {
                 document.body.style.zoom = old;
             }, 10);
         })();
         if (false) {
             if (solution) {
                 Status.stopIndicator(true);
-                window.setTimeout(function() {
+                window.setTimeout(function () {
                     Animation.play(getGame());
                 }, 3000);
             } else {
                 Status.stopIndicator(false);
                 console.log("no solution");
                 if (false) {
-                    window.setTimeout(function() {
+                    window.setTimeout(function () {
                         Y.fire("newAppGame");
                     }, 3000);
                 }
@@ -20827,13 +20820,13 @@ define([
 
         let value = source[1];
         const source_type = source[0];
-        game.eachStack(function(stack) {
+        game.eachStack(function (stack) {
             if (ret.card) {
                 return;
             }
             const len = stack.cards.length;
 
-            stack.eachCard(function(card, i) {
+            stack.eachCard(function (card, i) {
                 if (ret.card) {
                     return false;
                 }
@@ -20860,7 +20853,7 @@ define([
         }
 
         value = dest[1];
-        game.eachStack(function(stack) {
+        game.eachStack(function (stack) {
             if (ret.stack) {
                 return;
             }
@@ -20873,16 +20866,19 @@ define([
 
             if (
                 card &&
-                (card.rank === cardRank(value) && card.suit === cardSuit(value))
+                card.rank === cardRank(value) &&
+                card.suit === cardSuit(value)
             ) {
                 ret.stack = stack;
             }
         }, dest[0]);
 
         if (!ret.stack) {
-            throw "Must not happen - could not find dest stack for <" +
+            throw (
+                "Must not happen - could not find dest stack for <" +
                 value +
-                ">";
+                ">"
+            );
         }
         // console.log("found for <" + value + ">");
 
@@ -20893,7 +20889,7 @@ define([
 
     YUI.add(
         "solver-freecell",
-        function(Y) {
+        function (Y) {
             Y.namespace("Solitaire.Solver.Freecell");
 
             // only let this work with typed arrays
@@ -20908,7 +20904,7 @@ define([
 
             const redeal = Y.one("#redeal");
             if (redeal) {
-                redeal.on("click", function() {
+                redeal.on("click", function () {
                     Solitaire.Application.newGame();
                     getGame().redeal();
                     return;
@@ -20921,12 +20917,12 @@ define([
                 remainingMovesIdx: null,
                 remainingMovesArr: [],
 
-                init: function(moves) {
+                init: function (moves) {
                     this.remainingMovesArr = moves;
                     this.remainingMovesIdx = 0;
                 },
 
-                pause: function() {
+                pause: function () {
                     // Solitaire.Autoplay.enable();
 
                     window.clearTimeout(this.timer);
@@ -20936,7 +20932,7 @@ define([
                         /* Remove UI clutter for the demo */ withSelector(
                             Y,
                             "#solver_bar .pause",
-                            function(node) {
+                            function (node) {
                                 node.removeClass("pause");
                                 node.addClass("play");
                                 // node.set("text", "⏵");
@@ -20945,7 +20941,7 @@ define([
                     }
                 },
 
-                _playCurrentHelper: function(game) {
+                _playCurrentHelper: function (game) {
                     const that = this;
 
                     if (
@@ -20967,7 +20963,7 @@ define([
                     const origin = card.stack;
 
                     if (false) {
-                        card.after(function() {
+                        card.after(function () {
                             origin.updateCardsPosition();
                             move.stack.updateCardsPosition();
                         });
@@ -20994,12 +20990,12 @@ define([
                         // alert("proxyStack " + flatted.stringify(proxyStack));
 
                         if (false) {
-                            getGame().unanimated(function() {
+                            getGame().unanimated(function () {
                                 proxyStack.updateCardsPosition();
                             });
                         }
 
-                        Y.Array.each(proxyStack.cards, function(card) {
+                        Y.Array.each(proxyStack.cards, function (card) {
                             if (!card) {
                                 return;
                             }
@@ -21017,20 +21013,20 @@ define([
                     return true;
                 },
 
-                _resetGameFoo: function() {
+                _resetGameFoo: function () {
                     const that = this;
                     if (false) {
                         // window.clearTimeout(that.timer);
                         // that.timer = undefined;
                         Animation.pause();
-                        window.setTimeout(function() {
+                        window.setTimeout(function () {
                             Y.fire("newAppGame");
                         }, 2000);
                         // Y.fire("newAppGame");
                     }
                 },
 
-                playCurrent: function(game) {
+                playCurrent: function (game) {
                     const that = this;
                     const verdict = that._playCurrentHelper(game);
 
@@ -21040,7 +21036,7 @@ define([
                     }
                 },
 
-                prev: function(game) {
+                prev: function (game) {
                     const that = this;
                     if (that.remainingMovesIdx > 0) {
                         Y.fire("undo", true);
@@ -21048,7 +21044,7 @@ define([
                     }
                 },
 
-                next: function(game) {
+                next: function (game) {
                     const that = this;
                     const next_idx = this.remainingMovesIdx + 1;
 
@@ -21066,7 +21062,7 @@ define([
                     Y.fire("endTurn", true);
                 },
 
-                play: function(game) {
+                play: function (game) {
                     const that = this;
 
                     if (
@@ -21080,7 +21076,7 @@ define([
                     Solitaire.Autoplay.disable();
 
                     if (WITH_UI) {
-                        withSelector(Y, "#solver_bar .play", function(node) {
+                        withSelector(Y, "#solver_bar .play", function (node) {
                             node.removeClass("play");
                             node.addClass("pause");
                             // node.set("text", "⏸");
@@ -21095,7 +21091,7 @@ define([
                             that.remainingMovesIdx < 0
                         )
                     ) {
-                        that.timer = window.setTimeout(function() {
+                        that.timer = window.setTimeout(function () {
                             that.play(game);
                         }, that.interval);
                     }
@@ -21109,7 +21105,7 @@ define([
                 indicatorInterval: 750,
                 delay: 400,
 
-                updateIndicator: function(ticks) {
+                updateIndicator: function (ticks) {
                     const that = this;
                     const indicator = that.indicator;
 
@@ -21125,13 +21121,13 @@ define([
 
                     indicator.set("text", text);
 
-                    that.indicatorTimer = window.setTimeout(function() {
+                    that.indicatorTimer = window.setTimeout(function () {
                         // body...
                         return that.updateIndicator(ticks + 1);
                     }, that.indicatorInterval);
                 },
 
-                stopIndicator: function(solved) {
+                stopIndicator: function (solved) {
                     const indicator = this.indicator;
 
                     window.clearTimeout(this.indicatorTimer);
@@ -21142,7 +21138,7 @@ define([
                     if (solved) {
                         indicator.set("text", "Solution found");
                         if (WITH_UI) {
-                            withSelector(Y, "#solver_bar .controls", function(
+                            withSelector(Y, "#solver_bar .controls", function (
                                 node,
                             ) {
                                 node.removeClass("hidden");
@@ -21155,7 +21151,7 @@ define([
                     this.indicatorTimer = null;
                 },
 
-                show: function() {
+                show: function () {
                     if (!WITH_UI) {
                         return;
                     } // remove UI clutter for the demo
@@ -21192,15 +21188,15 @@ define([
                     const controls = Y.Node.create(
                         "<div class='controls'></div>",
                     );
-                    next.on("click", function() {
+                    next.on("click", function () {
                         Animation.pause();
                         Animation.next(getGame());
                     });
-                    prev.on("click", function() {
+                    prev.on("click", function () {
                         Animation.pause();
                         Animation.prev(getGame());
                     });
-                    playPause.on("click", function() {
+                    playPause.on("click", function () {
                         const that = playPause;
                         /*
                          * Here I tie up state with the DOM
@@ -21228,7 +21224,7 @@ define([
                     this.bar = bar;
                 },
 
-                hide: function() {
+                hide: function () {
                     if (false) {
                         if (this.bar) {
                             this.bar.remove();
@@ -21236,7 +21232,7 @@ define([
                     }
                 },
             };
-            _startSolution_cb = function(args) {
+            _startSolution_cb = function (args) {
                 Y.Solitaire.Application.switchToGame("freecell");
                 Y.Solitaire.Application.clearDOM();
                 Y.Solitaire.Freecell.setup(
@@ -21252,19 +21248,19 @@ define([
                         const tableau = game.tableau.stacks;
                         board.columns.forEach((col, ci) => {
                             const column = col.col;
-                            tableau[ci].setCards(column.getLen(), function(i) {
+                            tableau[ci].setCards(column.getLen(), function (i) {
                                 return _from_card(column.getCard(i));
                             });
                         });
                         const fc = board.freecells;
                         game.reserve.stacks.forEach((stack, i) => {
                             const card = fc ? fc.freecells.getCard(i) : null;
-                            stack.setCards(card ? 1 : 0, function(_unused) {
+                            stack.setCards(card ? 1 : 0, function (_unused) {
                                 return _from_card(card);
                             });
                         });
                         const foundations = board.foundations;
-                        game.foundation.stacks.forEach(function(stack, suit) {
+                        game.foundation.stacks.forEach(function (stack, suit) {
                             stack.setCards(
                                 foundations
                                     ? 1 +
@@ -21273,7 +21269,7 @@ define([
                                               [1, 2, 0, 3][suit],
                                           )
                                     : 0,
-                                function(rank) {
+                                function (rank) {
                                     return Y.Solitaire.Freecell.Card.create(
                                         rank,
                                         game.deck.suits[suit],
@@ -21300,22 +21296,22 @@ define([
                 attached: false,
                 supportedGames: ["Freecell"],
 
-                isSupported: function() {
+                isSupported: function () {
                     return this.supportedGames.indexOf(getGame().name()) !== -1;
                 },
 
-                enable: function() {
+                enable: function () {
                     if (this.isSupported()) {
                         this.createUI();
                     }
                     this.attachEvents();
                 },
 
-                disable: function() {
+                disable: function () {
                     Status.hide();
                 },
 
-                attachEvents: function() {
+                attachEvents: function () {
                     const that = this;
                     if (that.attached) {
                         return;
@@ -21324,7 +21320,7 @@ define([
                     const pause = Animation.pause.bind(Animation);
 
                     // start the solver if the current game supports it
-                    Y.on("afterDealingAnimation", function() {
+                    Y.on("afterDealingAnimation", function () {
                         if (that.isSupported()) {
                             that.solver_active = false;
                             Animation.remainingMovesIdx = null;
@@ -21338,7 +21334,7 @@ define([
                     if (false) {
                         // if a solution isn't currently being played,
                         // find a new solution on every new turn
-                        Y.on("endTurn", function(dontResolve) {
+                        Y.on("endTurn", function (dontResolve) {
                             if (dontResolve || !that.isSupported()) {
                                 return;
                             }
@@ -21346,18 +21342,18 @@ define([
                         });
                     }
 
-                    Y.on("autoPlay", function() {
+                    Y.on("autoPlay", function () {
                         FreecellSolver.disable();
                     });
 
-                    Y.on("win", function() {
+                    Y.on("win", function () {
                         // FreecellSolver.disable();
                     });
 
                     // human interaction stops playing the current solution
                     document.documentElement.addEventListener(
                         "mousedown",
-                        function(e) {
+                        function (e) {
                             if (e.target.className.match(/\bpause\b/)) {
                                 return;
                             }
@@ -21370,13 +21366,13 @@ define([
                     return;
                 },
 
-                createUI: function() {
+                createUI: function () {
                     Status.show();
                 },
 
-                stop: function() {},
+                stop: function () {},
 
-                solve: function() {
+                solve: function () {
                     const that = this;
                     if (that.solver_active) {
                         return;
@@ -21387,7 +21383,7 @@ define([
                     // Remove UI clutter for the demo.
                     if (WITH_UI) {
                         if (false) {
-                            withSelector(Y, "#solver_bar .controls", function(
+                            withSelector(Y, "#solver_bar .controls", function (
                                 node,
                             ) {
                                 node.addClass("hidden");
@@ -21398,14 +21394,14 @@ define([
                     that.currentSolution = null;
                     if (false) {
                         window.clearTimeout(Status.indicatorTimer);
-                        Status.indicatorTimer = window.setTimeout(function() {
+                        Status.indicatorTimer = window.setTimeout(function () {
                             return Status.updateIndicator(0);
                         }, Status.delay);
                     }
                     const state = gameToState(Y, getGame());
 
                     function _cb() {
-                        window.setTimeout(function() {
+                        window.setTimeout(function () {
                             return _solve_cb(
                                 Y,
                                 that,
@@ -21456,7 +21452,7 @@ function GameState(obj) {
     }
 }
 
-GameState.fromState = function(other) {
+GameState.fromState = function (other) {
     const state = new GameState();
 
     state.tableau = other.tableau;
@@ -21475,7 +21471,7 @@ GameState.prototype = {
     parent: null,
     child: null,
 
-    solved: function() {
+    solved: function () {
         const foundation = this.foundation;
 
         for (let i = 0, len = 4; i < len; i++) {
@@ -21487,7 +21483,7 @@ GameState.prototype = {
         return true;
     },
 
-    eachTableau: function(callback) {
+    eachTableau: function (callback) {
         const tableau = this.tableau;
 
         for (let i = 0, len = tableau.length; i < len; i++) {
@@ -21496,7 +21492,7 @@ GameState.prototype = {
         }
     },
 
-    validTarget: function(field, value, start) {
+    validTarget: function (field, value, start) {
         const rank = value >> 2,
             suit = value & 3;
         let dest, tableau, i, len;
@@ -21552,12 +21548,12 @@ GameState.prototype = {
         return -1;
     },
 
-    move: function(sourceField, sourceStack, destField, destStack) {
+    move: function (sourceField, sourceStack, destField, destStack) {
         const val = this.pop(sourceField, sourceStack);
         this.push(destField, destStack, val);
     },
 
-    pop: function(field, stack) {
+    pop: function (field, stack) {
         let val, newBuffer, i, len;
 
         if (field === "reserve" || field === "foundation") {
@@ -21580,7 +21576,7 @@ GameState.prototype = {
         return val;
     },
 
-    push: function(field, stack, val) {
+    push: function (field, stack, val) {
         if (!val) {
             return;
         }
@@ -21596,7 +21592,7 @@ GameState.prototype = {
         this.tableau[stack][0][newLength - 1] = val;
     },
 
-    copyTableau: function(stack, newLength) {
+    copyTableau: function (stack, newLength) {
         const old = this.tableau,
             tableau = old[stack][0],
             newBuffer = new Uint8Array(new ArrayBuffer(newLength));
@@ -21616,17 +21612,17 @@ GameState.prototype = {
         }
     },
 
-    sort: function() {
+    sort: function () {
         Array.prototype.sort.call(this.reserve);
         Array.prototype.sort.call(this.foundation);
-        this.tableau.sort(function(a, b) {
+        this.tableau.sort(function (a, b) {
             return a[0][0] - b[0][0];
         });
     },
 
     _serialized: null,
     // TODO write a real hash function
-    serialize: function() {
+    serialize: function () {
         if (this._serialized !== null) {
             return this._serialized;
         }
@@ -21658,7 +21654,7 @@ GameState.prototype = {
     },
 
     // the search heuristic function
-    rateMove: function(sourceField, sourceIndex, destField, destIndex) {
+    rateMove: function (sourceField, sourceIndex, destField, destIndex) {
         const RATING_FOUNDATION = 1000,
             RATING_CLOSEDTABLEAUFOLLOWUP = 20,
             RATING_FREEFOUNDATIONTARGET = 15,
@@ -21775,7 +21771,7 @@ GameState.prototype = {
         return rating;
     },
 
-    transformParentMove: function() {
+    transformParentMove: function () {
         const move = this.parentMove,
             parent = this.parent;
 
@@ -21787,7 +21783,7 @@ GameState.prototype = {
         move.dest[1] = parent.lastCard(move.dest[0], move.dest[1]);
     },
 
-    lastCard: function(field, index) {
+    lastCard: function (field, index) {
         switch (field) {
             case "reserve":
             case "foundation":
@@ -21801,7 +21797,7 @@ GameState.prototype = {
         }
     },
 
-    becomeChild: function() {
+    becomeChild: function () {
         const parent = this.parent;
 
         if (!parent) {
@@ -21956,7 +21952,7 @@ function solve(state, depth, visited, movesSinceFoundation, fastSearch) {
         moves[i] = next;
     }
 
-    moves.sort(function(a, b) {
+    moves.sort(function (a, b) {
         return b.rating - a.rating;
     });
 
@@ -22051,7 +22047,7 @@ function _render_state_as_string(obj) {
     ret +=
         "Foundations:" +
         foundation
-            .map(function(c) {
+            .map(function (c) {
                 if (c == 0) {
                     return "";
                 } else {
@@ -22064,7 +22060,7 @@ function _render_state_as_string(obj) {
     ret +=
         "Freecells:" +
         reserve
-            .map(function(c) {
+            .map(function (c) {
                 if (c == 0) {
                     return " -";
                 } else {
@@ -22098,7 +22094,7 @@ function attemptSolution(obj, fastSearch) {
     const instance = new FC_Solve({
         cmd_line_preset: "ct",
         // cmd_line_preset: 'default',
-        set_status_callback: function() {
+        set_status_callback: function () {
             return;
         },
     });
@@ -22111,7 +22107,7 @@ function attemptSolution(obj, fastSearch) {
 
     if (solve_err_code == FCS_STATE_WAS_SOLVED) {
         const buffer = instance.display_expanded_moves_solution({});
-        const to_int = function(s) {
+        const to_int = function (s) {
             return parseInt(s, 10);
         };
 
@@ -22127,7 +22123,7 @@ function attemptSolution(obj, fastSearch) {
             if (m.type == "m") {
                 const str = m.str;
 
-                const move_content = (function() {
+                const move_content = (function () {
                     let matched = str.match(
                         /^Move 1 cards from stack ([0-9]+) to stack ([0-9]+)/,
                     );
@@ -22187,7 +22183,7 @@ function attemptSolution(obj, fastSearch) {
     return;
 }
 
-onmessage = function(e) {
+onmessage = function (e) {
     let state, solution;
     const data = e.data;
 
@@ -22202,17 +22198,17 @@ onmessage = function(e) {
 };
 YUI.add(
     "spider",
-    function(Y) {
+    function (Y) {
         const Solitaire = Y.Solitaire,
             Spider = (Solitaire.Spider = Solitaire.instance(Solitaire, {
                 fields: ["Foundation", "Deck", "Tableau"],
 
-                createEvents: function() {
+                createEvents: function () {
                     Solitaire.AutoStackClear.register();
                     Solitaire.createEvents.call(this);
                 },
 
-                deal: function() {
+                deal: function () {
                     const deck = this.deck,
                         stacks = this.tableau.stacks;
 
@@ -22231,9 +22227,9 @@ YUI.add(
                     deck.createStack();
                 },
 
-                redeal: function() {},
+                redeal: function () {},
 
-                turnOver: function() {
+                turnOver: function () {
                     const deck = this.deck.stacks[0];
                     const that = this;
 
@@ -22241,13 +22237,13 @@ YUI.add(
                         return;
                     }
 
-                    this.eachStack(function(stack) {
+                    this.eachStack(function (stack) {
                         const card = deck.my_Last();
 
                         if (card) {
                             card.faceUp()
                                 .moveTo(stack)
-                                .after(function() {
+                                .after(function () {
                                     that.stack.updateCardsPosition();
                                 });
                         }
@@ -22262,7 +22258,7 @@ YUI.add(
                         layout: {
                             hspacing: 1.25,
                             top: 0,
-                            left: function() {
+                            left: function () {
                                 return Solitaire.Card.width * 2.5;
                             },
                         },
@@ -22290,7 +22286,7 @@ YUI.add(
                         total: 10,
                         layout: {
                             hspacing: 1.25,
-                            top: function() {
+                            top: function () {
                                 return Solitaire.Card.height * 1.5;
                             },
                             left: 0,
@@ -22300,7 +22296,7 @@ YUI.add(
                 },
 
                 Card: Solitaire.instance(Solitaire.Card, {
-                    playable: function() {
+                    playable: function () {
                         const previous = this.stack[this.index - 1];
 
                         switch (this.stack.field) {
@@ -22313,7 +22309,7 @@ YUI.add(
                         }
                     },
 
-                    validTarget: function(stack) {
+                    validTarget: function (stack) {
                         if (stack.field !== "tableau") {
                             return false;
                         }
@@ -22330,25 +22326,25 @@ YUI.add(
             }));
 
         function hasFreeTableaus() {
-            return Y.Array.some(Solitaire.getGame().tableau.stacks, function(
+            return Y.Array.some(Solitaire.getGame().tableau.stacks, function (
                 stack,
             ) {
                 return !stack.cards.length;
             });
         }
 
-        Y.Array.each(Spider.fields, function(field) {
+        Y.Array.each(Spider.fields, function (field) {
             Spider[field].Stack = Solitaire.instance(Spider.Stack);
         });
 
         Y.mix(
             Spider.Stack,
             {
-                validCard: function(card) {
+                validCard: function (card) {
                     return card.suit === _.last(this.cards).suit;
                 },
 
-                validTarget: function(stack) {
+                validTarget: function (stack) {
                     switch (stack.field) {
                         case "tableau":
                             return this.first().validTarget(stack);
@@ -22365,7 +22361,7 @@ YUI.add(
         Y.mix(
             Spider.Tableau.Stack,
             {
-                setCardPosition: function(card) {
+                setCardPosition: function (card) {
                     return this.lastCardSetCardPosition(card);
                 },
             },
@@ -22377,7 +22373,7 @@ YUI.add(
 );
 YUI.add(
     "spider1s",
-    function(Y) {
+    function (Y) {
         const Solitaire = Y.Solitaire,
             Spider = (Y.Solitaire.Spider1S = Solitaire.instance(
                 Y.Solitaire.Spider,
@@ -22393,7 +22389,7 @@ YUI.add(
 );
 YUI.add(
     "spider2s",
-    function(Y) {
+    function (Y) {
         const Spider = (Y.Solitaire.Spider2S = Y.Solitaire.instance(
             Y.Solitaire.Spider,
         ));
@@ -22408,7 +22404,7 @@ YUI.add(
 );
 YUI.add(
     "spiderette",
-    function(Y) {
+    function (Y) {
         const Solitaire = Y.Solitaire,
             Klondike = Solitaire.Klondike,
             Spider = Solitaire.Spider,
@@ -22431,14 +22427,14 @@ YUI.add(
     "0.0.1",
     { requires: ["klondike", "spider"] },
 );
-define(["./solitaire"], function(solitaire) {
+define(["./solitaire"], function (solitaire) {
     const getGame = solitaire.getGame;
     /*
      * record win/lose records, streaks, etc
      */
     YUI.add(
         "statistics",
-        function(Y) {
+        function (Y) {
             let loaded,
                 won,
                 enabled = true;
@@ -22450,7 +22446,7 @@ define(["./solitaire"], function(solitaire) {
                 return;
             }
 
-            Y.on("newGame", function() {
+            Y.on("newGame", function () {
                 if (loaded) {
                     recordLose();
                 }
@@ -22459,20 +22455,20 @@ define(["./solitaire"], function(solitaire) {
                 loaded = null;
             });
 
-            Y.on("loadGame", function() {
+            Y.on("loadGame", function () {
                 loaded = Solitaire.game.name();
                 saveProgress();
                 won = false;
             });
 
-            Y.on("endTurn", function() {
+            Y.on("endTurn", function () {
                 if (!loaded) {
                     loaded = Solitaire.game.name();
                     saveProgress();
                 }
             });
 
-            Y.on("win", function() {
+            Y.on("win", function () {
                 if (won || !enabled) {
                     return;
                 }
@@ -22485,7 +22481,7 @@ define(["./solitaire"], function(solitaire) {
                 explodeFoundations();
             });
 
-            Y.on("beforeSetup", function() {
+            Y.on("beforeSetup", function () {
                 const winDisplay = Y.one("#win_display");
 
                 winDisplay && winDisplay.remove();
@@ -22497,8 +22493,8 @@ define(["./solitaire"], function(solitaire) {
                     duration = 900,
                     interval = 900;
 
-                getGame().eachStack(function(stack) {
-                    stack.eachCard(function(card) {
+                getGame().eachStack(function (stack) {
+                    stack.eachCard(function (card) {
                         if (!card) {
                             return;
                         }
@@ -22510,8 +22506,8 @@ define(["./solitaire"], function(solitaire) {
                         }
 
                         node.plug(Y.Breakout, { columns: 5 });
-                        (function(node) {
-                            setTimeout(function() {
+                        (function (node) {
+                            setTimeout(function () {
                                 node.breakout.explode({
                                     random: 0.65,
                                     duration: duration,
@@ -22523,7 +22519,7 @@ define(["./solitaire"], function(solitaire) {
                     });
                 }, "foundation");
 
-                setTimeout(function() {
+                setTimeout(function () {
                     Statistics.winDisplay();
                 }, delay + 200);
             }
@@ -22620,7 +22616,7 @@ define(["./solitaire"], function(solitaire) {
 
                     entries.splice(entries.length - 1);
 
-                    return Y.Array.map(entries, function(entry) {
+                    return Y.Array.map(entries, function (entry) {
                         entry = entry.split("_");
 
                         return {
@@ -22637,11 +22633,11 @@ define(["./solitaire"], function(solitaire) {
                 const record = parse();
 
                 return {
-                    streaks: function() {
+                    streaks: function () {
                         const streaks = [];
                         let streak = null;
 
-                        Y.Array.each(record, function(entry) {
+                        Y.Array.each(record, function (entry) {
                             if (!entry.won) {
                                 streak && streaks.push(streak);
                                 streak = null;
@@ -22658,25 +22654,25 @@ define(["./solitaire"], function(solitaire) {
                         return streaks;
                     },
 
-                    wins: function() {
+                    wins: function () {
                         return Y.Array.filter(record, won);
                     },
 
-                    loses: function() {
+                    loses: function () {
                         return Y.Array.reject(record, won);
                     },
                 };
             }
 
             Y.mix(Statistics, {
-                winDisplay: function() {
+                winDisplay: function () {
                     const Application = Solitaire.Application;
 
                     Y.one(".solitairey_body").append(winDisplay());
 
                     Y.on(
                         "click",
-                        function() {
+                        function () {
                             Application.newGame();
                         },
                         Y.one("#win_display .new_deal"),
@@ -22685,7 +22681,7 @@ define(["./solitaire"], function(solitaire) {
                     if (false) {
                         Y.on(
                             "click",
-                            function() {
+                            function () {
                                 Application.GameChooser.show(true);
                             },
                             Y.one("#win_display .choose_game"),
@@ -22693,11 +22689,11 @@ define(["./solitaire"], function(solitaire) {
                     }
                 },
 
-                enable: function() {
+                enable: function () {
                     enabled = true;
                 },
 
-                disable: function() {
+                disable: function () {
                     enabled = false;
                 },
             });
@@ -22709,21 +22705,21 @@ define(["./solitaire"], function(solitaire) {
 });
 YUI.add(
     "tri-towers",
-    function(Y) {
+    function (Y) {
         const Solitaire = Y.Solitaire,
             TriTowers = (Y.Solitaire.TriTowers = Solitaire.instance(
                 Solitaire,
                 {
                     fields: ["Deck", "Foundation", "Tableau"],
 
-                    width: function() {
+                    width: function () {
                         return this.Card.base.width * 15;
                     },
-                    height: function() {
+                    height: function () {
                         return this.Card.base.height * 5;
                     },
-                    createEvents: function() {
-                        Y.on("solitaire|endTurn", function() {
+                    createEvents: function () {
+                        Y.on("solitaire|endTurn", function () {
                             const tableaus = Solitaire.game.tableau.stacks;
 
                             for (let i = 0; i < 3; i++) {
@@ -22734,7 +22730,7 @@ YUI.add(
                         Solitaire.createEvents.call(this);
                     },
 
-                    deal: function() {
+                    deal: function () {
                         let card, stack, i, stackLength;
 
                         const stacks = this.tableau.stacks,
@@ -22756,7 +22752,7 @@ YUI.add(
                         deck.createStack();
                     },
 
-                    turnOver: function() {
+                    turnOver: function () {
                         const deck = this.deck.stacks[0],
                             foundation = this.foundation.stacks[0],
                             last = deck.my_Last();
@@ -22764,11 +22760,11 @@ YUI.add(
                         last && last.faceUp().moveTo(foundation);
                     },
 
-                    isWon: function() {
+                    isWon: function () {
                         let won = true;
 
-                        this.eachStack(function(stack) {
-                            stack.eachCard(function(card) {
+                        this.eachStack(function (stack) {
+                            stack.eachCard(function (card) {
                                 if (card) {
                                     won = false;
                                 }
@@ -22786,14 +22782,14 @@ YUI.add(
                             total: 1,
                             layout: {
                                 hspacing: 0,
-                                top: function() {
+                                top: function () {
                                     return Solitaire.Card.height * 4;
                                 },
                                 left: 0,
                             },
                         },
 
-                        createStack: function() {
+                        createStack: function () {
                             for (
                                 let i = 0, len = this.cards.length;
                                 i < len;
@@ -22814,7 +22810,7 @@ YUI.add(
                                 vspacing: 0.6,
                                 hspacing: -0.625,
                                 top: 0,
-                                left: function() {
+                                left: function () {
                                     return Solitaire.Card.width * 1.875;
                                 },
                             },
@@ -22827,10 +22823,10 @@ YUI.add(
                             total: 1,
                             layout: {
                                 hspacing: 0,
-                                top: function() {
+                                top: function () {
                                     return Solitaire.Card.height * 4;
                                 },
-                                left: function() {
+                                left: function () {
                                     return Solitaire.Card.width * 4;
                                 },
                             },
@@ -22838,7 +22834,7 @@ YUI.add(
                     },
 
                     Events: Solitaire.instance(Solitaire.Events, {
-                        dragCheck: function(e) {
+                        dragCheck: function (e) {
                             this.getCard().autoPlay();
 
                             /* workaround because YUI retains stale drag information if we halt the event :\ */
@@ -22852,7 +22848,7 @@ YUI.add(
                          * return true if the target is 1 rank away from the this card
                          * Aces and Kings are valid targets for each other
                          */
-                        validTarget: function(stack) {
+                        validTarget: function (stack) {
                             if (stack.field !== "foundation") {
                                 return false;
                             }
@@ -22863,7 +22859,7 @@ YUI.add(
                             return diff === 1 || diff === 12;
                         },
 
-                        playable: function() {
+                        playable: function () {
                             const stack = this.stack;
 
                             return (
@@ -22877,7 +22873,7 @@ YUI.add(
                             );
                         },
 
-                        isFree: function() {
+                        isFree: function () {
                             const stack = this.stack,
                                 next = stack.next(),
                                 tower = this.tower(),
@@ -22900,7 +22896,7 @@ YUI.add(
                             return true;
                         },
 
-                        tower: function() {
+                        tower: function () {
                             const stack = this.stack,
                                 index = stack.cards.indexOf(this),
                                 stackIndex = stack.index() + 1;
@@ -22916,14 +22912,14 @@ YUI.add(
                 true,
             ));
 
-        Y.Array.each(TriTowers.fields, function(field) {
+        Y.Array.each(TriTowers.fields, function (field) {
             TriTowers[field].Stack = Solitaire.instance(TriTowers.Stack);
         });
 
         Y.mix(
             TriTowers.Tableau.Stack,
             {
-                deleteItem: function(card) {
+                deleteItem: function (card) {
                     const cards = this.cards,
                         i = cards.indexOf(card);
 
@@ -22932,7 +22928,7 @@ YUI.add(
                     }
                 },
 
-                setCardPosition: function(card) {
+                setCardPosition: function (card) {
                     let left, index, stackIndex;
                     const last = this.my_Last(),
                         top = this.top,
@@ -22963,7 +22959,7 @@ YUI.add(
         Y.mix(
             TriTowers.Deck.Stack,
             {
-                setCardPosition: function(card) {
+                setCardPosition: function (card) {
                     const last = this.my_Last();
                     let left, zIndex;
 
@@ -22989,16 +22985,16 @@ YUI.add(
 );
 YUI.add(
     "will-o-the-wisp",
-    function(Y) {
+    function (Y) {
         const Solitaire = Y.Solitaire,
             WillOTheWisp = (Y.Solitaire.WillOTheWisp = Solitaire.instance(
                 Solitaire.Spiderette,
                 {
-                    deal: function() {
+                    deal: function () {
                         const deck = this.deck;
 
                         for (let row = 0; row < 3; row++) {
-                            this.eachStack(function(stack) {
+                            this.eachStack(function (stack) {
                                 const card = deck.pop();
                                 if (row === 2) {
                                     card.faceUp();
@@ -23018,12 +23014,12 @@ YUI.add(
 );
 YUI.add(
     "yukon",
-    function(Y) {
+    function (Y) {
         const Solitaire = Y.Solitaire,
             Yukon = (Solitaire.Yukon = Solitaire.instance(Solitaire, {
                 fields: ["Foundation", "Tableau"],
 
-                deal: function() {
+                deal: function () {
                     let card,
                         piles = 6,
                         stack = 0;
@@ -23049,7 +23045,7 @@ YUI.add(
                     }
                 },
 
-                height: function() {
+                height: function () {
                     return this.Card.base.height * 4.8;
                 },
 
@@ -23061,7 +23057,7 @@ YUI.add(
                         layout: {
                             vspacing: 1.25,
                             top: 0,
-                            left: function() {
+                            left: function () {
                                 return Solitaire.Card.width * 9;
                             },
                         },
@@ -23084,13 +23080,13 @@ YUI.add(
                 },
 
                 Card: Solitaire.instance(Solitaire.Card, {
-                    playable: function() {
+                    playable: function () {
                         return (
                             this.stack.field === "tableau" && !this.isFaceDown
                         );
                     },
 
-                    validTarget: function(stack) {
+                    validTarget: function (stack) {
                         const target = stack.my_Last();
 
                         switch (stack.field) {
@@ -23122,21 +23118,21 @@ YUI.add(
                 }),
             }));
 
-        Y.Array.each(Yukon.fields, function(field) {
+        Y.Array.each(Yukon.fields, function (field) {
             Yukon[field].Stack = Solitaire.instance(Yukon.Stack);
         });
 
         Y.mix(
             Yukon.Stack,
             {
-                validTarget: function(stack) {
+                validTarget: function (stack) {
                     return (
                         stack.field === "tableau" &&
                         this.first().validTarget(stack)
                     );
                 },
 
-                validProxy: function(card) {
+                validProxy: function (card) {
                     return true;
                 },
             },
@@ -23146,7 +23142,7 @@ YUI.add(
         Y.mix(
             Yukon.Tableau.Stack,
             {
-                setCardPosition: function(card) {
+                setCardPosition: function (card) {
                     return this.lastCardSetCardPosition(card);
                 },
             },

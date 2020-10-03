@@ -1,11 +1,11 @@
-define(["./solitaire"], function(solitaire) {
+define(["./solitaire"], function (solitaire) {
     const getGame = solitaire.getGame;
     /*
      * record win/lose records, streaks, etc
      */
     YUI.add(
         "statistics",
-        function(Y) {
+        function (Y) {
             let loaded,
                 won,
                 enabled = true;
@@ -17,7 +17,7 @@ define(["./solitaire"], function(solitaire) {
                 return;
             }
 
-            Y.on("newGame", function() {
+            Y.on("newGame", function () {
                 if (loaded) {
                     recordLose();
                 }
@@ -26,20 +26,20 @@ define(["./solitaire"], function(solitaire) {
                 loaded = null;
             });
 
-            Y.on("loadGame", function() {
+            Y.on("loadGame", function () {
                 loaded = Solitaire.game.name();
                 saveProgress();
                 won = false;
             });
 
-            Y.on("endTurn", function() {
+            Y.on("endTurn", function () {
                 if (!loaded) {
                     loaded = Solitaire.game.name();
                     saveProgress();
                 }
             });
 
-            Y.on("win", function() {
+            Y.on("win", function () {
                 if (won || !enabled) {
                     return;
                 }
@@ -52,7 +52,7 @@ define(["./solitaire"], function(solitaire) {
                 explodeFoundations();
             });
 
-            Y.on("beforeSetup", function() {
+            Y.on("beforeSetup", function () {
                 const winDisplay = Y.one("#win_display");
 
                 winDisplay && winDisplay.remove();
@@ -64,8 +64,8 @@ define(["./solitaire"], function(solitaire) {
                     duration = 900,
                     interval = 900;
 
-                getGame().eachStack(function(stack) {
-                    stack.eachCard(function(card) {
+                getGame().eachStack(function (stack) {
+                    stack.eachCard(function (card) {
                         if (!card) {
                             return;
                         }
@@ -77,8 +77,8 @@ define(["./solitaire"], function(solitaire) {
                         }
 
                         node.plug(Y.Breakout, { columns: 5 });
-                        (function(node) {
-                            setTimeout(function() {
+                        (function (node) {
+                            setTimeout(function () {
                                 node.breakout.explode({
                                     random: 0.65,
                                     duration: duration,
@@ -90,7 +90,7 @@ define(["./solitaire"], function(solitaire) {
                     });
                 }, "foundation");
 
-                setTimeout(function() {
+                setTimeout(function () {
                     Statistics.winDisplay();
                 }, delay + 200);
             }
@@ -187,7 +187,7 @@ define(["./solitaire"], function(solitaire) {
 
                     entries.splice(entries.length - 1);
 
-                    return Y.Array.map(entries, function(entry) {
+                    return Y.Array.map(entries, function (entry) {
                         entry = entry.split("_");
 
                         return {
@@ -204,11 +204,11 @@ define(["./solitaire"], function(solitaire) {
                 const record = parse();
 
                 return {
-                    streaks: function() {
+                    streaks: function () {
                         const streaks = [];
                         let streak = null;
 
-                        Y.Array.each(record, function(entry) {
+                        Y.Array.each(record, function (entry) {
                             if (!entry.won) {
                                 streak && streaks.push(streak);
                                 streak = null;
@@ -225,25 +225,25 @@ define(["./solitaire"], function(solitaire) {
                         return streaks;
                     },
 
-                    wins: function() {
+                    wins: function () {
                         return Y.Array.filter(record, won);
                     },
 
-                    loses: function() {
+                    loses: function () {
                         return Y.Array.reject(record, won);
                     },
                 };
             }
 
             Y.mix(Statistics, {
-                winDisplay: function() {
+                winDisplay: function () {
                     const Application = Solitaire.Application;
 
                     Y.one(".solitairey_body").append(winDisplay());
 
                     Y.on(
                         "click",
-                        function() {
+                        function () {
                             Application.newGame();
                         },
                         Y.one("#win_display .new_deal"),
@@ -252,7 +252,7 @@ define(["./solitaire"], function(solitaire) {
                     if (false) {
                         Y.on(
                             "click",
-                            function() {
+                            function () {
                                 Application.GameChooser.show(true);
                             },
                             Y.one("#win_display .choose_game"),
@@ -260,11 +260,11 @@ define(["./solitaire"], function(solitaire) {
                     }
                 },
 
-                enable: function() {
+                enable: function () {
                     enabled = true;
                 },
 
-                disable: function() {
+                disable: function () {
                     enabled = false;
                 },
             });

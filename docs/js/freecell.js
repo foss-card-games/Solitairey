@@ -1,13 +1,13 @@
-define(["./solitaire"], function(solitaire) {
+define(["./solitaire"], function (solitaire) {
     const instance = solitaire.instance;
     YUI.add(
         "freecell",
-        function(Y) {
+        function (Y) {
             const Solitaire = Y.Solitaire;
             const Freecell = (Y.Solitaire.Freecell = instance(Solitaire, {
                 fields: ["Foundation", "Reserve", "Tableau"],
 
-                deal: function() {
+                deal: function () {
                     let card,
                         stack = 0;
                     const stacks = this.tableau.stacks;
@@ -21,7 +21,7 @@ define(["./solitaire"], function(solitaire) {
                     }
                 },
 
-                openSlots: function(exclude) {
+                openSlots: function (exclude) {
                     let total = 1,
                         freeTableaus = 0;
                     const rStacks = this.reserve.stacks,
@@ -41,7 +41,7 @@ define(["./solitaire"], function(solitaire) {
 
                 Stack: instance(Solitaire.Stack),
 
-                height: function() {
+                height: function () {
                     return this.Card.base.height * 5;
                 },
 
@@ -51,7 +51,7 @@ define(["./solitaire"], function(solitaire) {
                         layout: {
                             hspacing: 1.25,
                             top: 0,
-                            left: function() {
+                            left: function () {
                                 return Solitaire.Card.width * 6;
                             },
                         },
@@ -78,7 +78,7 @@ define(["./solitaire"], function(solitaire) {
                         total: 8,
                         layout: {
                             hspacing: 1.25,
-                            top: function() {
+                            top: function () {
                                 return Solitaire.Card.height * 1.5;
                             },
                             left: 0,
@@ -89,7 +89,7 @@ define(["./solitaire"], function(solitaire) {
                 },
 
                 Card: instance(Solitaire.Card, {
-                    playable: function() {
+                    playable: function () {
                         switch (this.stack.field) {
                             case "reserve":
                                 return true;
@@ -100,7 +100,7 @@ define(["./solitaire"], function(solitaire) {
                         }
                     },
 
-                    createProxyStack: function() {
+                    createProxyStack: function () {
                         const stack = Solitaire.Card.createProxyStack.call(
                             this,
                         );
@@ -113,7 +113,7 @@ define(["./solitaire"], function(solitaire) {
                         return this.proxyStack;
                     },
 
-                    validTarget: function(stack) {
+                    validTarget: function (stack) {
                         const target = stack.my_Last();
 
                         switch (stack.field) {
@@ -147,7 +147,7 @@ define(["./solitaire"], function(solitaire) {
 
             Y.Array.each(
                 Freecell.fields,
-                function(field) {
+                function (field) {
                     Freecell[field].Stack = instance(Freecell.Stack);
                 },
                 true,
@@ -156,7 +156,7 @@ define(["./solitaire"], function(solitaire) {
             Y.mix(
                 Freecell.Stack,
                 {
-                    validTarget: function(stack) {
+                    validTarget: function (stack) {
                         if (
                             stack.field !== "tableau" ||
                             !this.first().validTarget(stack)
@@ -173,7 +173,7 @@ define(["./solitaire"], function(solitaire) {
             Y.mix(
                 Freecell.Tableau.Stack,
                 {
-                    setCardPosition: function(card) {
+                    setCardPosition: function (card) {
                         return this.lastCardSetCardPosition(card);
                     },
                 },

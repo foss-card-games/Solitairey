@@ -1,6 +1,6 @@
 YUI.add(
     "spider1s",
-    function(Y) {
+    function (Y) {
         const Solitaire = Y.Solitaire,
             Spider = (Y.Solitaire.Spider1S = Solitaire.instance(
                 Y.Solitaire.Spider,
