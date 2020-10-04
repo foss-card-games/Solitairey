@@ -123,19 +123,19 @@ end
 def fcs_root_file(filename)
   src = fcs_pat_file(filename)
   dest = "#{ROOT_PREFIX}/#{filename}"
-  dest2 = "#{PREFIX}/js/#{filename}"
+  dest2 = "#{PREFIX}/#{filename}"
   cpfile src, dest2
   cpfile src, dest
-  dest
+  [dest, dest2]
 end
 
 def js_root_file(filename)
   src = js_pat_file(filename)
   dest = "#{ROOT_PREFIX}/#{filename}"
-  dest2 = "#{PREFIX}/js/#{filename}"
+  dest2 = "#{PREFIX}/#{filename}"
   cpfile src, dest2
   cpfile src, dest
-  dest
+  [dest, dest2]
 end
 
 def dest_js(base)
@@ -187,7 +187,7 @@ dest_js_extra = ['libfcs-wrap.d.ts',
                  'libfreecell-solver.js.mem',
                  'libfreecell-solver.min.js'].map { |x| fcs_file(x) }
 dest_js_extra += ['libfreecell-solver.js.mem',
-                  'libfreecell-solver.wasm'].map { |x| fcs_root_file(x) }
+                  'libfreecell-solver.wasm'].map { |x| fcs_root_file(x) }.flatten(1)
 
 desc 'concatenated solitaire sources'
 file ALL => dest_js_s + dest_js_extra do
