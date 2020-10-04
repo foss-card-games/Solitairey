@@ -138,6 +138,15 @@ def js_root_file(filename)
   [dest, dest2]
 end
 
+def js_root_file_jstorage(filename)
+  src = "jStorage/#{filename}"
+  dest = "#{ROOT_PREFIX}/#{filename}"
+  dest2 = "#{PREFIX}/#{filename}"
+  cpfile src, dest2
+  cpfile src, dest
+  [dest, dest2]
+end
+
 def dest_js(base)
   'dest/js/' + base + '.js'
 end
@@ -188,6 +197,7 @@ dest_js_extra = ['libfcs-wrap.d.ts',
                  'libfreecell-solver.min.js'].map { |x| fcs_file(x) }
 dest_js_extra += ['libfreecell-solver.js.mem',
                   'libfreecell-solver.wasm'].map { |x| fcs_root_file(x) }.flatten(1)
+dest_js_extra += ['jstorage.min.js'].map { |x| js_root_file_jstorage(x) }.flatten(1)
 
 desc 'concatenated solitaire sources'
 file ALL => dest_js_s + dest_js_extra do

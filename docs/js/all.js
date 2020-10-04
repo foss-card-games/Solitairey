@@ -15082,7 +15082,9 @@ define(["./solitaire"], function (solitaire) {
     let schedule;
     let schedule_cb;
     let enable_solitairey_ui = false;
-    const enable_cookies = false;
+    const enable_cookies = () => {
+        return enable_solitairey_ui;
+    };
     (function () {
         const active = {
             name: "freecell", // name: "klondike",
@@ -15168,10 +15170,8 @@ define(["./solitaire"], function (solitaire) {
             const twoWeeks = 1000 * 3600 * 24 * 14;
             switchToGame(name);
 
-            if (enable_cookies) {
-                Y.Cookie.set("options", name, {
-                    expires: new Date(new Date().getTime() + twoWeeks),
-                });
+            if (enable_cookies()) {
+                $.jStorage.set("FossSolitairey_options", name);
             }
             newGame();
         }
@@ -15331,10 +15331,12 @@ define(["./solitaire"], function (solitaire) {
         };
 
         function loadOptions() {
-            if (enable_cookies) {
-                const options = Y.Cookie.get("options");
+            if (enable_cookies()) {
+                const options = $.jStorage.get("FossSolitairey_options");
 
-                options && (active.name = options);
+                if (options) {
+                    active.name = options;
+                }
             }
 
             Themes.load("dondorf");
@@ -15396,10 +15398,11 @@ define(["./solitaire"], function (solitaire) {
                 if (chromestore) {
                     chromestore.addClass("hidden");
                 }
-                if (enable_cookies) {
-                    Y.Cookie.set("disable-chromestore-link", true, {
-                        expires: new Date(new Date().getTime() + expires),
-                    });
+                if (enable_cookies()) {
+                    $.jStorage.set(
+                        "FossSolitairey_disable-chromestore-link",
+                        true,
+                    );
                 }
             }
             if (enable_solitairey_ui) {
@@ -15507,10 +15510,10 @@ define(["./solitaire"], function (solitaire) {
             },
         };
         function showChromeStoreLink() {
-            if (enable_cookies) {
+            if (enable_cookies()) {
                 if (
                     Y.UA.chrome &&
-                    !Y.Cookie.get("disable-chromestore-link", Boolean)
+                    !$.jStorage.get("FossSolitairey_disable-chromestore-link")
                 ) {
                     const chromestore = Y.one(".chromestore");
                     if (chromestore) {
@@ -15520,7 +15523,9 @@ define(["./solitaire"], function (solitaire) {
             }
         }
         function _my_load_func() {
-            const save = enable_cookies ? Y.Cookie.get("saved-game") : false;
+            const save = enable_cookies()
+                ? $.jStorage.get("FossSolitairey_saved-game")
+                : false;
 
             attachEvents();
             loadOptions();
@@ -15575,8 +15580,8 @@ define(["./solitaire"], function (solitaire) {
         }
 
         function restart() {
-            if (enable_cookies) {
-                const init = Y.Cookie.get("initial-game");
+            if (enable_cookies()) {
+                const init = Y.Cookie.get("FossSolitairey_initial-game");
 
                 if (init) {
                     clearDOM();
@@ -18744,7 +18749,15 @@ YUI.add(
 );
 define([], function () {
     let enable_solitairey_ui = false;
-    const enable_cookies = false;
+    const enable_cookies = () => {
+        return enable_solitairey_ui;
+    };
+    const _delete_saved_game = () => {
+        if (enable_cookies()) {
+            $.jStorage.deleteKey("FossSolitairey_saved-game");
+        }
+        return;
+    };
     // For debugging.
     // var pre_canned_seeds = [11982, 11982, 11982, 11982];
     const pre_canned_seeds = [];
@@ -18983,10 +18996,11 @@ define([], function () {
                     const data = this.serialize(),
                         twoWeeks = 1206900000;
 
-                    if (enable_cookies) {
-                        Y.Cookie.set(name || "saved-game", data, {
-                            expires: new Date(new Date().getTime() + twoWeeks),
-                        });
+                    if (enable_cookies()) {
+                        $.jStorage.set(
+                            "FossSolitairey_" + (name || "saved-game"),
+                            data,
+                        );
                     }
                 },
 
@@ -19002,9 +19016,7 @@ define([], function () {
                 },
 
                 newGame: function () {
-                    if (enable_cookies) {
-                        Y.Cookie.remove("saved-game");
-                    }
+                    _delete_saved_game();
                     const that = this;
                     if (enable_solitairey_ui) {
                         that.setup(that.deal);
@@ -19321,9 +19333,7 @@ define([], function () {
 
                 win: function () {
                     Y.fire("win");
-                    if (enable_cookies) {
-                        Y.Cookie.remove("saved-game");
-                    }
+                    _delete_saved_game();
                 },
 
                 endTurn: function () {
@@ -20396,7 +20406,6 @@ define([], function () {
                 "dd-delegate",
                 "anim",
                 "async-queue",
-                "cookie",
                 "array-extras",
             ],
         },

@@ -6,6 +6,10 @@
 #
 set -e -x
 npm install
+if ! test -e jStorage
+then
+    git clone https://github.com/andris9/jStorage
+fi
 
 # npm install \
 #     amdefine babel-cli babel-eslint babel-preset-env babel-preset-stage-2 big-integer browserify camel-case coffeescript eslint eslint-config-google flatted html-minifier prettier requirejs sass typescript uglify-es \

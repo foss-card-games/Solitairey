@@ -1,6 +1,14 @@
 define([], function () {
     let enable_solitairey_ui = false;
-    const enable_cookies = false;
+    const enable_cookies = () => {
+        return enable_solitairey_ui;
+    };
+    const _delete_saved_game = () => {
+        if (enable_cookies()) {
+            $.jStorage.deleteKey("FossSolitairey_saved-game");
+        }
+        return;
+    };
     // For debugging.
     // var pre_canned_seeds = [11982, 11982, 11982, 11982];
     const pre_canned_seeds = [];
@@ -239,10 +247,11 @@ define([], function () {
                     const data = this.serialize(),
                         twoWeeks = 1206900000;
 
-                    if (enable_cookies) {
-                        Y.Cookie.set(name || "saved-game", data, {
-                            expires: new Date(new Date().getTime() + twoWeeks),
-                        });
+                    if (enable_cookies()) {
+                        $.jStorage.set(
+                            "FossSolitairey_" + (name || "saved-game"),
+                            data,
+                        );
                     }
                 },
 
@@ -258,9 +267,7 @@ define([], function () {
                 },
 
                 newGame: function () {
-                    if (enable_cookies) {
-                        Y.Cookie.remove("saved-game");
-                    }
+                    _delete_saved_game();
                     const that = this;
                     if (enable_solitairey_ui) {
                         that.setup(that.deal);
@@ -577,9 +584,7 @@ define([], function () {
 
                 win: function () {
                     Y.fire("win");
-                    if (enable_cookies) {
-                        Y.Cookie.remove("saved-game");
-                    }
+                    _delete_saved_game();
                 },
 
                 endTurn: function () {
@@ -1652,7 +1657,6 @@ define([], function () {
                 "dd-delegate",
                 "anim",
                 "async-queue",
-                "cookie",
                 "array-extras",
             ],
         },
