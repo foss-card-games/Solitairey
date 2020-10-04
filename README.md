@@ -1,5 +1,10 @@
 Solitairey is a JavaScript Solitaire collection using YUI 3.
 
+A [playable version is available online](https://foss-card-games.github.io/Solitairey/) on GitHub Pages.
+
+This is a [FOSS](https://en.wikipedia.org/wiki/Free_and_open-source_software) fork of the most recent version
+of the original repository by Paul Harrington that had a LICENSE file.
+
 Current games include:
 
 - Agnes
