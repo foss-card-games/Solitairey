@@ -400,32 +400,24 @@ define(["./solitaire"], function (solitaire) {
                     "yukon",
                 ];
 
-                Y.Array.each(
-                    ["s", "h", "c", "d"],
-                    function (suit) {
-                        for (let rank = 1; rank <= 13; ++rank) {
-                            that.load(
-                                Y.Solitaire.Card.base.theme +
-                                    "/" +
-                                    suit +
-                                    rank +
-                                    ".png",
-                            );
-                        }
-                    },
-                    this,
-                );
+                ["s", "h", "c", "d"].forEach(function (suit) {
+                    for (let rank = 1; rank <= 13; ++rank) {
+                        that.load(
+                            Y.Solitaire.Card.base.theme +
+                                "/" +
+                                suit +
+                                rank +
+                                ".png",
+                        );
+                    }
+                });
 
                 this.load(Y.Solitaire.Card.base.theme + "/facedown.png");
 
                 if (enable_solitairey_ui) {
-                    Y.Array.each(
-                        icons,
-                        function (image) {
-                            that.load("layouts/mini/" + image + ".png");
-                        },
-                        that,
-                    );
+                    icons.forEach(function (image) {
+                        that.load("layouts/mini/" + image + ".png");
+                    });
                 }
 
                 Fade.show();

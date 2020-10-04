@@ -69,7 +69,7 @@ YUI.add(
                             len = cards.length;
                         let card, s, i;
 
-                        Y.Array.each(stacks, function (stack) {
+                        stacks.forEach(function (stack) {
                             stack.node.remove();
                             stack.cards = [];
                             stack.createNode();
@@ -103,7 +103,7 @@ YUI.add(
                         updateDragGroups: function () {
                             const active = Solitaire.activeCard;
 
-                            Y.Array.each(this.cards, function (c) {
+                            this.cards.forEach(function (c) {
                                 if (!c) {
                                     return;
                                 }
@@ -249,7 +249,7 @@ YUI.add(
                 },
             ));
 
-        Y.Array.each(MonteCarlo.fields, function (field) {
+        MonteCarlo.fields.forEach(function (field) {
             MonteCarlo[field].Stack = Solitaire.instance(MonteCarlo.Stack);
         });
 

@@ -174,15 +174,9 @@ YUI.add(
                 true,
             ));
 
-        Y.Array.each(
-            FlowerGarden.fields,
-            function (field) {
-                FlowerGarden[field].Stack = Solitaire.instance(
-                    FlowerGarden.Stack,
-                );
-            },
-            true,
-        );
+        FlowerGarden.fields.forEach(function (field) {
+            FlowerGarden[field].Stack = Solitaire.instance(FlowerGarden.Stack);
+        });
 
         Y.mix(
             FlowerGarden.Stack,
@@ -234,7 +228,7 @@ YUI.add(
 
                     const stack = this;
 
-                    Y.Array.each(this.cards, function (card, i) {
+                    stack.cards.forEach(function (card, i) {
                         const left = stack.left + i * card.width * 0.4;
 
                         if (left !== card.left) {

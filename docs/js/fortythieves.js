@@ -71,7 +71,7 @@ YUI.add(
 
                         init: function () {
                             Solitaire.Deck.init.call(this);
-                            Y.Array.each(this.cards, function (c) {
+                            this.cards.forEach(function (c) {
                                 c.faceDown();
                             });
                         },
@@ -147,7 +147,7 @@ YUI.add(
                 },
             ));
 
-        Y.Array.each(FortyThieves.fields, function (field) {
+        FortyThieves.fields.forEach(function (field) {
             FortyThieves[field].Stack = Solitaire.instance(FortyThieves.Stack);
         });
 

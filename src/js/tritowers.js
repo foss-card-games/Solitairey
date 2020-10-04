@@ -207,7 +207,7 @@ YUI.add(
                 true,
             ));
 
-        Y.Array.each(TriTowers.fields, function (field) {
+        TriTowers.fields.forEach(function (field) {
             TriTowers[field].Stack = Solitaire.instance(TriTowers.Stack);
         });
 

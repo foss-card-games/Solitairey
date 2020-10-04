@@ -135,7 +135,7 @@ YUI.add(
             });
         }
 
-        Y.Array.each(Spider.fields, function (field) {
+        Spider.fields.forEach(function (field) {
             Spider[field].Stack = Solitaire.instance(Spider.Stack);
         });
 

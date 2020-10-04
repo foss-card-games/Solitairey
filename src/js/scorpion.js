@@ -121,7 +121,7 @@ YUI.add(
                 }),
             }));
 
-        Y.Array.each(Scorpion.fields, function (field) {
+        Scorpion.fields.forEach(function (field) {
             Scorpion[field].Stack = Solitaire.instance(Scorpion.Stack);
         });
 

@@ -15479,32 +15479,24 @@ define(["./solitaire"], function (solitaire) {
                     "yukon",
                 ];
 
-                Y.Array.each(
-                    ["s", "h", "c", "d"],
-                    function (suit) {
-                        for (let rank = 1; rank <= 13; ++rank) {
-                            that.load(
-                                Y.Solitaire.Card.base.theme +
-                                    "/" +
-                                    suit +
-                                    rank +
-                                    ".png",
-                            );
-                        }
-                    },
-                    this,
-                );
+                ["s", "h", "c", "d"].forEach(function (suit) {
+                    for (let rank = 1; rank <= 13; ++rank) {
+                        that.load(
+                            Y.Solitaire.Card.base.theme +
+                                "/" +
+                                suit +
+                                rank +
+                                ".png",
+                        );
+                    }
+                });
 
                 this.load(Y.Solitaire.Card.base.theme + "/facedown.png");
 
                 if (enable_solitairey_ui) {
-                    Y.Array.each(
-                        icons,
-                        function (image) {
-                            that.load("layouts/mini/" + image + ".png");
-                        },
-                        that,
-                    );
+                    icons.forEach(function (image) {
+                        that.load("layouts/mini/" + image + ".png");
+                    });
                 }
 
                 Fade.show();
@@ -15724,7 +15716,7 @@ define(["./solitaire"], function (solitaire) {
         "auto-turnover",
         function (Y) {
             Y.on("tableau:afterPop", function (stack) {
-                Y.Array.each(stack.cards, function (card) {
+                stack.cards.forEach(function (card) {
                     if (card && card.isFaceDown && card.isFree()) {
                         card.faceUp();
                     }
@@ -16009,15 +16001,9 @@ YUI.add(
                 true,
             ));
 
-        Y.Array.each(
-            FlowerGarden.fields,
-            function (field) {
-                FlowerGarden[field].Stack = Solitaire.instance(
-                    FlowerGarden.Stack,
-                );
-            },
-            true,
-        );
+        FlowerGarden.fields.forEach(function (field) {
+            FlowerGarden[field].Stack = Solitaire.instance(FlowerGarden.Stack);
+        });
 
         Y.mix(
             FlowerGarden.Stack,
@@ -16069,7 +16055,7 @@ YUI.add(
 
                     const stack = this;
 
-                    Y.Array.each(this.cards, function (card, i) {
+                    stack.cards.forEach(function (card, i) {
                         const left = stack.left + i * card.width * 0.4;
 
                         if (left !== card.left) {
@@ -16158,7 +16144,7 @@ YUI.add(
 
                         init: function () {
                             Solitaire.Deck.init.call(this);
-                            Y.Array.each(this.cards, function (c) {
+                            this.cards.forEach(function (c) {
                                 c.faceDown();
                             });
                         },
@@ -16234,7 +16220,7 @@ YUI.add(
                 },
             ));
 
-        Y.Array.each(FortyThieves.fields, function (field) {
+        FortyThieves.fields.forEach(function (field) {
             FortyThieves[field].Stack = Solitaire.instance(FortyThieves.Stack);
         });
 
@@ -16430,13 +16416,9 @@ define(["./solitaire"], function (solitaire) {
                 }),
             }));
 
-            Y.Array.each(
-                Freecell.fields,
-                function (field) {
-                    Freecell[field].Stack = instance(Freecell.Stack);
-                },
-                true,
-            );
+            Freecell.fields.forEach(function (field) {
+                Freecell[field].Stack = instance(Freecell.Stack);
+            });
 
             Y.mix(
                 Freecell.Stack,
@@ -16618,7 +16600,7 @@ YUI.add(
                 true,
             ));
 
-        Y.Array.each(Golf.fields, function (field) {
+        Golf.fields.forEach(function (field) {
             Golf[field].Stack = Solitaire.instance(Golf.Stack);
         });
 
@@ -16811,13 +16793,9 @@ YUI.add(
                 }),
             }));
 
-        Y.Array.each(
-            GClock.fields,
-            function (field) {
-                GClock[field].Stack = Solitaire.instance(GClock.Stack);
-            },
-            true,
-        );
+        GClock.fields.forEach(function (field) {
+            GClock[field].Stack = Solitaire.instance(GClock.Stack);
+        });
 
         Y.mix(
             GClock.Stack,
@@ -17413,7 +17391,7 @@ define(["./solitaire"], function (solitaire) {
                 return function () {
                     var that = this;
 
-                    Y.each(layouts, function (layout) {
+                    layouts.forEach(function (layout) {
                         Y.mix(
                             that[layout[0]].stackConfig.layout,
                             layout[1],
@@ -17830,7 +17808,7 @@ YUI.add(
                 }),
             }));
 
-        Y.Array.each(Klondike.fields, function (field) {
+        Klondike.fields.forEach(function (field) {
             Klondike[field].Stack = Solitaire.instance(Klondike.Stack);
         });
 
@@ -17866,7 +17844,7 @@ YUI.add(
                         last = _.last(cards),
                         stack = this;
 
-                    Y.Array.each(cards.slice(-2), function (card, i) {
+                    cards.slice(-2).forEach(function (card, i) {
                         card.left = stack.left;
                         card.top = stack.top;
                     });
@@ -18008,7 +17986,7 @@ YUI.add(
                             len = cards.length;
                         let card, s, i;
 
-                        Y.Array.each(stacks, function (stack) {
+                        stacks.forEach(function (stack) {
                             stack.node.remove();
                             stack.cards = [];
                             stack.createNode();
@@ -18042,7 +18020,7 @@ YUI.add(
                         updateDragGroups: function () {
                             const active = Solitaire.activeCard;
 
-                            Y.Array.each(this.cards, function (c) {
+                            this.cards.forEach(function (c) {
                                 if (!c) {
                                     return;
                                 }
@@ -18188,7 +18166,7 @@ YUI.add(
                 },
             ));
 
-        Y.Array.each(MonteCarlo.fields, function (field) {
+        MonteCarlo.fields.forEach(function (field) {
             MonteCarlo[field].Stack = Solitaire.instance(MonteCarlo.Stack);
         });
 
@@ -18305,7 +18283,7 @@ YUI.add(
                     updateDragGroups: function () {
                         const active = Solitaire.activeCard;
 
-                        Y.Array.each(this.cards, function (c) {
+                        this.cards.forEach(function (c) {
                             if (!c) {
                                 return;
                             }
@@ -18470,7 +18448,7 @@ YUI.add(
                 }),
             }));
 
-        Y.Array.each(Pyramid.fields, function (field) {
+        Pyramid.fields.forEach(function (field) {
             Pyramid[field].Stack = Solitaire.instance(Pyramid.Stack);
         });
 
@@ -18706,7 +18684,7 @@ YUI.add(
                 }),
             }));
 
-        Y.Array.each(Scorpion.fields, function (field) {
+        Scorpion.fields.forEach(function (field) {
             Scorpion[field].Stack = Solitaire.instance(Scorpion.Stack);
         });
 
@@ -18931,19 +18909,15 @@ define([], function () {
                     const serialized = [],
                         lengths = [];
 
-                    Y.Array.each(
-                        this.fields,
-                        function (field) {
-                            const stacks = that[field.toLowerCase()].stacks;
+                    that.fields.forEach(function (field) {
+                        const stacks = that[field.toLowerCase()].stacks;
 
-                            for (let i = 0, len = stacks.length; i < len; i++) {
-                                const data = stacks[i].serialize();
-                                serialized.push(data);
-                                lengths.push(String.fromCharCode(data.length));
-                            }
-                        },
-                        this,
-                    );
+                        for (let i = 0, len = stacks.length; i < len; i++) {
+                            const data = stacks[i].serialize();
+                            serialized.push(data);
+                            lengths.push(String.fromCharCode(data.length));
+                        }
+                    });
 
                     return [String.fromCharCode(serialized.length)]
                         .concat(lengths, serialized)
@@ -19204,16 +19178,17 @@ define([], function () {
                 },
 
                 eachStack: function (callback, fieldName) {
-                    Game &&
-                        Y.Array.each(Game.fields, function (name) {
+                    if (Game) {
+                        Game.fields.forEach(function (name) {
                             const currentName = name.toLowerCase(),
                                 field = Game[currentName],
                                 fname = fieldName || currentName;
 
-                            fname === currentName &&
-                                field.stacks &&
-                                Y.Array.each(field.stacks, callback);
+                            if (fname === currentName && field.stacks) {
+                                field.stacks.forEach(callback);
+                            }
                         });
+                    }
                 },
 
                 resize: function (scale) {
@@ -19450,7 +19425,7 @@ define([], function () {
                         proxyStack.updateCardsPosition();
                     });
 
-                    Y.Array.each(cards, function (card) {
+                    cards.forEach(function (card) {
                         if (!card) {
                             return;
                         }
@@ -19836,7 +19811,7 @@ define([], function () {
                             left: -this.left,
                         });
 
-                        Y.Array.each(this.proxyCards(), function (c) {
+                        this.proxyCards().forEach(function (c) {
                             c.proxyStack = stack;
                             node.append(c.node);
                         });
@@ -20051,7 +20026,7 @@ define([], function () {
                         gameOffset = Solitaire.offset,
                         self = this;
 
-                    Y.Array.each(["top", "left"], function (p) {
+                    ["top", "left"].forEach(function (p) {
                         self[p] = normalize(layout[p]);
                     });
 
@@ -20377,7 +20352,7 @@ define([], function () {
                         my_Flatten(Y.Array.map(this.pop(), this.act)),
                     );
 
-                    Y.Array.each(stacks, function (stack) {
+                    stacks.forEach(function (stack) {
                         if (stack) {
                             stack.updateCardsPosition();
                             stack.update(true);
@@ -20502,12 +20477,12 @@ define([
         });
 
         const reserve = [];
-        Y.Array.forEach(sortedStacks(Y, game.reserve), function (s, i) {
+        sortedStacks(Y, game.reserve).forEach(function (s, i) {
             reserve[i] = cardToValue(s.my_Last());
         });
 
         const foundation = [];
-        Y.Array.forEach(sortedStacks(Y, game.foundation), function (s, i) {
+        sortedStacks(Y, game.foundation).forEach(function (s, i) {
             foundation[i] = cardToValue(s.my_Last());
         });
 
@@ -21013,7 +20988,7 @@ define([
                             });
                         }
 
-                        Y.Array.each(proxyStack.cards, function (card) {
+                        proxyStack.cards.forEach(function (card) {
                             if (!card) {
                                 return;
                             }
@@ -22351,7 +22326,7 @@ YUI.add(
             });
         }
 
-        Y.Array.each(Spider.fields, function (field) {
+        Spider.fields.forEach(function (field) {
             Spider[field].Stack = Solitaire.instance(Spider.Stack);
         });
 
@@ -22655,7 +22630,7 @@ define(["./solitaire"], function (solitaire) {
                         const streaks = [];
                         let streak = null;
 
-                        Y.Array.each(record, function (entry) {
+                        record.forEach(function (entry) {
                             if (!entry.won) {
                                 streak && streaks.push(streak);
                                 streak = null;
@@ -22930,7 +22905,7 @@ YUI.add(
                 true,
             ));
 
-        Y.Array.each(TriTowers.fields, function (field) {
+        TriTowers.fields.forEach(function (field) {
             TriTowers[field].Stack = Solitaire.instance(TriTowers.Stack);
         });
 
@@ -23136,7 +23111,7 @@ YUI.add(
                 }),
             }));
 
-        Y.Array.each(Yukon.fields, function (field) {
+        Yukon.fields.forEach(function (field) {
             Yukon[field].Stack = Solitaire.instance(Yukon.Stack);
         });
 

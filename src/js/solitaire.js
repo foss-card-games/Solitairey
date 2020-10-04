@@ -165,19 +165,15 @@ define([], function () {
                     const serialized = [],
                         lengths = [];
 
-                    Y.Array.each(
-                        this.fields,
-                        function (field) {
-                            const stacks = that[field.toLowerCase()].stacks;
+                    that.fields.forEach(function (field) {
+                        const stacks = that[field.toLowerCase()].stacks;
 
-                            for (let i = 0, len = stacks.length; i < len; i++) {
-                                const data = stacks[i].serialize();
-                                serialized.push(data);
-                                lengths.push(String.fromCharCode(data.length));
-                            }
-                        },
-                        this,
-                    );
+                        for (let i = 0, len = stacks.length; i < len; i++) {
+                            const data = stacks[i].serialize();
+                            serialized.push(data);
+                            lengths.push(String.fromCharCode(data.length));
+                        }
+                    });
 
                     return [String.fromCharCode(serialized.length)]
                         .concat(lengths, serialized)
@@ -438,16 +434,17 @@ define([], function () {
                 },
 
                 eachStack: function (callback, fieldName) {
-                    Game &&
-                        Y.Array.each(Game.fields, function (name) {
+                    if (Game) {
+                        Game.fields.forEach(function (name) {
                             const currentName = name.toLowerCase(),
                                 field = Game[currentName],
                                 fname = fieldName || currentName;
 
-                            fname === currentName &&
-                                field.stacks &&
-                                Y.Array.each(field.stacks, callback);
+                            if (fname === currentName && field.stacks) {
+                                field.stacks.forEach(callback);
+                            }
                         });
+                    }
                 },
 
                 resize: function (scale) {
@@ -684,7 +681,7 @@ define([], function () {
                         proxyStack.updateCardsPosition();
                     });
 
-                    Y.Array.each(cards, function (card) {
+                    cards.forEach(function (card) {
                         if (!card) {
                             return;
                         }
@@ -1070,7 +1067,7 @@ define([], function () {
                             left: -this.left,
                         });
 
-                        Y.Array.each(this.proxyCards(), function (c) {
+                        this.proxyCards().forEach(function (c) {
                             c.proxyStack = stack;
                             node.append(c.node);
                         });
@@ -1285,7 +1282,7 @@ define([], function () {
                         gameOffset = Solitaire.offset,
                         self = this;
 
-                    Y.Array.each(["top", "left"], function (p) {
+                    ["top", "left"].forEach(function (p) {
                         self[p] = normalize(layout[p]);
                     });
 
@@ -1611,7 +1608,7 @@ define([], function () {
                         my_Flatten(Y.Array.map(this.pop(), this.act)),
                     );
 
-                    Y.Array.each(stacks, function (stack) {
+                    stacks.forEach(function (stack) {
                         if (stack) {
                             stack.updateCardsPosition();
                             stack.update(true);

@@ -161,7 +161,7 @@ YUI.add(
                 }),
             }));
 
-        Y.Array.each(Klondike.fields, function (field) {
+        Klondike.fields.forEach(function (field) {
             Klondike[field].Stack = Solitaire.instance(Klondike.Stack);
         });
 
@@ -197,7 +197,7 @@ YUI.add(
                         last = _.last(cards),
                         stack = this;
 
-                    Y.Array.each(cards.slice(-2), function (card, i) {
+                    cards.slice(-2).forEach(function (card, i) {
                         card.left = stack.left;
                         card.top = stack.top;
                     });
