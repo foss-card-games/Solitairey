@@ -4,7 +4,7 @@
 
 .solitairey_body {
   background-attachment: fixed;
-  background-image: url(green.jpg);
+  background-image: url(green.webp);
   background-repeat: no-repeat;
   background-size: 100% 100%;
   -moz-background-size: 100% 100%;
@@ -90,7 +90,7 @@
   top: 0;
   z-index: 1001;
   background-attachment: fixed;
-  background-image: url(green.jpg);
+  background-image: url(green.webp);
   background-repeat: no-repeat;
   background-size: 100% 100%;
   -moz-background-size: 100% 100%; }

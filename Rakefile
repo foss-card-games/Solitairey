@@ -51,7 +51,7 @@ COMPRESSOR = 'bin/Run-YUI-Compressor'
 TEMPLATE = 'index.erb'
 
 IMAGES = Dir['{dondorf,layouts}/**/*.png', '*.{css,gif,png,jpg}'] +
-         ['.htaccess']
+         ['green.webp', '.htaccess']
 
 DEST_INDEX = 'dest/index.html'
 DEST_INDEX_DEV = 'dest/index-dev.html'
@@ -154,7 +154,7 @@ end
 dest_css = 'dest/cards.css'
 src_css = 'solitairey-cards.scss'
 
-file dest_css => src_css do
+file dest_css => [src_css, 'solitairey-cards--common.scss'] do
   mkdir_p File.dirname(dest_css)
   # sh "pysassc --style compressed #{src_css} #{dest_css}"
   sh "pysassc #{src_css} #{dest_css}"
@@ -226,6 +226,10 @@ file DEST_INDEX_DEV_X => TEMPLATE do
   create_index DEST_INDEX_DEV_X, true
 end
 
+file 'green.webp' => 'green.jpg' do
+  sh 'gm convert green.jpg green.webp'
+end
+
 desc 'production file with separated, unminified source files'
 file DEST_INDEX => [TEMPLATE, COMBINED] do
   # create_index DEST_INDEX
@@ -257,10 +261,10 @@ task upload: :default do
   # myrsync "hostgator:public_html/temp-Solitairey-ekrimyk/"
   # myrsync "hostgator:public_html/temp-Solitairey-fc-solve-loop-NjU78o/"
   myrsync '/var/www/html/shlomif/local-Solitairey-todel/'
-  myrsync 'hostgator:public_html/temp-Solitairey-fc-solve2/'
-  myrsync 'hostgator:public_html/Solitairey--macklop/'
   cond = false
   if cond
+    myrsync 'hostgator:public_html/temp-Solitairey-fc-solve2/'
+    myrsync 'hostgator:public_html/Solitairey--macklop/'
     sh 'rsync --progress --inplace -a -v dest ' \
       'hostgator:public_html/temp-Solitairey-ekrimyk/'
   end

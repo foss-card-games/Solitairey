@@ -68,12 +68,16 @@
     padding: 50px;
 }
 
-.solitairey_body {
+@mixin green_bg {
     background-attachment: fixed;
-    background-image: url(green.jpg);
+    background-image: url(green.webp);
     background-repeat: no-repeat;
     background-size: 100% 100%;
     -moz-background-size: 100% 100%;
+}
+
+.solitairey_body {
+    @include green_bg;
     font-family: helvetica, verdana, sans;
     @if $Solitairey {
         z-index: -99;
@@ -180,11 +184,7 @@
     left: 0;
     top: 0;
     z-index: 1001;
-    background-attachment: fixed;
-    background-image: url(green.jpg);
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
-    -moz-background-size: 100% 100%;
+    @include green_bg;
 
     &.show {
         display: block;
