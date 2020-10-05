@@ -29,7 +29,7 @@ my $temp_fn = $t_dir->dirname() . '/temp.js';
 
 path($temp_fn)->spew_utf8($buf);
 
-if ( system( 'uglifyjs', '--compress', '-o', $output_fn, '--', $temp_fn ) )
+if ( system( 'terser', '--compress', '-o', $output_fn, '--', $temp_fn ) )
 {
     if ( $ENV{KEEP_COPY} )
     {
