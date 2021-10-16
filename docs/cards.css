@@ -437,3 +437,13 @@ button.solitairey {
     background-image: -moz-linear-gradient(#eec, #a1a172);
     background-image: -ms-linear-gradient(#eec, #a1a172);
     box-shadow: none; }
+
+footer {
+  position: absolute;
+  right: 0%;
+  top: 0%; }
+  footer a {
+    color: white;
+    text-decoration: underline; }
+  footer > p {
+    padding: 1em; }

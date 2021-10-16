@@ -62,6 +62,18 @@
             box-shadow: none;
         }
     }
+    footer {
+        position: absolute;
+        right: 0%;
+        top: 0%;
+        a {
+           color: white;
+           text-decoration: underline;
+        }
+        > p {
+            padding: 1em;
+        }
+    }
 }
 
 .solitairey_body_margin {
