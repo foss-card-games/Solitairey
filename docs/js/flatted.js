@@ -8,6 +8,7 @@ const {keys} = Object;
 const Primitive = String;   // it could be Number
 const primitive = 'string'; // it could be 'number'
 
+const ignore = {};
 const object = 'object';
 
 const noop = (_, value) => value;
@@ -20,23 +21,30 @@ const Primitives = (_, value) => (
   typeof value === primitive ? new Primitive(value) : value
 );
 
-const revive = (input, parsed, output, $) => keys(output).reduce(
-  (output, key) => {
-    const value = output[key];
+const revive = (input, parsed, output, $) => {
+  const lazy = [];
+  for (let ke = keys(output), {length} = ke, y = 0; y < length; y++) {
+    const k = ke[y];
+    const value = output[k];
     if (value instanceof Primitive) {
       const tmp = input[value];
       if (typeof tmp === object && !parsed.has(tmp)) {
         parsed.add(tmp);
-        output[key] = $.call(output, key, revive(input, parsed, tmp, $));
-      } else {
-        output[key] = $.call(output, key, tmp);
+        output[k] = ignore;
+        lazy.push({k, a: [input, parsed, tmp, $]});
       }
-    } else
-      output[key] = $.call(output, key, value);
-    return output;
-  },
-  output
-);
+      else
+        output[k] = $.call(output, k, tmp);
+    }
+    else if (output[k] !== ignore)
+      output[k] = $.call(output, k, value);
+  }
+  for (let {length} = lazy, i = 0; i < length; i++) {
+    const {k, a} = lazy[i];
+    output[k] = $.call(output, k, revive.apply(null, a));
+  }
+  return output;
+};
 
 const set = (known, input, value) => {
   const index = Primitive(input.push(value) - 1);
@@ -85,6 +93,11 @@ const stringify = (value, replacer, space) => {
   }
 };
 exports.stringify = stringify;
+
+const toJSON = any => $parse(stringify(any));
+exports.toJSON = toJSON;
+const fromJSON = any => parse($stringify(any));
+exports.fromJSON = fromJSON;
 
 },{}]},{},[])("flatted")
 });

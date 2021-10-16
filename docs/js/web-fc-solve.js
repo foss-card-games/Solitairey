@@ -495,10 +495,10 @@ define(["require", "exports", "big-integer", "./fcs-validate", "./web-fc-solve--
     function deal_ms_fc_board(seed) {
         const randomizer = new MSRand({ gamenumber: seed });
         const num_cols = 8;
-        const columns = prange_1.perl_range(0, num_cols - 1).map(() => {
+        const columns = (0, prange_1.perl_range)(0, num_cols - 1).map(() => {
             return [];
         });
-        let deck = prange_1.perl_range(0, 4 * 13 - 1);
+        let deck = (0, prange_1.perl_range)(0, 4 * 13 - 1);
         randomizer.shuffle(deck);
         deck = deck.reverse();
         for (let i = 0; i < 52; i++) {

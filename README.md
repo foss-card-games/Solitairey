@@ -24,6 +24,16 @@ Current games include:
 - Will O' The Wisp
 - Yukon
 
+Build Process:
+==============
+
+```
+bash -ex bin/install-npm-deps.sh
+rake
+rake test
+rake upload
+```
+
 License
 =======
 
