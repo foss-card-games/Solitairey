@@ -57,7 +57,7 @@ DEST_INDEX = 'dest/index.html'
 DEST_INDEX_DEV = 'dest/index-dev.html'
 DEST_INDEX_DEV_X = 'dest/index-dev.xhtml'
 
-def create_index(index, development = false)
+def create_index(index, development)
   require 'erb'
 
   File.open(index, 'w') do |f|
@@ -87,13 +87,13 @@ dest_js_s = []
 
 DIRS = %w[ext/lodash ext/requirejs ext/yui-debug].freeze
 def js_pat_file(filename)
-  DIRS.map { |d| d + '/' + filename }.select do |f|
+  DIRS.map { |d| "#{d}/#{filename}" }.select do |f|
     File.file? f
   end [0] || "#{JS_SRC_PREFIX}/#{filename}"
 end
 
 def ts_pat_file(filename)
-  DIRS.map { |d| d + '/' + filename }.select do |f|
+  DIRS.map { |d| "#{d}/#{filename}" }.select do |f|
     File.file? f
   end [0] || "src/ts/#{filename}"
 end
@@ -103,7 +103,7 @@ def fcs_pat_file(filename)
 end
 
 def js_js_pat_file(filename)
-  js_pat_file(filename + '.js')
+  js_pat_file("#{filename}.js")
 end
 
 def fcs_file(filename)
@@ -148,7 +148,7 @@ def js_root_file_jstorage(filename)
 end
 
 def dest_js(base)
-  'dest/js/' + base + '.js'
+  "dest/js/#{base}.js"
 end
 
 dest_css = 'dest/cards.css'
@@ -184,7 +184,7 @@ end
 file ALL => dest
 
 JS.each do |fn_base|
-  filename = fn_base + '.js'
+  filename = "#{fn_base}.js"
   dest_js_s << js_file(filename)
 end
 
@@ -238,7 +238,8 @@ end
 
 T = JS_CURATED_SOURCES.reject { |x| x == 'iphone' }.freeze
 task test: :default do
-  sh 'eslint -c .eslintrc.yml ' + T.map { |f| "src/js/#{f}.js" }.join(' ')
+  js_files_string = T.map { |f| "src/js/#{f}.js" }.join(' ')
+  sh "eslint -c .eslintrc.yml #{js_files_string}"
   sh 'rubocop Rakefile'
 end
 task :prettier do
