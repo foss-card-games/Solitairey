@@ -23154,10 +23154,10 @@ YUI.add(
     "0.0.1",
     { requires: ["solitaire"] },
 );
-define(["require", "exports"], function (require, exports) {
+define(["require", "exports", "./prange", "./french-cards"], function (require, exports, prange_1, french_cards_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.BoardParseResult = exports.ParseErrorType = exports.ErrorLocationType = exports.fcs_js__foundations_from_string = exports.Foundations = exports.fcs_js__freecells_from_string = exports.fcs_js__column_from_string = exports.fcs_js__card_from_string = exports.capitalize_cards = exports.suits__str_to_int = exports.MAX_RANK = exports.MIN_RANK = exports.NUM_SUITS = exports.ranks__str_to_int = void 0;
+    exports.determine_if_string_is_board_like = exports.BoardParseResult = exports.ParseErrorType = exports.ErrorLocationType = exports.fcs_js__foundations_from_string = exports.Foundations = exports.fcs_js__freecells_from_string = exports.fcs_js__column_from_string = exports.fcs_js__card_from_string = exports.capitalize_cards = exports.suits__str_to_int = exports.MAX_RANK = exports.MIN_RANK = exports.NUM_SUITS = exports.ranks__str_to_int = void 0;
     // Adapted from http://www.inventpartners.com/javascript_is_int - thanks.
     function is_int(input) {
         const value = "" + input;
@@ -23170,25 +23170,17 @@ define(["require", "exports"], function (require, exports) {
     }
     const _ranks__int_to_str = "0A23456789TJQK";
     exports.ranks__str_to_int = {};
-    function _perl_range(start, end) {
-        const ret = [];
-        for (let i = start; i <= end; i++) {
-            ret.push(i);
-        }
-        return ret;
-    }
     exports.NUM_SUITS = 4;
-    const _suits = _perl_range(0, exports.NUM_SUITS - 1);
+    const _suits = (0, prange_1.perl_range)(0, exports.NUM_SUITS - 1);
     exports.MIN_RANK = 1;
     exports.MAX_RANK = 13;
-    const _ranks = _perl_range(exports.MIN_RANK, exports.MAX_RANK);
+    const _ranks = (0, prange_1.perl_range)(exports.MIN_RANK, exports.MAX_RANK);
     for (const rank of _ranks) {
         exports.ranks__str_to_int[_ranks__int_to_str.substring(rank, rank + 1)] = rank;
     }
-    const _suits__int_to_str = "HCDS";
     exports.suits__str_to_int = new Map();
     for (const suit of _suits) {
-        exports.suits__str_to_int.set(_suits__int_to_str.substring(suit, suit + 1), suit);
+        exports.suits__str_to_int.set(french_cards_1.suits__int_to_str.substring(suit, suit + 1), suit);
     }
     class Card {
         constructor(rank, suit) {
@@ -23221,7 +23213,7 @@ define(["require", "exports"], function (require, exports) {
         }
         toString() {
             return (_ranks__int_to_str.substring(this.rank, this.rank + 1) +
-                _suits__int_to_str.substring(this.suit, this.suit + 1));
+                french_cards_1.suits__int_to_str.substring(this.suit, this.suit + 1));
         }
     }
     class BoardTextLine {
@@ -23290,7 +23282,7 @@ define(["require", "exports"], function (require, exports) {
         }
         getArrOfStrs() {
             const that = this;
-            return _perl_range(0, that.getLen() - 1).map((i) => {
+            return (0, prange_1.perl_range)(0, that.getLen() - 1).map((i) => {
                 return that.getCard(i).toString();
             });
         }
@@ -23301,9 +23293,7 @@ define(["require", "exports"], function (require, exports) {
                 .join(" ") + "\n");
         }
     }
-    const suit_re = "[HCDS]";
-    const rank_re = "[A23456789TJQK]";
-    const card_re = "(" + rank_re + ")(" + suit_re + ")";
+    const card_re = "(" + french_cards_1.rank_re + ")(" + french_cards_1.suit_re + ")";
     function fcs_js__card_from_string(s) {
         const m = s.match("^" + card_re + "$");
         if (!m) {
@@ -23327,6 +23317,12 @@ define(["require", "exports"], function (require, exports) {
         constructor(is_correct, start_char_idx, num_consumed_chars, error, cards) {
             super(is_correct, start_char_idx, num_consumed_chars, error);
             this.col = new Column(cards);
+        }
+        getLen() {
+            return this.col.getLen();
+        }
+        toString() {
+            return this.col.toString();
         }
     }
     class StringParser {
@@ -23400,6 +23396,9 @@ define(["require", "exports"], function (require, exports) {
             return null;
         }
     }
+    function calc_1H_error_string(suit) {
+        return 'Wrong rank specifier "1" (followed by "[R]"). Perhaps you meant either "A[R]" (for ace) or "T[R]" (for rank ten).'.replace(/\[R\]/g, suit);
+    }
     function fcs_js__column_from_string(start_char_idx, orig_s, force_leading_colon) {
         const p = new CardsStringParser(orig_s, fcs_js__card_from_string);
         const match = p.consume_match("^((?:: +|:(?:$|(?=\\n)))?)");
@@ -23407,6 +23406,11 @@ define(["require", "exports"], function (require, exports) {
             return new ColumnParseResult(false, start_char_idx, p.getConsumed(), 'Columns must start with a ":" in strict mode.', []);
         }
         const ret = p.loop(card_re, () => {
+            const card_str = p.match(/^(\S+)/)[1];
+            const m = card_str.match("^1(" + french_cards_1.suit_re + ")");
+            if (m) {
+                return new ColumnParseResult(false, start_char_idx, p.getConsumed(), calc_1H_error_string(m[1]), []);
+            }
             return new ColumnParseResult(false, start_char_idx, p.getConsumed(), "Wrong card format - should be [Rank][Suit]", []);
         });
         if (ret) {
@@ -23441,7 +23445,7 @@ define(["require", "exports"], function (require, exports) {
         }
         getArrOfStrs() {
             const that = this;
-            return _perl_range(0, that.getNum() - 1).map((i) => {
+            return (0, prange_1.perl_range)(0, that.getNum() - 1).map((i) => {
                 const card = that.getCard(i);
                 return card !== null ? card.toString() : "-";
             });
@@ -23453,7 +23457,6 @@ define(["require", "exports"], function (require, exports) {
                 .join(" ") + "\n");
         }
     }
-    // TODO : Merge common functionality with ColumnParseResult into a base class.
     class FreecellsParseResult extends BaseResult {
         constructor(is_correct, start_char_idx, num_consumed_chars, error, num_freecells, fc) {
             super(is_correct, start_char_idx, num_consumed_chars, error);
@@ -23473,6 +23476,11 @@ define(["require", "exports"], function (require, exports) {
             return make_ret(false, 'Wrong line prefix for freecells - should be "Freecells:"');
         }
         const ret = p.loop("\\-|(?:" + card_re + ")", () => {
+            const card_str = p.match(/^(\S+)/)[1];
+            const m = card_str.match("^1(" + french_cards_1.suit_re + ")");
+            if (m) {
+                return make_ret(false, calc_1H_error_string(m[1]));
+            }
             return make_ret(false, "Wrong card format - should be [Rank][Suit]");
         });
         if (ret) {
@@ -23524,7 +23532,7 @@ define(["require", "exports"], function (require, exports) {
             for (const suit of _suits) {
                 const val = that.getByIdx(0, suit);
                 if (val > 0) {
-                    arr.push(_suits__int_to_str[suit] + "-" + _ranks__int_to_str[val]);
+                    arr.push(french_cards_1.suits__int_to_str[suit] + "-" + _ranks__int_to_str[val]);
                 }
             }
             return (Array.prototype.concat
@@ -23553,8 +23561,8 @@ define(["require", "exports"], function (require, exports) {
             }
         }
     }
-    const foundations_prefix_re = /^((?:Foundations|Founds|FOUNDS)\:)/;
-    const freecells_prefix_re = "(?:Freecells|FC|Fc)";
+    const foundations_prefix_re = /^((?:Foundations|Founds|FOUNDS|founds)\:)/;
+    const freecells_prefix_re = "(?:Freecells|FC|Fc|fc|freecells)";
     function fcs_js__foundations_from_string(num_decks, start_char_idx, orig_s) {
         if (num_decks !== 1) {
             throw "Can only handle 1 decks.";
@@ -23574,9 +23582,12 @@ define(["require", "exports"], function (require, exports) {
             if (p.consume_match(/^( *\n?)$/)) {
                 break;
             }
-            const m = p.consume_match("^( +(" + suit_re + ")-(" + rank_re + "))");
+            const m = p.consume_match("^( +(" + french_cards_1.suit_re + ")-(" + french_cards_1.rank_re + "))");
             if (!m) {
-                return make_ret(false, "Could not match a foundation string [HCDS]-[A23456789TJQK]");
+                return make_ret(false, "Could not match a foundation string " +
+                    french_cards_1.suit_re +
+                    "-" +
+                    french_cards_1.rank_re);
             }
             const suit = m[2];
             if (!founds.setByIdx(0, exports.suits__str_to_int.get(suit), exports.ranks__str_to_int[m[3]])) {
@@ -23591,7 +23602,7 @@ define(["require", "exports"], function (require, exports) {
         ErrorLocationType[ErrorLocationType["Foundations"] = 0] = "Foundations";
         ErrorLocationType[ErrorLocationType["Freecells"] = 1] = "Freecells";
         ErrorLocationType[ErrorLocationType["Column"] = 2] = "Column";
-    })(ErrorLocationType = exports.ErrorLocationType || (exports.ErrorLocationType = {}));
+    })(ErrorLocationType || (exports.ErrorLocationType = ErrorLocationType = {}));
     class ErrorLocation {
         constructor(type_, idx, start, end) {
             this.type_ = type_;
@@ -23610,7 +23621,7 @@ define(["require", "exports"], function (require, exports) {
         ParseErrorType[ParseErrorType["LINE_PARSE_ERROR"] = 5] = "LINE_PARSE_ERROR";
         ParseErrorType[ParseErrorType["LOWERCASE_LETTERS"] = 6] = "LOWERCASE_LETTERS";
         ParseErrorType[ParseErrorType["HAS_10_STRINGS"] = 7] = "HAS_10_STRINGS";
-    })(ParseErrorType = exports.ParseErrorType || (exports.ParseErrorType = {}));
+    })(ParseErrorType || (exports.ParseErrorType = ParseErrorType = {}));
     class ParseError {
         constructor(type_, locs, card) {
             this.type_ = type_;
@@ -23658,7 +23669,7 @@ define(["require", "exports"], function (require, exports) {
             }
             that.columns = [];
             const counter = _suits.map((i) => {
-                return _perl_range(0, exports.MAX_RANK).map((i) => {
+                return (0, prange_1.perl_range)(0, exports.MAX_RANK).map((i) => {
                     return [];
                 });
             });
@@ -23707,13 +23718,13 @@ define(["require", "exports"], function (require, exports) {
             }
             if (that.foundations) {
                 for (const suit of _suits) {
-                    for (const rank of _perl_range(1, that.foundations.foundations.getByIdx(0, suit))) {
+                    for (const rank of (0, prange_1.perl_range)(1, that.foundations.foundations.getByIdx(0, suit))) {
                         counter[suit][rank].push(new ParseLocation(ErrorLocationType.Foundations, 0, 0));
                     }
                 }
             }
             if (that.freecells) {
-                for (const i of _perl_range(0, that.freecells.freecells.getNum() - 1)) {
+                for (const i of (0, prange_1.perl_range)(0, that.freecells.freecells.getNum() - 1)) {
                     const card = that.freecells.freecells.getCard(i);
                     if (card) {
                         counter[card.getSuit()][card.getRank()].push(new ParseLocation(ErrorLocationType.Freecells, i, 0));
@@ -23722,7 +23733,7 @@ define(["require", "exports"], function (require, exports) {
             }
             that.columns.forEach((col_res, idx) => {
                 const col = col_res.col;
-                for (const h of _perl_range(0, col.getLen() - 1)) {
+                for (const h of (0, prange_1.perl_range)(0, col.getLen() - 1)) {
                     const card = col.getCard(h);
                     counter[card.getSuit()][card.getRank()].push(new ParseLocation(ErrorLocationType.Column, idx, h));
                 }
@@ -23763,12 +23774,83 @@ define(["require", "exports"], function (require, exports) {
                 ret += that.freecells.freecells.toString();
             }
             for (const col of that.columns) {
-                ret += col.col.toString();
+                ret += col.toString();
             }
             return ret;
         }
+        _calc_filled() {
+            const that = this;
+            return that.columns.filter((c) => {
+                return c.getLen() > 0;
+            });
+        }
+        checkIfFlipped() {
+            const that = this;
+            let i = 0;
+            const my_filled_columns = that._calc_filled();
+            for (; i < 6; ++i) {
+                if (i >= my_filled_columns.length) {
+                    return false;
+                }
+                if (my_filled_columns[i].getLen() != 8) {
+                    return false;
+                }
+            }
+            for (; i < 7; ++i) {
+                if (i >= my_filled_columns.length) {
+                    return false;
+                }
+                if (my_filled_columns[i].getLen() != 4) {
+                    return false;
+                }
+            }
+            for (; i < my_filled_columns.length; ++i) {
+                if (my_filled_columns[i].getLen() != 0) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        flip() {
+            const that = this;
+            if (!that.checkIfFlipped()) {
+                throw "not flipped";
+            }
+            const my_filled_columns = that._calc_filled();
+            let new_columns = [];
+            for (let i = 0; i < 8; ++i) {
+                new_columns.push(fcs_js__column_from_string(0, ": " +
+                    (0, prange_1.perl_range)(0, i < 4 ? 6 : 5)
+                        .map((c) => {
+                        return my_filled_columns[c].col
+                            .getCard(i)
+                            .toString();
+                    })
+                        .join(" ") +
+                    "\n", false));
+            }
+            return new BoardParseResult(8, 4, new_columns.map((col) => col.toString()).join(""));
+        }
     }
     exports.BoardParseResult = BoardParseResult;
+    const lax_card_rank_re = "(?:(?:" + french_cards_1.rank_re + ")|10|[01])";
+    const lax_card_re = "(?:(?:" +
+        lax_card_rank_re +
+        french_cards_1.suit_re +
+        ")|(?:" +
+        french_cards_1.suit_re +
+        lax_card_rank_re +
+        "))";
+    const lax_card_with_spaces_re = "(?:(?:\\s|^)" + lax_card_re + "(?=(?:\\s|$)))";
+    const lax_card_three_matches = new RegExp(lax_card_with_spaces_re +
+        ".*?" +
+        lax_card_with_spaces_re +
+        ".*?" +
+        lax_card_with_spaces_re, "ims");
+    function determine_if_string_is_board_like(s) {
+        return lax_card_three_matches.test(s);
+    }
+    exports.determine_if_string_is_board_like = determine_if_string_is_board_like;
 });
 define(["require", "exports"], function (require, exports) {
     "use strict";
@@ -23835,7 +23917,7 @@ define(["require", "exports"], function (require, exports) {
         }
         init_from_string(num_stacks, num_freecells, ultimate_source, ultimate_dest, initial_src_state_str) {
             const expander = this;
-            const col_matches = initial_src_state_str.match(/(\n:[^\n]+)/g);
+            const col_matches = initial_src_state_str.match(/(\n:[^\n]*)/g);
             if (!col_matches || col_matches.length !== num_stacks) {
                 throw "Miscount of stacks.";
             }
@@ -24004,103 +24086,60 @@ define(["require", "exports"], function (require, exports) {
     }
     exports.fc_solve_expand_move = fc_solve_expand_move;
 });
-define(["require", "exports", "big-integer", "./fcs-validate", "./web-fc-solve--expand-moves", "./prange", "./french-cards"], function (require, exports, bigInt, validate, expand, prange_1, french_cards_1) {
+define(["require", "exports", "./fcs-validate", "./web-fcs-api-base", "./web-fc-solve--expand-moves", "./french-cards"], function (require, exports, validate, BaseApi, web_fc_solve__expand_moves_1, french_cards_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.Freecell_Deal_Finder = exports.deal_ms_fc_board = exports.FC_Solve = exports.DisplayFilter = exports.FCS_STATE_SUSPEND_PROCESS = exports.FCS_STATE_WAS_SOLVED = exports.FC_Solve_init_wrappers_with_module = void 0;
-    const fc_solve_expand_move = expand.fc_solve_expand_move;
-    let fc_solve__hll_ms_rand__get_singleton = null;
-    let fc_solve__hll_ms_rand__init = null;
-    let fc_solve__hll_ms_rand__mod_rand = null;
-    let fc_solve_user__find_deal__alloc = null;
-    let fc_solve_user__find_deal__fill = null;
-    let fc_solve_user__find_deal__free = null;
-    let fc_solve_user__find_deal__run = null;
-    let freecell_solver_user_alloc = null;
-    let freecell_solver_user_solve_board = null;
-    let freecell_solver_user_resume_solution = null;
-    let freecell_solver_user_cmd_line_read_cmd_line_preset = null;
-    let malloc = null;
-    let c_free = null;
-    let freecell_solver_user_get_next_move = null;
-    let freecell_solver_user_get_num_freecells = null;
-    let freecell_solver_user_get_num_stacks = null;
-    let freecell_solver_user_current_state_stringify = null;
-    let freecell_solver_user_stringify_move_ptr = null;
-    let freecell_solver_user_free = null;
-    let freecell_solver_user_limit_iterations_long = null;
-    let freecell_solver_user_get_invalid_state_error_into_string = null;
-    let freecell_solver_user_cmd_line_parse_args_with_file_nesting_count = null;
-    let fc_solve_Pointer_stringify = null;
-    let fc_solve_FS_writeFile = null;
-    let fc_solve_getValue = null;
-    let fc_solve_setValue = null;
-    let fc_solve_intArrayFromString = null;
-    let fc_solve_allocate_i8 = null;
+    exports.FC_Solve = exports.DisplayFilter = exports.FCS_STATE_SUSPEND_PROCESS = exports.FCS_STATE_WAS_SOLVED = exports.FC_Solve_init_wrappers_with_module = void 0;
     function FC_Solve_init_wrappers_with_module(Module) {
-        fc_solve__hll_ms_rand__get_singleton = Module.cwrap("fc_solve__hll_ms_rand__get_singleton", "number", []);
-        fc_solve__hll_ms_rand__init = Module.cwrap("fc_solve__hll_ms_rand__init", "number", ["number", "string"]);
-        fc_solve__hll_ms_rand__mod_rand = Module.cwrap("fc_solve__hll_ms_rand__mod_rand", "number", ["number", "number"]);
-        fc_solve_user__find_deal__alloc = Module.cwrap("fc_solve_user__find_deal__alloc", "number", []);
-        fc_solve_user__find_deal__fill = Module.cwrap("fc_solve_user__find_deal__fill", "number", ["number", "string"]);
-        fc_solve_user__find_deal__free = Module.cwrap("fc_solve_user__find_deal__free", "number", ["number"]);
-        fc_solve_user__find_deal__run = Module.cwrap("fc_solve_user__find_deal__run", "string", ["number", "string", "string"]);
-        freecell_solver_user_alloc = Module.cwrap("freecell_solver_user_alloc", "number", []);
-        freecell_solver_user_solve_board = Module.cwrap("freecell_solver_user_solve_board", "number", ["number", "string"]);
-        freecell_solver_user_resume_solution = Module.cwrap("freecell_solver_user_resume_solution", "number", ["number"]);
-        freecell_solver_user_cmd_line_read_cmd_line_preset = Module.cwrap("freecell_solver_user_cmd_line_read_cmd_line_preset", "number", ["number", "string", "number", "number", "number", "string"]);
-        malloc = Module.cwrap("malloc", "number", ["number"]);
-        c_free = Module.cwrap("free", "number", ["number"]);
-        freecell_solver_user_get_next_move = Module.cwrap("freecell_solver_user_get_next_move", "number", ["number", "number"]);
-        freecell_solver_user_get_num_freecells = Module.cwrap("freecell_solver_user_get_num_freecells", "number", ["number"]);
-        freecell_solver_user_get_num_stacks = Module.cwrap("freecell_solver_user_get_num_stacks", "number", ["number"]);
-        freecell_solver_user_current_state_stringify = Module.cwrap("freecell_solver_user_current_state_stringify", "number", ["number", "number", "number", "number", "number"]);
-        freecell_solver_user_stringify_move_ptr = Module.cwrap("freecell_solver_user_stringify_move_ptr", "number", ["number", "number", "number", "number"]);
-        freecell_solver_user_free = Module.cwrap("freecell_solver_user_free", "number", ["number"]);
-        freecell_solver_user_limit_iterations_long = Module.cwrap("freecell_solver_user_limit_iterations_long", "number", ["number", "number"]);
-        freecell_solver_user_get_invalid_state_error_into_string = Module.cwrap("freecell_solver_user_get_invalid_state_error_into_string", "number", ["number", "number", "number"]);
-        freecell_solver_user_cmd_line_parse_args_with_file_nesting_count = Module.cwrap("freecell_solver_user_cmd_line_parse_args_with_file_nesting_count", "number", [
-            "number",
-            "number",
-            "number",
-            "number",
-            "number",
-            "number",
-            "number",
-            "number",
-            "number",
-            "number",
-            "number",
-        ]);
-        fc_solve_Pointer_stringify = (ptr) => {
-            return Module.UTF8ToString(ptr, 10000);
-        };
-        fc_solve_FS_writeFile = (p1, p2, p3) => {
-            return Module.FS.writeFile(p1, p2, p3);
-        };
-        fc_solve_getValue = (p1, p2) => {
-            return Module.getValue(p1, p2);
-        };
-        fc_solve_setValue = (p1, p2, p3) => {
-            return Module.setValue(p1, p2, p3);
-        };
-        fc_solve_intArrayFromString = (s) => {
-            return Module.intArrayFromString(s);
-        };
-        fc_solve_allocate_i8 = (p1) => {
+        const module_wrapper = BaseApi.base_calc_module_wrapper(Module);
+        module_wrapper.fc_solve_allocate_i8 = (p1) => {
             return Module.allocate(p1, "i8", Module.ALLOC_STACK);
         };
-        return;
+        module_wrapper.user_alloc = Module.cwrap("freecell_solver_user_alloc", "number", []);
+        module_wrapper.user_solve_board = Module.cwrap("freecell_solver_user_solve_board", "number", ["number", "string"]);
+        module_wrapper.user_resume_solution = Module.cwrap("freecell_solver_user_resume_solution", "number", ["number"]);
+        module_wrapper.user_cmd_line_read_cmd_line_preset = Module.cwrap("freecell_solver_user_cmd_line_read_cmd_line_preset", "number", ["number", "string", "number", "number", "number", "string"]);
+        module_wrapper.user_get_next_move = Module.cwrap("freecell_solver_user_get_next_move", "number", ["number", "number"]);
+        module_wrapper.user_get_num_freecells = Module.cwrap("freecell_solver_user_get_num_freecells", "number", ["number"]);
+        module_wrapper.user_get_num_stacks = Module.cwrap("freecell_solver_user_get_num_stacks", "number", ["number"]);
+        module_wrapper.user_get_unrecognized_cmd_line_flag = Module.cwrap("freecell_solver_user_get_unrecognized_cmd_line_flag", "number", ["number", "number"]);
+        module_wrapper.user_get_unrecognized_cmd_line_flag_status = Module.cwrap("freecell_solver_user_get_unrecognized_cmd_line_flag_status", "number", ["number", "number"]);
+        module_wrapper.user_current_state_stringify = Module.cwrap("freecell_solver_user_current_state_stringify", "number", ["number", "number", "number", "number", "number"]);
+        module_wrapper.user_stringify_move_ptr = Module.cwrap("freecell_solver_user_stringify_move_ptr", "number", ["number", "number", "number", "number"]);
+        module_wrapper.user_free = Module.cwrap("freecell_solver_user_free", "number", ["number"]);
+        module_wrapper.user_limit_iterations_long = Module.cwrap("freecell_solver_user_limit_iterations_long", "number", ["number", "number"]);
+        module_wrapper.user_get_invalid_state_error_into_string = Module.cwrap("freecell_solver_user_get_invalid_state_error_into_string", "number", ["number", "number", "number"]);
+        module_wrapper.user_cmd_line_parse_args_with_file_nesting_count =
+            Module.cwrap("freecell_solver_user_cmd_line_parse_args_with_file_nesting_count", "number", [
+                "number",
+                "number",
+                "number",
+                "number",
+                "number",
+                "number",
+                "number",
+                "number",
+                "number",
+                "number",
+                "number",
+            ]);
+        module_wrapper.alloc_wrap = ((my_malloc) => {
+            return (size, desc, error) => {
+                const buffer = my_malloc(size);
+                if (buffer === 0) {
+                    alert("Could not allocate " + desc + " (out of memory?)");
+                    throw error;
+                }
+                return buffer;
+            };
+        })(Module.cwrap("malloc", "number", ["number"]));
+        module_wrapper.c_free = Module.cwrap("free", "number", ["number"]);
+        module_wrapper.fc_solve_Pointer_stringify = (ptr) => {
+            return Module.UTF8ToString(ptr, 10000);
+        };
+        return module_wrapper;
     }
     exports.FC_Solve_init_wrappers_with_module = FC_Solve_init_wrappers_with_module;
-    function alloc_wrap(size, desc, error) {
-        const ret = malloc(size);
-        if (ret === 0) {
-            alert("Could not allocate " + desc + " (out of memory?)");
-            throw error;
-        }
-        return ret;
-    }
     const remove_trailing_space_re = /[ \t]+$/gm;
     exports.FCS_STATE_WAS_SOLVED = 0;
     const FCS_STATE_IS_NOT_SOLVEABLE = 1;
@@ -24159,16 +24198,19 @@ define(["require", "exports", "big-integer", "./fcs-validate", "./web-fc-solve--
         }
     }
     exports.DisplayFilter = DisplayFilter;
+    const ptr_type = "i32";
     class FC_Solve {
         constructor(args) {
             const that = this;
+            that.module_wrapper = args.module_wrapper;
+            that._do_not_alert = false;
             that.dir_base = args.dir_base;
-            that.string_params = args.string_params;
+            that.string_params = args.string_params ? [args.string_params] : null;
             that.set_status_callback = args.set_status_callback;
             that.cmd_line_preset = args.cmd_line_preset;
             that.current_iters_limit = 0;
             that.obj = (() => {
-                const ret_obj = freecell_solver_user_alloc();
+                const ret_obj = that.module_wrapper.user_alloc();
                 // TODO : add an option to customise the limit of the
                 // iterations count.
                 if (ret_obj === 0) {
@@ -24176,8 +24218,13 @@ define(["require", "exports", "big-integer", "./fcs-validate", "./web-fc-solve--
                     throw "Foo";
                 }
                 if (that._initialize_obj(ret_obj) !== 0) {
-                    alert("Failed to initialize solver (Bug!)");
-                    freecell_solver_user_free(ret_obj);
+                    if (that._do_not_alert) {
+                        that._do_not_alert = false;
+                    }
+                    else {
+                        alert("Failed to initialize solver (Bug!)");
+                    }
+                    that.module_wrapper.user_free(ret_obj);
                     throw "Bar";
                 }
                 return ret_obj;
@@ -24185,8 +24232,8 @@ define(["require", "exports", "big-integer", "./fcs-validate", "./web-fc-solve--
             that.proto_states_and_moves_seq = null;
             that._pre_expand_states_and_moves_seq = null;
             that._post_expand_states_and_moves_seq = null;
-            that._state_string_buffer = alloc_wrap(500, "state string buffer", "Zam");
-            that._move_string_buffer = alloc_wrap(200, "move string buffer", "Plum");
+            that._state_string_buffer = that.module_wrapper.alloc_wrap(500, "state string buffer", "Zam");
+            that._move_string_buffer = that.module_wrapper.alloc_wrap(200, "move string buffer", "Plum");
             return;
         }
         set_status(myclass, mylabel) {
@@ -24196,10 +24243,10 @@ define(["require", "exports", "big-integer", "./fcs-validate", "./web-fc-solve--
         handle_err_code(solve_err_code) {
             const that = this;
             if (solve_err_code === FCS_STATE_INVALID_STATE) {
-                const error_string_ptr = alloc_wrap(300, "state error string", "Gum");
-                freecell_solver_user_get_invalid_state_error_into_string(that.obj, error_string_ptr, 1);
-                const error_string = fc_solve_Pointer_stringify(error_string_ptr);
-                c_free(error_string_ptr);
+                const error_string_ptr = that.module_wrapper.alloc_wrap(300, "state error string", "Gum");
+                that.module_wrapper.user_get_invalid_state_error_into_string(that.obj, error_string_ptr, 1);
+                const error_string = that.module_wrapper.fc_solve_Pointer_stringify(error_string_ptr);
+                that.module_wrapper.c_free(error_string_ptr);
                 alert(error_string + "\n");
                 throw "Foo";
             }
@@ -24230,7 +24277,7 @@ define(["require", "exports", "big-integer", "./fcs-validate", "./web-fc-solve--
         resume_solution() {
             const that = this;
             that._increase_iters_limit();
-            const solve_err_code = freecell_solver_user_resume_solution(that.obj);
+            const solve_err_code = that.module_wrapper.user_resume_solution(that.obj);
             that.handle_err_code(solve_err_code);
             return solve_err_code;
         }
@@ -24242,7 +24289,7 @@ define(["require", "exports", "big-integer", "./fcs-validate", "./web-fc-solve--
                 // Removed; for debugging purposes.
                 // alert("preset_ret = " + preset_ret);
                 const board_string = that._process_board_string(proto_board_string);
-                const solve_err_code = freecell_solver_user_solve_board(that.obj, board_string);
+                const solve_err_code = that.module_wrapper.user_solve_board(that.obj, board_string);
                 that.handle_err_code(solve_err_code);
                 return solve_err_code;
             }
@@ -24279,7 +24326,7 @@ define(["require", "exports", "big-integer", "./fcs-validate", "./web-fc-solve--
             const that = this;
             const states_and_moves_sequence = that.proto_states_and_moves_seq;
             if (!states_and_moves_sequence[idx].exp) {
-                states_and_moves_sequence[idx].exp = fc_solve_expand_move(8, 4, states_and_moves_sequence[idx - 1].str, states_and_moves_sequence[idx].m, states_and_moves_sequence[idx + 1].str);
+                states_and_moves_sequence[idx].exp = (0, web_fc_solve__expand_moves_1.fc_solve_expand_move)(8, 4, states_and_moves_sequence[idx - 1].str, states_and_moves_sequence[idx].m, states_and_moves_sequence[idx + 1].str);
             }
             return states_and_moves_sequence[idx].exp;
         }
@@ -24291,11 +24338,11 @@ define(["require", "exports", "big-integer", "./fcs-validate", "./web-fc-solve--
         }
         get_num_freecells() {
             const that = this;
-            return freecell_solver_user_get_num_freecells(that.obj);
+            return that.module_wrapper.user_get_num_freecells(that.obj);
         }
         get_num_stacks() {
             const that = this;
-            return freecell_solver_user_get_num_stacks(that.obj);
+            return that.module_wrapper.user_get_num_stacks(that.obj);
         }
         _calc_states_and_moves_seq() {
             const that = this;
@@ -24309,17 +24356,17 @@ define(["require", "exports", "big-integer", "./fcs-validate", "./web-fc-solve--
                 states_and_moves_sequence.push({ type: "s", str: s });
             }
             function get_state_str() {
-                freecell_solver_user_current_state_stringify(that.obj, that._state_string_buffer, 1, 0, 1);
-                return fc_solve_Pointer_stringify(that._state_string_buffer);
+                that.module_wrapper.user_current_state_stringify(that.obj, that._state_string_buffer, 1, 0, 1);
+                return that.module_wrapper.fc_solve_Pointer_stringify(that._state_string_buffer);
             }
             _out_state(get_state_str());
             let move_ret_code;
             // 128 bytes are enough to hold a move.
-            const move_buffer = alloc_wrap(128, "a buffer for the move", "maven");
-            while ((move_ret_code = freecell_solver_user_get_next_move(that.obj, move_buffer)) === 0) {
+            const move_buffer = that.module_wrapper.alloc_wrap(128, "a buffer for the move", "maven");
+            while ((move_ret_code = that.module_wrapper.user_get_next_move(that.obj, move_buffer)) === 0) {
                 const state_as_string = get_state_str();
-                freecell_solver_user_stringify_move_ptr(that.obj, that._move_string_buffer, move_buffer, 0);
-                const move_as_string = fc_solve_Pointer_stringify(that._move_string_buffer);
+                that.module_wrapper.user_stringify_move_ptr(that.obj, that._move_string_buffer, move_buffer, 0);
+                const move_as_string = that.module_wrapper.fc_solve_Pointer_stringify(that._move_string_buffer);
                 states_and_moves_sequence.push({
                     exp: null,
                     is_exp: false,
@@ -24337,12 +24384,12 @@ define(["require", "exports", "big-integer", "./fcs-validate", "./web-fc-solve--
             });
             that._post_expand_states_and_moves_seq = null;
             // Cleanup C resources
-            c_free(move_buffer);
-            freecell_solver_user_free(that.obj);
+            that.module_wrapper.c_free(move_buffer);
+            that.module_wrapper.user_free(that.obj);
             that.obj = 0;
-            c_free(that._state_string_buffer);
+            that.module_wrapper.c_free(that._state_string_buffer);
             that._state_string_buffer = 0;
-            c_free(that._move_string_buffer);
+            that.module_wrapper.c_free(that._move_string_buffer);
             that._move_string_buffer = 0;
             return;
         }
@@ -24378,7 +24425,7 @@ define(["require", "exports", "big-integer", "./fcs-validate", "./web-fc-solve--
         _increase_iters_limit() {
             const that = this;
             that.current_iters_limit += iters_step;
-            freecell_solver_user_limit_iterations_long(that.obj, that.current_iters_limit);
+            that.module_wrapper.user_limit_iterations_long(that.obj, that.current_iters_limit);
             return;
         }
         // Ascertain that the string contains a trailing newline.
@@ -24394,19 +24441,21 @@ define(["require", "exports", "big-integer", "./fcs-validate", "./web-fc-solve--
         }
         _stringify_possibly_null_ptr(s_ptr) {
             const that = this;
-            return s_ptr ? fc_solve_Pointer_stringify(s_ptr) : "";
+            return s_ptr
+                ? that.module_wrapper.fc_solve_Pointer_stringify(s_ptr)
+                : "";
         }
         _initialize_obj(obj) {
             const that = this;
             const cmd_line_preset = that.cmd_line_preset;
             try {
                 if (cmd_line_preset !== "default") {
-                    const error_string_ptr_buf = alloc_wrap(128, "error string buffer", "Foo");
-                    const preset_ret = freecell_solver_user_cmd_line_read_cmd_line_preset(obj, cmd_line_preset, 0, error_string_ptr_buf, 0, null);
-                    const error_string_ptr = fc_solve_getValue(error_string_ptr_buf, "*");
+                    const error_string_ptr_buf = that.module_wrapper.alloc_wrap(128, "error string buffer", "Foo");
+                    const preset_ret = that.module_wrapper.user_cmd_line_read_cmd_line_preset(obj, cmd_line_preset, 0, error_string_ptr_buf, 0, null);
+                    const error_string_ptr = that.module_wrapper.Module.getValue(error_string_ptr_buf, ptr_type);
                     const error_string = that._stringify_possibly_null_ptr(error_string_ptr);
-                    c_free(error_string_ptr);
-                    c_free(error_string_ptr_buf);
+                    that.module_wrapper.c_free(error_string_ptr);
+                    that.module_wrapper.c_free(error_string_ptr_buf);
                     if (preset_ret !== 0) {
                         alert("Failed to load command line preset '" +
                             cmd_line_preset +
@@ -24417,29 +24466,61 @@ define(["require", "exports", "big-integer", "./fcs-validate", "./web-fc-solve--
                     }
                 }
                 if (that.string_params) {
-                    const error_string_ptr_buf = alloc_wrap(128, "error string buffer", "Engo");
+                    const error_string_ptr_buf = that.module_wrapper.alloc_wrap(128, "error string buffer", "Engo");
                     // Create a file with the contents of string_params.
                     // var base_path = '/' + that.dir_base;
                     const base_path = "/";
                     const file_basename = "string-params.fc-solve.txt";
                     const string_params_file_path = base_path + file_basename;
-                    fc_solve_FS_writeFile(string_params_file_path, that.string_params, {});
-                    const args_buf = alloc_wrap(4 * 2, "args buf", "Seed");
+                    that.module_wrapper.Module.FS.writeFile(string_params_file_path, that.string_params[0], {});
+                    const args_buf = that.module_wrapper.alloc_wrap(4 * 2, "args buf", "Seed");
                     // TODO : Is there a memory leak here?
-                    const read_from_file_str_ptr = fc_solve_allocate_i8(fc_solve_intArrayFromString("--read-from-file"));
-                    const arg_str_ptr = fc_solve_allocate_i8(fc_solve_intArrayFromString("0," + string_params_file_path));
-                    fc_solve_setValue(args_buf, read_from_file_str_ptr, "*");
-                    fc_solve_setValue(args_buf + 4, arg_str_ptr, "*");
-                    const last_arg_ptr = alloc_wrap(4, "last_arg_ptr", "cherry");
+                    const read_from_file_str_ptr = that.module_wrapper.fc_solve_allocate_i8(that.module_wrapper.Module.intArrayFromString("--read-from-file"));
+                    const arg_str_ptr = that.module_wrapper.fc_solve_allocate_i8(that.module_wrapper.Module.intArrayFromString("0," + string_params_file_path));
+                    that.module_wrapper.Module.setValue(args_buf, read_from_file_str_ptr, ptr_type);
+                    that.module_wrapper.Module.setValue(args_buf + 4, arg_str_ptr, ptr_type);
+                    const last_arg_ptr = that.module_wrapper.alloc_wrap(4, "last_arg_ptr", "cherry");
                     // Input the file to the solver.
-                    const args_ret_code = freecell_solver_user_cmd_line_parse_args_with_file_nesting_count(obj, 2, args_buf, 0, 0, 0, 0, error_string_ptr_buf, last_arg_ptr, -1, 0);
-                    c_free(last_arg_ptr);
-                    c_free(args_buf);
-                    const error_string_ptr = fc_solve_getValue(error_string_ptr_buf, "*");
+                    const args_ret_code = that.module_wrapper.user_cmd_line_parse_args_with_file_nesting_count(obj, 2, args_buf, 0, 0, 0, 0, error_string_ptr_buf, last_arg_ptr, -1, 0);
+                    that.module_wrapper.c_free(last_arg_ptr);
+                    that.module_wrapper.c_free(args_buf);
+                    const error_string_ptr = that.module_wrapper.Module.getValue(error_string_ptr_buf, ptr_type);
                     const error_string = that._stringify_possibly_null_ptr(error_string_ptr);
-                    c_free(error_string_ptr);
-                    c_free(error_string_ptr_buf);
+                    that.module_wrapper.c_free(error_string_ptr);
+                    that.module_wrapper.c_free(error_string_ptr_buf);
                     if (args_ret_code !== 0) {
+                        const unrecognized_opt_ptr = that.module_wrapper.user_get_unrecognized_cmd_line_flag_status(obj, 0) == 0
+                            ? that.module_wrapper.user_get_unrecognized_cmd_line_flag(obj, 0)
+                            : 0;
+                        let unrecognized_opt_s = "";
+                        if (unrecognized_opt_ptr != 0) {
+                            that._do_not_alert = true;
+                            that._unrecognized_opt =
+                                that._stringify_possibly_null_ptr(unrecognized_opt_ptr);
+                            that.module_wrapper.c_free(unrecognized_opt_ptr);
+                            let exception_string = "";
+                            if (validate.determine_if_string_is_board_like(that.string_params[0])) {
+                                unrecognized_opt_s =
+                                    "Did you try inputting the cards' deal in the command-line arguments text box?\n" +
+                                        "Unrecognized command line flag: «" +
+                                        that._unrecognized_opt +
+                                        "».";
+                                exception_string =
+                                    "CommandLineArgsMayContainCardsArrangement";
+                            }
+                            else {
+                                unrecognized_opt_s =
+                                    "The Command Line arguments' textbox should " +
+                                        "normally be kept " +
+                                        "empty. (It is intended for advanced use!) " +
+                                        "There was an unrecognized command line flag: «" +
+                                        that._unrecognized_opt +
+                                        "».";
+                                exception_string = "Bar";
+                            }
+                            alert(unrecognized_opt_s);
+                            throw exception_string;
+                        }
                         alert("Failed to process user-specified command " +
                             "line arguments. Problem is: «" +
                             error_string +
@@ -24456,116 +24537,4 @@ define(["require", "exports", "big-integer", "./fcs-validate", "./web-fc-solve--
         }
     }
     exports.FC_Solve = FC_Solve;
-    /*
-     * Microsoft C Run-time-Library-compatible Random Number Generator
-     * Copyright by Shlomi Fish, 2011.
-     * Released under the MIT/Expat License
-     * ( http://en.wikipedia.org/wiki/MIT_License ).
-     * */
-    class MSRand {
-        constructor(args) {
-            const that = this;
-            that.gamenumber = args.gamenumber;
-            that.rander = fc_solve__hll_ms_rand__get_singleton();
-            fc_solve__hll_ms_rand__init(that.rander, "" + that.gamenumber);
-            return;
-        }
-        max_rand(mymax) {
-            return fc_solve__hll_ms_rand__mod_rand(this.rander, mymax);
-        }
-        shuffle(deck) {
-            if (deck.length) {
-                let i = deck.length;
-                while (--i) {
-                    const j = this.max_rand(i + 1);
-                    const tmp = deck[i];
-                    deck[i] = deck[j];
-                    deck[j] = tmp;
-                }
-            }
-            return deck;
-        }
-    }
-    /*
-     * Microsoft Windows Freecell / Freecell Pro boards generation.
-     *
-     * See:
-     *
-     * - http://rosettacode.org/wiki/Deal_cards_for_FreeCell
-     *
-     * - http://www.solitairelaboratory.com/mshuffle.txt
-     *
-     * Under MIT/Expat Licence.
-     *
-     * */
-    function deal_ms_fc_board(seed) {
-        const randomizer = new MSRand({ gamenumber: seed });
-        const num_cols = 8;
-        const columns = (0, prange_1.perl_range)(0, num_cols - 1).map(() => {
-            return [];
-        });
-        let deck = (0, prange_1.perl_range)(0, 4 * 13 - 1);
-        randomizer.shuffle(deck);
-        deck = deck.reverse();
-        for (let i = 0; i < 52; i++) {
-            columns[i % num_cols].push(deck[i]);
-        }
-        function render_card(card) {
-            const suit = card % 4;
-            const rank = Math.floor(card / 4);
-            return "A23456789TJQK".charAt(rank) + "CDHS".charAt(suit);
-        }
-        function render_column(col) {
-            return ": " + col.map(render_card).join(" ") + "\n";
-        }
-        return columns.map(render_column).join("");
-    }
-    exports.deal_ms_fc_board = deal_ms_fc_board;
-    class Freecell_Deal_Finder {
-        constructor(args) {
-            const that = this;
-            that.obj = fc_solve_user__find_deal__alloc();
-        }
-        fill(str) {
-            const that = this;
-            fc_solve_user__find_deal__fill(that.obj, str);
-            return;
-        }
-        release() {
-            fc_solve_user__find_deal__free(this.obj);
-            return;
-        }
-        run(abs_start, abs_end_param, update_cb) {
-            const that = this;
-            const CHUNK = bigInt(1000000);
-            that.CHUNKM = CHUNK.add(bigInt.minusOne);
-            const start = bigInt(abs_start);
-            const abs_end = bigInt(abs_end_param);
-            that.abs_end = abs_end;
-            that.start = start;
-            that.update_cb = update_cb;
-            return;
-        }
-        cont() {
-            const that = this;
-            const abs_end = that.abs_end;
-            if (that.start.lesser(abs_end)) {
-                that.update_cb({ start: that.start });
-                let end = that.start.add(that.CHUNKM);
-                if (end.gt(abs_end)) {
-                    end = abs_end;
-                }
-                const result = fc_solve_user__find_deal__run(that.obj, that.start.toString(), end.toString());
-                if (result !== "-1") {
-                    return { found: true, result };
-                }
-                that.start = end.add(bigInt.one);
-                return { found: false, cont: true };
-            }
-            else {
-                return { found: false, cont: false };
-            }
-        }
-    }
-    exports.Freecell_Deal_Finder = Freecell_Deal_Finder;
 });
