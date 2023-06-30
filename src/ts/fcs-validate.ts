@@ -1,3 +1,6 @@
+import { perl_range } from "./prange";
+import { rank_re, suits__int_to_str, suit_re } from "./french-cards";
+
 // Adapted from http://www.inventpartners.com/javascript_is_int - thanks.
 function is_int(input: number): boolean {
     const value: string = "" + input;
@@ -10,28 +13,18 @@ function is_int(input: number): boolean {
 
 const _ranks__int_to_str: string = "0A23456789TJQK";
 export const ranks__str_to_int = {};
-function _perl_range(start: number, end: number): number[] {
-    const ret: number[] = [];
-
-    for (let i = start; i <= end; i++) {
-        ret.push(i);
-    }
-
-    return ret;
-}
 export const NUM_SUITS: number = 4;
-const _suits: number[] = _perl_range(0, NUM_SUITS - 1);
+const _suits: number[] = perl_range(0, NUM_SUITS - 1);
 export const MIN_RANK: number = 1;
 export const MAX_RANK: number = 13;
-const _ranks: number[] = _perl_range(MIN_RANK, MAX_RANK);
+const _ranks: number[] = perl_range(MIN_RANK, MAX_RANK);
 
 for (const rank of _ranks) {
     ranks__str_to_int[_ranks__int_to_str.substring(rank, rank + 1)] = rank;
 }
-const _suits__int_to_str: string = "HCDS";
 export let suits__str_to_int = new Map<string, number>();
 for (const suit of _suits) {
-    suits__str_to_int.set(_suits__int_to_str.substring(suit, suit + 1), suit);
+    suits__str_to_int.set(suits__int_to_str.substring(suit, suit + 1), suit);
 }
 
 class Card {
@@ -67,7 +60,7 @@ class Card {
     public toString(): string {
         return (
             _ranks__int_to_str.substring(this.rank, this.rank + 1) +
-            _suits__int_to_str.substring(this.suit, this.suit + 1)
+            suits__int_to_str.substring(this.suit, this.suit + 1)
         );
     }
 }
@@ -142,7 +135,7 @@ class Column {
 
     public getArrOfStrs(): string[] {
         const that = this;
-        return _perl_range(0, that.getLen() - 1).map((i) => {
+        return perl_range(0, that.getLen() - 1).map((i) => {
             return that.getCard(i).toString();
         });
     }
@@ -156,8 +149,6 @@ class Column {
     }
 }
 
-const suit_re: string = "[HCDS]";
-const rank_re: string = "[A23456789TJQK]";
 const card_re: string = "(" + rank_re + ")(" + suit_re + ")";
 export function fcs_js__card_from_string(s: string): Card {
     const m = s.match("^" + card_re + "$");
@@ -192,6 +183,13 @@ class ColumnParseResult extends BaseResult {
     ) {
         super(is_correct, start_char_idx, num_consumed_chars, error);
         this.col = new Column(cards);
+    }
+
+    public getLen(): number {
+        return this.col.getLen();
+    }
+    public toString(): string {
+        return this.col.toString();
     }
 }
 
@@ -240,7 +238,7 @@ class CardsStringParser<CardType> extends StringParser {
     public cards: CardType[] = [];
     private is_start: boolean = true;
 
-    constructor(s: string, private card_mapper: ((string) => CardType)) {
+    constructor(s: string, private card_mapper: (string) => CardType) {
         super(s);
     }
 
@@ -268,7 +266,7 @@ class CardsStringParser<CardType> extends StringParser {
         return;
     }
 
-    public loop(re: any, callback: (() => any)): any {
+    public loop(re: any, callback: () => any): any {
         const p = this;
 
         while (p.should_loop()) {
@@ -284,6 +282,13 @@ class CardsStringParser<CardType> extends StringParser {
         }
         return null;
     }
+}
+
+function calc_1H_error_string(suit: string): string {
+    return 'Wrong rank specifier "1" (followed by "[R]"). Perhaps you meant either "A[R]" (for ace) or "T[R]" (for rank ten).'.replace(
+        /\[R\]/g,
+        suit,
+    );
 }
 
 export function fcs_js__column_from_string(
@@ -306,6 +311,17 @@ export function fcs_js__column_from_string(
     }
 
     const ret = p.loop(card_re, () => {
+        const card_str = p.match(/^(\S+)/)[1];
+        const m = card_str.match("^1(" + suit_re + ")");
+        if (m) {
+            return new ColumnParseResult(
+                false,
+                start_char_idx,
+                p.getConsumed(),
+                calc_1H_error_string(m[1]),
+                [],
+            );
+        }
         return new ColumnParseResult(
             false,
             start_char_idx,
@@ -356,7 +372,7 @@ class Freecells {
 
     public getArrOfStrs(): string[] {
         const that = this;
-        return _perl_range(0, that.getNum() - 1).map((i) => {
+        return perl_range(0, that.getNum() - 1).map((i) => {
             const card = that.getCard(i);
             return card !== null ? card.toString() : "-";
         });
@@ -372,7 +388,6 @@ class Freecells {
     }
 }
 
-// TODO : Merge common functionality with ColumnParseResult into a base class.
 class FreecellsParseResult extends BaseResult {
     public freecells: Freecells;
 
@@ -423,6 +438,11 @@ export function fcs_js__freecells_from_string(
     }
 
     const ret = p.loop("\\-|(?:" + card_re + ")", () => {
+        const card_str = p.match(/^(\S+)/)[1];
+        const m = card_str.match("^1(" + suit_re + ")");
+        if (m) {
+            return make_ret(false, calc_1H_error_string(m[1]));
+        }
         return make_ret(false, "Wrong card format - should be [Rank][Suit]");
     });
 
@@ -488,7 +508,7 @@ export class Foundations {
             const val = that.getByIdx(0, suit);
             if (val > 0) {
                 arr.push(
-                    _suits__int_to_str[suit] + "-" + _ranks__int_to_str[val],
+                    suits__int_to_str[suit] + "-" + _ranks__int_to_str[val],
                 );
             }
         }
@@ -531,8 +551,8 @@ class FoundationsParseResult extends BaseResult {
     }
 }
 
-const foundations_prefix_re = /^((?:Foundations|Founds|FOUNDS)\:)/;
-const freecells_prefix_re = "(?:Freecells|FC|Fc)";
+const foundations_prefix_re = /^((?:Foundations|Founds|FOUNDS|founds)\:)/;
+const freecells_prefix_re = "(?:Freecells|FC|Fc|fc|freecells)";
 export function fcs_js__foundations_from_string(
     num_decks: number,
     start_char_idx: number,
@@ -573,7 +593,10 @@ export function fcs_js__foundations_from_string(
         if (!m) {
             return make_ret(
                 false,
-                "Could not match a foundation string [HCDS]-[A23456789TJQK]",
+                "Could not match a foundation string " +
+                    suit_re +
+                    "-" +
+                    rank_re,
             );
         }
         const suit = m[2];
@@ -679,7 +702,7 @@ export class BoardParseResult {
         }
         that.columns = [];
         const counter: ParseLocation[][][] = _suits.map((i) => {
-            return _perl_range(0, MAX_RANK).map((i) => {
+            return perl_range(0, MAX_RANK).map((i) => {
                 return [];
             });
         });
@@ -766,7 +789,7 @@ export class BoardParseResult {
         }
         if (that.foundations) {
             for (const suit of _suits) {
-                for (const rank of _perl_range(
+                for (const rank of perl_range(
                     1,
                     that.foundations.foundations.getByIdx(0, suit),
                 )) {
@@ -777,7 +800,7 @@ export class BoardParseResult {
             }
         }
         if (that.freecells) {
-            for (const i of _perl_range(
+            for (const i of perl_range(
                 0,
                 that.freecells.freecells.getNum() - 1,
             )) {
@@ -791,7 +814,7 @@ export class BoardParseResult {
         }
         that.columns.forEach((col_res, idx) => {
             const col = col_res.col;
-            for (const h of _perl_range(0, col.getLen() - 1)) {
+            for (const h of perl_range(0, col.getLen() - 1)) {
                 const card = col.getCard(h);
 
                 counter[card.getSuit()][card.getRank()].push(
@@ -845,8 +868,92 @@ export class BoardParseResult {
             ret += that.freecells.freecells.toString();
         }
         for (const col of that.columns) {
-            ret += col.col.toString();
+            ret += col.toString();
         }
         return ret;
     }
+    private _calc_filled(): ColumnParseResult[] {
+        const that = this;
+        return that.columns.filter((c) => {
+            return c.getLen() > 0;
+        });
+    }
+    public checkIfFlipped(): boolean {
+        const that = this;
+        let i = 0;
+        const my_filled_columns = that._calc_filled();
+        for (; i < 6; ++i) {
+            if (i >= my_filled_columns.length) {
+                return false;
+            }
+            if (my_filled_columns[i].getLen() != 8) {
+                return false;
+            }
+        }
+        for (; i < 7; ++i) {
+            if (i >= my_filled_columns.length) {
+                return false;
+            }
+            if (my_filled_columns[i].getLen() != 4) {
+                return false;
+            }
+        }
+        for (; i < my_filled_columns.length; ++i) {
+            if (my_filled_columns[i].getLen() != 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+    public flip(): BoardParseResult {
+        const that = this;
+        if (!that.checkIfFlipped()) {
+            throw "not flipped";
+        }
+        const my_filled_columns = that._calc_filled();
+        let new_columns: ColumnParseResult[] = [];
+        for (let i = 0; i < 8; ++i) {
+            new_columns.push(
+                fcs_js__column_from_string(
+                    0,
+                    ": " +
+                        perl_range(0, i < 4 ? 6 : 5)
+                            .map((c) => {
+                                return my_filled_columns[c].col
+                                    .getCard(i)
+                                    .toString();
+                            })
+                            .join(" ") +
+                        "\n",
+                    false,
+                ),
+            );
+        }
+        return new BoardParseResult(
+            8,
+            4,
+            new_columns.map((col) => col.toString()).join(""),
+        );
+    }
+}
+const lax_card_rank_re = "(?:(?:" + rank_re + ")|10|[01])";
+const lax_card_re =
+    "(?:(?:" +
+    lax_card_rank_re +
+    suit_re +
+    ")|(?:" +
+    suit_re +
+    lax_card_rank_re +
+    "))";
+const lax_card_with_spaces_re = "(?:(?:\\s|^)" + lax_card_re + "(?=(?:\\s|$)))";
+const lax_card_three_matches = new RegExp(
+    lax_card_with_spaces_re +
+        ".*?" +
+        lax_card_with_spaces_re +
+        ".*?" +
+        lax_card_with_spaces_re,
+    "ims",
+);
+export function determine_if_string_is_board_like(s: string): boolean {
+    return lax_card_three_matches.test(s);
 }

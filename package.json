@@ -28,7 +28,7 @@
     "browserify": "^17.0.0",
     "camel-case": "^4.1.2",
     "coffeescript": "^2.7.0",
-    "eslint": "^8.39.0",
+    "eslint": "^8.43.0",
     "eslint-config-google": "^0.14.0",
     "flatted": "^3.2.7",
     "html-minifier": "^4.0.0",
@@ -37,8 +37,8 @@
     "micromatch": "^4.0.5",
     "prettier": "^2.8.8",
     "requirejs": "^2.3.6",
-    "terser": "^5.17.1",
-    "typescript": "^5.0.4",
+    "terser": "^5.18.2",
+    "typescript": "^5.1.6",
     "uglify-es": "^3.3.9"
   }
 }
