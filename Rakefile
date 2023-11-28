@@ -6,7 +6,7 @@ ROOT_PREFIX = 'dest'
 PREFIX = 'dest/js'
 BROWSERIFY_JS = %w[big-integer flatted].freeze
 TS_BASE = %w[fcs-validate french-cards prange web-fc-solve--expand-moves
-             web-fc-solve].freeze
+             web-fc-solve web-fcs-api-base].freeze
 JS_CURATED_SOURCES = %w[
   agnes
   application
