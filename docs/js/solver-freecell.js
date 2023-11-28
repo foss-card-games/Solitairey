@@ -11,6 +11,7 @@ define([
     const FCS_STATE_WAS_SOLVED = w.FCS_STATE_WAS_SOLVED;
     const ENABLE_VALIDATION = true;
     let getGame; // = solitaire.getGame;
+    let _module_wrapper;
     let _startSolution_cb;
     function startSolution(args) {
         return _startSolution_cb(args);
@@ -170,9 +171,10 @@ define([
                 onRuntimeInitialized: () => {
                     _my_module.then((result) => {
                         _my_non_promise_module = result;
-                        w.FC_Solve_init_wrappers_with_module(
-                            _my_non_promise_module,
+                        const module_wrapper = w.FC_Solve_init_wrappers_with_module(
+                                                                                    _my_non_promise_module,
                         );
+                        _module_wrapper = module_wrapper;
                         callback();
                     });
                 },
@@ -323,6 +325,7 @@ define([
             // cmd_line_preset: "lg",
             // cmd_line_preset: 'as',
             // cmd_line_preset: 'default',
+            module_wrapper: _module_wrapper,
             set_status_callback: function (status) {
                 if (status == "exceeded") {
                     exceeded_iters = true;
