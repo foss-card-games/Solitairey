@@ -33,7 +33,7 @@
     "flatted": "^3.2.9",
     "html-minifier": "^4.0.0",
     "lodash": "^4.17.21",
-    "lodash-cli": "^4.17.5",
+    "lodash-cli": "^3.10.1",
     "micromatch": "^4.0.5",
     "prettier": "^3.1.0",
     "requirejs": "^2.3.6",
