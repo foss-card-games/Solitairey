@@ -6,6 +6,7 @@
 /dest/.htaccess
 /dest/cards.css.map
 /dest/dondorf
+/dest/green.webp
 /dest/index-dev.html
 /dest/index-dev.xhtml
 /dest/index.html
@@ -15,8 +16,10 @@
 /dest/js/libfreecell-solver-asm.js.mem
 /dest/js/libfreecell-solver.js.mem
 /dest/js/yui-unpack
+/dest/jstorage.min.js
 /dest/layouts
 /dest/libfreecell-solver.js.mem
+/green.webp
 /node_modules/
 /src/js/fcs-validate.js
 /src/js/french-cards.js

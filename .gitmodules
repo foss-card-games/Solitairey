@@ -1,0 +1,3 @@
+[submodule "jStorage"]
+	path = jStorage
+	url = https://github.com/andris9/jStorage

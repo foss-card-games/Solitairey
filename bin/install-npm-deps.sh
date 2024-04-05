@@ -8,7 +8,9 @@ set -e -x
 npm install
 if ! test -e jStorage
 then
-    git clone https://github.com/andris9/jStorage
+    # git clone https://github.com/andris9/jStorage
+    printf "%s\\n" "jStorage directory does not exist (maybe run git submodule)" 1>&2
+    exit 1
 fi
 
 # npm install \
