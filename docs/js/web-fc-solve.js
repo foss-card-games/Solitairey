@@ -1,7 +1,8 @@
 define(["require", "exports", "./fcs-validate", "./web-fcs-api-base", "./web-fc-solve--expand-moves", "./french-cards"], function (require, exports, validate, BaseApi, web_fc_solve__expand_moves_1, french_cards_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.FC_Solve = exports.DisplayFilter = exports.FCS_STATE_SUSPEND_PROCESS = exports.FCS_STATE_WAS_SOLVED = exports.FC_Solve_init_wrappers_with_module = void 0;
+    exports.FC_Solve = exports.DisplayFilter = exports.FCS_STATE_SUSPEND_PROCESS = exports.FCS_STATE_WAS_SOLVED = void 0;
+    exports.FC_Solve_init_wrappers_with_module = FC_Solve_init_wrappers_with_module;
     function FC_Solve_init_wrappers_with_module(Module) {
         const module_wrapper = BaseApi.base_calc_module_wrapper(Module);
         module_wrapper.fc_solve_allocate_i8 = (p1) => {
@@ -51,7 +52,6 @@ define(["require", "exports", "./fcs-validate", "./web-fcs-api-base", "./web-fc-
         };
         return module_wrapper;
     }
-    exports.FC_Solve_init_wrappers_with_module = FC_Solve_init_wrappers_with_module;
     const remove_trailing_space_re = /[ \t]+$/gm;
     exports.FCS_STATE_WAS_SOLVED = 0;
     const FCS_STATE_IS_NOT_SOLVEABLE = 1;

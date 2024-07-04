@@ -3,7 +3,10 @@
 @import url(https://fonts.googleapis.com/css?family=Questrial);
 
 @mixin clear_style {
-    // position: relative;
+    // It is important to keep “position: relative;” here given removing
+    // it causes cards' drag-and-dropped images to be misplaced and
+    // #solver_bar and the menu-bar to be non-centred .
+    position: relative;
     margin: 0;
     border: 0;
     padding: 0;
@@ -67,8 +70,8 @@
         right: 0%;
         top: 0%;
         a {
-           color: white;
-           text-decoration: underline;
+            color: white;
+            text-decoration: underline;
         }
         > p {
             padding: 1em;

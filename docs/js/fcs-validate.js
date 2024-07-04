@@ -1,7 +1,13 @@
 define(["require", "exports", "./prange", "./french-cards"], function (require, exports, prange_1, french_cards_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.determine_if_string_is_board_like = exports.BoardParseResult = exports.ParseErrorType = exports.ErrorLocationType = exports.fcs_js__foundations_from_string = exports.Foundations = exports.fcs_js__freecells_from_string = exports.fcs_js__column_from_string = exports.fcs_js__card_from_string = exports.capitalize_cards = exports.suits__str_to_int = exports.MAX_RANK = exports.MIN_RANK = exports.NUM_SUITS = exports.ranks__str_to_int = void 0;
+    exports.BoardParseResult = exports.ParseErrorType = exports.ErrorLocationType = exports.Foundations = exports.suits__str_to_int = exports.MAX_RANK = exports.MIN_RANK = exports.NUM_SUITS = exports.ranks__str_to_int = void 0;
+    exports.capitalize_cards = capitalize_cards;
+    exports.fcs_js__card_from_string = fcs_js__card_from_string;
+    exports.fcs_js__column_from_string = fcs_js__column_from_string;
+    exports.fcs_js__freecells_from_string = fcs_js__freecells_from_string;
+    exports.fcs_js__foundations_from_string = fcs_js__foundations_from_string;
+    exports.determine_if_string_is_board_like = determine_if_string_is_board_like;
     // Adapted from http://www.inventpartners.com/javascript_is_int - thanks.
     function is_int(input) {
         const value = "" + input;
@@ -106,7 +112,6 @@ define(["require", "exports", "./prange", "./french-cards"], function (require, 
         })
             .join("");
     }
-    exports.capitalize_cards = capitalize_cards;
     class Column {
         constructor(cards) {
             this.cards = cards;
@@ -145,7 +150,6 @@ define(["require", "exports", "./prange", "./french-cards"], function (require, 
         }
         return new Card(exports.ranks__str_to_int[m[1]], exports.suits__str_to_int.get(m[2]));
     }
-    exports.fcs_js__card_from_string = fcs_js__card_from_string;
     class BaseResult {
         constructor(is_correct, start_char_idx, num_consumed_chars, error) {
             this.is_correct = is_correct;
@@ -262,7 +266,6 @@ define(["require", "exports", "./prange", "./french-cards"], function (require, 
         }
         return new ColumnParseResult(true, start_char_idx, p.getConsumed(), "", p.cards);
     }
-    exports.fcs_js__column_from_string = fcs_js__column_from_string;
     class Freecells {
         constructor(num_freecells, cards) {
             this.num_freecells = num_freecells;
@@ -338,7 +341,6 @@ define(["require", "exports", "./prange", "./french-cards"], function (require, 
         }
         return make_ret(true, "");
     }
-    exports.fcs_js__freecells_from_string = fcs_js__freecells_from_string;
     class Foundations {
         constructor() {
             this.ranks = [-1, -1, -1, -1];
@@ -440,7 +442,6 @@ define(["require", "exports", "./prange", "./french-cards"], function (require, 
         }
         return make_ret(true, "");
     }
-    exports.fcs_js__foundations_from_string = fcs_js__foundations_from_string;
     var ErrorLocationType;
     (function (ErrorLocationType) {
         ErrorLocationType[ErrorLocationType["Foundations"] = 0] = "Foundations";
@@ -694,5 +695,4 @@ define(["require", "exports", "./prange", "./french-cards"], function (require, 
     function determine_if_string_is_board_like(s) {
         return lax_card_three_matches.test(s);
     }
-    exports.determine_if_string_is_board_like = determine_if_string_is_board_like;
 });

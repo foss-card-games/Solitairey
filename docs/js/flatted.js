@@ -1,6 +1,8 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.flatted = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({"flatted":[function(require,module,exports){
 'use strict';
-/*! (c) 2020 Andrea Giammarchi */
+/// <reference types="../types/index.d.ts" />
+
+// (c) 2020-present Andrea Giammarchi
 
 const {parse: $parse, stringify: $stringify} = JSON;
 const {keys} = Object;
@@ -52,6 +54,12 @@ const set = (known, input, value) => {
   return index;
 };
 
+/**
+ * Converts a specialized flatted string into a JS value.
+ * @param {string} text
+ * @param {((this: any, key: string, value: any) => any) | undefined): any} [reviver]
+ * @returns {any}
+ */
 const parse = (text, reviver) => {
   const input = $parse(text, Primitives).map(primitives);
   const value = input[0];
@@ -63,6 +71,13 @@ const parse = (text, reviver) => {
 };
 exports.parse = parse;
 
+/**
+ * Converts a JS value into a specialized flatted string.
+ * @param {any} value
+ * @param {((this: any, key: string, value: any) => any) | (string | number)[] | null | undefined} [replacer]
+ * @param {string | number | undefined} [space]
+ * @returns {string}
+ */
 const stringify = (value, replacer, space) => {
   const $ = replacer && typeof replacer === object ?
             (k, v) => (k === '' || -1 < replacer.indexOf(k) ? v : void 0) :
@@ -94,9 +109,20 @@ const stringify = (value, replacer, space) => {
 };
 exports.stringify = stringify;
 
-const toJSON = any => $parse(stringify(any));
+/**
+ * Converts a generic value into a JSON serializable object without losing recursion.
+ * @param {any} value
+ * @returns {any}
+ */
+const toJSON = value => $parse(stringify(value));
 exports.toJSON = toJSON;
-const fromJSON = any => parse($stringify(any));
+
+/**
+ * Converts a previously serialized object with recursion into a recursive one.
+ * @param {any} value
+ * @returns {any}
+ */
+const fromJSON = value => parse($stringify(value));
 exports.fromJSON = fromJSON;
 
 },{}]},{},[])("flatted")

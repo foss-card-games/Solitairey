@@ -1,7 +1,7 @@
 define(["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.fc_solve_expand_move = void 0;
+    exports.fc_solve_expand_move = fc_solve_expand_move;
     function _to_int(s) {
         return parseInt(s, 10);
     }
@@ -208,5 +208,4 @@ define(["require", "exports"], function (require, exports) {
         expander.recursive_move(ultimate_source, ultimate_dest, ultimate_num_cards, expander.empty_stack_indexes);
         return expander.ret_array;
     }
-    exports.fc_solve_expand_move = fc_solve_expand_move;
 });

@@ -23160,7 +23160,13 @@ YUI.add(
 define(["require", "exports", "./prange", "./french-cards"], function (require, exports, prange_1, french_cards_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.determine_if_string_is_board_like = exports.BoardParseResult = exports.ParseErrorType = exports.ErrorLocationType = exports.fcs_js__foundations_from_string = exports.Foundations = exports.fcs_js__freecells_from_string = exports.fcs_js__column_from_string = exports.fcs_js__card_from_string = exports.capitalize_cards = exports.suits__str_to_int = exports.MAX_RANK = exports.MIN_RANK = exports.NUM_SUITS = exports.ranks__str_to_int = void 0;
+    exports.BoardParseResult = exports.ParseErrorType = exports.ErrorLocationType = exports.Foundations = exports.suits__str_to_int = exports.MAX_RANK = exports.MIN_RANK = exports.NUM_SUITS = exports.ranks__str_to_int = void 0;
+    exports.capitalize_cards = capitalize_cards;
+    exports.fcs_js__card_from_string = fcs_js__card_from_string;
+    exports.fcs_js__column_from_string = fcs_js__column_from_string;
+    exports.fcs_js__freecells_from_string = fcs_js__freecells_from_string;
+    exports.fcs_js__foundations_from_string = fcs_js__foundations_from_string;
+    exports.determine_if_string_is_board_like = determine_if_string_is_board_like;
     // Adapted from http://www.inventpartners.com/javascript_is_int - thanks.
     function is_int(input) {
         const value = "" + input;
@@ -23265,7 +23271,6 @@ define(["require", "exports", "./prange", "./french-cards"], function (require, 
         })
             .join("");
     }
-    exports.capitalize_cards = capitalize_cards;
     class Column {
         constructor(cards) {
             this.cards = cards;
@@ -23304,7 +23309,6 @@ define(["require", "exports", "./prange", "./french-cards"], function (require, 
         }
         return new Card(exports.ranks__str_to_int[m[1]], exports.suits__str_to_int.get(m[2]));
     }
-    exports.fcs_js__card_from_string = fcs_js__card_from_string;
     class BaseResult {
         constructor(is_correct, start_char_idx, num_consumed_chars, error) {
             this.is_correct = is_correct;
@@ -23421,7 +23425,6 @@ define(["require", "exports", "./prange", "./french-cards"], function (require, 
         }
         return new ColumnParseResult(true, start_char_idx, p.getConsumed(), "", p.cards);
     }
-    exports.fcs_js__column_from_string = fcs_js__column_from_string;
     class Freecells {
         constructor(num_freecells, cards) {
             this.num_freecells = num_freecells;
@@ -23497,7 +23500,6 @@ define(["require", "exports", "./prange", "./french-cards"], function (require, 
         }
         return make_ret(true, "");
     }
-    exports.fcs_js__freecells_from_string = fcs_js__freecells_from_string;
     class Foundations {
         constructor() {
             this.ranks = [-1, -1, -1, -1];
@@ -23599,7 +23601,6 @@ define(["require", "exports", "./prange", "./french-cards"], function (require, 
         }
         return make_ret(true, "");
     }
-    exports.fcs_js__foundations_from_string = fcs_js__foundations_from_string;
     var ErrorLocationType;
     (function (ErrorLocationType) {
         ErrorLocationType[ErrorLocationType["Foundations"] = 0] = "Foundations";
@@ -23853,7 +23854,6 @@ define(["require", "exports", "./prange", "./french-cards"], function (require, 
     function determine_if_string_is_board_like(s) {
         return lax_card_three_matches.test(s);
     }
-    exports.determine_if_string_is_board_like = determine_if_string_is_board_like;
 });
 define(["require", "exports"], function (require, exports) {
     "use strict";
@@ -23867,7 +23867,7 @@ define(["require", "exports"], function (require, exports) {
 define(["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.perl_range = void 0;
+    exports.perl_range = perl_range;
     function perl_range(start, end) {
         const ret = [];
         for (let i = start; i <= end; ++i) {
@@ -23875,12 +23875,11 @@ define(["require", "exports"], function (require, exports) {
         }
         return ret;
     }
-    exports.perl_range = perl_range;
 });
 define(["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.fc_solve_expand_move = void 0;
+    exports.fc_solve_expand_move = fc_solve_expand_move;
     function _to_int(s) {
         return parseInt(s, 10);
     }
@@ -24087,12 +24086,12 @@ define(["require", "exports"], function (require, exports) {
         expander.recursive_move(ultimate_source, ultimate_dest, ultimate_num_cards, expander.empty_stack_indexes);
         return expander.ret_array;
     }
-    exports.fc_solve_expand_move = fc_solve_expand_move;
 });
 define(["require", "exports", "./fcs-validate", "./web-fcs-api-base", "./web-fc-solve--expand-moves", "./french-cards"], function (require, exports, validate, BaseApi, web_fc_solve__expand_moves_1, french_cards_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.FC_Solve = exports.DisplayFilter = exports.FCS_STATE_SUSPEND_PROCESS = exports.FCS_STATE_WAS_SOLVED = exports.FC_Solve_init_wrappers_with_module = void 0;
+    exports.FC_Solve = exports.DisplayFilter = exports.FCS_STATE_SUSPEND_PROCESS = exports.FCS_STATE_WAS_SOLVED = void 0;
+    exports.FC_Solve_init_wrappers_with_module = FC_Solve_init_wrappers_with_module;
     function FC_Solve_init_wrappers_with_module(Module) {
         const module_wrapper = BaseApi.base_calc_module_wrapper(Module);
         module_wrapper.fc_solve_allocate_i8 = (p1) => {
@@ -24142,7 +24141,6 @@ define(["require", "exports", "./fcs-validate", "./web-fcs-api-base", "./web-fc-
         };
         return module_wrapper;
     }
-    exports.FC_Solve_init_wrappers_with_module = FC_Solve_init_wrappers_with_module;
     const remove_trailing_space_re = /[ \t]+$/gm;
     exports.FCS_STATE_WAS_SOLVED = 0;
     const FCS_STATE_IS_NOT_SOLVEABLE = 1;
@@ -24544,7 +24542,8 @@ define(["require", "exports", "./fcs-validate", "./web-fcs-api-base", "./web-fc-
 define(["require", "exports", "./prange"], function (require, exports, prange_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.deal_ms_fc_board = exports.base_calc_module_wrapper = void 0;
+    exports.base_calc_module_wrapper = base_calc_module_wrapper;
+    exports.deal_ms_fc_board = deal_ms_fc_board;
     function base_calc_module_wrapper(Module) {
         const ms_rand__get_singleton = Module.cwrap("fc_solve__hll_ms_rand__get_singleton", "number", []);
         const ms_rand__init = Module.cwrap("fc_solve__hll_ms_rand__init", "number", ["number", "string"]);
@@ -24556,7 +24555,6 @@ define(["require", "exports", "./prange"], function (require, exports, prange_1)
             Module,
         };
     }
-    exports.base_calc_module_wrapper = base_calc_module_wrapper;
     /*
      * Microsoft C Run-time-Library-compatible Random Number Generator
      * Copyright by Shlomi Fish, 2011.
@@ -24626,5 +24624,4 @@ define(["require", "exports", "./prange"], function (require, exports, prange_1)
         }
         return columns.map(render_column).join("");
     }
-    exports.deal_ms_fc_board = deal_ms_fc_board;
 });
