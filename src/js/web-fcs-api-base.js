@@ -1,7 +1,8 @@
 define(["require", "exports", "./prange"], function (require, exports, prange_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.deal_ms_fc_board = exports.base_calc_module_wrapper = void 0;
+    exports.base_calc_module_wrapper = base_calc_module_wrapper;
+    exports.deal_ms_fc_board = deal_ms_fc_board;
     function base_calc_module_wrapper(Module) {
         const ms_rand__get_singleton = Module.cwrap("fc_solve__hll_ms_rand__get_singleton", "number", []);
         const ms_rand__init = Module.cwrap("fc_solve__hll_ms_rand__init", "number", ["number", "string"]);
@@ -13,7 +14,6 @@ define(["require", "exports", "./prange"], function (require, exports, prange_1)
             Module,
         };
     }
-    exports.base_calc_module_wrapper = base_calc_module_wrapper;
     /*
      * Microsoft C Run-time-Library-compatible Random Number Generator
      * Copyright by Shlomi Fish, 2011.
@@ -83,5 +83,4 @@ define(["require", "exports", "./prange"], function (require, exports, prange_1)
         }
         return columns.map(render_column).join("");
     }
-    exports.deal_ms_fc_board = deal_ms_fc_board;
 });

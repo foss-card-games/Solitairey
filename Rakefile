@@ -239,7 +239,7 @@ end
 T = JS_CURATED_SOURCES.reject { |x| x == 'iphone' }.freeze
 task test: :default do
   js_files_string = T.map { |f| "src/js/#{f}.js" }.join(' ')
-  sh "eslint -c .eslintrc.yml #{js_files_string}"
+  sh "eslint -c eslint.config.mjs #{js_files_string}"
   sh 'rubocop Rakefile'
 end
 task :prettier do
