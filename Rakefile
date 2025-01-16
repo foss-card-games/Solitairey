@@ -261,8 +261,9 @@ end
 task upload: :default do
   # myrsync "hostgator:public_html/temp-Solitairey-ekrimyk/"
   # myrsync "hostgator:public_html/temp-Solitairey-fc-solve-loop-NjU78o/"
-  myrsync '/var/www/html/shlomif/local-Solitairey-todel/'
-  cond = false
+  # myrsync '/var/www/html/shlomif/local-Solitairey-todel/'
+  # cond = false
+  cond = true
   if cond
     myrsync 'hostgator:public_html/temp-Solitairey-fc-solve2/'
     myrsync 'hostgator:public_html/Solitairey--macklop/'

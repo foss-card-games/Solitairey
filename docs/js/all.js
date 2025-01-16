@@ -20783,9 +20783,9 @@ define([
         }
         return null;
     }
-    function _solve_cb(Y, that, instance, Animation, Status) {
-        const solution = instance
-            ? _calc__ret_moves(instance._pre_expand_states_and_moves_seq)
+    function _solve_cb(Y, that, _pre_expand_states_and_moves_seq, Animation, Status) {
+        const solution = _pre_expand_states_and_moves_seq
+            ? _calc__ret_moves(_pre_expand_states_and_moves_seq)
             : [];
         Animation.init(solution);
         (function () {
@@ -21289,7 +21289,7 @@ define([
                 return _solve_cb(
                     Y,
                     FreecellSolver,
-                    args.instance,
+                    args.instance._pre_expand_states_and_moves_seq,
                     Animation,
                     Status,
                 );
@@ -21407,10 +21407,12 @@ define([
 
                     function _cb() {
                         window.setTimeout(function () {
+                            const instance =_calc_instance_from_state(state);
+
                             return _solve_cb(
                                 Y,
                                 that,
-                                _calc_instance_from_state(state),
+                                (instance ? instance._pre_expand_states_and_moves_seq : null),
                                 Animation,
                                 Status,
                             );
