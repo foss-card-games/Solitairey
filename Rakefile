@@ -60,8 +60,8 @@ DEST_INDEX_DEV_X = 'dest/index-dev.xhtml'
 def create_index(index, development)
   require 'erb'
 
-  File.open(index, 'w') do |f|
-    f.write(ERB.new(File.read(TEMPLATE)).result(binding))
+  File.open(index, 'w') do |out_fh|
+    out_fh.write(ERB.new(File.read(TEMPLATE)).result(binding))
   end
 end
 
@@ -87,8 +87,8 @@ dest_js_s = []
 
 DIRS = %w[ext/lodash ext/requirejs ext/yui-debug].freeze
 def js_pat_file(filename)
-  DIRS.map { |d| "#{d}/#{filename}" }.select do |f|
-    File.file? f
+  DIRS.map { |d| "#{d}/#{filename}" }.select do |fullpath_name|
+    File.file? fullpath_name
   end [0] || "#{JS_SRC_PREFIX}/#{filename}"
 end
 
@@ -202,9 +202,9 @@ dest_js_extra += ['jstorage.min.js'].map { |x| js_root_file_jstorage(x) }.flatte
 
 desc 'concatenated solitaire sources'
 file ALL => dest_js_s + dest_js_extra do
-  File.open(ALL, 'w') do |f|
+  File.open(ALL, 'w') do |out_fh|
     JS.each do |filename|
-      f.write(File.read(js_js_pat_file(filename)))
+      out_fh.write(File.read(js_js_pat_file(filename)))
     end
   end
 end
