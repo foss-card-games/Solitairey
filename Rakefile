@@ -93,9 +93,10 @@ def js_pat_file(filename)
 end
 
 def ts_pat_file(filename)
-  DIRS.map { |d| "#{d}/#{filename}" }.select do |f|
-    File.file? f
-  end [0] || "src/ts/#{filename}"
+  d = 'src/ts'
+  ret = "#{d}/#{filename}"
+  throw "#{ret} does not exist" unless File.file? ret
+  ret
 end
 
 def fcs_pat_file(filename)
