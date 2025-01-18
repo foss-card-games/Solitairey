@@ -130,15 +130,6 @@ def fcs_root_file(filename)
   [dest, dest2]
 end
 
-def js_root_file(filename)
-  src = js_pat_file(filename)
-  dest = "#{ROOT_PREFIX}/#{filename}"
-  dest2 = "#{PREFIX}/#{filename}"
-  cpfile src, dest2
-  cpfile src, dest
-  [dest, dest2]
-end
-
 def js_root_file_jstorage(filename)
   src = "jStorage/#{filename}"
   dest = "#{ROOT_PREFIX}/#{filename}"
