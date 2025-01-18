@@ -170,7 +170,7 @@ TS_BASE.each do |base|
   dest2 = js_js_pat_file(base)
   src2 = ts_pat_file("#{base}.ts")
   file dest2 => [src2] + BROWSERIFY_JS.map { |x| dest_js(x) } do
-    sh 'tsc -p .'
+    sh 'tsc -p ./tsconfig.json'
   end
 end
 
