@@ -87,9 +87,11 @@ dest_js_s = []
 
 DIRS = %w[ext/lodash ext/requirejs ext/yui-debug].freeze
 def js_pat_file(filename)
-  DIRS.map { |d| "#{d}/#{filename}" }.select do |fullpath_name|
+  ret = DIRS.map { |d| "#{d}/#{filename}" }.select do |fullpath_name|
     File.file? fullpath_name
   end [0] || "#{JS_SRC_PREFIX}/#{filename}"
+  warn "#{ret} does not exist" unless File.file? ret
+  ret
 end
 
 def ts_pat_file(filename)
@@ -154,6 +156,7 @@ end
 
 BROWSERIFY_JS.each do |base|
   dest2 = dest_js(base)
+  puts "missing #{dest2}" unless File.file? dest2
   file dest2 do
     sh "browserify -s #{base} -r #{base} -o #{dest2}"
   end
