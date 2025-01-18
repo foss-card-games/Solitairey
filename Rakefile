@@ -86,10 +86,15 @@ cpfile YUI_SRC, YUI
 dest_js_s = []
 
 DIRS = %w[ext/lodash ext/requirejs ext/yui-debug].freeze
+JS_MODULES_DIRS_LOOKUP = {
+  'lodash.custom.min.js' => 'ext/lodash',
+  'require--debug.js' => 'ext/requirejs',
+  'require.js' => 'ext/requirejs',
+  'yui-debug.js' => 'ext/yui-debug'
+}.freeze
 def js_pat_file(filename)
-  ret = DIRS.map { |d| "#{d}/#{filename}" }.select do |fullpath_name|
-    File.file? fullpath_name
-  end [0] || "#{JS_SRC_PREFIX}/#{filename}"
+  ret = JS_MODULES_DIRS_LOOKUP[filename] || JS_SRC_PREFIX
+  ret += "/#{filename}"
   warn "#{ret} does not exist" unless File.file? ret
   ret
 end
