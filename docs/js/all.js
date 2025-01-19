@@ -21289,7 +21289,7 @@ define([
                 return _solve_cb(
                     Y,
                     FreecellSolver,
-                    args.instance._pre_expand_states_and_moves_seq,
+                    args.instance.get_pre_expand_states_and_moves_seq(),
                     Animation,
                     Status,
                 );
