@@ -1,26 +1,58 @@
 define(["require", "exports", "./fcs-validate", "./web-fcs-api-base", "./web-fc-solve--expand-moves", "./french-cards"], function (require, exports, validate, BaseApi, web_fc_solve__expand_moves_1, french_cards_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.FC_Solve = exports.DisplayFilter = exports.FCS_STATE_SUSPEND_PROCESS = exports.FCS_STATE_WAS_SOLVED = void 0;
+    exports.FC_Solve = exports.DisplayFilter = exports.FCS_STATE_SUSPEND_PROCESS = exports.FCS_STATE_WAS_SOLVED = exports.FCS_SEQ_BUILT_BY_ALTERNATE_COLOR = exports.FCS_ES_FILLED_BY_ANY_CARD = void 0;
     exports.FC_Solve_init_wrappers_with_module = FC_Solve_init_wrappers_with_module;
+    let myalert;
+    try {
+        if (!alert) {
+            myalert = (e) => {
+                console.log(e + "\n");
+                throw e;
+            };
+        }
+        else {
+            myalert = alert;
+        }
+    }
+    catch (x) {
+        myalert = (e) => {
+            console.log(e + "\n");
+            throw e;
+        };
+    }
     function FC_Solve_init_wrappers_with_module(Module) {
         const module_wrapper = BaseApi.base_calc_module_wrapper(Module);
-        module_wrapper.fc_solve_allocate_i8 = (p1) => {
-            return Module.allocate(p1, "i8", Module.ALLOC_STACK);
-        };
-        module_wrapper.user_alloc = Module.cwrap("freecell_solver_user_alloc", "number", []);
+        module_wrapper.bh_create = Module._black_hole_solver_create;
+        module_wrapper.bh_free = Module._black_hole_solver_free;
+        module_wrapper.user_alloc = Module._freecell_solver_user_alloc;
         module_wrapper.user_solve_board = Module.cwrap("freecell_solver_user_solve_board", "number", ["number", "string"]);
-        module_wrapper.user_resume_solution = Module.cwrap("freecell_solver_user_resume_solution", "number", ["number"]);
+        module_wrapper.user_resume_solution =
+            Module._freecell_solver_user_resume_solution;
         module_wrapper.user_cmd_line_read_cmd_line_preset = Module.cwrap("freecell_solver_user_cmd_line_read_cmd_line_preset", "number", ["number", "string", "number", "number", "number", "string"]);
+        module_wrapper.user_get_empty_stacks_filled_by =
+            Module._freecell_solver_user_get_empty_stacks_filled_by;
         module_wrapper.user_get_next_move = Module.cwrap("freecell_solver_user_get_next_move", "number", ["number", "number"]);
-        module_wrapper.user_get_num_freecells = Module.cwrap("freecell_solver_user_get_num_freecells", "number", ["number"]);
-        module_wrapper.user_get_num_stacks = Module.cwrap("freecell_solver_user_get_num_stacks", "number", ["number"]);
+        module_wrapper.user_get_num_freecells =
+            Module._freecell_solver_user_get_num_freecells;
+        module_wrapper.user_get_num_stacks =
+            Module._freecell_solver_user_get_num_stacks;
+        module_wrapper.user_get_num_states_in_collection_long =
+            Module._freecell_solver_user_get_num_states_in_collection_long;
+        module_wrapper.user_get_num_times_long =
+            Module._freecell_solver_user_get_num_times_long;
+        module_wrapper.user_get_sequence_move =
+            Module._freecell_solver_user_get_sequence_move;
+        module_wrapper.user_get_sequences_are_built_by_type =
+            Module._freecell_solver_user_get_sequences_are_built_by_type;
         module_wrapper.user_get_unrecognized_cmd_line_flag = Module.cwrap("freecell_solver_user_get_unrecognized_cmd_line_flag", "number", ["number", "number"]);
         module_wrapper.user_get_unrecognized_cmd_line_flag_status = Module.cwrap("freecell_solver_user_get_unrecognized_cmd_line_flag_status", "number", ["number", "number"]);
-        module_wrapper.user_current_state_stringify = Module.cwrap("freecell_solver_user_current_state_stringify", "number", ["number", "number", "number", "number", "number"]);
+        module_wrapper.user_current_state_stringify =
+            Module._freecell_solver_user_current_state_stringify;
         module_wrapper.user_stringify_move_ptr = Module.cwrap("freecell_solver_user_stringify_move_ptr", "number", ["number", "number", "number", "number"]);
-        module_wrapper.user_free = Module.cwrap("freecell_solver_user_free", "number", ["number"]);
-        module_wrapper.user_limit_iterations_long = Module.cwrap("freecell_solver_user_limit_iterations_long", "number", ["number", "number"]);
+        module_wrapper.user_free = Module._freecell_solver_user_free;
+        module_wrapper.user_limit_iterations_long =
+            Module._freecell_solver_user_limit_iterations_long;
         module_wrapper.user_get_invalid_state_error_into_string = Module.cwrap("freecell_solver_user_get_invalid_state_error_into_string", "number", ["number", "number", "number"]);
         module_wrapper.user_cmd_line_parse_args_with_file_nesting_count =
             Module.cwrap("freecell_solver_user_cmd_line_parse_args_with_file_nesting_count", "number", [
@@ -50,9 +82,17 @@ define(["require", "exports", "./fcs-validate", "./web-fcs-api-base", "./web-fc-
         module_wrapper.fc_solve_Pointer_stringify = (ptr) => {
             return Module.UTF8ToString(ptr, 10000);
         };
+        module_wrapper.stringToAscii = (s, outPtr) => {
+            return Module.writeArrayToMemory(Module.intArrayFromString(s), outPtr);
+        };
+        module_wrapper.stringToUTF8 = (s, outPtr, maxBytes) => {
+            return Module.stringToUTF8(s, outPtr, maxBytes);
+        };
         return module_wrapper;
     }
     const remove_trailing_space_re = /[ \t]+$/gm;
+    exports.FCS_ES_FILLED_BY_ANY_CARD = 0;
+    exports.FCS_SEQ_BUILT_BY_ALTERNATE_COLOR = 0;
     exports.FCS_STATE_WAS_SOLVED = 0;
     const FCS_STATE_IS_NOT_SOLVEABLE = 1;
     const FCS_STATE_ALREADY_EXISTS = 2;
@@ -110,12 +150,17 @@ define(["require", "exports", "./fcs-validate", "./web-fcs-api-base", "./web-fc-
         }
     }
     exports.DisplayFilter = DisplayFilter;
+    const _PTR_SIZE = 4;
+    const _read_from_file_str_ptr_size = 32;
+    const _arg_str_ptr_size = 128;
     const ptr_type = "i32";
     class FC_Solve {
         constructor(args) {
             const that = this;
             that.module_wrapper = args.module_wrapper;
             that._do_not_alert = false;
+            that._cached_num_times_long = -1;
+            that._cached_num_states_long = -1;
             that.dir_base = args.dir_base;
             that.string_params = args.string_params ? [args.string_params] : null;
             that.set_status_callback = args.set_status_callback;
@@ -141,12 +186,16 @@ define(["require", "exports", "./fcs-validate", "./web-fcs-api-base", "./web-fc-
                 }
                 return ret_obj;
             })();
+            that._cached_num_times_long = -1;
+            that._cached_num_states_long = -1;
             that.proto_states_and_moves_seq = null;
             that._pre_expand_states_and_moves_seq = null;
             that._post_expand_states_and_moves_seq = null;
-            that._state_string_buffer = that.module_wrapper.alloc_wrap(500, "state string buffer", "Zam");
-            that._move_string_buffer = that.module_wrapper.alloc_wrap(200, "move string buffer", "Plum");
             return;
+        }
+        get_pre_expand_states_and_moves_seq() {
+            const that = this;
+            return that._pre_expand_states_and_moves_seq;
         }
         set_status(myclass, mylabel) {
             const that = this;
@@ -155,10 +204,9 @@ define(["require", "exports", "./fcs-validate", "./web-fcs-api-base", "./web-fc-
         handle_err_code(solve_err_code) {
             const that = this;
             if (solve_err_code === FCS_STATE_INVALID_STATE) {
-                const error_string_ptr = that.module_wrapper.alloc_wrap(300, "state error string", "Gum");
+                const error_string_ptr = that._error_string_buffer;
                 that.module_wrapper.user_get_invalid_state_error_into_string(that.obj, error_string_ptr, 1);
                 const error_string = that.module_wrapper.fc_solve_Pointer_stringify(error_string_ptr);
-                that.module_wrapper.c_free(error_string_ptr);
                 alert(error_string + "\n");
                 throw "Foo";
             }
@@ -248,13 +296,94 @@ define(["require", "exports", "./fcs-validate", "./web-fcs-api-base", "./web-fc-
                 ? that.display_expanded_moves_solution(args)
                 : that.display_solution(args);
         }
+        get_empty_stacks_filled_by() {
+            const that = this;
+            return that.module_wrapper.user_get_empty_stacks_filled_by(that.obj);
+        }
         get_num_freecells() {
             const that = this;
             return that.module_wrapper.user_get_num_freecells(that.obj);
         }
+        _is_num_times_invalid(iters) {
+            return iters < 0;
+        }
+        get_num_times_long() {
+            const that = this;
+            if (that._is_num_times_invalid(that._cached_num_times_long)) {
+                if (!that.obj) {
+                    throw "obj is null when num_times not set.";
+                }
+                return that._calc_get_num_times_long_based_obj();
+            }
+            return that._cached_num_times_long;
+        }
+        _calc_get_num_states_in_collection_long_based_obj() {
+            const that = this;
+            return that.module_wrapper.user_get_num_states_in_collection_long(that.obj);
+        }
+        _calc_get_num_times_long_based_obj() {
+            const that = this;
+            return that.module_wrapper.user_get_num_times_long(that.obj);
+        }
         get_num_stacks() {
             const that = this;
             return that.module_wrapper.user_get_num_stacks(that.obj);
+        }
+        get_num_states_in_collection_long() {
+            const that = this;
+            if (that._is_num_times_invalid(that._cached_num_states_long)) {
+                if (!that.obj) {
+                    throw "obj is null when num_times not set.";
+                }
+                return that._calc_get_num_states_in_collection_long_based_obj();
+            }
+            return that._cached_num_states_long;
+        }
+        get_sequence_move() {
+            const that = this;
+            return that.module_wrapper.user_get_sequence_move(that.obj);
+        }
+        get_sequences_are_built_by_type() {
+            const that = this;
+            return that.module_wrapper.user_get_sequences_are_built_by_type(that.obj);
+        }
+        _check_if_params_match_preset({ empty_stacks_filled_by, sequence_move, sequences_are_built_by_type, wanted_num_freecells, wanted_num_stacks, }) {
+            const that = this;
+            let reasons = "";
+            if (that.get_empty_stacks_filled_by() !== empty_stacks_filled_by) {
+                reasons += "Wrong empty_stacks_filled_by!\n";
+            }
+            if (that.get_num_stacks() !== wanted_num_stacks) {
+                reasons += "Wrong number of stacks!\n";
+            }
+            if (that.get_num_freecells() !== wanted_num_freecells) {
+                reasons += "Wrong number of freecells!\n";
+            }
+            if (that.get_sequence_move() !== sequence_move) {
+                reasons += "Wrong sequence_move!\n";
+            }
+            if (that.get_sequences_are_built_by_type() !==
+                sequences_are_built_by_type) {
+                reasons += "Wrong sequences_are_built_by_type!\n";
+            }
+            const verdict = reasons.length == 0;
+            return { reasons: reasons, verdict: verdict };
+        }
+        check_if_params_match_freecell() {
+            const that = this;
+            let reasons = "";
+            const wanted_num_freecells = 4;
+            const wanted_num_stacks = 8;
+            const empty_stacks_filled_by = exports.FCS_ES_FILLED_BY_ANY_CARD;
+            const sequence_move = 0;
+            const sequences_are_built_by_type = exports.FCS_SEQ_BUILT_BY_ALTERNATE_COLOR;
+            return that._check_if_params_match_preset({
+                empty_stacks_filled_by: empty_stacks_filled_by,
+                sequence_move: sequence_move,
+                sequences_are_built_by_type: sequences_are_built_by_type,
+                wanted_num_freecells: wanted_num_freecells,
+                wanted_num_stacks: wanted_num_stacks,
+            });
         }
         _calc_states_and_moves_seq() {
             const that = this;
@@ -274,7 +403,7 @@ define(["require", "exports", "./fcs-validate", "./web-fcs-api-base", "./web-fc-
             _out_state(get_state_str());
             let move_ret_code;
             // 128 bytes are enough to hold a move.
-            const move_buffer = that.module_wrapper.alloc_wrap(128, "a buffer for the move", "maven");
+            const move_buffer = that._move_buffer;
             while ((move_ret_code = that.module_wrapper.user_get_next_move(that.obj, move_buffer)) === 0) {
                 const state_as_string = get_state_str();
                 that.module_wrapper.user_stringify_move_ptr(that.obj, that._move_string_buffer, move_buffer, 0);
@@ -295,14 +424,16 @@ define(["require", "exports", "./fcs-validate", "./web-fcs-api-base", "./web-fc-
                 return item.type === "m" ? item.m : item;
             });
             that._post_expand_states_and_moves_seq = null;
+            that._cached_num_times_long = that._calc_get_num_times_long_based_obj();
+            that._cached_num_states_long =
+                that._calc_get_num_states_in_collection_long_based_obj();
             // Cleanup C resources
-            that.module_wrapper.c_free(move_buffer);
             that.module_wrapper.user_free(that.obj);
             that.obj = 0;
             that.module_wrapper.c_free(that._state_string_buffer);
             that._state_string_buffer = 0;
-            that.module_wrapper.c_free(that._move_string_buffer);
             that._move_string_buffer = 0;
+            that._move_buffer = 0;
             return;
         }
         _calc_expanded_seq() {
@@ -357,17 +488,48 @@ define(["require", "exports", "./fcs-validate", "./web-fcs-api-base", "./web-fc-
                 ? that.module_wrapper.fc_solve_Pointer_stringify(s_ptr)
                 : "";
         }
+        _initialize_object_buffers() {
+            const that = this;
+            const _error_string_buffer_size = 512;
+            const _state_string_buffer_size = 500;
+            const _move_string_buffer_size = 200;
+            const _move_buffer_size = 64;
+            const _args_buffer_size = _PTR_SIZE * 2;
+            const _last_arg_ptr_buffer_size = _PTR_SIZE;
+            const _total_buffer_size = _state_string_buffer_size +
+                _move_string_buffer_size +
+                _move_buffer_size +
+                _read_from_file_str_ptr_size +
+                _arg_str_ptr_size +
+                _args_buffer_size +
+                _last_arg_ptr_buffer_size +
+                _error_string_buffer_size;
+            that._state_string_buffer = that.module_wrapper.alloc_wrap(_total_buffer_size, "state+move string buffer", "Zam");
+            if (!that._state_string_buffer) {
+                alert("that._state_string_buffer is 0");
+            }
+            that._move_string_buffer =
+                that._state_string_buffer + _state_string_buffer_size;
+            that._move_buffer = that._move_string_buffer + _move_string_buffer_size;
+            that._read_from_file_str_ptr = that._move_buffer + _move_buffer_size;
+            that._arg_str_ptr =
+                that._read_from_file_str_ptr + _read_from_file_str_ptr_size;
+            that._args_buffer = that._arg_str_ptr + _arg_str_ptr_size;
+            that._last_arg_ptr_buffer = that._args_buffer + _args_buffer_size;
+            that._error_string_buffer =
+                that._last_arg_ptr_buffer + _last_arg_ptr_buffer_size;
+        }
         _initialize_obj(obj) {
             const that = this;
             const cmd_line_preset = that.cmd_line_preset;
             try {
+                that._initialize_object_buffers();
                 if (cmd_line_preset !== "default") {
-                    const error_string_ptr_buf = that.module_wrapper.alloc_wrap(128, "error string buffer", "Foo");
+                    const error_string_ptr_buf = that._error_string_buffer;
                     const preset_ret = that.module_wrapper.user_cmd_line_read_cmd_line_preset(obj, cmd_line_preset, 0, error_string_ptr_buf, 0, null);
                     const error_string_ptr = that.module_wrapper.Module.getValue(error_string_ptr_buf, ptr_type);
                     const error_string = that._stringify_possibly_null_ptr(error_string_ptr);
                     that.module_wrapper.c_free(error_string_ptr);
-                    that.module_wrapper.c_free(error_string_ptr_buf);
                     if (preset_ret !== 0) {
                         alert("Failed to load command line preset '" +
                             cmd_line_preset +
@@ -378,28 +540,27 @@ define(["require", "exports", "./fcs-validate", "./web-fcs-api-base", "./web-fc-
                     }
                 }
                 if (that.string_params) {
-                    const error_string_ptr_buf = that.module_wrapper.alloc_wrap(128, "error string buffer", "Engo");
+                    const error_string_ptr_buf = that._error_string_buffer;
                     // Create a file with the contents of string_params.
                     // var base_path = '/' + that.dir_base;
                     const base_path = "/";
                     const file_basename = "string-params.fc-solve.txt";
                     const string_params_file_path = base_path + file_basename;
                     that.module_wrapper.Module.FS.writeFile(string_params_file_path, that.string_params[0], {});
-                    const args_buf = that.module_wrapper.alloc_wrap(4 * 2, "args buf", "Seed");
+                    const args_buf = that._args_buffer;
                     // TODO : Is there a memory leak here?
-                    const read_from_file_str_ptr = that.module_wrapper.fc_solve_allocate_i8(that.module_wrapper.Module.intArrayFromString("--read-from-file"));
-                    const arg_str_ptr = that.module_wrapper.fc_solve_allocate_i8(that.module_wrapper.Module.intArrayFromString("0," + string_params_file_path));
+                    const read_from_file_str_ptr = that._read_from_file_str_ptr;
+                    that.module_wrapper.stringToUTF8("--read-from-file", read_from_file_str_ptr, _read_from_file_str_ptr_size);
+                    const arg_str_ptr = that._arg_str_ptr;
+                    that.module_wrapper.stringToUTF8("0," + string_params_file_path, arg_str_ptr, _arg_str_ptr_size);
                     that.module_wrapper.Module.setValue(args_buf, read_from_file_str_ptr, ptr_type);
-                    that.module_wrapper.Module.setValue(args_buf + 4, arg_str_ptr, ptr_type);
-                    const last_arg_ptr = that.module_wrapper.alloc_wrap(4, "last_arg_ptr", "cherry");
+                    that.module_wrapper.Module.setValue(args_buf + _PTR_SIZE, arg_str_ptr, ptr_type);
+                    const last_arg_ptr = that._last_arg_ptr_buffer;
                     // Input the file to the solver.
                     const args_ret_code = that.module_wrapper.user_cmd_line_parse_args_with_file_nesting_count(obj, 2, args_buf, 0, 0, 0, 0, error_string_ptr_buf, last_arg_ptr, -1, 0);
-                    that.module_wrapper.c_free(last_arg_ptr);
-                    that.module_wrapper.c_free(args_buf);
                     const error_string_ptr = that.module_wrapper.Module.getValue(error_string_ptr_buf, ptr_type);
                     const error_string = that._stringify_possibly_null_ptr(error_string_ptr);
                     that.module_wrapper.c_free(error_string_ptr);
-                    that.module_wrapper.c_free(error_string_ptr_buf);
                     if (args_ret_code !== 0) {
                         const unrecognized_opt_ptr = that.module_wrapper.user_get_unrecognized_cmd_line_flag_status(obj, 0) == 0
                             ? that.module_wrapper.user_get_unrecognized_cmd_line_flag(obj, 0)
@@ -443,6 +604,7 @@ define(["require", "exports", "./fcs-validate", "./web-fcs-api-base", "./web-fc-
                 return 0;
             }
             catch (e) {
+                console.log("Error = " + e + "\n");
                 that.set_status("error", "Error");
                 return -1;
             }

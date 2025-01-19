@@ -2,6 +2,7 @@ define(["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.fc_solve_expand_move = fc_solve_expand_move;
+    exports.fc_solve_expand_moves_filter_solution_text = fc_solve_expand_moves_filter_solution_text;
     function _to_int(s) {
         return parseInt(s, 10);
     }
@@ -95,7 +96,13 @@ define(["require", "exports"], function (require, exports) {
                 "\n" +
                 expander.modified_state.c
                     .map((col) => {
-                    return ": " + col.join(" ") + "\n";
+                    return (":" +
+                        col
+                            .map((card) => {
+                            return " " + card;
+                        })
+                            .join("") +
+                        "\n");
                 })
                     .join("");
             expander.ret_array.push({
@@ -192,13 +199,19 @@ define(["require", "exports"], function (require, exports) {
     }
     function fc_solve_expand_move(num_stacks, num_freecells, initial_src_state_str, initial_move, initial_dest_state_str) {
         const matched = initial_move.str.match(/^Move ([0-9]+) cards from stack ([0-9]+) to stack ([0-9]+)$/);
+        const raw_ret = [
+            {
+                str: initial_move.str,
+                type: "m",
+            },
+        ];
         if (!matched) {
-            return [initial_move];
+            return raw_ret;
         }
         const ultimate_num_cards = _to_int(matched[1]);
         // TODO : Implement the case where the sequence move is unlimited.
         if (ultimate_num_cards === 1) {
-            return [initial_move];
+            return raw_ret;
         }
         const ultimate_source = _to_int(matched[2]);
         const ultimate_dest = _to_int(matched[3]);
@@ -207,5 +220,59 @@ define(["require", "exports"], function (require, exports) {
         expander.init_from_string(num_stacks, num_freecells, ultimate_source, ultimate_dest, initial_src_state_str);
         expander.recursive_move(ultimate_source, ultimate_dest, ultimate_num_cards, expander.empty_stack_indexes);
         return expander.ret_array;
+    }
+    function fc_solve_expand_moves_filter_solution_text(num_stacks, num_freecells, initial_str) {
+        const founds_pat = "^Foundations:[^\\n]*\\n";
+        const freecells_pat = "^Freecells:[^\\n]*\\n";
+        const move_line_pat = "^Move (?:[2-9][0-9]*|1[0-9]+) cards from stack [0-9]+ to stack [0-9]+$";
+        const board_pat = founds_pat + freecells_pat + "(?:^:[^\\n]*\\n)+";
+        const board2move_sep = "\n\n====================\n\n";
+        const move2board_sep = "\n";
+        const move2board_sep4output = "\n\n";
+        const re = new RegExp("(" +
+            board_pat +
+            ")" +
+            board2move_sep +
+            "(" +
+            move_line_pat +
+            ")" +
+            "\\n" +
+            move2board_sep +
+            "(?=" +
+            "(" +
+            board_pat +
+            ")" +
+            ")", "gms");
+        let expanded_sol = initial_str;
+        let changes = 0;
+        do {
+            changes = 0;
+            expanded_sol = expanded_sol.replace(re, function replacer(match, initial_str, move, fin) {
+                ++changes;
+                let ret = "";
+                const arr = fc_solve_expand_move(num_stacks, num_freecells, initial_str, { str: move }, fin);
+                ret += initial_str;
+                ret += board2move_sep;
+                let i;
+                for (i = 0; i < arr.length - 1; i += 2) {
+                    const m_elem = arr[i];
+                    if (m_elem.type != "m") {
+                        throw "wrong KI.T ''" + m_elem.type + "''";
+                    }
+                    ret += m_elem.str;
+                    ret += move2board_sep4output;
+                    const s_elem = arr[i + 1];
+                    if (s_elem.type != "s") {
+                        throw "wrong K[I+1].T ''" + s_elem.type + "''";
+                    }
+                    ret += s_elem.str;
+                    ret += board2move_sep;
+                }
+                ret += arr[i].str;
+                ret += move2board_sep4output;
+                return ret;
+            });
+        } while (changes != 0);
+        return expanded_sol;
     }
 });

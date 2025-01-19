@@ -23159,11 +23159,10 @@ YUI.add(
     "0.0.1",
     { requires: ["solitaire"] },
 );
-define(["require", "exports", "./prange", "./french-cards"], function (require, exports, prange_1, french_cards_1) {
+define(["require", "exports", "./prange", "./french-cards", "./capitalize-cards"], function (require, exports, prange_1, french_cards_1, capitalize_cards_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.BoardParseResult = exports.ParseErrorType = exports.ErrorLocationType = exports.Foundations = exports.suits__str_to_int = exports.MAX_RANK = exports.MIN_RANK = exports.NUM_SUITS = exports.ranks__str_to_int = void 0;
-    exports.capitalize_cards = capitalize_cards;
     exports.fcs_js__card_from_string = fcs_js__card_from_string;
     exports.fcs_js__column_from_string = fcs_js__column_from_string;
     exports.fcs_js__freecells_from_string = fcs_js__freecells_from_string;
@@ -23226,52 +23225,6 @@ define(["require", "exports", "./prange", "./french-cards"], function (require, 
             return (_ranks__int_to_str.substring(this.rank, this.rank + 1) +
                 french_cards_1.suits__int_to_str.substring(this.suit, this.suit + 1));
         }
-    }
-    class BoardTextLine {
-        constructor(line) {
-            this.line = line;
-            const that = this;
-            const m1 = line.match(/^([^\n\r]*)([\n\r]*)$/);
-            that.newline = m1[2];
-            let l = m1[1];
-            if (m1[1].match(/#/)) {
-                const m2 = m1[1].match(/^(.*?)(#.*)/);
-                that.comment = m2[2];
-                l = m2[1];
-            }
-            else {
-                that.comment = "";
-            }
-            if (l.match(/:/)) {
-                const m3 = l.match(/^([^:]*:)(.*)/);
-                that.prefix = m3[1];
-                that.content = m3[2];
-            }
-            else {
-                that.prefix = "";
-                that.content = l;
-            }
-            return;
-        }
-        getContent() {
-            return this.content;
-        }
-        capitalize() {
-            const that = this;
-            const ret = that.prefix +
-                that.getContent().toUpperCase() +
-                that.comment +
-                that.newline;
-            return ret;
-        }
-    }
-    function capitalize_cards(board) {
-        return board
-            .match(/[^\n]*\n?/g)
-            .map((l) => {
-            return new BoardTextLine(l).capitalize();
-        })
-            .join("");
     }
     class Column {
         constructor(cards) {
@@ -23651,7 +23604,7 @@ define(["require", "exports", "./prange", "./french-cards"], function (require, 
             this.is_valid = true;
             const that = this;
             const lines = orig_s.match(/[^\n]*\n?/g).map((l) => {
-                return new BoardTextLine(l);
+                return new capitalize_cards_1.BoardTextLine(l);
             });
             for (const l of lines) {
                 {
@@ -23882,6 +23835,7 @@ define(["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.fc_solve_expand_move = fc_solve_expand_move;
+    exports.fc_solve_expand_moves_filter_solution_text = fc_solve_expand_moves_filter_solution_text;
     function _to_int(s) {
         return parseInt(s, 10);
     }
@@ -23975,7 +23929,13 @@ define(["require", "exports"], function (require, exports) {
                 "\n" +
                 expander.modified_state.c
                     .map((col) => {
-                    return ": " + col.join(" ") + "\n";
+                    return (":" +
+                        col
+                            .map((card) => {
+                            return " " + card;
+                        })
+                            .join("") +
+                        "\n");
                 })
                     .join("");
             expander.ret_array.push({
@@ -24072,13 +24032,19 @@ define(["require", "exports"], function (require, exports) {
     }
     function fc_solve_expand_move(num_stacks, num_freecells, initial_src_state_str, initial_move, initial_dest_state_str) {
         const matched = initial_move.str.match(/^Move ([0-9]+) cards from stack ([0-9]+) to stack ([0-9]+)$/);
+        const raw_ret = [
+            {
+                str: initial_move.str,
+                type: "m",
+            },
+        ];
         if (!matched) {
-            return [initial_move];
+            return raw_ret;
         }
         const ultimate_num_cards = _to_int(matched[1]);
         // TODO : Implement the case where the sequence move is unlimited.
         if (ultimate_num_cards === 1) {
-            return [initial_move];
+            return raw_ret;
         }
         const ultimate_source = _to_int(matched[2]);
         const ultimate_dest = _to_int(matched[3]);
@@ -24088,30 +24054,116 @@ define(["require", "exports"], function (require, exports) {
         expander.recursive_move(ultimate_source, ultimate_dest, ultimate_num_cards, expander.empty_stack_indexes);
         return expander.ret_array;
     }
+    function fc_solve_expand_moves_filter_solution_text(num_stacks, num_freecells, initial_str) {
+        const founds_pat = "^Foundations:[^\\n]*\\n";
+        const freecells_pat = "^Freecells:[^\\n]*\\n";
+        const move_line_pat = "^Move (?:[2-9][0-9]*|1[0-9]+) cards from stack [0-9]+ to stack [0-9]+$";
+        const board_pat = founds_pat + freecells_pat + "(?:^:[^\\n]*\\n)+";
+        const board2move_sep = "\n\n====================\n\n";
+        const move2board_sep = "\n";
+        const move2board_sep4output = "\n\n";
+        const re = new RegExp("(" +
+            board_pat +
+            ")" +
+            board2move_sep +
+            "(" +
+            move_line_pat +
+            ")" +
+            "\\n" +
+            move2board_sep +
+            "(?=" +
+            "(" +
+            board_pat +
+            ")" +
+            ")", "gms");
+        let expanded_sol = initial_str;
+        let changes = 0;
+        do {
+            changes = 0;
+            expanded_sol = expanded_sol.replace(re, function replacer(match, initial_str, move, fin) {
+                ++changes;
+                let ret = "";
+                const arr = fc_solve_expand_move(num_stacks, num_freecells, initial_str, { str: move }, fin);
+                ret += initial_str;
+                ret += board2move_sep;
+                let i;
+                for (i = 0; i < arr.length - 1; i += 2) {
+                    const m_elem = arr[i];
+                    if (m_elem.type != "m") {
+                        throw "wrong KI.T ''" + m_elem.type + "''";
+                    }
+                    ret += m_elem.str;
+                    ret += move2board_sep4output;
+                    const s_elem = arr[i + 1];
+                    if (s_elem.type != "s") {
+                        throw "wrong K[I+1].T ''" + s_elem.type + "''";
+                    }
+                    ret += s_elem.str;
+                    ret += board2move_sep;
+                }
+                ret += arr[i].str;
+                ret += move2board_sep4output;
+                return ret;
+            });
+        } while (changes != 0);
+        return expanded_sol;
+    }
 });
 define(["require", "exports", "./fcs-validate", "./web-fcs-api-base", "./web-fc-solve--expand-moves", "./french-cards"], function (require, exports, validate, BaseApi, web_fc_solve__expand_moves_1, french_cards_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.FC_Solve = exports.DisplayFilter = exports.FCS_STATE_SUSPEND_PROCESS = exports.FCS_STATE_WAS_SOLVED = void 0;
+    exports.FC_Solve = exports.DisplayFilter = exports.FCS_STATE_SUSPEND_PROCESS = exports.FCS_STATE_WAS_SOLVED = exports.FCS_SEQ_BUILT_BY_ALTERNATE_COLOR = exports.FCS_ES_FILLED_BY_ANY_CARD = void 0;
     exports.FC_Solve_init_wrappers_with_module = FC_Solve_init_wrappers_with_module;
+    let myalert;
+    try {
+        if (!alert) {
+            myalert = (e) => {
+                console.log(e + "\n");
+                throw e;
+            };
+        }
+        else {
+            myalert = alert;
+        }
+    }
+    catch (x) {
+        myalert = (e) => {
+            console.log(e + "\n");
+            throw e;
+        };
+    }
     function FC_Solve_init_wrappers_with_module(Module) {
         const module_wrapper = BaseApi.base_calc_module_wrapper(Module);
-        module_wrapper.fc_solve_allocate_i8 = (p1) => {
-            return Module.allocate(p1, "i8", Module.ALLOC_STACK);
-        };
-        module_wrapper.user_alloc = Module.cwrap("freecell_solver_user_alloc", "number", []);
+        module_wrapper.bh_create = Module._black_hole_solver_create;
+        module_wrapper.bh_free = Module._black_hole_solver_free;
+        module_wrapper.user_alloc = Module._freecell_solver_user_alloc;
         module_wrapper.user_solve_board = Module.cwrap("freecell_solver_user_solve_board", "number", ["number", "string"]);
-        module_wrapper.user_resume_solution = Module.cwrap("freecell_solver_user_resume_solution", "number", ["number"]);
+        module_wrapper.user_resume_solution =
+            Module._freecell_solver_user_resume_solution;
         module_wrapper.user_cmd_line_read_cmd_line_preset = Module.cwrap("freecell_solver_user_cmd_line_read_cmd_line_preset", "number", ["number", "string", "number", "number", "number", "string"]);
+        module_wrapper.user_get_empty_stacks_filled_by =
+            Module._freecell_solver_user_get_empty_stacks_filled_by;
         module_wrapper.user_get_next_move = Module.cwrap("freecell_solver_user_get_next_move", "number", ["number", "number"]);
-        module_wrapper.user_get_num_freecells = Module.cwrap("freecell_solver_user_get_num_freecells", "number", ["number"]);
-        module_wrapper.user_get_num_stacks = Module.cwrap("freecell_solver_user_get_num_stacks", "number", ["number"]);
+        module_wrapper.user_get_num_freecells =
+            Module._freecell_solver_user_get_num_freecells;
+        module_wrapper.user_get_num_stacks =
+            Module._freecell_solver_user_get_num_stacks;
+        module_wrapper.user_get_num_states_in_collection_long =
+            Module._freecell_solver_user_get_num_states_in_collection_long;
+        module_wrapper.user_get_num_times_long =
+            Module._freecell_solver_user_get_num_times_long;
+        module_wrapper.user_get_sequence_move =
+            Module._freecell_solver_user_get_sequence_move;
+        module_wrapper.user_get_sequences_are_built_by_type =
+            Module._freecell_solver_user_get_sequences_are_built_by_type;
         module_wrapper.user_get_unrecognized_cmd_line_flag = Module.cwrap("freecell_solver_user_get_unrecognized_cmd_line_flag", "number", ["number", "number"]);
         module_wrapper.user_get_unrecognized_cmd_line_flag_status = Module.cwrap("freecell_solver_user_get_unrecognized_cmd_line_flag_status", "number", ["number", "number"]);
-        module_wrapper.user_current_state_stringify = Module.cwrap("freecell_solver_user_current_state_stringify", "number", ["number", "number", "number", "number", "number"]);
+        module_wrapper.user_current_state_stringify =
+            Module._freecell_solver_user_current_state_stringify;
         module_wrapper.user_stringify_move_ptr = Module.cwrap("freecell_solver_user_stringify_move_ptr", "number", ["number", "number", "number", "number"]);
-        module_wrapper.user_free = Module.cwrap("freecell_solver_user_free", "number", ["number"]);
-        module_wrapper.user_limit_iterations_long = Module.cwrap("freecell_solver_user_limit_iterations_long", "number", ["number", "number"]);
+        module_wrapper.user_free = Module._freecell_solver_user_free;
+        module_wrapper.user_limit_iterations_long =
+            Module._freecell_solver_user_limit_iterations_long;
         module_wrapper.user_get_invalid_state_error_into_string = Module.cwrap("freecell_solver_user_get_invalid_state_error_into_string", "number", ["number", "number", "number"]);
         module_wrapper.user_cmd_line_parse_args_with_file_nesting_count =
             Module.cwrap("freecell_solver_user_cmd_line_parse_args_with_file_nesting_count", "number", [
@@ -24141,9 +24193,17 @@ define(["require", "exports", "./fcs-validate", "./web-fcs-api-base", "./web-fc-
         module_wrapper.fc_solve_Pointer_stringify = (ptr) => {
             return Module.UTF8ToString(ptr, 10000);
         };
+        module_wrapper.stringToAscii = (s, outPtr) => {
+            return Module.writeArrayToMemory(Module.intArrayFromString(s), outPtr);
+        };
+        module_wrapper.stringToUTF8 = (s, outPtr, maxBytes) => {
+            return Module.stringToUTF8(s, outPtr, maxBytes);
+        };
         return module_wrapper;
     }
     const remove_trailing_space_re = /[ \t]+$/gm;
+    exports.FCS_ES_FILLED_BY_ANY_CARD = 0;
+    exports.FCS_SEQ_BUILT_BY_ALTERNATE_COLOR = 0;
     exports.FCS_STATE_WAS_SOLVED = 0;
     const FCS_STATE_IS_NOT_SOLVEABLE = 1;
     const FCS_STATE_ALREADY_EXISTS = 2;
@@ -24201,12 +24261,17 @@ define(["require", "exports", "./fcs-validate", "./web-fcs-api-base", "./web-fc-
         }
     }
     exports.DisplayFilter = DisplayFilter;
+    const _PTR_SIZE = 4;
+    const _read_from_file_str_ptr_size = 32;
+    const _arg_str_ptr_size = 128;
     const ptr_type = "i32";
     class FC_Solve {
         constructor(args) {
             const that = this;
             that.module_wrapper = args.module_wrapper;
             that._do_not_alert = false;
+            that._cached_num_times_long = -1;
+            that._cached_num_states_long = -1;
             that.dir_base = args.dir_base;
             that.string_params = args.string_params ? [args.string_params] : null;
             that.set_status_callback = args.set_status_callback;
@@ -24232,12 +24297,16 @@ define(["require", "exports", "./fcs-validate", "./web-fcs-api-base", "./web-fc-
                 }
                 return ret_obj;
             })();
+            that._cached_num_times_long = -1;
+            that._cached_num_states_long = -1;
             that.proto_states_and_moves_seq = null;
             that._pre_expand_states_and_moves_seq = null;
             that._post_expand_states_and_moves_seq = null;
-            that._state_string_buffer = that.module_wrapper.alloc_wrap(500, "state string buffer", "Zam");
-            that._move_string_buffer = that.module_wrapper.alloc_wrap(200, "move string buffer", "Plum");
             return;
+        }
+        get_pre_expand_states_and_moves_seq() {
+            const that = this;
+            return that._pre_expand_states_and_moves_seq;
         }
         set_status(myclass, mylabel) {
             const that = this;
@@ -24246,10 +24315,9 @@ define(["require", "exports", "./fcs-validate", "./web-fcs-api-base", "./web-fc-
         handle_err_code(solve_err_code) {
             const that = this;
             if (solve_err_code === FCS_STATE_INVALID_STATE) {
-                const error_string_ptr = that.module_wrapper.alloc_wrap(300, "state error string", "Gum");
+                const error_string_ptr = that._error_string_buffer;
                 that.module_wrapper.user_get_invalid_state_error_into_string(that.obj, error_string_ptr, 1);
                 const error_string = that.module_wrapper.fc_solve_Pointer_stringify(error_string_ptr);
-                that.module_wrapper.c_free(error_string_ptr);
                 alert(error_string + "\n");
                 throw "Foo";
             }
@@ -24339,13 +24407,94 @@ define(["require", "exports", "./fcs-validate", "./web-fcs-api-base", "./web-fc-
                 ? that.display_expanded_moves_solution(args)
                 : that.display_solution(args);
         }
+        get_empty_stacks_filled_by() {
+            const that = this;
+            return that.module_wrapper.user_get_empty_stacks_filled_by(that.obj);
+        }
         get_num_freecells() {
             const that = this;
             return that.module_wrapper.user_get_num_freecells(that.obj);
         }
+        _is_num_times_invalid(iters) {
+            return iters < 0;
+        }
+        get_num_times_long() {
+            const that = this;
+            if (that._is_num_times_invalid(that._cached_num_times_long)) {
+                if (!that.obj) {
+                    throw "obj is null when num_times not set.";
+                }
+                return that._calc_get_num_times_long_based_obj();
+            }
+            return that._cached_num_times_long;
+        }
+        _calc_get_num_states_in_collection_long_based_obj() {
+            const that = this;
+            return that.module_wrapper.user_get_num_states_in_collection_long(that.obj);
+        }
+        _calc_get_num_times_long_based_obj() {
+            const that = this;
+            return that.module_wrapper.user_get_num_times_long(that.obj);
+        }
         get_num_stacks() {
             const that = this;
             return that.module_wrapper.user_get_num_stacks(that.obj);
+        }
+        get_num_states_in_collection_long() {
+            const that = this;
+            if (that._is_num_times_invalid(that._cached_num_states_long)) {
+                if (!that.obj) {
+                    throw "obj is null when num_times not set.";
+                }
+                return that._calc_get_num_states_in_collection_long_based_obj();
+            }
+            return that._cached_num_states_long;
+        }
+        get_sequence_move() {
+            const that = this;
+            return that.module_wrapper.user_get_sequence_move(that.obj);
+        }
+        get_sequences_are_built_by_type() {
+            const that = this;
+            return that.module_wrapper.user_get_sequences_are_built_by_type(that.obj);
+        }
+        _check_if_params_match_preset({ empty_stacks_filled_by, sequence_move, sequences_are_built_by_type, wanted_num_freecells, wanted_num_stacks, }) {
+            const that = this;
+            let reasons = "";
+            if (that.get_empty_stacks_filled_by() !== empty_stacks_filled_by) {
+                reasons += "Wrong empty_stacks_filled_by!\n";
+            }
+            if (that.get_num_stacks() !== wanted_num_stacks) {
+                reasons += "Wrong number of stacks!\n";
+            }
+            if (that.get_num_freecells() !== wanted_num_freecells) {
+                reasons += "Wrong number of freecells!\n";
+            }
+            if (that.get_sequence_move() !== sequence_move) {
+                reasons += "Wrong sequence_move!\n";
+            }
+            if (that.get_sequences_are_built_by_type() !==
+                sequences_are_built_by_type) {
+                reasons += "Wrong sequences_are_built_by_type!\n";
+            }
+            const verdict = reasons.length == 0;
+            return { reasons: reasons, verdict: verdict };
+        }
+        check_if_params_match_freecell() {
+            const that = this;
+            let reasons = "";
+            const wanted_num_freecells = 4;
+            const wanted_num_stacks = 8;
+            const empty_stacks_filled_by = exports.FCS_ES_FILLED_BY_ANY_CARD;
+            const sequence_move = 0;
+            const sequences_are_built_by_type = exports.FCS_SEQ_BUILT_BY_ALTERNATE_COLOR;
+            return that._check_if_params_match_preset({
+                empty_stacks_filled_by: empty_stacks_filled_by,
+                sequence_move: sequence_move,
+                sequences_are_built_by_type: sequences_are_built_by_type,
+                wanted_num_freecells: wanted_num_freecells,
+                wanted_num_stacks: wanted_num_stacks,
+            });
         }
         _calc_states_and_moves_seq() {
             const that = this;
@@ -24365,7 +24514,7 @@ define(["require", "exports", "./fcs-validate", "./web-fcs-api-base", "./web-fc-
             _out_state(get_state_str());
             let move_ret_code;
             // 128 bytes are enough to hold a move.
-            const move_buffer = that.module_wrapper.alloc_wrap(128, "a buffer for the move", "maven");
+            const move_buffer = that._move_buffer;
             while ((move_ret_code = that.module_wrapper.user_get_next_move(that.obj, move_buffer)) === 0) {
                 const state_as_string = get_state_str();
                 that.module_wrapper.user_stringify_move_ptr(that.obj, that._move_string_buffer, move_buffer, 0);
@@ -24386,14 +24535,16 @@ define(["require", "exports", "./fcs-validate", "./web-fcs-api-base", "./web-fc-
                 return item.type === "m" ? item.m : item;
             });
             that._post_expand_states_and_moves_seq = null;
+            that._cached_num_times_long = that._calc_get_num_times_long_based_obj();
+            that._cached_num_states_long =
+                that._calc_get_num_states_in_collection_long_based_obj();
             // Cleanup C resources
-            that.module_wrapper.c_free(move_buffer);
             that.module_wrapper.user_free(that.obj);
             that.obj = 0;
             that.module_wrapper.c_free(that._state_string_buffer);
             that._state_string_buffer = 0;
-            that.module_wrapper.c_free(that._move_string_buffer);
             that._move_string_buffer = 0;
+            that._move_buffer = 0;
             return;
         }
         _calc_expanded_seq() {
@@ -24448,17 +24599,48 @@ define(["require", "exports", "./fcs-validate", "./web-fcs-api-base", "./web-fc-
                 ? that.module_wrapper.fc_solve_Pointer_stringify(s_ptr)
                 : "";
         }
+        _initialize_object_buffers() {
+            const that = this;
+            const _error_string_buffer_size = 512;
+            const _state_string_buffer_size = 500;
+            const _move_string_buffer_size = 200;
+            const _move_buffer_size = 64;
+            const _args_buffer_size = _PTR_SIZE * 2;
+            const _last_arg_ptr_buffer_size = _PTR_SIZE;
+            const _total_buffer_size = _state_string_buffer_size +
+                _move_string_buffer_size +
+                _move_buffer_size +
+                _read_from_file_str_ptr_size +
+                _arg_str_ptr_size +
+                _args_buffer_size +
+                _last_arg_ptr_buffer_size +
+                _error_string_buffer_size;
+            that._state_string_buffer = that.module_wrapper.alloc_wrap(_total_buffer_size, "state+move string buffer", "Zam");
+            if (!that._state_string_buffer) {
+                alert("that._state_string_buffer is 0");
+            }
+            that._move_string_buffer =
+                that._state_string_buffer + _state_string_buffer_size;
+            that._move_buffer = that._move_string_buffer + _move_string_buffer_size;
+            that._read_from_file_str_ptr = that._move_buffer + _move_buffer_size;
+            that._arg_str_ptr =
+                that._read_from_file_str_ptr + _read_from_file_str_ptr_size;
+            that._args_buffer = that._arg_str_ptr + _arg_str_ptr_size;
+            that._last_arg_ptr_buffer = that._args_buffer + _args_buffer_size;
+            that._error_string_buffer =
+                that._last_arg_ptr_buffer + _last_arg_ptr_buffer_size;
+        }
         _initialize_obj(obj) {
             const that = this;
             const cmd_line_preset = that.cmd_line_preset;
             try {
+                that._initialize_object_buffers();
                 if (cmd_line_preset !== "default") {
-                    const error_string_ptr_buf = that.module_wrapper.alloc_wrap(128, "error string buffer", "Foo");
+                    const error_string_ptr_buf = that._error_string_buffer;
                     const preset_ret = that.module_wrapper.user_cmd_line_read_cmd_line_preset(obj, cmd_line_preset, 0, error_string_ptr_buf, 0, null);
                     const error_string_ptr = that.module_wrapper.Module.getValue(error_string_ptr_buf, ptr_type);
                     const error_string = that._stringify_possibly_null_ptr(error_string_ptr);
                     that.module_wrapper.c_free(error_string_ptr);
-                    that.module_wrapper.c_free(error_string_ptr_buf);
                     if (preset_ret !== 0) {
                         alert("Failed to load command line preset '" +
                             cmd_line_preset +
@@ -24469,28 +24651,27 @@ define(["require", "exports", "./fcs-validate", "./web-fcs-api-base", "./web-fc-
                     }
                 }
                 if (that.string_params) {
-                    const error_string_ptr_buf = that.module_wrapper.alloc_wrap(128, "error string buffer", "Engo");
+                    const error_string_ptr_buf = that._error_string_buffer;
                     // Create a file with the contents of string_params.
                     // var base_path = '/' + that.dir_base;
                     const base_path = "/";
                     const file_basename = "string-params.fc-solve.txt";
                     const string_params_file_path = base_path + file_basename;
                     that.module_wrapper.Module.FS.writeFile(string_params_file_path, that.string_params[0], {});
-                    const args_buf = that.module_wrapper.alloc_wrap(4 * 2, "args buf", "Seed");
+                    const args_buf = that._args_buffer;
                     // TODO : Is there a memory leak here?
-                    const read_from_file_str_ptr = that.module_wrapper.fc_solve_allocate_i8(that.module_wrapper.Module.intArrayFromString("--read-from-file"));
-                    const arg_str_ptr = that.module_wrapper.fc_solve_allocate_i8(that.module_wrapper.Module.intArrayFromString("0," + string_params_file_path));
+                    const read_from_file_str_ptr = that._read_from_file_str_ptr;
+                    that.module_wrapper.stringToUTF8("--read-from-file", read_from_file_str_ptr, _read_from_file_str_ptr_size);
+                    const arg_str_ptr = that._arg_str_ptr;
+                    that.module_wrapper.stringToUTF8("0," + string_params_file_path, arg_str_ptr, _arg_str_ptr_size);
                     that.module_wrapper.Module.setValue(args_buf, read_from_file_str_ptr, ptr_type);
-                    that.module_wrapper.Module.setValue(args_buf + 4, arg_str_ptr, ptr_type);
-                    const last_arg_ptr = that.module_wrapper.alloc_wrap(4, "last_arg_ptr", "cherry");
+                    that.module_wrapper.Module.setValue(args_buf + _PTR_SIZE, arg_str_ptr, ptr_type);
+                    const last_arg_ptr = that._last_arg_ptr_buffer;
                     // Input the file to the solver.
                     const args_ret_code = that.module_wrapper.user_cmd_line_parse_args_with_file_nesting_count(obj, 2, args_buf, 0, 0, 0, 0, error_string_ptr_buf, last_arg_ptr, -1, 0);
-                    that.module_wrapper.c_free(last_arg_ptr);
-                    that.module_wrapper.c_free(args_buf);
                     const error_string_ptr = that.module_wrapper.Module.getValue(error_string_ptr_buf, ptr_type);
                     const error_string = that._stringify_possibly_null_ptr(error_string_ptr);
                     that.module_wrapper.c_free(error_string_ptr);
-                    that.module_wrapper.c_free(error_string_ptr_buf);
                     if (args_ret_code !== 0) {
                         const unrecognized_opt_ptr = that.module_wrapper.user_get_unrecognized_cmd_line_flag_status(obj, 0) == 0
                             ? that.module_wrapper.user_get_unrecognized_cmd_line_flag(obj, 0)
@@ -24534,6 +24715,7 @@ define(["require", "exports", "./fcs-validate", "./web-fcs-api-base", "./web-fc-
                 return 0;
             }
             catch (e) {
+                console.log("Error = " + e + "\n");
                 that.set_status("error", "Error");
                 return -1;
             }
@@ -24547,11 +24729,11 @@ define(["require", "exports", "./prange"], function (require, exports, prange_1)
     exports.base_calc_module_wrapper = base_calc_module_wrapper;
     exports.deal_ms_fc_board = deal_ms_fc_board;
     function base_calc_module_wrapper(Module) {
-        const ms_rand__get_singleton = Module.cwrap("fc_solve__hll_ms_rand__get_singleton", "number", []);
+        const ms_rand__get = Module.cwrap("fc_solve__hll_ms_rand__get_global_instance", "number", []);
         const ms_rand__init = Module.cwrap("fc_solve__hll_ms_rand__init", "number", ["number", "string"]);
         const ms_rand__mod_rand = Module.cwrap("fc_solve__hll_ms_rand__mod_rand", "number", ["number", "number"]);
         return {
-            ms_rand__get_singleton,
+            ms_rand__get,
             ms_rand__init,
             ms_rand__mod_rand,
             Module,
@@ -24568,7 +24750,7 @@ define(["require", "exports", "./prange"], function (require, exports, prange_1)
             const that = this;
             that.module_wrapper = args.module_wrapper;
             that.gamenumber = args.gamenumber;
-            that.rander = that.module_wrapper.ms_rand__get_singleton();
+            that.rander = that.module_wrapper.ms_rand__get();
             that.module_wrapper.ms_rand__init(that.rander, "" + that.gamenumber);
             return;
         }
@@ -24577,10 +24759,11 @@ define(["require", "exports", "./prange"], function (require, exports, prange_1)
             return that.module_wrapper.ms_rand__mod_rand(that.rander, mymax);
         }
         shuffle(deck) {
+            const that = this;
             if (deck.length) {
                 let i = deck.length;
                 while (--i) {
-                    const j = this.max_rand(i + 1);
+                    const j = that.max_rand(i + 1);
                     const tmp = deck[i];
                     deck[i] = deck[j];
                     deck[j] = tmp;

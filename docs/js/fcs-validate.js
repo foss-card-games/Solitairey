@@ -1,8 +1,7 @@
-define(["require", "exports", "./prange", "./french-cards"], function (require, exports, prange_1, french_cards_1) {
+define(["require", "exports", "./prange", "./french-cards", "./capitalize-cards"], function (require, exports, prange_1, french_cards_1, capitalize_cards_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.BoardParseResult = exports.ParseErrorType = exports.ErrorLocationType = exports.Foundations = exports.suits__str_to_int = exports.MAX_RANK = exports.MIN_RANK = exports.NUM_SUITS = exports.ranks__str_to_int = void 0;
-    exports.capitalize_cards = capitalize_cards;
     exports.fcs_js__card_from_string = fcs_js__card_from_string;
     exports.fcs_js__column_from_string = fcs_js__column_from_string;
     exports.fcs_js__freecells_from_string = fcs_js__freecells_from_string;
@@ -65,52 +64,6 @@ define(["require", "exports", "./prange", "./french-cards"], function (require, 
             return (_ranks__int_to_str.substring(this.rank, this.rank + 1) +
                 french_cards_1.suits__int_to_str.substring(this.suit, this.suit + 1));
         }
-    }
-    class BoardTextLine {
-        constructor(line) {
-            this.line = line;
-            const that = this;
-            const m1 = line.match(/^([^\n\r]*)([\n\r]*)$/);
-            that.newline = m1[2];
-            let l = m1[1];
-            if (m1[1].match(/#/)) {
-                const m2 = m1[1].match(/^(.*?)(#.*)/);
-                that.comment = m2[2];
-                l = m2[1];
-            }
-            else {
-                that.comment = "";
-            }
-            if (l.match(/:/)) {
-                const m3 = l.match(/^([^:]*:)(.*)/);
-                that.prefix = m3[1];
-                that.content = m3[2];
-            }
-            else {
-                that.prefix = "";
-                that.content = l;
-            }
-            return;
-        }
-        getContent() {
-            return this.content;
-        }
-        capitalize() {
-            const that = this;
-            const ret = that.prefix +
-                that.getContent().toUpperCase() +
-                that.comment +
-                that.newline;
-            return ret;
-        }
-    }
-    function capitalize_cards(board) {
-        return board
-            .match(/[^\n]*\n?/g)
-            .map((l) => {
-            return new BoardTextLine(l).capitalize();
-        })
-            .join("");
     }
     class Column {
         constructor(cards) {
@@ -490,7 +443,7 @@ define(["require", "exports", "./prange", "./french-cards"], function (require, 
             this.is_valid = true;
             const that = this;
             const lines = orig_s.match(/[^\n]*\n?/g).map((l) => {
-                return new BoardTextLine(l);
+                return new capitalize_cards_1.BoardTextLine(l);
             });
             for (const l of lines) {
                 {

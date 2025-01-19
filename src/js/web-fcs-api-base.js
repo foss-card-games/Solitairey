@@ -4,11 +4,11 @@ define(["require", "exports", "./prange"], function (require, exports, prange_1)
     exports.base_calc_module_wrapper = base_calc_module_wrapper;
     exports.deal_ms_fc_board = deal_ms_fc_board;
     function base_calc_module_wrapper(Module) {
-        const ms_rand__get_singleton = Module.cwrap("fc_solve__hll_ms_rand__get_singleton", "number", []);
+        const ms_rand__get = Module.cwrap("fc_solve__hll_ms_rand__get_global_instance", "number", []);
         const ms_rand__init = Module.cwrap("fc_solve__hll_ms_rand__init", "number", ["number", "string"]);
         const ms_rand__mod_rand = Module.cwrap("fc_solve__hll_ms_rand__mod_rand", "number", ["number", "number"]);
         return {
-            ms_rand__get_singleton,
+            ms_rand__get,
             ms_rand__init,
             ms_rand__mod_rand,
             Module,
@@ -25,7 +25,7 @@ define(["require", "exports", "./prange"], function (require, exports, prange_1)
             const that = this;
             that.module_wrapper = args.module_wrapper;
             that.gamenumber = args.gamenumber;
-            that.rander = that.module_wrapper.ms_rand__get_singleton();
+            that.rander = that.module_wrapper.ms_rand__get();
             that.module_wrapper.ms_rand__init(that.rander, "" + that.gamenumber);
             return;
         }
@@ -34,10 +34,11 @@ define(["require", "exports", "./prange"], function (require, exports, prange_1)
             return that.module_wrapper.ms_rand__mod_rand(that.rander, mymax);
         }
         shuffle(deck) {
+            const that = this;
             if (deck.length) {
                 let i = deck.length;
                 while (--i) {
-                    const j = this.max_rand(i + 1);
+                    const j = that.max_rand(i + 1);
                     const tmp = deck[i];
                     deck[i] = deck[j];
                     deck[j] = tmp;

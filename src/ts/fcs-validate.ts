@@ -1,5 +1,6 @@
 import { perl_range } from "./prange";
 import { rank_re, suits__int_to_str, suit_re } from "./french-cards";
+import { BoardTextLine, capitalize_cards } from "./capitalize-cards";
 
 // Adapted from http://www.inventpartners.com/javascript_is_int - thanks.
 function is_int(input: number): boolean {
@@ -28,7 +29,10 @@ for (const suit of _suits) {
 }
 
 class Card {
-    constructor(private rank: number, private suit: number) {
+    constructor(
+        private rank: number,
+        private suit: number,
+    ) {
         if (!is_int(rank)) {
             throw "rank is not an integer.";
         }
@@ -63,56 +67,6 @@ class Card {
             suits__int_to_str.substring(this.suit, this.suit + 1)
         );
     }
-}
-
-class BoardTextLine {
-    private newline: string;
-    private comment: string;
-    private prefix: string;
-    private content: string;
-    constructor(public line: string) {
-        const that = this;
-        const m1 = line.match(/^([^\n\r]*)([\n\r]*)$/);
-        that.newline = m1[2];
-        let l = m1[1];
-        if (m1[1].match(/#/)) {
-            const m2 = m1[1].match(/^(.*?)(#.*)/);
-            that.comment = m2[2];
-            l = m2[1];
-        } else {
-            that.comment = "";
-        }
-        if (l.match(/:/)) {
-            const m3 = l.match(/^([^:]*:)(.*)/);
-            that.prefix = m3[1];
-            that.content = m3[2];
-        } else {
-            that.prefix = "";
-            that.content = l;
-        }
-        return;
-    }
-    public getContent(): string {
-        return this.content;
-    }
-    public capitalize(): string {
-        const that = this;
-        const ret =
-            that.prefix +
-            that.getContent().toUpperCase() +
-            that.comment +
-            that.newline;
-        return ret;
-    }
-}
-
-export function capitalize_cards(board: string): string {
-    return board
-        .match(/[^\n]*\n?/g)
-        .map((l) => {
-            return new BoardTextLine(l).capitalize();
-        })
-        .join("");
 }
 
 class Column {
@@ -238,7 +192,10 @@ class CardsStringParser<CardType> extends StringParser {
     public cards: CardType[] = [];
     private is_start: boolean = true;
 
-    constructor(s: string, private card_mapper: (string) => CardType) {
+    constructor(
+        s: string,
+        private card_mapper: (string) => CardType,
+    ) {
         super(s);
     }
 
@@ -346,7 +303,10 @@ export function fcs_js__column_from_string(
 type MaybeCard = Card | null;
 
 class Freecells {
-    constructor(private num_freecells: number, private cards: MaybeCard[]) {
+    constructor(
+        private num_freecells: number,
+        private cards: MaybeCard[],
+    ) {
         if (!is_int(num_freecells)) {
             throw "num_freecells is not an integer.";
         }

@@ -3,24 +3,55 @@ import * as BaseApi from "./web-fcs-api-base";
 import { fc_solve_expand_move } from "./web-fc-solve--expand-moves";
 import { rank_re, suit_re } from "./french-cards";
 
+let myalert: any;
+try {
+    if (!alert) {
+        myalert = (e) => {
+            console.log(e + "\n");
+            throw e;
+        };
+    } else {
+        myalert = alert;
+    }
+} catch (x) {
+    myalert = (e) => {
+        console.log(e + "\n");
+        throw e;
+    };
+}
+
 export interface ModuleWrapper extends BaseApi.ModuleWrapper {
     alloc_wrap: (size: number, desc: string, error: string) => number;
+    bh_create: (buffer: number) => number;
+    bh_free: (instance: number) => number;
     c_free: (buffer: number) => number;
-    fc_solve_allocate_i8: (pointer: number) => number;
     fc_solve_Pointer_stringify: (buffer: number) => string;
-    user_alloc: (...args: any) => any;
+    stringToAscii: (s: string, outPtr: number) => void;
+    stringToUTF8: (s: string, outPtr: number, maxBytes: number) => void;
+    user_alloc: () => number;
     user_cmd_line_parse_args_with_file_nesting_count: (...args: any) => any;
     user_cmd_line_read_cmd_line_preset: (...args: any) => any;
-    user_current_state_stringify: (...args: any) => any;
-    user_free: (...args: any) => any;
+    user_current_state_stringify: (
+        instance: number,
+        a1: number,
+        a2: number,
+        a3: number,
+        a4: number,
+    ) => number;
+    user_free: (instance: number) => number;
+    user_get_empty_stacks_filled_by: (instance: number) => number;
     user_get_invalid_state_error_into_string: (...args: any) => any;
     user_get_next_move: (...args: any) => any;
-    user_get_num_freecells: (...args: any) => any;
-    user_get_num_stacks: (...args: any) => any;
+    user_get_num_freecells: (instance: number) => number;
+    user_get_num_stacks: (instance: number) => number;
+    user_get_num_states_in_collection_long: (instance: number) => number;
+    user_get_num_times_long: (instance: number) => number;
+    user_get_sequence_move: (instance: number) => number;
+    user_get_sequences_are_built_by_type: (instance: number) => number;
     user_get_unrecognized_cmd_line_flag: (...args: any) => any;
     user_get_unrecognized_cmd_line_flag_status: (...args: any) => any;
-    user_limit_iterations_long: (...args: any) => any;
-    user_resume_solution: (...args: any) => any;
+    user_limit_iterations_long: (instance: number, limit: number) => number;
+    user_resume_solution: (instance: number) => number;
     user_solve_board: (...args: any) => any;
     user_stringify_move_ptr: (...args: any) => any;
 }
@@ -29,44 +60,40 @@ export function FC_Solve_init_wrappers_with_module(Module): ModuleWrapper {
     const module_wrapper = BaseApi.base_calc_module_wrapper(
         Module,
     ) as ModuleWrapper;
-    module_wrapper.fc_solve_allocate_i8 = (p1) => {
-        return Module.allocate(p1, "i8", Module.ALLOC_STACK);
-    };
-    module_wrapper.user_alloc = Module.cwrap(
-        "freecell_solver_user_alloc",
-        "number",
-        [],
-    );
+    module_wrapper.bh_create = Module._black_hole_solver_create;
+    module_wrapper.bh_free = Module._black_hole_solver_free;
+    module_wrapper.user_alloc = Module._freecell_solver_user_alloc;
     module_wrapper.user_solve_board = Module.cwrap(
         "freecell_solver_user_solve_board",
         "number",
         ["number", "string"],
     );
-    module_wrapper.user_resume_solution = Module.cwrap(
-        "freecell_solver_user_resume_solution",
-        "number",
-        ["number"],
-    );
+    module_wrapper.user_resume_solution =
+        Module._freecell_solver_user_resume_solution;
     module_wrapper.user_cmd_line_read_cmd_line_preset = Module.cwrap(
         "freecell_solver_user_cmd_line_read_cmd_line_preset",
         "number",
         ["number", "string", "number", "number", "number", "string"],
     );
+    module_wrapper.user_get_empty_stacks_filled_by =
+        Module._freecell_solver_user_get_empty_stacks_filled_by;
     module_wrapper.user_get_next_move = Module.cwrap(
         "freecell_solver_user_get_next_move",
         "number",
         ["number", "number"],
     );
-    module_wrapper.user_get_num_freecells = Module.cwrap(
-        "freecell_solver_user_get_num_freecells",
-        "number",
-        ["number"],
-    );
-    module_wrapper.user_get_num_stacks = Module.cwrap(
-        "freecell_solver_user_get_num_stacks",
-        "number",
-        ["number"],
-    );
+    module_wrapper.user_get_num_freecells =
+        Module._freecell_solver_user_get_num_freecells;
+    module_wrapper.user_get_num_stacks =
+        Module._freecell_solver_user_get_num_stacks;
+    module_wrapper.user_get_num_states_in_collection_long =
+        Module._freecell_solver_user_get_num_states_in_collection_long;
+    module_wrapper.user_get_num_times_long =
+        Module._freecell_solver_user_get_num_times_long;
+    module_wrapper.user_get_sequence_move =
+        Module._freecell_solver_user_get_sequence_move;
+    module_wrapper.user_get_sequences_are_built_by_type =
+        Module._freecell_solver_user_get_sequences_are_built_by_type;
     module_wrapper.user_get_unrecognized_cmd_line_flag = Module.cwrap(
         "freecell_solver_user_get_unrecognized_cmd_line_flag",
         "number",
@@ -77,26 +104,16 @@ export function FC_Solve_init_wrappers_with_module(Module): ModuleWrapper {
         "number",
         ["number", "number"],
     );
-    module_wrapper.user_current_state_stringify = Module.cwrap(
-        "freecell_solver_user_current_state_stringify",
-        "number",
-        ["number", "number", "number", "number", "number"],
-    );
+    module_wrapper.user_current_state_stringify =
+        Module._freecell_solver_user_current_state_stringify;
     module_wrapper.user_stringify_move_ptr = Module.cwrap(
         "freecell_solver_user_stringify_move_ptr",
         "number",
         ["number", "number", "number", "number"],
     );
-    module_wrapper.user_free = Module.cwrap(
-        "freecell_solver_user_free",
-        "number",
-        ["number"],
-    );
-    module_wrapper.user_limit_iterations_long = Module.cwrap(
-        "freecell_solver_user_limit_iterations_long",
-        "number",
-        ["number", "number"],
-    );
+    module_wrapper.user_free = Module._freecell_solver_user_free;
+    module_wrapper.user_limit_iterations_long =
+        Module._freecell_solver_user_limit_iterations_long;
     module_wrapper.user_get_invalid_state_error_into_string = Module.cwrap(
         "freecell_solver_user_get_invalid_state_error_into_string",
         "number",
@@ -134,12 +151,24 @@ export function FC_Solve_init_wrappers_with_module(Module): ModuleWrapper {
     module_wrapper.fc_solve_Pointer_stringify = (ptr) => {
         return Module.UTF8ToString(ptr, 10000);
     };
+    module_wrapper.stringToAscii = (s: string, outPtr: number) => {
+        return Module.writeArrayToMemory(Module.intArrayFromString(s), outPtr);
+    };
+    module_wrapper.stringToUTF8 = (
+        s: string,
+        outPtr: number,
+        maxBytes: number,
+    ) => {
+        return Module.stringToUTF8(s, outPtr, maxBytes);
+    };
 
     return module_wrapper;
 }
 
 const remove_trailing_space_re = /[ \t]+$/gm;
 
+export const FCS_ES_FILLED_BY_ANY_CARD = 0;
+export const FCS_SEQ_BUILT_BY_ALTERNATE_COLOR = 0;
 export const FCS_STATE_WAS_SOLVED = 0;
 const FCS_STATE_IS_NOT_SOLVEABLE = 1;
 const FCS_STATE_ALREADY_EXISTS = 2;
@@ -218,6 +247,14 @@ interface DisplaySolArgs {
     displayer: DisplayFilter;
     expand: boolean;
 }
+export interface GameVariantPresetCheckRet {
+    reasons: string;
+    verdict: boolean;
+}
+
+const _PTR_SIZE: number = 4;
+const _read_from_file_str_ptr_size: number = 32;
+const _arg_str_ptr_size: number = 128;
 
 const ptr_type: string = "i32";
 export class FC_Solve {
@@ -229,17 +266,27 @@ export class FC_Solve {
     private current_iters_limit: number;
     private module_wrapper: ModuleWrapper;
     private obj: any;
+    private _cached_num_times_long: number;
+    private _cached_num_states_long: number;
     private _do_not_alert: boolean;
     private _pre_expand_states_and_moves_seq: any;
     private _post_expand_states_and_moves_seq: any;
-    private _state_string_buffer: number;
+    private _args_buffer: number;
+    private _error_string_buffer: number;
+    private _last_arg_ptr_buffer: number;
+    private _move_buffer: number;
     private _move_string_buffer: number;
+    private _state_string_buffer: number;
+    private _read_from_file_str_ptr: number;
+    private _arg_str_ptr: number;
     private _unrecognized_opt: string;
 
     constructor(args) {
         const that = this;
         that.module_wrapper = args.module_wrapper;
         that._do_not_alert = false;
+        that._cached_num_times_long = -1;
+        that._cached_num_states_long = -1;
 
         that.dir_base = args.dir_base;
         that.string_params = args.string_params ? [args.string_params] : null;
@@ -271,21 +318,17 @@ export class FC_Solve {
 
             return ret_obj;
         })();
+        that._cached_num_times_long = -1;
+        that._cached_num_states_long = -1;
         that.proto_states_and_moves_seq = null;
         that._pre_expand_states_and_moves_seq = null;
         that._post_expand_states_and_moves_seq = null;
-        that._state_string_buffer = that.module_wrapper.alloc_wrap(
-            500,
-            "state string buffer",
-            "Zam",
-        );
-        that._move_string_buffer = that.module_wrapper.alloc_wrap(
-            200,
-            "move string buffer",
-            "Plum",
-        );
-
         return;
+    }
+    public get_pre_expand_states_and_moves_seq() {
+        const that = this;
+
+        return that._pre_expand_states_and_moves_seq;
     }
     public set_status(myclass, mylabel) {
         const that = this;
@@ -295,11 +338,7 @@ export class FC_Solve {
     public handle_err_code(solve_err_code) {
         const that = this;
         if (solve_err_code === FCS_STATE_INVALID_STATE) {
-            const error_string_ptr = that.module_wrapper.alloc_wrap(
-                300,
-                "state error string",
-                "Gum",
-            );
+            const error_string_ptr: number = that._error_string_buffer;
 
             that.module_wrapper.user_get_invalid_state_error_into_string(
                 that.obj,
@@ -311,7 +350,6 @@ export class FC_Solve {
                 that.module_wrapper.fc_solve_Pointer_stringify(
                     error_string_ptr,
                 );
-            that.module_wrapper.c_free(error_string_ptr);
 
             alert(error_string + "\n");
 
@@ -433,15 +471,133 @@ export class FC_Solve {
             ? that.display_expanded_moves_solution(args)
             : that.display_solution(args);
     }
-    public get_num_freecells() {
+    public get_empty_stacks_filled_by(): number {
+        const that = this;
+
+        return that.module_wrapper.user_get_empty_stacks_filled_by(that.obj);
+    }
+    public get_num_freecells(): number {
         const that = this;
 
         return that.module_wrapper.user_get_num_freecells(that.obj);
     }
-    public get_num_stacks() {
+    private _is_num_times_invalid(iters: number): boolean {
+        return iters < 0;
+    }
+    public get_num_times_long(): number {
+        const that = this;
+
+        if (that._is_num_times_invalid(that._cached_num_times_long)) {
+            if (!that.obj) {
+                throw "obj is null when num_times not set.";
+            }
+            return that._calc_get_num_times_long_based_obj();
+        }
+        return that._cached_num_times_long;
+    }
+    private _calc_get_num_states_in_collection_long_based_obj(): number {
+        const that = this;
+
+        return that.module_wrapper.user_get_num_states_in_collection_long(
+            that.obj,
+        );
+    }
+    private _calc_get_num_times_long_based_obj(): number {
+        const that = this;
+
+        return that.module_wrapper.user_get_num_times_long(that.obj);
+    }
+    public get_num_stacks(): number {
         const that = this;
 
         return that.module_wrapper.user_get_num_stacks(that.obj);
+    }
+    public get_num_states_in_collection_long(): number {
+        const that = this;
+
+        if (that._is_num_times_invalid(that._cached_num_states_long)) {
+            if (!that.obj) {
+                throw "obj is null when num_times not set.";
+            }
+            return that._calc_get_num_states_in_collection_long_based_obj();
+        }
+        return that._cached_num_states_long;
+    }
+    public get_sequence_move(): number {
+        const that = this;
+
+        return that.module_wrapper.user_get_sequence_move(that.obj);
+    }
+    public get_sequences_are_built_by_type(): number {
+        const that = this;
+
+        return that.module_wrapper.user_get_sequences_are_built_by_type(
+            that.obj,
+        );
+    }
+    private _check_if_params_match_preset({
+        empty_stacks_filled_by,
+        sequence_move,
+        sequences_are_built_by_type,
+        wanted_num_freecells,
+        wanted_num_stacks,
+    }: {
+        empty_stacks_filled_by: number;
+        sequence_move: number;
+        sequences_are_built_by_type: number;
+        wanted_num_freecells: number;
+        wanted_num_stacks: number;
+    }): GameVariantPresetCheckRet {
+        const that = this;
+
+        let reasons: string = "";
+
+        if (that.get_empty_stacks_filled_by() !== empty_stacks_filled_by) {
+            reasons += "Wrong empty_stacks_filled_by!\n";
+        }
+
+        if (that.get_num_stacks() !== wanted_num_stacks) {
+            reasons += "Wrong number of stacks!\n";
+        }
+
+        if (that.get_num_freecells() !== wanted_num_freecells) {
+            reasons += "Wrong number of freecells!\n";
+        }
+
+        if (that.get_sequence_move() !== sequence_move) {
+            reasons += "Wrong sequence_move!\n";
+        }
+
+        if (
+            that.get_sequences_are_built_by_type() !==
+            sequences_are_built_by_type
+        ) {
+            reasons += "Wrong sequences_are_built_by_type!\n";
+        }
+
+        const verdict: boolean = reasons.length == 0;
+
+        return { reasons: reasons, verdict: verdict };
+    }
+    public check_if_params_match_freecell(): GameVariantPresetCheckRet {
+        const that = this;
+
+        let reasons: string = "";
+
+        const wanted_num_freecells: number = 4;
+        const wanted_num_stacks: number = 8;
+        const empty_stacks_filled_by: number = FCS_ES_FILLED_BY_ANY_CARD;
+        const sequence_move: number = 0;
+        const sequences_are_built_by_type: number =
+            FCS_SEQ_BUILT_BY_ALTERNATE_COLOR;
+
+        return that._check_if_params_match_preset({
+            empty_stacks_filled_by: empty_stacks_filled_by,
+            sequence_move: sequence_move,
+            sequences_are_built_by_type: sequences_are_built_by_type,
+            wanted_num_freecells: wanted_num_freecells,
+            wanted_num_stacks: wanted_num_stacks,
+        });
     }
     private _calc_states_and_moves_seq() {
         const that = this;
@@ -476,11 +632,7 @@ export class FC_Solve {
 
         let move_ret_code;
         // 128 bytes are enough to hold a move.
-        const move_buffer = that.module_wrapper.alloc_wrap(
-            128,
-            "a buffer for the move",
-            "maven",
-        );
+        const move_buffer = that._move_buffer;
         while (
             (move_ret_code = that.module_wrapper.user_get_next_move(
                 that.obj,
@@ -519,14 +671,17 @@ export class FC_Solve {
         );
         that._post_expand_states_and_moves_seq = null;
 
+        that._cached_num_times_long = that._calc_get_num_times_long_based_obj();
+        that._cached_num_states_long =
+            that._calc_get_num_states_in_collection_long_based_obj();
+
         // Cleanup C resources
-        that.module_wrapper.c_free(move_buffer);
         that.module_wrapper.user_free(that.obj);
         that.obj = 0;
         that.module_wrapper.c_free(that._state_string_buffer);
         that._state_string_buffer = 0;
-        that.module_wrapper.c_free(that._move_string_buffer);
         that._move_string_buffer = 0;
+        that._move_buffer = 0;
 
         return;
     }
@@ -602,16 +757,49 @@ export class FC_Solve {
             ? that.module_wrapper.fc_solve_Pointer_stringify(s_ptr)
             : "";
     }
+    private _initialize_object_buffers() {
+        const that = this;
+        const _error_string_buffer_size: number = 512;
+        const _state_string_buffer_size: number = 500;
+        const _move_string_buffer_size: number = 200;
+        const _move_buffer_size: number = 64;
+        const _args_buffer_size: number = _PTR_SIZE * 2;
+        const _last_arg_ptr_buffer_size: number = _PTR_SIZE;
+        const _total_buffer_size: number =
+            _state_string_buffer_size +
+            _move_string_buffer_size +
+            _move_buffer_size +
+            _read_from_file_str_ptr_size +
+            _arg_str_ptr_size +
+            _args_buffer_size +
+            _last_arg_ptr_buffer_size +
+            _error_string_buffer_size;
+        that._state_string_buffer = that.module_wrapper.alloc_wrap(
+            _total_buffer_size,
+            "state+move string buffer",
+            "Zam",
+        );
+        if (!that._state_string_buffer) {
+            alert("that._state_string_buffer is 0");
+        }
+        that._move_string_buffer =
+            that._state_string_buffer + _state_string_buffer_size;
+        that._move_buffer = that._move_string_buffer + _move_string_buffer_size;
+        that._read_from_file_str_ptr = that._move_buffer + _move_buffer_size;
+        that._arg_str_ptr =
+            that._read_from_file_str_ptr + _read_from_file_str_ptr_size;
+        that._args_buffer = that._arg_str_ptr + _arg_str_ptr_size;
+        that._last_arg_ptr_buffer = that._args_buffer + _args_buffer_size;
+        that._error_string_buffer =
+            that._last_arg_ptr_buffer + _last_arg_ptr_buffer_size;
+    }
     private _initialize_obj(obj) {
         const that = this;
         const cmd_line_preset = that.cmd_line_preset;
         try {
+            that._initialize_object_buffers();
             if (cmd_line_preset !== "default") {
-                const error_string_ptr_buf = that.module_wrapper.alloc_wrap(
-                    128,
-                    "error string buffer",
-                    "Foo",
-                );
+                const error_string_ptr_buf: number = that._error_string_buffer;
                 const preset_ret =
                     that.module_wrapper.user_cmd_line_read_cmd_line_preset(
                         obj,
@@ -631,7 +819,6 @@ export class FC_Solve {
                     that._stringify_possibly_null_ptr(error_string_ptr);
 
                 that.module_wrapper.c_free(error_string_ptr);
-                that.module_wrapper.c_free(error_string_ptr_buf);
 
                 if (preset_ret !== 0) {
                     alert(
@@ -646,11 +833,7 @@ export class FC_Solve {
             }
 
             if (that.string_params) {
-                const error_string_ptr_buf = that.module_wrapper.alloc_wrap(
-                    128,
-                    "error string buffer",
-                    "Engo",
-                );
+                const error_string_ptr_buf: number = that._error_string_buffer;
                 // Create a file with the contents of string_params.
                 // var base_path = '/' + that.dir_base;
                 const base_path = "/";
@@ -662,22 +845,21 @@ export class FC_Solve {
                     {},
                 );
 
-                const args_buf = that.module_wrapper.alloc_wrap(
-                    4 * 2,
-                    "args buf",
-                    "Seed",
-                );
+                const args_buf: number = that._args_buffer;
                 // TODO : Is there a memory leak here?
-                const read_from_file_str_ptr =
-                    that.module_wrapper.fc_solve_allocate_i8(
-                        that.module_wrapper.Module.intArrayFromString(
-                            "--read-from-file",
-                        ),
-                    );
-                const arg_str_ptr = that.module_wrapper.fc_solve_allocate_i8(
-                    that.module_wrapper.Module.intArrayFromString(
-                        "0," + string_params_file_path,
-                    ),
+                const read_from_file_str_ptr: number =
+                    that._read_from_file_str_ptr;
+                that.module_wrapper.stringToUTF8(
+                    "--read-from-file",
+                    read_from_file_str_ptr,
+                    _read_from_file_str_ptr_size,
+                );
+
+                const arg_str_ptr: number = that._arg_str_ptr;
+                that.module_wrapper.stringToUTF8(
+                    "0," + string_params_file_path,
+                    arg_str_ptr,
+                    _arg_str_ptr_size,
                 );
 
                 that.module_wrapper.Module.setValue(
@@ -686,16 +868,12 @@ export class FC_Solve {
                     ptr_type,
                 );
                 that.module_wrapper.Module.setValue(
-                    args_buf + 4,
+                    args_buf + _PTR_SIZE,
                     arg_str_ptr,
                     ptr_type,
                 );
 
-                const last_arg_ptr = that.module_wrapper.alloc_wrap(
-                    4,
-                    "last_arg_ptr",
-                    "cherry",
-                );
+                const last_arg_ptr: number = that._last_arg_ptr_buffer;
 
                 // Input the file to the solver.
                 const args_ret_code =
@@ -713,9 +891,6 @@ export class FC_Solve {
                         0,
                     );
 
-                that.module_wrapper.c_free(last_arg_ptr);
-                that.module_wrapper.c_free(args_buf);
-
                 const error_string_ptr = that.module_wrapper.Module.getValue(
                     error_string_ptr_buf,
                     ptr_type,
@@ -724,7 +899,6 @@ export class FC_Solve {
                 const error_string =
                     that._stringify_possibly_null_ptr(error_string_ptr);
                 that.module_wrapper.c_free(error_string_ptr);
-                that.module_wrapper.c_free(error_string_ptr_buf);
 
                 if (args_ret_code !== 0) {
                     const unrecognized_opt_ptr =
@@ -782,6 +956,7 @@ export class FC_Solve {
             }
             return 0;
         } catch (e) {
+            console.log("Error = " + e + "\n");
             that.set_status("error", "Error");
             return -1;
         }
