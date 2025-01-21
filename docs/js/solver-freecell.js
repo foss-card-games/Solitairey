@@ -863,10 +863,11 @@ define([
                     { disableDragging: true },
                 );
 
+                const _moves = args['moves'] ? args.moves : args.instance.get_pre_expand_states_and_moves_seq();
                 return _solve_cb(
                     Y,
                     FreecellSolver,
-                    args.instance.get_pre_expand_states_and_moves_seq(),
+                    _moves,
                     Animation,
                     Status,
                 );
@@ -984,12 +985,15 @@ define([
 
                     function _cb() {
                         window.setTimeout(function () {
-                            const instance =_calc_instance_from_state(state);
-
+                            const _calc_moves_helper = () => {
+                                const inst = _calc_instance_from_state(state);
+                                return inst ? inst.get_pre_expand_states_and_moves_seq() : null;
+                            };
+                            const _moves = args['moves'] ? args.moves : _calc_moves_helper();
                             return _solve_cb(
                                 Y,
                                 that,
-                                (instance ? instance.get_pre_expand_states_and_moves_seq() : null),
+                                _moves,
                                 Animation,
                                 Status,
                             );
