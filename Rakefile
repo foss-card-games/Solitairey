@@ -106,7 +106,9 @@ def ts_pat_file(filename)
 end
 
 def fcs_pat_file(filename)
-  "ext/libfreecell-solver/#{filename}"
+  ret = "ext/libfreecell-solver/#{filename}"
+  throw "#{ret} does not exist" unless File.file? ret
+  ret
 end
 
 def js_js_pat_file(filename)
