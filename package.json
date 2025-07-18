@@ -31,7 +31,7 @@
     "browserify": "^17.0.1",
     "camel-case": "^5.0.0",
     "coffeescript": "^2.7.0",
-    "eslint": "^9.23.0",
+    "eslint": "^9.31.0",
     "eslint-config-google": "^0.14.0",
     "flatted": "^3.3.3",
     "html-minifier": "^4.0.0",
