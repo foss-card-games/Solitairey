@@ -21173,7 +21173,11 @@ define([
                         return Y.Node.create(
                             '<button class="control ' +
                                 args.cls +
-                                '" title="' +
+                                             '" ' +
+                                             (args.id ? (' id="' + args.id +'" ')
+                                                 : ""
+                                             ) +
+                                             ' title="' +
                                 args.title +
                                 '"></button>',
                         );
@@ -21188,18 +21192,41 @@ define([
                     });
                     const playPause = _create_button({
                         cls: "play",
+                        id: "buttonplaypause",
                         title: "Play/Pause",
                     });
                     const controls = Y.Node.create(
                         "<div class='controls'></div>",
                     );
+                    const _playpause_toggle = function () {
+                        if (playPause.hasClass("pause")) {
+                            if (playPause.hasClass("play")) {
+                                console.log("both play and pause were present!");
+                            }
+                            playPause.removeClass("pause");
+                            playPause.addClass("play");
+                        } else {
+                            if (! playPause.hasClass("play")) {
+                                console.log("both play and pause were not present!");
+                            }
+                            playPause.removeClass("play");
+                            playPause.addClass("pause");
+                        }
+                        return;
+                    };
                     next.on("click", function () {
                         Animation.pause();
                         Animation.next(getGame());
+                        if (playPause.hasClass("pause")) {
+                            _playpause_toggle();
+                        }
                     });
                     prev.on("click", function () {
                         Animation.pause();
                         Animation.prev(getGame());
+                        if (playPause.hasClass("pause")) {
+                            _playpause_toggle();
+                        }
                     });
                     playPause.on("click", function () {
                         const that = playPause;
@@ -21214,6 +21241,7 @@ define([
                         } else if (that.hasClass("pause")) {
                             Animation.pause();
                         }
+                        _playpause_toggle();
                     });
 
                     controls.append(prev);
@@ -21412,7 +21440,8 @@ define([
                                 const inst = _calc_instance_from_state(state);
                                 return inst ? inst.get_pre_expand_states_and_moves_seq() : null;
                             };
-                            const _moves = args['moves'] ? args.moves : _calc_moves_helper();
+                            // const _moves = args['moves'] ? args.moves : _calc_moves_helper();
+                            const _moves = _calc_moves_helper();
                             return _solve_cb(
                                 Y,
                                 that,
