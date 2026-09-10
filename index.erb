@@ -95,6 +95,7 @@ requirejs.config({
 			<a id="undo">Undo</a>
 		</li>
     </ul>
+	<div id="game-title"></div>
 <% end %>
 <%if false %>
 <button id="redeal">Redeal</button>
@@ -407,6 +408,7 @@ requirejs.config({
          <a href="https://github.com/foss-card-games/Solitairey">Source code / GitHub repo</a>
          </p>
     </footer>
+    <div id="app-version">v<%= File.exist?('VERSION') ? File.read('VERSION').strip : 'dev' %></div>
 
 </body>
 </html>

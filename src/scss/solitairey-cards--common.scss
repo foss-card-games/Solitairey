@@ -577,3 +577,45 @@
         display: block;
     }
 }
+
+#app-version {
+    position: fixed;
+    bottom: 8px;
+    right: 10px;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.3);
+    pointer-events: none;
+    z-index: 1;
+    font-family: monospace;
+    letter-spacing: 0.05em;
+    user-select: none;
+}
+
+#game-title {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    color: white;
+    font-size: 18px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+    background-color: rgba(0,0,0,0.4);
+    padding: 6px 12px;
+    border-radius: 8px;
+    z-index: 1;
+    font-family: 'Questrial', sans-serif;
+    pointer-events: none;
+    
+    a {
+        color: white;
+        text-decoration: underline;
+        text-decoration-color: rgba(255, 255, 255, 0.6);
+        text-decoration-thickness: 2px;
+        text-underline-offset: 3px;
+        pointer-events: auto;
+        
+        &:hover {
+            text-decoration-color: white;
+            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+    }
+}

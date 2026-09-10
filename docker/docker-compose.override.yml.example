@@ -1,0 +1,27 @@
+# docker-compose.override.yml
+# This file is automatically loaded by podman-compose and docker-compose
+# Copy this file to docker-compose.override.yml and customize for local development
+
+services:
+  web:
+    # Custom port binding
+    ports:
+      - "3000:80"
+    
+    # Enable debugging
+    environment:
+      - DEBUG=true
+    
+    # Custom volumes for development
+    # volumes:
+    #   - ./dest:/usr/share/nginx/html
+
+  dev:
+    # Custom environment variables
+    environment:
+      - DEBUG=true
+      - LOG_LEVEL=verbose
+    
+    # Additional volumes
+    # volumes:
+    #   - ./custom-config:/config

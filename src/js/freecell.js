@@ -160,7 +160,8 @@ define(["./solitaire"], function (solitaire) {
                             return false;
                         }
 
-                        return this.cards.length <= Freecell.openSlots(stack);
+                        const Game = Y.Solitaire.game;
+                        return this.cards.length <= Game.openSlots(stack);
                     },
                 },
                 true,

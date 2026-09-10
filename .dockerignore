@@ -1,0 +1,34 @@
+# Git
+.git
+.gitignore
+.gitmodules
+
+# Dependencies
+node_modules
+jStorage
+
+# Build output
+dest
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docs
+docs
+README.md
+
+# CI/CD
+.travis.yml
+
+# Misc
+*.log
+npm-debug.log*
+.eslintcache

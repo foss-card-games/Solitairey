@@ -1,0 +1,68 @@
+# Podman Compose configuration for Solitairey
+# Compatible with both podman-compose and docker-compose
+
+services:
+  # Production build - serves built static files
+  web:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    ports:
+      - "${WEB_PORT:-8663}:80"
+    container_name: solitairey-web
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=${NODE_ENV:-production}
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # Development service - with live reload
+  dev:
+    image: ruby:3.2-slim
+    working_dir: /app
+    volumes:
+      - .:/app
+      - node_modules:/app/node_modules
+    ports:
+      - "${DEV_PORT:-8000}:8000"
+    container_name: solitairey-dev
+    command: >
+      bash -c "
+        apt-get update && 
+        apt-get install -y curl git build-essential &&
+        curl -fsSL https://deb.nodesource.com/setup_20.x | bash - &&
+        apt-get install -y nodejs &&
+        npm install &&
+        rake &&
+        cd dest && 
+        python3 -m http.server 8000
+      "
+    profiles:
+      - dev
+
+  # Build-only service for manual builds
+  builder:
+    image: ruby:3.2-slim
+    working_dir: /app
+    volumes:
+      - .:/app
+      - node_modules:/app/node_modules
+    container_name: solitairey-builder
+    command: >
+      bash -c "
+        apt-get update && 
+        apt-get install -y curl git build-essential &&
+        curl -fsSL https://deb.nodesource.com/setup_20.x | bash - &&
+        apt-get install -y nodejs &&
+        bash -ex bin/install-npm-deps.sh &&
+        rake
+      "
+    profiles:
+      - build
+
+volumes:
+  node_modules:

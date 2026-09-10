@@ -18,6 +18,8 @@ define(["./solitaire"], function (solitaire) {
                 "Yukon",
             ];
 
+            // Automatic autoplay disabled - use double-click to trigger manually
+            /*
             Y.on("endTurn", function () {
                 if (
                     !whenWon ||
@@ -30,6 +32,7 @@ define(["./solitaire"], function (solitaire) {
                     Y.fire("autoPlay");
                 }
             });
+            */
 
             Y.on("win", function () {
                 clearInterval(autoPlayInterval);

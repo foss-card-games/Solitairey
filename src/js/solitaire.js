@@ -353,13 +353,14 @@ define([], function () {
 
                 createEvents: function () {
                     const container = Y.one(Solitaire.selector);
-                    if (false) {
-                        container.delegate("dblclick", Game.autoPlay, ".card");
-                        container.delegate(
-                            "contextmenu",
-                            Game.autoPlay,
-                            ".card",
-                        );
+                    if (true) {
+                        // Disabled automatic placement - use drag-and-drop for full control
+                        // container.delegate("dblclick", Game.autoPlay, ".card");
+                        // container.delegate(
+                        //     "contextmenu",
+                        //     Game.autoPlay,
+                        //     ".card",
+                        // );
 
                         container.delegate("click", Game.Events.click, ".card");
                         container.delegate(
@@ -593,21 +594,19 @@ define([], function () {
             });
 
             Y.Solitaire.Events = {
-                /*
-                click: function(e) {
-                    var card = e.target.getData("target");
+            click: function(e) {
+                var card = e.target.getData("target");
 
-                    if (card.dragging) {
-                        return;
-                    }
+                if (card.dragging) {
+                    return;
+                }
 
-                    card.dragging = false;
-                    card.turnOver(e);
-                    Solitaire.moves.reverse();
-                    Solitaire.endTurn();
-                    e.preventDefault();
-                },*/
-
+                card.dragging = false;
+                card.turnOver(e);
+                Solitaire.moves.reverse();
+                Solitaire.endTurn();
+                e.preventDefault();
+            },
                 clickEmptyDeck: function () {
                     Game.redeal();
                     Solitaire.moves.reverse();
@@ -621,7 +620,6 @@ define([], function () {
                 dragCheck: function () {
                     const card = this.getCard(),
                         stack = card.createProxyStack();
-
                     if (!stack) {
                         return;
                     }
@@ -648,8 +646,103 @@ define([], function () {
                     }
                 },
 
+                // Returns the foundation stack closest to the dragged card's visual rect
+                // Foundation-only override used by the drop handler (drophit fired but
+                // getBestMatch may have picked a tableau card over the foundation slot).
+                _bestFoundationForProxy: function (lastXY) {
+                    const cardW = Solitaire.Card.width;
+                    const cardH = Solitaire.Card.height;
+                    const xTol = cardW * 0.5;
+                    const yTol = cardH * 0.5;
+                    const pLeft = lastXY[0];
+                    const pTop = lastXY[1];
+                    const pRight = pLeft + cardW;
+                    const pBottom = pTop + cardH;
+                    let bestFoundation = null;
+                    let bestArea = 0;
+                    Game.eachStack(function (s) {
+                        if (s.field === "foundation" && s.node) {
+                            const xy = s.node.getXY();
+                            const fLeft = xy[0] - xTol;
+                            const fRight = xy[0] + cardW + xTol;
+                            const fTop = xy[1] - yTol;
+                            const fBottom = xy[1] + cardH + yTol;
+                            const overlapW = Math.min(pRight, fRight) - Math.max(pLeft, fLeft);
+                            const overlapH = Math.min(pBottom, fBottom) - Math.max(pTop, fTop);
+                            if (overlapW > 0 && overlapH > 0) {
+                                const area = overlapW * overlapH;
+                                if (area > bestArea) {
+                                    bestArea = area;
+                                    bestFoundation = s;
+                                }
+                            }
+                        }
+                    });
+                    return bestFoundation;
+                },
+
+                // General fallback used when YUI DDProxy skips drop events entirely.
+                // Finds the valid target stack with the most proxy overlap across ALL
+                // stack types (foundation, reserve, tableau, etc.).
+                _bestDropTargetForProxy: function (lastXY, proxyStack) {
+                    const cardW = Solitaire.Card.width;
+                    const cardH = Solitaire.Card.height;
+                    const xTol = cardW * 0.5;
+                    const yTol = cardH * 0.5;
+                    const pLeft = lastXY[0];
+                    const pTop = lastXY[1];
+                    const pRight = pLeft + cardW;
+                    const pBottom = pTop + cardH;
+                    const first = proxyStack.first();
+                    let bestStack = null;
+                    let bestArea = 0;
+                    Game.eachStack(function (s) {
+                        if (!s.node) { return; }
+                        // For non-empty tableau the registered drop is the top card node.
+                        const last = s.my_Last();
+                        const checkNode = (s.field === "tableau" && last) ? last.node : s.node;
+                        if (!checkNode) { return; }
+                        const xy = checkNode.getXY();
+                        const fLeft = xy[0] - xTol;
+                        const fRight = xy[0] + cardW + xTol;
+                        const fTop = xy[1] - yTol;
+                        const fBottom = xy[1] + cardH + yTol;
+                        const overlapW = Math.min(pRight, fRight) - Math.max(pLeft, fLeft);
+                        const overlapH = Math.min(pBottom, fBottom) - Math.max(pTop, fTop);
+                        if (overlapW > 0 && overlapH > 0) {
+                            const valid = (proxyStack.cards.length === 1 && first.validTarget(s)) ||
+                                proxyStack.validTarget(s);
+                            if (valid) {
+                                const area = overlapW * overlapH;
+                                if (area > bestArea) {
+                                    bestArea = area;
+                                    bestStack = s;
+                                }
+                            }
+                        }
+                    });
+                    return bestStack;
+                },
+
                 dragMiss: function () {
-                    const card = this.getCard();
+                    // this.getCard() returns null on dropmiss when DDProxy replaces
+                    // this.get("node") with the proxy element (which has no "target" data).
+                    // Use activeCard which is reliably set by dragCheck.
+                    const card = Solitaire.activeCard;
+                    if (!card) { return; }
+
+                    // Use DDM.activeDrag.lastXY (proxy top-left) to check foundation overlap.
+                    const DDM = Y.DD.DDM;
+                    const lastXY = DDM.activeDrag && DDM.activeDrag.lastXY;
+                    if (lastXY && lastXY.length && card.proxyStack) {
+                        const stack = card.proxyStack;
+                        const dropTarget = Solitaire.Events._bestDropTargetForProxy(lastXY, stack);
+                        if (dropTarget) {
+                            dropTarget.pushStack(stack);
+                            Solitaire.endTurn();
+                            return;
+                        }
+                    }
 
                     Game.unanimated(function () {
                         card.updatePosition();
@@ -657,20 +750,36 @@ define([], function () {
                 },
 
                 dragEnd: function () {
-                    const target = this.getCard(),
-                        root = Solitaire.container(),
-                        fragment = new Y.Node(
-                            document.createDocumentFragment(),
-                        ),
-                        dragXY = this.dd.realXY,
-                        containerXY = root.getXY(),
-                        proxyStack = target.proxyStack;
+                    const target = this.getCard() || Solitaire.activeCard;
+                    const root = Solitaire.container();
+                    const fragment = new Y.Node(document.createDocumentFragment());
+                    const dragXY = this.dd.realXY;
+                    const containerXY = root.getXY();
+                    const proxyStack = target && target.proxyStack;
 
-                    target.dragging = false;
+                    if (target) { target.dragging = false; }
                     const dragNode = this.get("dragNode");
                     const node = dragNode.get("firstChild");
 
                     node && node.remove();
+
+                    // Fallback: if activeCard is still set here, neither drop handler
+                    // nor endTurn ran (YUI DDProxy skipped drophit/dropmiss for this
+                    // drag). Try foundation proximity detection before snapping back.
+                    // Do NOT return early — the rest of dragEnd must run to call
+                    // stack.updateCardsPosition(), which repositions the card's DOM node
+                    // at the foundation (target.stack points to foundation after moveTo).
+                    if (Solitaire.activeCard && proxyStack) {
+                        const DDM = Y.DD.DDM;
+                        const lastXY = DDM.activeDrag && DDM.activeDrag.lastXY;
+                        if (lastXY && lastXY.length) {
+                            const dropTarget = Solitaire.Events._bestDropTargetForProxy(lastXY, proxyStack);
+                            if (dropTarget) {
+                                dropTarget.pushStack(proxyStack);
+                                Solitaire.endTurn();
+                            }
+                        }
+                    }
 
                     if (!proxyStack) {
                         return;
@@ -712,8 +821,19 @@ define([], function () {
                         const first = stack.first();
 
                         let target = e.drop.get("node").getData("target");
-
                         target = target.stack || target;
+
+                        // getBestMatch picks by intersection area and can favour a tableau
+                        // card node over a foundation stack node. Override: find the foundation
+                        // whose slot has the most overlap with the dragged card's visual rect.
+                        const DDM = Y.DD.DDM;
+                        const lastXY = DDM.activeDrag && DDM.activeDrag.lastXY;
+                        if (lastXY && lastXY.length) {
+                            const foundation = Solitaire.Events._bestFoundationForProxy(lastXY);
+                            if (foundation) {
+                                target = foundation;
+                            }
+                        }
 
                         if (
                             (stack.cards.length === 1 &&
@@ -1465,7 +1585,7 @@ define([], function () {
                         .setAttribute("src", that.imageSrc())
                         .setData("target", that)
                         .plug(Y.Plugin.Drop, {
-                            useShim: true,
+                            useShim: false,
                         }));
 
                     that.updateStyle();

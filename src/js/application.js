@@ -87,6 +87,95 @@ define(["./solitaire"], function (solitaire) {
             active.name = name;
             active.game = Y.Solitaire[games[name]];
         }
+        function updateGameTitle(name) {
+            const titleElement = Y.one("#game-title");
+            if (titleElement) {
+                const gameInfo = {
+                    'agnes': {
+                        name: 'Agnes',
+                        url: 'https://en.wikipedia.org/wiki/Agnes_(solitaire)#Rules'
+                    },
+                    'klondike': {
+                        name: 'Klondike',
+                        url: 'https://en.wikipedia.org/wiki/Klondike_(solitaire)#Rules'
+                    },
+                    'klondike1t': {
+                        name: 'Klondike (1 Card)',
+                        url: 'https://en.wikipedia.org/wiki/Klondike_(solitaire)#Rules'
+                    },
+                    'flower-garden': {
+                        name: 'Flower Garden',
+                        url: 'https://en.wikipedia.org/wiki/Flower_Garden_(solitaire)#Rules'
+                    },
+                    'forty-thieves': {
+                        name: 'Forty Thieves',
+                        url: 'https://en.wikipedia.org/wiki/Forty_Thieves_(solitaire)#Rules'
+                    },
+                    'freecell': {
+                        name: 'Freecell',
+                        url: 'https://en.wikipedia.org/wiki/FreeCell#Rules'
+                    },
+                    'golf': {
+                        name: 'Golf',
+                        url: 'https://en.wikipedia.org/wiki/Golf_(patience)#Rules'
+                    },
+                    'grandfathers-clock': {
+                        name: "Grandfather's Clock",
+                        url: 'https://en.wikipedia.org/wiki/Grandfather%27s_Clock_(solitaire)#Rules'
+                    },
+                    'monte-carlo': {
+                        name: 'Monte Carlo',
+                        url: 'https://en.wikipedia.org/wiki/Monte_Carlo_(solitaire)#Rules'
+                    },
+                    'pyramid': {
+                        name: 'Pyramid',
+                        url: 'https://en.wikipedia.org/wiki/Pyramid_(solitaire)#Rules'
+                    },
+                    'russian-solitaire': {
+                        name: 'Russian Solitaire',
+                        url: 'https://en.wikipedia.org/wiki/Yukon_(solitaire)#Variants'
+                    },
+                    'scorpion': {
+                        name: 'Scorpion',
+                        url: 'https://en.wikipedia.org/wiki/Scorpion_(solitaire)#Rules'
+                    },
+                    'spider': {
+                        name: 'Spider',
+                        url: 'https://en.wikipedia.org/wiki/Spider_(solitaire)#Rules'
+                    },
+                    'spider1s': {
+                        name: 'Spider (1 Suit)',
+                        url: 'https://en.wikipedia.org/wiki/Spider_(solitaire)#Rules'
+                    },
+                    'spider2s': {
+                        name: 'Spider (2 Suits)',
+                        url: 'https://en.wikipedia.org/wiki/Spider_(solitaire)#Rules'
+                    },
+                    'spiderette': {
+                        name: 'Spiderette',
+                        url: 'https://en.wikipedia.org/wiki/Spider_(solitaire)#Variations'
+                    },
+                    'tri-towers': {
+                        name: 'Tri Towers',
+                        url: 'https://en.wikipedia.org/wiki/Tri_Peaks_(solitaire)#Rules'
+                    },
+                    'will-o-the-wisp': {
+                        name: 'Will O\' The Wisp',
+                        url: 'https://en.wikipedia.org/wiki/Will_o%27_the_Wisp_(solitaire)#Rules'
+                    },
+                    'yukon': {
+                        name: 'Yukon',
+                        url: 'https://en.wikipedia.org/wiki/Yukon_(solitaire)#Rules'
+                    }
+                };
+                const info = gameInfo[name];
+                if (info) {
+                    titleElement.setHTML('<a href="' + info.url + '" target="_blank" rel="noopener noreferrer">' + info.name + '</a>');
+                } else {
+                    titleElement.setHTML(name);
+                }
+            }
+        }
         function playGame(name) {
             const twoWeeks = 1000 * 3600 * 24 * 14;
             switchToGame(name);
@@ -94,6 +183,7 @@ define(["./solitaire"], function (solitaire) {
             if (enable_cookies()) {
                 $.jStorage.set("FossSolitairey_options", name);
             }
+            updateGameTitle(name);
             newGame();
         }
         const GameChooser = {
@@ -458,6 +548,7 @@ define(["./solitaire"], function (solitaire) {
                     clearDOM();
                     active.game = Y.Solitaire[games[active.name]];
                     active.game.loadGame(save);
+                    updateGameTitle(active.name);
                 } else {
                     if (enable_solitairey_ui) {
                         playGame(active.name);
@@ -502,7 +593,7 @@ define(["./solitaire"], function (solitaire) {
 
         function restart() {
             if (enable_cookies()) {
-                const init = Y.Cookie.get("FossSolitairey_initial-game");
+                const init = $.jStorage.get("FossSolitairey_initial-game");
 
                 if (init) {
                     clearDOM();

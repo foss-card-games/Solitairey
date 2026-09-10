@@ -131,10 +131,7 @@ YUI.add(
                         if (!target) {
                             return this.rank === 1;
                         } else {
-                            return (
-                                target.suit === this.suit &&
-                                target.rank === this.rank - 1
-                            );
+                            return target.suit === this.suit && target.rank === this.rank - 1;
                         }
                     },
 
@@ -146,11 +143,7 @@ YUI.add(
                                 if (!target) {
                                     return this.rank === 13;
                                 } else {
-                                    return (
-                                        !target.isFaceDown &&
-                                        target.color !== this.color &&
-                                        target.rank === this.rank + 1
-                                    );
+                                    return !target.isFaceDown && target.color !== this.color && target.rank === this.rank + 1;
                                 }
                             case "foundation":
                                 return this.validFoundationTarget(target);
@@ -169,10 +162,8 @@ YUI.add(
             Klondike.Stack,
             {
                 validTarget: function (stack) {
-                    return (
-                        stack.field === "tableau" &&
-                        this.first().validTarget(stack)
-                    );
+                    return (stack.field === "tableau" || stack.field === "foundation") &&
+                        this.first().validTarget(stack);
                 },
             },
             true,
